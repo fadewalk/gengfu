@@ -21,8 +21,8 @@ function ErrorList({
     count: Object.keys(validationErrors).length,
   });
   return (
-    <details className="flex flex-col gap-1">
-      <summary className="text-sm font-medium">{textSummary}</summary>
+    <span className="flex flex-col gap-1">
+      <span className="text-sm font-medium">{textSummary}</span>
       <span className="flex flex-col gap-1">
         {Object.entries(validationErrors).map(([id, error]) => (
           <span key={id}>
@@ -38,7 +38,7 @@ function ErrorList({
           </span>
         ))}
       </span>
-    </details>
+    </span>
   );
 }
 
@@ -97,7 +97,6 @@ export const WorkflowStatus = ({ className }: { className?: string }) => {
         color="yellow"
       >
         {t("workflows.builder.workflowHasErrorsDescription")}
-        {/* TODO: fix In HTML, <summary> cannot be a descendant of <p>. */}
         <ErrorList
           validationErrors={validationErrors}
           onErrorClick={handleErrorClick}

@@ -2216,7 +2216,11 @@
       "groupSteps": "步骤",
       "groupActions": "动作",
       "groupMisc": "其他",
-      "groupConditions": "条件"
+      "groupConditions": "条件",
+      "showYAMLEditor": "显示 YAML 编辑器",
+      "hideAIAssistant": "隐藏 AI 助手",
+      "loadingProviders": "加载集成中...",
+      "failedToLoadProviders": "加载集成失败"
     },
     "runNow": "立即运行",
     "messages": {
@@ -2285,6 +2289,7 @@
       "executionCount": "执行次数"
     },
     "preview": {
+      "title": "工作流预览",
       "previewTemplate": "预览工作流模板",
       "loading": "加载工作流预览...",
       "goBack": "返回",

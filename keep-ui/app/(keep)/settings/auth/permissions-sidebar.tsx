@@ -45,6 +45,7 @@ const PermissionSidebar = ({
   onSavePermissions,
   isDisabled = false,
 }: PermissionSidebarProps) => {
+  const { t } = useI18n();
   const {
     control,
     handleSubmit,

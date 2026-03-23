@@ -166,7 +166,7 @@ export function AlertDismissModal({
         <>
           <Callout color="orange" title={t("alerts.dismiss.calloutTitle")} className="mb-2.5">
             {selectedTab === 1
-              ? t("alerts.dismiss.calloutMessageUntil", { dateTime: selectedDateTime })
+              ? t("alerts.dismiss.calloutMessageUntil", { dateTime: selectedDateTime ?? new Date() })
               : t("alerts.dismiss.calloutMessageForever")}
           </Callout>
           <TabGroup

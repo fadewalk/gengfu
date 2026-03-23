@@ -17,7 +17,7 @@ export default function WorkflowVersionPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1>{t("workflows.breadcrumbs.workflowRevision", { revision })}</h1>
+      <h1>{t("workflows.breadcrumbs.workflowRevision", { revision: String(revision) })}</h1>
       <Card className="h-[calc(100vh-12rem)] p-0">
         <WorkflowYAMLEditor
           value={workflow?.workflow_raw ?? ""}

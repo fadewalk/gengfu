@@ -1011,7 +1011,11 @@
       "groupSteps": "Steps",
       "groupActions": "Actions",
       "groupMisc": "Misc",
-      "groupConditions": "Conditions"
+      "groupConditions": "Conditions",
+      "showYAMLEditor": "Show YAML editor",
+      "hideAIAssistant": "Hide AI Assistant",
+      "loadingProviders": "Loading providers...",
+      "failedToLoadProviders": "Failed to load providers"
     },
     "labels": {
       "workflowId": "Workflow ID",
@@ -1054,6 +1058,7 @@
       "builder": "Workflow Builder"
     },
     "preview": {
+      "title": "Workflow Preview",
       "loading": "Loading workflow preview...",
       "goBack": "Go Back",
       "notFound": "Workflow not found!",

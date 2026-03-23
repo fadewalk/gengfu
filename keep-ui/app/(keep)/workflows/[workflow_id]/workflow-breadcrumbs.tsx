@@ -32,7 +32,7 @@ export function WorkflowBreadcrumbs({ workflowId }: { workflowId: string }) {
           <Link
             href={`/workflows/${workflowId}/versions/${clientParams.revision}`}
           >
-            {t("workflows.breadcrumbs.workflowRevision", { revision: clientParams.revision })}
+            {t("workflows.breadcrumbs.workflowRevision", { revision: String(clientParams.revision) })}
           </Link>
         </>
       )}
