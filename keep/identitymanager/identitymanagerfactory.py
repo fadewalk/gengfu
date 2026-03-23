@@ -23,6 +23,7 @@ class IdentityManagerTypes(enum.Enum):
     OKTA = "okta"
     ONELOGIN = "onelogin"
     DB = "db"
+    LDAP = "ldap"
     NOAUTH = "noauth"
     OAUTH2PROXY = "oauth2proxy"
 

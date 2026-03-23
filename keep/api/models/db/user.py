@@ -26,3 +26,6 @@ class User(SQLModel, table=True):
 
     # Account creation timestamp
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # Whether this user is from LDAP (True) or local DB (False)
+    ldap: bool = Field(default=False)
