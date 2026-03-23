@@ -191,28 +191,28 @@ export default function SignInForm({
         </Text>
 
         {/* Auth method toggle: Internal vs LDAP */}
-        <div className="flex rounded-md border border-tremor-border bg-tremor-background-subtle p-1 gap-1">
+        <div className="inline-flex rounded-md border border-tremor-border bg-tremor-background-subtle p-0.5 gap-0.5">
           <button
             type="button"
             onClick={() => setUseLdap(false)}
-            className={`flex-1 text-sm px-3 py-2 rounded-md font-medium transition-colors ${
+            className={`text-sm px-4 py-1.5 rounded-md font-medium transition-colors whitespace-nowrap ${
               !useLdap
                 ? "bg-orange-500 text-white shadow-sm"
                 : "text-tremor-content-subtle hover:text-tremor-content-strong hover:bg-tremor-background"
             }`}
           >
-            内置账号登录
+            内置账号
           </button>
           <button
             type="button"
             onClick={() => setUseLdap(true)}
-            className={`flex-1 text-sm px-3 py-2 rounded-md font-medium transition-colors ${
+            className={`text-sm px-4 py-1.5 rounded-md font-medium transition-colors whitespace-nowrap ${
               useLdap
                 ? "bg-orange-500 text-white shadow-sm"
                 : "text-tremor-content-subtle hover:text-tremor-content-strong hover:bg-tremor-background"
             }`}
           >
-            AD/LDAP 登录
+            AD/LDAP
           </button>
         </div>
 
