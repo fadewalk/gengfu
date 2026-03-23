@@ -1,0 +1,33 @@
+services:
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: keep-openldap
+    hostname: keep-openldap
+    restart: always
+    environment:
+      LDAP_LOG_LEVEL: 256
+      LDAP_DOMAIN: ubiq2.com
+      LDAP_BASE_DN: dc=ubiq2,dc=com
+      LDAP_ADMIN_PASSWORD: rLhQq572Kq
+      LDAP_TLS: "false"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./ldap-data:/var/lib/ldap
+      - ./slapd.d:/etc/ldap/slapd.d
+      - ./ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif
+    command: --copy-service
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:0.9.0
+    container_name: keep-phpldapadmin
+    restart: always
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: openldap
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8088:80"
+    depends_on:
+      - openldap

@@ -1,0 +1,47 @@
+# Create the organizational unit for 九坤投资
+dn: OU=九坤投资,dc=ubiq2,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: 九坤投资
+
+# Test user 1: zhangsan
+dn: CN=zhangsan,OU=九坤投资,dc=ubiq2,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: zhangsan
+sn: 张三
+uid: zhangsan
+mail: zhangsan@ubiq2.com
+displayName: 张三
+telephoneNumber: 13800000001
+userPassword: Test@123456
+
+# Test user 2: lisi
+dn: CN=lisi,OU=九坤投资,dc=ubiq2,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: lisi
+sn: 李四
+uid: lisi
+mail: lisi@ubiq2.com
+displayName: 李四
+telephoneNumber: 13800000002
+userPassword: Test@123456
+
+# Test user 3: wangwu
+dn: CN=wangwu,OU=九坤投资,dc=ubiq2,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: wangwu
+sn: 王五
+uid: wangwu
+mail: wangwu@ubiq2.com
+displayName: 王五
+telephoneNumber: 13800000003
+userPassword: Test@123456

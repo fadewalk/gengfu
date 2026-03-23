@@ -1,0 +1,101 @@
+# Keep + LDAP authentication
+# Usage: docker compose -f docker-compose-with-ldap.yml up --build
+#
+# LDAP admin UI: http://localhost:8088
+# Login DN: cn=admin,dc=ubiq2,dc=com
+# Login PW: rLhQq572Kq
+#
+# Keep UI: http://localhost:3000
+# Test accounts:
+#   - zhangsan / Test@123456
+#   - lisi    / Test@123456
+#   - wangwu  / Test@123456
+
+services:
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: keep-openldap
+    hostname: keep-openldap
+    restart: always
+    environment:
+      LDAP_LOG_LEVEL: 256
+      LDAP_DOMAIN: ubiq2.com
+      LDAP_BASE_DN: dc=ubiq2,dc=com
+      LDAP_ADMIN_PASSWORD: rLhQq572Kq
+      LDAP_TLS: "false"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
+    ports:
+      - "389:389"
+    volumes:
+      - ldap-data:/var/lib/ldap
+      - slapd.d:/etc/ldap/slapd.d
+      - ./ldap/ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif
+    command: --copy-service
+    healthcheck:
+      test: ["CMD", "ldapsearch", "-x", "-H", "ldap://localhost", "-b", "dc=ubiq2,dc=com", "-D", "cn=admin,dc=ubiq2,dc=com", "-w", "rLhQq572Kq"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:0.9.0
+    container_name: keep-phpldapadmin
+    restart: always
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: openldap
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8088:80"
+    depends_on:
+      - openldap
+
+  keep-backend:
+    extends:
+      file: docker-compose.common.yml
+      service: keep-backend-common
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    environment:
+      - AUTH_TYPE=LDAP
+      - KEEP_JWT_SECRET=keep-ldap-jwt-secret-2024
+      - LDAP_URL=ldap://openldap:389
+      - LDAP_BIND_DN=cn=admin,dc=ubiq2,dc=com
+      - LDAP_BIND_PASSWORD=rLhQq572Kq
+      - LDAP_BASE_DN=dc=ubiq2,dc=com
+      - LDAP_USER_SEARCH_BASE=OU=九坤投资,dc=ubiq2,dc=com
+      - LDAP_USER_FILTER=(&(objectClass=inetOrgPerson)(uid={0}))
+      - LDAP_MAIL_ATTRIBUTE=mail
+      - LDAP_NAME_ATTRIBUTE=displayName
+      - LDAP_DEFAULT_ROLE=Admin
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME:-}
+    volumes:
+      - ./state:/state
+    depends_on:
+      openldap:
+        condition: service_healthy
+
+  keep-frontend:
+    extends:
+      file: docker-compose.common.yml
+      service: keep-frontend-common
+    image: us-central1-docker.pkg.dev/keephq/keep/keep-ui
+    environment:
+      - AUTH_TYPE=LDAP
+      - NEXTAUTH_SECRET=keep-ldap-jwt-secret-2024
+      - API_URL=http://keep-backend:8080
+    volumes:
+      - ./state:/state
+    depends_on:
+      - keep-backend
+
+  keep-websocket-server:
+    extends:
+      file: docker-compose.common.yml
+      service: keep-websocket-server-common
+
+volumes:
+  ldap-data:
+  slapd.d:
