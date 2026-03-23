@@ -11,9 +11,7 @@ import { useFloating } from "@floating-ui/react";
 import { Subtitle } from "@tremor/react";
 import UserAvatar from "./UserAvatar";
 import { useSignOut } from "@/shared/lib/hooks/useSignOut";
-import { FaSlack } from "react-icons/fa";
 import { ThemeControl, LanguageSwitcher } from "@/shared/ui";
-import { HiOutlineDocumentText } from "react-icons/hi2";
 import { useTranslations } from "next-intl";
 
 type UserDropdownProps = {
@@ -88,9 +86,6 @@ type UserInfoProps = {
 export const UserInfo = ({ session }: UserInfoProps) => {
   const t = useTranslations("nav");
   const tProviders = useTranslations("providers");
-  const { data: config } = useConfig();
-
-  const docsUrl = config?.KEEP_DOCS_URL || "https://docs.keephq.dev";
 
   return (
     <>
@@ -98,25 +93,6 @@ export const UserInfo = ({ session }: UserInfoProps) => {
         <li>
           <LinkWithIcon href="/providers" icon={VscDebugDisconnect}>
             <Subtitle className="text-xs">{tProviders("title")}</Subtitle>
-          </LinkWithIcon>
-        </li>
-        <li className="flex text-xs items-center gap-2">
-          <LinkWithIcon
-            icon={FaSlack}
-            href="https://slack.keephq.dev/"
-            className="w-auto pr-3.5"
-            target="_blank"
-          >
-            Slack
-          </LinkWithIcon>
-          <LinkWithIcon
-            icon={HiOutlineDocumentText}
-            iconClassName="w-4"
-            href={docsUrl}
-            className="w-auto px-3.5"
-            target="_blank"
-          >
-            {t("documentation")}
           </LinkWithIcon>
         </li>
         <div className="flex items-center justify-between">
