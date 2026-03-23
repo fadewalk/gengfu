@@ -2,6 +2,10 @@
 .DS_Store
 **/.DS_Store
 
+# LDAP test data
+ldap/ldap-data/
+ldap/slapd.d/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -129,6 +133,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+venv-ldap/
 env/
 venv/
 ENV/
