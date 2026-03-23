@@ -4,11 +4,16 @@ import { signIn } from "@/auth";
 import { AuthenticationError, AuthErrorCodes } from "@/errors";
 import { revalidatePath } from "next/cache";
 
-export async function authenticate(username: string, password: string) {
+export async function authenticate(
+  username: string,
+  password: string,
+  authMethod: "ldap" | "db" = "ldap"
+) {
   try {
     const result = await signIn("credentials", {
       username,
       password,
+      auth_method: authMethod,
       redirect: false,
     });
 
