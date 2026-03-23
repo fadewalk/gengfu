@@ -3,6 +3,7 @@
 export enum AuthType {
   AUTH0 = "AUTH0",
   DB = "DB",
+  LDAP = "LDAP",
   KEYCLOAK = "KEYCLOAK",
   OAUTH2PROXY = "OAUTH2PROXY",
   AZUREAD = "AZUREAD",

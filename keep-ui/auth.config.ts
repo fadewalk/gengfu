@@ -43,7 +43,9 @@ export const authType =
       ? AuthType.DB
       : authTypeEnv === NO_AUTH
         ? AuthType.NOAUTH
-        : (authTypeEnv as AuthType);
+        : authTypeEnv === "LDAP"
+          ? AuthType.DB  // LDAP uses DB credentials provider with auth_method toggle
+          : (authTypeEnv as AuthType);
 
 export const proxyUrl =
   process.env.HTTP_PROXY ||
@@ -142,6 +144,7 @@ const baseProviderConfigs = {
       credentials: {
         username: { label: "Username", type: "text", placeholder: "keep" },
         password: { label: "Password", type: "password", placeholder: "keep" },
+        auth_method: { label: "Auth Method", type: "hidden" },
       },
       async authorize(credentials): Promise<User | null> {
         try {
@@ -153,7 +156,7 @@ const baseProviderConfigs = {
 
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error("Authentication failed:", errorData);
+            console.error("LDAP Authentication failed:", errorData);
             throw new AuthenticationError(AuthErrorCodes.INVALID_CREDENTIALS);
           }
 
