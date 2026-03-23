@@ -43,6 +43,7 @@ export default function SignInForm({
   const tErrors = useTranslations("auth.errors");
   const [providers, setProviders] = useState<Providers | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [useLdap, setUseLdap] = useState(true); // Default to LDAP login
   const router = useRouter();
 
   const {
@@ -131,8 +132,14 @@ export default function SignInForm({
 
   const onSubmit = async (data: SignInFormInputs) => {
     try {
-      console.log("Authenticating with credentials provider");
-      const result = await authenticate(data.username, data.password);
+      console.log(
+        `Authenticating with credentials provider (auth_method: ${useLdap ? "ldap" : "db"})`
+      );
+      const result = await authenticate(
+        data.username,
+        data.password,
+        useLdap ? "ldap" : "db"
+      );
 
       if (!result) {
         setError("root", {
@@ -182,6 +189,32 @@ export default function SignInForm({
         <Text className="text-tremor-title font-bold text-tremor-content-strong">
           {t("title")}
         </Text>
+
+        {/* Auth method toggle: Internal vs LDAP */}
+        <div className="flex rounded-md border border-tremor-border bg-tremor-background-subtle p-1 gap-1">
+          <button
+            type="button"
+            onClick={() => setUseLdap(false)}
+            className={`flex-1 text-sm px-3 py-2 rounded-md font-medium transition-colors ${
+              !useLdap
+                ? "bg-orange-500 text-white shadow-sm"
+                : "text-tremor-content-subtle hover:text-tremor-content-strong hover:bg-tremor-background"
+            }`}
+          >
+            内置账号登录
+          </button>
+          <button
+            type="button"
+            onClick={() => setUseLdap(true)}
+            className={`flex-1 text-sm px-3 py-2 rounded-md font-medium transition-colors ${
+              useLdap
+                ? "bg-orange-500 text-white shadow-sm"
+                : "text-tremor-content-subtle hover:text-tremor-content-strong hover:bg-tremor-background"
+            }`}
+          >
+            AD/LDAP 登录
+          </button>
+        </div>
 
         <form className="w-full space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {errors.root && (
