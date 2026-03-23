@@ -233,3 +233,4 @@ keep/providers/grafana_provider/grafana/png/*
 topology.sh
 posthog.py
 .playwright-mcp/
+.venv*
