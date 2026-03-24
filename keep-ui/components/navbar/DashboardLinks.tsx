@@ -45,7 +45,7 @@ export const DashboardLinks = () => {
 
   const deleteDashboard = async (id: string) => {
     const isDeleteConfirmed = confirm(
-      t("messages.confirmDelete", { defaultValue: "您即将删除此仪表盘。确定要继续吗？" })
+      t("messages.confirmDelete")
     );
     if (isDeleteConfirmed) {
       try {
@@ -130,7 +130,7 @@ export const DashboardLinks = () => {
               ))
             ) : (
               <Text className="text-xs max-w-[200px] px-2">
-                {t("messages.noDashboards", { defaultValue: "保存后的仪表盘将显示在这里。" })}
+                {t("messages.noDashboards")}
               </Text>
             )}
           </SortableContext>
@@ -144,7 +144,7 @@ export const DashboardLinks = () => {
           onClick={handleCreateDashboard}
           icon={PlusIcon}
         >
-          {t("addDashboard", { defaultValue: "添加仪表盘" })}
+          {t("addDashboard")}
         </Button>
       </Disclosure.Panel>
     </Disclosure>

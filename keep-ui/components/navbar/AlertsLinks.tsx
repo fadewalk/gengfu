@@ -143,9 +143,9 @@ export const AlertsLinks = ({ session }: AlertsLinksProps) => {
         className="w-[30%] max-w-screen-2xl max-h-[710px] transform overflow-auto ring-tremor bg-white p-6 text-left align-middle shadow-tremor transition-all rounded-xl"
       >
         <div className="space-y-2">
-          <Subtitle>{t("labels.selectTagsToWatch", { defaultValue: "选择要监控的标签" })}</Subtitle>
+          <Subtitle>{t("labels.selectTagsToWatch")}</Subtitle>
           <Callout title="" color="orange">
-            {t("messages.customizePresets", { defaultValue: "通过监控特定标签来自定义您的预设列表。" })}
+            {t("messages.customizePresets")}
           </Callout>
           <CreatableMultiSelect
             value={tempSelectedTags.map((tag) => ({
@@ -157,7 +157,7 @@ export const AlertsLinks = ({ session }: AlertsLinksProps) => {
               value: tag.name,
               label: tag.name,
             }))}
-            placeholder={tCommon("actions.selectOrCreate", { defaultValue: "选择或创建标签" })}
+            placeholder={tCommon("actions.selectOrCreate")}
             className="mt-4"
           />
           <div className="flex justify-end space-x-2.5">
@@ -166,17 +166,17 @@ export const AlertsLinks = ({ session }: AlertsLinksProps) => {
               variant="secondary"
               color="orange"
               onClick={() => setIsTagModalOpen(false)}
-              tooltip={tCommon("actions.close", { defaultValue: "关闭" })}
+              tooltip={tCommon("actions.close")}
             >
-              {tCommon("actions.close", { defaultValue: "关闭" })}
+              {tCommon("actions.close")}
             </Button>
             <Button
               size="lg"
               color="orange"
               onClick={handleApplyTags}
-              tooltip={tCommon("actions.apply", { defaultValue: "应用" })}
+              tooltip={tCommon("actions.apply")}
             >
-              {tCommon("actions.apply", { defaultValue: "应用" })}
+              {tCommon("actions.apply")}
             </Button>
           </div>
         </div>

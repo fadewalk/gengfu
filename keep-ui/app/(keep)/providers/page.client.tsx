@@ -15,7 +15,6 @@ export const useFetchProviders = () => {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [installedProviders, setInstalledProviders] = useState<Provider[]>([]);
   const [linkedProviders, setLinkedProviders] = useState<Provider[]>([]);
-  const { data: config } = useConfig();
   const { data, error, mutate, isLoading } = useProviders();
 
   if (error) {
@@ -23,50 +22,6 @@ export const useFetchProviders = () => {
   }
 
   const isLocalhost = data && data.is_localhost;
-  const toastShownKey = "localhostToastShown";
-  const ToastMessage = () => (
-    <div>
-      {t("providers.webhookDisabled")}
-      <br />
-      <Link
-        href={`${
-          config?.KEEP_DOCS_URL || "https://docs.keephq.dev"
-        }/development/external-url`}
-        target="_blank"
-        rel="noreferrer noopener"
-      >
-        {t("providers.webhookDisabledReadDocs")}
-      </Link>{" "}
-      {t("providers.webhookDisabledLearnMore")}
-    </div>
-  );
-
-  useEffect(() => {
-    // Check if we're in a browser environment before accessing localStorage
-    if (typeof window === "undefined" || typeof localStorage === "undefined") {
-      return;
-    }
-    
-    const toastShown = localStorage.getItem(toastShownKey);
-
-    if (isLocalhost && !toastShown) {
-      toast(<ToastMessage />, {
-        type: "info",
-        position: "top-center",
-        autoClose: 10000,
-        onClick: () =>
-          window.open(
-            `${config?.KEEP_DOCS_URL || "https://docs.keephq.dev"}`,
-            "_blank"
-          ),
-        style: {
-          width: "250%",
-          marginLeft: "-75%",
-        },
-      });
-      localStorage.setItem(toastShownKey, "true");
-    }
-  }, [isLocalhost]);
 
   useEffect(() => {
     if (data) {
@@ -137,6 +92,52 @@ export default function ProvidersPage({
     providersSearchString ||
     providersSelectedTags.length > 0 ||
     providersSelectedCategories.length > 0;
+
+  const { data: config } = useConfig();
+
+  const ToastMessage = () => (
+    <div>
+      {t("providers.webhookDisabled")}
+      <br />
+      <Link
+        href={`${
+          config?.KEEP_DOCS_URL || "https://docs.keephq.dev"
+        }/development/external-url`}
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        {t("providers.webhookDisabledReadDocs")}
+      </Link>{" "}
+      {t("providers.webhookDisabledLearnMore")}
+    </div>
+  );
+
+  useEffect(() => {
+    // Check if we're in a browser environment before accessing localStorage
+    if (typeof window === "undefined" || typeof localStorage === "undefined") {
+      return;
+    }
+
+    const toastShown = localStorage.getItem("localhostToastShown");
+
+    if (isLocalhost && !toastShown) {
+      toast(<ToastMessage />, {
+        type: "info",
+        position: "top-center",
+        autoClose: 10000,
+        onClick: () =>
+          window.open(
+            `${config?.KEEP_DOCS_URL || "https://docs.keephq.dev"}`,
+            "_blank"
+          ),
+        style: {
+          width: "250%",
+          marginLeft: "-75%",
+        },
+      });
+      localStorage.setItem("localhostToastShown", "true");
+    }
+  }, [isLocalhost]);
 
   useEffect(() => {
     if (searchParams?.oauth === "failure") {

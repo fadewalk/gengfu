@@ -27,6 +27,7 @@ export function LinkTicketModal({
   onSuccess,
 }: LinkTicketModalProps) {
   const t = useTranslations("incidents");
+  const tCommon = useTranslations("common");
   const [ticketId, setTicketId] = useState("");
   const [ticketUrl, setTicketUrl] = useState("");
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
@@ -124,7 +125,7 @@ export function LinkTicketModal({
           </Text>
           <div className="flex justify-end">
             <Button variant="secondary" onClick={handleCancel}>
-              {t("common:actions.close", { ns: "common" })}
+              {tCommon("actions.close")}
             </Button>
           </div>
         </div>
@@ -147,7 +148,7 @@ export function LinkTicketModal({
           </Text>
           <div className="flex justify-end">
             <Button variant="secondary" onClick={handleCancel}>
-              {t("common:actions.close", { ns: "common" })}
+              {tCommon("actions.close")}
             </Button>
           </div>
         </div>
@@ -260,7 +261,7 @@ export function LinkTicketModal({
             onClick={handleCancel}
             disabled={isLoading}
           >
-            {t("common:actions.cancel", { ns: "common" })}
+            {tCommon("actions.cancel")}
           </Button>
           <Button
             variant="primary"

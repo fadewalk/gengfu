@@ -384,7 +384,7 @@ const ProviderForm = ({
       "detail" in data ? data.detail : "message" in data ? data.message : data;
     if (status === 409) {
       setFormErrors(
-        t("providers.providerAlreadyExists", { name: formValues.provider_name })
+        t("providers.providerAlreadyExists", { name: String(formValues.provider_name ?? "") })
       );
     } else if (status === 412) {
       setProviderValidatedScopes(error);

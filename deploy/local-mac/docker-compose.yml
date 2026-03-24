@@ -8,6 +8,9 @@ services:
       service: keep-backend-common
     environment:
       - AUTH_TYPE=NO_AUTH
+      - OPENAI_API_KEY=45f87d5d955a6e44fa94c5a5cacd96d1.nJZbr53s2hM0tSiJ
+      - OPENAI_BASE_URL=https://open.bigmodel.cn/api/coding/paas/v4
+      - OPENAI_MODEL_NAME=glm-5-turbo
     volumes:
       - ../../state:/state
 
@@ -15,6 +18,8 @@ services:
     build:
       context: ../..
       dockerfile: deploy/local-mac/Dockerfile.ui
+      args:
+        - OPENAI_API_KEY=45f87d5d955a6e44fa94c5a5cacd96d1.nJZbr53s2hM0tSiJ
     extends:
       file: ../../docker-compose.common.yml
       service: keep-frontend-common

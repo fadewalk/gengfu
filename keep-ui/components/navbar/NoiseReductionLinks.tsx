@@ -85,7 +85,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
             {tenantConfig && (
               <>
                 <Subtitle className="text-xs ml-2 text-gray-900 font-medium uppercase">
-                  {t("noiseReduction", { defaultValue: "降噪" }).toUpperCase()}
+                  {t("noiseReduction").toUpperCase()}
                 </Subtitle>
                 <IoChevronUp
                   className={clsx(
@@ -114,7 +114,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
               icon={IoMdGitMerge}
               testId="deduplication"
             >
-              <Subtitle className="text-xs">{tRules("deduplication.title", { defaultValue: "去重" })}</Subtitle>
+              <Subtitle className="text-xs">{tRules("deduplication.title")}</Subtitle>
             </LinkWithIcon>
           </li>
         </TogglableLink>
@@ -123,7 +123,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
         >
           <li>
             <LinkWithIcon href="/rules" icon={Rules} testId="rules">
-              <Subtitle className="text-xs">{tRules("correlation.title", { defaultValue: "关联规则" })}</Subtitle>
+              <Subtitle className="text-xs">{tRules("correlation.title")}</Subtitle>
             </LinkWithIcon>
           </li>
         </TogglableLink>
@@ -132,7 +132,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
         >
           <li>
             <LinkWithIcon href="/workflows" icon={Workflows} testId="workflows">
-              <Subtitle className="text-xs">{tWorkflows("title", { defaultValue: "工作流" })}</Subtitle>
+              <Subtitle className="text-xs">{tWorkflows("title")}</Subtitle>
             </LinkWithIcon>
           </li>
         </TogglableLink>
@@ -150,7 +150,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
               }
               testId="service-topology"
             >
-              <Subtitle className="text-xs">{tTopology("title", { defaultValue: "服务拓扑" })}</Subtitle>
+              <Subtitle className="text-xs">{tTopology("title")}</Subtitle>
             </LinkWithIcon>
           </li>
         </TogglableLink>
@@ -159,7 +159,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
         >
           <li>
             <LinkWithIcon href="/mapping" icon={Mapping} testId="mapping">
-              <Subtitle className="text-xs">{tRules("mapping.title", { defaultValue: "映射" })}</Subtitle>
+              <Subtitle className="text-xs">{tRules("mapping.title")}</Subtitle>
             </LinkWithIcon>
           </li>
         </TogglableLink>
@@ -172,7 +172,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
               icon={ExportIcon}
               testId="extraction"
             >
-              <Subtitle className="text-xs">{tRules("extraction.title", { defaultValue: "提取" })}</Subtitle>
+              <Subtitle className="text-xs">{tRules("extraction.title")}</Subtitle>
             </LinkWithIcon>
           </li>
         </TogglableLink>
@@ -185,7 +185,7 @@ export const NoiseReductionLinks = ({ session }: NoiseReductionLinksProps) => {
               icon={FaVolumeMute}
               testId="maintenance"
             >
-              <Subtitle className="text-xs">{t("maintenanceWindows", { defaultValue: "维护窗口" })}</Subtitle>
+              <Subtitle className="text-xs">{t("maintenanceWindows")}</Subtitle>
             </LinkWithIcon>
           </li>
         </TogglableLink>

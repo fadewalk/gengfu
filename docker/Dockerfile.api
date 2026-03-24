@@ -62,8 +62,8 @@ COPY --from=builder /venv /venv
 COPY --from=builder /app/examples /examples
 COPY --from=builder /app/unknown-icon.png unknown-icon.png
 # as per Openshift guidelines, https://docs.openshift.com/container-platform/4.11/openshift_images/create-images.html#use-uid_create-images
-RUN chgrp -R 0 /app && chmod -R g=u /app && \
-    chown -R keep:keep /app && \
+RUN chgrp -R 0 /app /examples && chmod -R g=u /app /examples && \
+    chown -R keep:keep /app /examples && \
     chown -R keep:keep /venv
 USER keep
 
