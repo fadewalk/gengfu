@@ -138,7 +138,7 @@ export function IncidentHeader({
                 color="orange"
                 size="xs"
                 icon={TbInfoCircle}
-                tooltip={t("messages.orphanedTooltip", { ruleName: incident.rule_name })}
+                tooltip={t("messages.orphanedTooltip", { ruleName: incident.rule_name ?? "" })}
               >
                 {t("messages.orphaned")}
               </Badge>

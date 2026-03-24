@@ -131,7 +131,7 @@ const ProvidersTiles = ({
       </div>
 
       <Drawer
-        title={t("providers.connectTo", { providerName: selectedProvider?.display_name })}
+        title={t("providers.connectTo", { providerName: selectedProvider?.display_name ?? "" })}
         isOpen={openPanel}
         onClose={handleCloseModal}
       >

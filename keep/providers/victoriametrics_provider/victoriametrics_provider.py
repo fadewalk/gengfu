@@ -146,6 +146,27 @@ class VictoriametricsProviderAuthConfig:
         default=None,
     )
 
+    ClusterMode: bool = dataclasses.field(
+        metadata={
+            "required": False,
+            "description": "Enable VictoriaMetrics cluster mode. URLs will be formatted as /select/<accountID>/prometheus/api/v1/... for cluster deployments.",
+            "config_sub_group": "vmbackend",
+            "config_main_group": "address",
+            "type": "switch",
+        },
+        default=False,
+    )
+
+    AccountID: str = dataclasses.field(
+        metadata={
+            "required": False,
+            "description": "Account ID for VictoriaMetrics cluster mode (default: 0)",
+            "config_sub_group": "vmbackend",
+            "config_main_group": "address",
+        },
+        default="0",
+    )
+
     SkipValidation: bool = dataclasses.field(
         metadata={
             "required": False,
@@ -250,8 +271,9 @@ receivers:
                 )
 
         if self.vmbackend_enabled:
+            validate_url = self._build_backend_url("/prometheus/api/v1/query")
             vmbackend_response = requests.get(
-                self.vmbackend_host,
+                validate_url,
                 auth=self._get_auth(),
                 verify=not self.authentication_config.insecure,
             )
@@ -470,17 +492,25 @@ receivers:
             self.logger.exception("Failed to get alerts")
             raise e
 
+    def _build_backend_url(self, path: str) -> str:
+        """Build the full URL for VM Backend API, handling cluster vs single-node paths."""
+        base_url = self.vmbackend_host
+        if self.authentication_config.ClusterMode:
+            account_id = self.authentication_config.AccountID or "0"
+            return f"{base_url}/select/{account_id}/prometheus{path}"
+        return f"{base_url}{path}"
+
     def _query(self, query="", start="", end="", step="", queryType="", **kwargs: dict):
         """Query metrics from VM Backend."""
         if not self.vmbackend_enabled:
             raise Exception("VM Backend is not configured")
 
         auth = self._get_auth()
-        base_url = self.vmbackend_host
 
         if queryType == "query":
+            url = self._build_backend_url("/api/v1/query")
             response = requests.get(
-                f"{base_url}/api/v1/query",
+                url,
                 params={"query": query, "time": start},
                 auth=auth,
                 verify=not self.authentication_config.insecure,
@@ -494,8 +524,9 @@ receivers:
                 raise e
 
         elif queryType == "query_range":
+            url = self._build_backend_url("/api/v1/query_range")
             response = requests.get(
-                f"{base_url}/api/v1/query_range",
+                url,
                 params={"query": query, "start": start, "end": end, "step": step},
                 auth=auth,
                 verify=not self.authentication_config.insecure,
