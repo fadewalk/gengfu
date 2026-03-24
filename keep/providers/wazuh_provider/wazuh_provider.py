@@ -1,5 +1,5 @@
 """
-Wazuh is a security platform that provides unified XDR and SIEM protection for endpoints and cloud workloads
+Wazuh 是一个安全平台，为端点和云工作负载提供统一的 XDR 和 SIEM 防护。
 """
 
 from keep.api.i18n import t
@@ -10,13 +10,13 @@ from keep.providers.models.provider_config import ProviderConfig
 
 
 class WazuhProvider(BaseProvider):
-    """Get alerts from Wazuh into Keep"""
+    """从 Wazuh 获取告警到 Keep。"""
     provider_description = t("Get alerts from Wazuh into Keep")
 
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
   1. Wazuh supports custom integration scripts.
   2. Install Keep integration scripts following the [Keep documentation](https://docs.keephq.dev/providers/documentation/wazuh-provider).
   3. Open the Wazuh configuration file
@@ -25,7 +25,7 @@ class WazuhProvider(BaseProvider):
   6. Add `<integration>` including proper `api_key` and `webhook_url` block in Wazuh configuration according to the the [Keep documentation](https://docs.keephq.dev/providers/documentation/wazuh-provider)
   7. Restart Wazuh.
   8. Now Wazuh will be able to send alerts to Keep.
-  """
+  """)
 
     PROVIDER_DISPLAY_NAME = "Wazuh"
     PROVIDER_TAGS = ["alert"]

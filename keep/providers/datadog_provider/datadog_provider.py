@@ -1,5 +1,5 @@
 """
-Datadog Provider is a class that allows to ingest/digest data from Datadog.
+Datadog 提供商，支持接入和解析 Datadog 的数据。
 """
 
 import dataclasses
@@ -181,7 +181,7 @@ class DatadogProviderAuthConfig:
 
 
 class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
-    """Pull/push alerts from Datadog."""
+    """从 Datadog 拉取/推送告警。"""
 
     PROVIDER_CATEGORY = ["Monitoring"]
     PROVIDER_DISPLAY_NAME = "Datadog"

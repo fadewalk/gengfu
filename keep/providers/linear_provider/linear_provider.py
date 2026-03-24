@@ -12,7 +12,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 @pydantic.dataclasses.dataclass
 class LinearProviderAuthConfig:
-    """Linear authentication configuration."""
+    """Linear 认证配置。"""
 
     api_token: str = dataclasses.field(
         metadata={
@@ -34,7 +34,7 @@ class LinearProviderAuthConfig:
 
 
 class LinearProvider(BaseProvider):
-    """Enrich alerts with Linear tickets."""
+    """使用 Linear 工单富化告警。"""
 
     PROVIDER_DISPLAY_NAME = "Linear"
     LINEAR_GRAPHQL_URL = "https://api.linear.app/graphql"

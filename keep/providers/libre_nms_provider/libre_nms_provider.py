@@ -1,5 +1,5 @@
 """
-LibreNMS Provider is a class that provides a way to receive alerts from LibreNMS using API endpoints as well as webhooks.
+LibreNMS 提供商，支持通过 API 端点和 Webhook 接收来自 LibreNMS 的告警。
 """
 
 import dataclasses
@@ -41,13 +41,13 @@ class LibreNmsProviderAuthConfig:
 
 class LibreNmsProvider(BaseProvider):
     """
-    Get alerts from LibreNMS into Keep.
+    从 LibreNMS 获取告警到 Keep。
     """
 
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 To send alerts from LibreNMS to Keep, Use the following webhook url to configure LibreNMS send alerts to Keep:
 
 1. In LibreNMS Dashboard, go to Alerts > Alert Transports
@@ -59,7 +59,7 @@ To send alerts from LibreNMS to Keep, Use the following webhook url to configure
 5. Add header "X-API-KEY" with your Keep API key (webhook role)
 6. For JSON body format, refer to [Keep documentation](https://docs.keephq.dev/providers/documentation/libre_nms-provider)
 7. Save the transport
-    """
+    """)
 
     PROVIDER_DISPLAY_NAME = "LibreNMS"
     PROVIDER_TAGS = ["alert"]

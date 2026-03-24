@@ -1,5 +1,5 @@
 """
-GithubProvider is a provider that interacts with GitHub.
+GithubProvider 是一个与 GitHub 交互的提供商。
 """
 
 import dataclasses
@@ -31,7 +31,7 @@ class GithubProviderAuthConfig:
 
 class GithubProvider(BaseProvider):
     """
-    Enrich alerts with data from GitHub.
+    使用 GitHub 数据富化告警。
     """
 
     PROVIDER_DISPLAY_NAME = "GitHub"
@@ -140,7 +140,7 @@ class GithubProvider(BaseProvider):
 
 class GithubStarsProvider(GithubProvider):
     """
-    GithubStarsProvider is a class that provides a way to read stars from a GitHub repository.
+    GitHub Stars 提供商，支持读取 GitHub 仓库的 Star 数。
     """
 
     def __init__(

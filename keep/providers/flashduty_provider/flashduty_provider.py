@@ -10,7 +10,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 @pydantic.dataclasses.dataclass
 class FlashdutyProviderAuthConfig:
-    """Flashduty authentication configuration."""
+    """FlashDuty 认证配置。"""
 
     integration_key: str = dataclasses.field(
         metadata= {
@@ -22,7 +22,7 @@ class FlashdutyProviderAuthConfig:
 
 
 class FlashdutyProvider(BaseProvider):
-    """Create incident in Flashduty."""
+    """在 FlashDuty 中创建事件。"""
 
     PROVIDER_DISPLAY_NAME = "Flashduty"
     PROVIDER_CATEGORY = ["Incident Management"]

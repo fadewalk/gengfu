@@ -1,5 +1,5 @@
 """
-ZoomChatProvider is a class that provides a way to send Zoom Chats programmatically using the Incoming Webhook Zoom application.
+ZoomChatProvider 提供了一种通过 Zoom Incoming Webhook 应用以编程方式发送 Zoom 聊天消息的方式。
 """
 
 import dataclasses
@@ -70,7 +70,7 @@ class ZoomChatProviderAuthConfig:
 
 
 class ZoomChatProvider(BaseProvider):
-    """Send alert message to Zoom Chat using the Incoming Webhook application."""
+    """通过 Incoming Webhook 应用发送告警消息到 Zoom Chat。"""
     provider_description = t("Send alert message to Zoom Chat using the Incoming Webhook application.")
 
     PROVIDER_DISPLAY_NAME = "Zoom Chat"

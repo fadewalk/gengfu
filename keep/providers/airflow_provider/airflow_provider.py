@@ -4,10 +4,11 @@ from keep.api.models.alert import AlertDto
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig
+from keep.api.i18n import t
 
 
 class AirflowProvider(BaseProvider):
-    """Enrich alerts with data sent from Airflow."""
+    """接收 Airflow 发送的告警数据并进行富化。"""
 
     PROVIDER_DISPLAY_NAME = "Airflow"
     PROVIDER_CATEGORY = ["Orchestration"]
@@ -16,7 +17,7 @@ class AirflowProvider(BaseProvider):
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 💡 For more details on configuring Airflow to send alerts to Keep, refer to the [Keep documentation](https://docs.keephq.dev/providers/documentation/airflow-provider).
 
 ### 1. Configure Keep's Webhook Credentials
@@ -72,7 +73,7 @@ dag = DAG(
     on_failure_callback=task_failure_callback,
 )
 ```
-"""
+""")
 
     def __init__(
         self, context_manager: ContextManager, provider_id: str, config: ProviderConfig

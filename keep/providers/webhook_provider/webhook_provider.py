@@ -1,5 +1,5 @@
 """
-WebhookProvider is a class that provides a way to notify a 3rd party service using a webhook.
+WebhookProvider 提供了一种通过 Webhook 通知第三方服务的方式。
 """
 
 import base64
@@ -90,7 +90,7 @@ class WebhookProviderAuthConfig:
 
 
 class WebhookProvider(BaseProvider):
-    """Enrich alerts with data from Webhook."""
+    """使用 Webhook 数据富化告警。"""
     provider_description = t("Enrich alerts with data from Webhook.")
 
     BLACKLISTED_ENDPOINTS = [

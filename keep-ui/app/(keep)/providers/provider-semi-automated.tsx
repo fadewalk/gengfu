@@ -31,7 +31,7 @@ export const ProviderSemiAutomated = ({ provider }: Props) => {
   );
 
   if (isLoading) return <div>{t("common.labels.loading")}</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (error) return <div>{t("providers.error")} {error.message}</div>;
 
   const settings = {
     theme: { ...a11yLight },

@@ -1,5 +1,5 @@
 """
-IncidentioProvider is a class that allows to get all incidents as well query specific incidents in Incidentio.
+IncidentioProvider 提供了一种在 Incidentio 中获取所有事件以及查询特定事件的方式。
 """
 
 import dataclasses
@@ -38,7 +38,7 @@ class IncidentioProviderAuthConfig:
 
 
 class IncidentioProvider(BaseProvider, ProviderHealthMixin):
-    """Receive Incidents from Incidentio."""
+    """从 Incidentio 接收事件。"""
 
     PROVIDER_DISPLAY_NAME = "incident.io"
     PROVIDER_CATEGORY = ["Incident Management"]

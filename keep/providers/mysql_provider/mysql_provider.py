@@ -1,5 +1,5 @@
 """
-MysqlProvider is a class that provides a way to read data from MySQL.
+MysqlProvider 提供了一种从 MySQL 读取数据的方式。
 """
 
 import dataclasses
@@ -39,7 +39,7 @@ class MysqlProviderAuthConfig:
 
 
 class MysqlProvider(BaseProvider):
-    """Enrich alerts with data from MySQL."""
+    """使用 MySQL 数据富化告警。"""
 
     PROVIDER_DISPLAY_NAME = "MySQL"
     PROVIDER_CATEGORY = ["Database"]

@@ -13,7 +13,7 @@ from keep.providers.models.provider_config import ProviderConfig, ProviderScope
 
 @pydantic.dataclasses.dataclass
 class KubernetesProviderAuthConfig:
-    """Kubernetes authentication configuration."""
+    """Kubernetes 认证配置。"""
 
     api_server: pydantic.AnyHttpUrl = dataclasses.field(
         default=None,
@@ -57,7 +57,7 @@ class KubernetesProviderAuthConfig:
 
 
 class KubernetesProvider(BaseProvider):
-    """Perform actions like rollout restart objects or list pods on Kubernetes."""
+    """在 Kubernetes 上执行滚动重启等操作或列出 Pod。"""
 
     provider_id: str
     PROVIDER_DISPLAY_NAME = "Kubernetes"
@@ -77,7 +77,7 @@ class KubernetesProvider(BaseProvider):
         self.validate_config()
 
     def dispose(self):
-        """Dispose the provider."""
+        """释放提供商资源。"""
         pass
 
     def validate_config(self):

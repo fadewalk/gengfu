@@ -166,7 +166,7 @@ const ProviderForm = ({
     [provider]
   );
   const zodSchema = useMemo(
-    () => getZodSchema(provider.config, provider.installed),
+    () => getZodSchema(provider.config, provider.installed, t),
     [provider]
   );
 
@@ -255,7 +255,7 @@ const ProviderForm = ({
   }
 
   async function deleteProvider() {
-    if (confirm("Are you sure you want to delete this provider?")) {
+    if (confirm(t("providers.deleteConfirm"))) {
       api
         .delete(`/providers/${provider.type}/${provider.id}`)
         .then(() => {
@@ -263,7 +263,7 @@ const ProviderForm = ({
           closeModal();
         })
         .catch((error: any) => {
-          showErrorToast(error, `Failed to delete ${provider.type} 😢`);
+          showErrorToast(error, t("providers.deleteFailed", { type: provider.type }));
         });
     }
   }
@@ -374,7 +374,7 @@ const ProviderForm = ({
 
   async function handleSubmitError(apiError: unknown) {
     if (apiError instanceof KeepApiReadOnlyError) {
-      setFormErrors("You're in read-only mode");
+      setFormErrors(t("providers.readOnlyMode"));
       return;
     }
     if (apiError instanceof KeepApiError === false) return;
@@ -384,12 +384,12 @@ const ProviderForm = ({
       "detail" in data ? data.detail : "message" in data ? data.message : data;
     if (status === 409) {
       setFormErrors(
-        `Provider with name ${formValues.provider_name} already exists`
+        t("providers.providerAlreadyExists", { name: formValues.provider_name })
       );
     } else if (status === 412) {
       setProviderValidatedScopes(error);
       setFormErrors(
-        `${provider.type} scopes are invalid: ${JSON.stringify(error, null, 4)}`
+        t("providers.scopesInvalid", { type: provider.type, details: JSON.stringify(error, null, 4) })
       );
     } else {
       setApiError(
@@ -585,7 +585,7 @@ const ProviderForm = ({
                     variant="simple"
                     color="gray"
                     size="sm"
-                    tooltip={`Whether to install Keep as a webhook integration in ${provider.type}. This allows Keep to asynchronously receive alerts from ${provider.type}. Please note that this will install a new integration in ${provider.type} and slightly modify your monitors/notification policy to include Keep.`}
+                    tooltip={t("providers.webhookTooltip", { type: provider.type })}
                   />
                 </label>
                 {provider.pulling_available && (
@@ -665,7 +665,7 @@ const ProviderForm = ({
                     variant="simple"
                     color="gray"
                     size="sm"
-                    tooltip={`Whether Keep should try to pull alerts automatically from the provider once in a while`}
+                    tooltip={t("providers.pullingTooltip")}
                   />
                 </label>
               </div>

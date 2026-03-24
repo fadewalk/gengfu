@@ -1,5 +1,5 @@
 """
-SumoLogic Provider is a class that allows to install webhooks in SumoLogic.
+SumoLogic 提供商，支持在 SumoLogic 中安装 Webhook。
 """
 
 import dataclasses
@@ -55,7 +55,7 @@ class SumologicProviderAuthConfig:
 
 
 class SumologicProvider(BaseProvider):
-    """Install Webhooks and receive alerts from SumoLogic."""
+    """安装 Webhook 并从 Sumo Logic 接收告警。"""
     provider_description = t("Install Webhooks and receive alerts from SumoLogic.")
 
     PROVIDER_DISPLAY_NAME = "SumoLogic"

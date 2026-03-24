@@ -30,7 +30,7 @@ class GoogleChatProviderAuthConfig:
 
 
 class GoogleChatProvider(BaseProvider):
-    """Send alert message to Google Chat."""
+    """发送告警消息到 Google Chat。"""
 
     PROVIDER_DISPLAY_NAME = "Google Chat"
     PROVIDER_TAGS = ["messaging"]

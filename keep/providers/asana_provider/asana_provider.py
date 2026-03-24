@@ -1,5 +1,5 @@
 """
-Asana Provider is a class that provides a way to create tasks in Asana.
+Asana 提供商，支持在 Asana 中创建任务。
 """
 
 import dataclasses
@@ -33,7 +33,7 @@ class AsanaProviderAuthConfig:
 
 class AsanaProvider(BaseProvider):
     """
-    Asana Provider is a class that provides a way to create tasks in Asana.
+    Asana 提供商，支持在 Asana 中创建任务。
     """
 
     PROVIDER_CATEGORY = ["Collaboration", "Organizational Tools", "Ticketing"]

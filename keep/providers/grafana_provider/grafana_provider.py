@@ -1,5 +1,5 @@
 """
-Grafana Provider is a class that allows to ingest/digest data from Grafana.
+Grafana 提供商，支持接入和解析 Grafana 的数据。
 """
 
 import dataclasses
@@ -75,7 +75,7 @@ class GrafanaProvider(BaseTopologyProvider, ProviderHealthMixin):
 
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """If your Grafana is unreachable from Keep, you can use the following webhook url to configure Grafana to send alerts to Keep:
+    webhook_markdown = t("""If your Grafana is unreachable from Keep, you can use the following webhook url to configure Grafana to send alerts to Keep:
 
     1. In Grafana, go to the Alerting tab in the Grafana dashboard.
     2. Click on Contact points in the left sidebar and create a new one.
@@ -86,7 +86,7 @@ class GrafanaProvider(BaseTopologyProvider, ProviderHealthMixin):
     7. Click on "New child policy" under the "Default policy"
     8. Remove all matchers until you see the following: "If no matchers are specified, this notification policy will handle all alert instances."
     9. Chose the webhook contact point you have just created under Contact point and click "Save Policy"
-    """
+    """)
 
     PROVIDER_SCOPES = [
         ProviderScope(

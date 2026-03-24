@@ -1,6 +1,5 @@
 """
-PlannerProvider is a class that provides a way to read data from Microsoft Planner
-and create tasks in planner.
+PlannerProvider 提供了一种从 Microsoft Planner 读取数据并在 Planner 中创建任务的方式。
 """
 import dataclasses
 from urllib.parse import urljoin
@@ -17,7 +16,7 @@ from keep.providers.providers_factory import ProvidersFactory
 
 @pydantic.dataclasses.dataclass
 class PlannerProviderAuthConfig:
-    """Planner authentication configuration."""
+    """Planner 认证配置。"""
 
     tenant_id: str | None = dataclasses.field(
         metadata={
@@ -44,7 +43,7 @@ class PlannerProviderAuthConfig:
 
 class PlannerProvider(BaseProvider):
     """
-    Create tasks in Microsoft Planner.
+    在 Microsoft Planner 中创建任务。
     """
     
     PROVIDER_DISPLAY_NAME = "Microsoft Planner"

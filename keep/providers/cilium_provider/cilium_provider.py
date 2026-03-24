@@ -14,7 +14,7 @@ from keep.validation.fields import NoSchemeUrl
 
 @pydantic.dataclasses.dataclass
 class CiliumProviderAuthConfig:
-    """Cilium authentication configuration."""
+    """Cilium 认证配置。"""
 
     cilium_base_endpoint: NoSchemeUrl = dataclasses.field(
         metadata={
@@ -28,7 +28,7 @@ class CiliumProviderAuthConfig:
 
 
 class CiliumProvider(BaseTopologyProvider):
-    """Manage Cilium provider."""
+    """管理 Cilium 提供商。"""
 
     PROVIDER_TAGS = ["topology"]
     PROVIDER_DISPLAY_NAME = "Cilium"

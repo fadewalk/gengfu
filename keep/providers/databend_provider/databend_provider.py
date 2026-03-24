@@ -1,5 +1,5 @@
 """
-DatabendProvider is a class that provides a way to interact with Databend.
+DatabendProvider 提供了一种与 Databend 交互的方式。
 """
 
 import os
@@ -42,7 +42,7 @@ class DatabendProviderAuthConfig:
 
 class DatabendProvider(BaseProvider):
     """
-    Enrich alerts with data from Databend.
+    使用 Databend 数据富化告警。
     """
 
     PROVIDER_DISPLAY_NAME = "Databend"

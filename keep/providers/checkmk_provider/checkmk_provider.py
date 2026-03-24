@@ -1,5 +1,5 @@
 """
-Checkmk is a monitoring tool for Infrastructure and Application Monitoring.
+Checkmk 是一个用于基础设施和应用监控的监控工具。
 """
 
 import logging
@@ -15,12 +15,12 @@ logger = logging.getLogger(__name__)
 
 
 class CheckmkProvider(BaseProvider):
-    """Get alerts from Checkmk into Keep"""
+    """从 Checkmk 获取告警到 Keep。"""
 
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
   1. Checkmk supports custom notification scripts.
   2. Install Keep webhook script following the [Keep documentation](https://docs.keephq.dev/providers/documentation/checkmk-provider).
   3. In Checkmk WebUI, go to Setup.
@@ -31,7 +31,7 @@ class CheckmkProvider(BaseProvider):
   8. The second parameter is the API Key of Keep which is {api_key}.
   9. Click on Save.
   10. Now Checkmk will be able to send alerts to Keep.
-  """
+  """)
 
     SEVERITIES_MAP = {
         "OK": AlertSeverity.INFO,

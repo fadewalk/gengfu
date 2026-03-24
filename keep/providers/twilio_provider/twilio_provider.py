@@ -1,5 +1,5 @@
 """
-TwilioProvider is a class that implements the BaseProvider interface for Twilio updates.
+TwilioProvider 实现了 BaseProvider 接口，用于处理 Twilio 的更新。
 """
 
 import dataclasses
@@ -17,7 +17,7 @@ from keep.providers.models.provider_config import ProviderConfig, ProviderScope
 
 @pydantic.dataclasses.dataclass
 class TwilioProviderAuthConfig:
-    """Twilio authentication configuration."""
+    """Twilio 认证配置。"""
 
     account_sid: str = dataclasses.field(
         metadata={
@@ -48,7 +48,7 @@ class TwilioProviderAuthConfig:
 
 
 class TwilioProvider(BaseProvider):
-    """Send SMS via Twilio."""
+    """通过 Twilio 发送短信。"""
     provider_description = t("Send SMS via Twilio.")
 
     PROVIDER_DISPLAY_NAME = "Twilio"

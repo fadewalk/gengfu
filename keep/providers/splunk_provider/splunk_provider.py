@@ -57,7 +57,7 @@ class SplunkProviderAuthConfig:
 
 
 class SplunkProvider(BaseProvider):
-    """Pull alerts and query incidents from Splunk."""
+    """从 Splunk 拉取告警并查询事件。"""
     provider_description = t("Pull alerts and query incidents from Splunk.")
 
     PROVIDER_DISPLAY_NAME = "Splunk"

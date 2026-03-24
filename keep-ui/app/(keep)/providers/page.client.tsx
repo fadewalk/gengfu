@@ -26,7 +26,7 @@ export const useFetchProviders = () => {
   const toastShownKey = "localhostToastShown";
   const ToastMessage = () => (
     <div>
-      Webhooks are disabled because Keep is not accessible from the internet.
+      {t("providers.webhookDisabled")}
       <br />
       <Link
         href={`${
@@ -35,9 +35,9 @@ export const useFetchProviders = () => {
         target="_blank"
         rel="noreferrer noopener"
       >
-        Read docs
+        {t("providers.webhookDisabledReadDocs")}
       </Link>{" "}
-      to learn how to enable it.
+      {t("providers.webhookDisabledLearnMore")}
     </div>
   );
 
@@ -143,11 +143,11 @@ export default function ProvidersPage({
       try {
         const reason = JSON.parse(searchParams.reason as string);
         showErrorToast(
-          new Error(`Failed to install provider: ${reason.detail}`)
+          new Error(`${t("providers.installFailed")}${reason.detail}`)
         );
       } catch (error) {
         showErrorToast(
-          new Error(`Failed to install provider: ${searchParams.reason}`)
+          new Error(`${t("providers.installFailed")}${searchParams.reason}`)
         );
       }
     } else if (searchParams?.oauth === "success") {

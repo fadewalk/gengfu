@@ -1,5 +1,5 @@
 """
-Zabbix Provider is a class that allows to ingest/digest data from Zabbix.
+Zabbix 提供商，支持接入和解析 Zabbix 的数据。
 """
 
 import dataclasses

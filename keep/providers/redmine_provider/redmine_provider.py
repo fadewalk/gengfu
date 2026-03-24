@@ -1,5 +1,5 @@
 """
-RedmineProvider is a class that implements the BaseProvider interface for Redmine issues.
+RedmineProvider 实现了 BaseProvider 接口，用于处理 Redmine 议题。
 """
 
 import dataclasses
@@ -16,7 +16,7 @@ from keep.providers.models.provider_config import ProviderConfig, ProviderScope
 
 @pydantic.dataclasses.dataclass
 class RedmineProviderAuthConfig:
-    """Redmine authentication configuration."""
+    """Redmine 认证配置。"""
 
     host: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
@@ -49,7 +49,7 @@ class RedmineProviderAuthConfig:
 
 
 class RedmineProvider(BaseProvider):
-    """Enrich alerts with Redmine tickets."""
+    """使用 Redmine 工单富化告警。"""
     provider_description = t("Enrich alerts with Redmine tickets.")
 
     PROVIDER_DISPLAY_NAME = "Redmine"

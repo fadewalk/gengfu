@@ -1,5 +1,5 @@
 """
-GithubWorkflowProvider is a provider that interacts with Github Workflows API.
+GithubWorkflowProvider 是一个与 GitHub Workflows API 交互的提供商。
 """
 
 import dataclasses

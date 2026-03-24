@@ -1,5 +1,5 @@
 """
-Statuscake is a class that provides a way to read alerts from the Statuscake API and install webhook in StatuCake
+StatusCake 提供了一种从 StatusCake API 读取告警并在 StatusCake 中安装 Webhook 的方式。
 """
 
 import dataclasses

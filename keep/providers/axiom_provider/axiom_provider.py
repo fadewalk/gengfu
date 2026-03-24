@@ -1,5 +1,5 @@
 """
-AxiomProvider is a class that allows to ingest/digest data from Axiom.
+AxiomProvider 支持接入和解析 Axiom 的数据。
 """
 
 import dataclasses
@@ -37,12 +37,12 @@ class AxiomProviderAuthConfig:
 
 
 class AxiomProvider(BaseProvider):
-    """Enrich alerts with data from Axiom."""
+    """使用 Axiom 数据富化告警。"""
 
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
     To send alerts from Axiom to Keep, Use the following webhook url to configure Axiom send alerts to Keep:
 
     1. In Axiom, go to the Monitors tab in the Axiom dashboard.
@@ -53,7 +53,7 @@ class AxiomProvider(BaseProvider):
     6. Go to Monitors tab and click on the Monitors in the left sidebar and create a new monitor.
     7. Create a new monitor and select the notifier created in the previous step as per your requirement. Refer [Axiom Monitors](https://axiom.co/docs/monitor-data/monitors) to create a new monitor.
     8. Save the monitor. Now, you will receive alerts in Keep.
-    """
+    """)
 
     PROVIDER_DISPLAY_NAME = "Axiom"
     PROVIDER_CATEGORY = ["Monitoring"]

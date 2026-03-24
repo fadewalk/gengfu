@@ -1,5 +1,5 @@
 """
-EksProvider is a class that provides a way to interact with AWS EKS clusters.
+EksProvider 提供了一种与 AWS EKS 集群交互的方式。
 """
 
 import dataclasses
@@ -20,7 +20,7 @@ from keep.providers.models.provider_method import ProviderMethod
 
 @pydantic.dataclasses.dataclass
 class EksProviderAuthConfig:
-    """EKS authentication configuration."""
+    """EKS 认证配置。"""
 
     region: str = dataclasses.field(
         metadata={
@@ -59,7 +59,7 @@ class EksProviderAuthConfig:
 
 
 class EksProvider(BaseProvider):
-    """Interact with and query AWS EKS clusters."""
+    """与 AWS EKS 集群交互并查询。"""
 
     PROVIDER_DISPLAY_NAME = "EKS"
     PROVIDER_CATEGORY = ["Cloud Infrastructure"]

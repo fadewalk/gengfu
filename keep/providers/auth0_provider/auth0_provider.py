@@ -1,5 +1,5 @@
 """
-Auth0 provider.
+Auth0 提供商。
 """
 
 import dataclasses
@@ -41,7 +41,7 @@ class Auth0ProviderAuthConfig:
 
 
 class Auth0Provider(BaseProvider):
-    """Enrich alerts with data from Auth0."""
+    """使用 Auth0 数据富化告警。"""
 
     PROVIDER_DISPLAY_NAME = "Auth0"
     PROVIDER_CATEGORY = ["Identity and Access Management"]

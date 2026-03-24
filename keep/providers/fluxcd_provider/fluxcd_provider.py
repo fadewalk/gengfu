@@ -1,5 +1,5 @@
 """
-FluxCD Provider is a class that allows to get Flux CD resources and map them to keep services and applications.
+FluxCD 提供商，支持获取 Flux CD 资源并将其映射到 Keep 服务和应用。
 """
 
 import dataclasses
@@ -150,7 +150,7 @@ class FluxcdProviderAuthConfig:
 
 
 class FluxcdProvider(BaseTopologyProvider):
-    """Get topology and alerts from Flux CD."""
+    """从 Flux CD 获取拓扑和告警。"""
 
     PROVIDER_CATEGORY = ["Cloud Infrastructure"]
 

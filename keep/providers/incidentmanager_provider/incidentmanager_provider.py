@@ -1,5 +1,5 @@
 """
-IncidentManagerProvider is a class that provides a way to read data from AWS Incident Manager.
+IncidentManagerProvider 提供了一种从 AWS Incident Manager 读取数据的方式。
 """
 
 import dataclasses
@@ -65,7 +65,7 @@ class IncidentmanagerProviderAuthConfig:
 
 
 class IncidentmanagerProvider(BaseProvider):
-    """Push incidents from AWS IncidentManager to Keep."""
+    """将 AWS Incident Manager 事件推送到 Keep。"""
 
     PROVIDER_CATEGORY = ["Incident Management"]
 

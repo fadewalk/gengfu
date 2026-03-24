@@ -1,5 +1,5 @@
 """
-MondayProvider is a class that provides a way to create new pulse on Monday.com.
+MondayProvider 提供了一种在 Monday.com 上创建新 Pulse 的方式。
 """
 
 import dataclasses

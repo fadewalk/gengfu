@@ -1,5 +1,5 @@
 """
-HttpProvider is a class that provides a way to send HTTP requests.
+HttpProvider 提供了一种发送 HTTP 请求的方式。
 """
 
 import copy
@@ -16,7 +16,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 
 class HttpProvider(BaseProvider):
-    """Enrich alerts with data from HTTP."""
+    """使用 HTTP 数据富化告警。"""
 
     BLACKLISTED_ENDPOINTS = [
         "metadata.google.internal",

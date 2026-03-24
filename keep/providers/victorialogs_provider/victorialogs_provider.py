@@ -1,5 +1,5 @@
 """
-VictoriaLogsProvider is a class that allows you to query logs from VictoriaLogs.
+VictoriaLogsProvider 提供了一种从 VictoriaLogs 查询日志的方式。
 """
 
 import base64
@@ -103,8 +103,7 @@ class VictorialogsProviderAuthConfig:
 
 class VictorialogsProvider(BaseProvider):
     """
-    VictoriaLogsProvider is a class that allows
-    you to query logs from VictoriaLogs.
+    VictoriaLogs 提供商，支持从 VictoriaLogs 查询日志。
     """
 
     PROVIDER_DISPLAY_NAME = "VictoriaLogs"

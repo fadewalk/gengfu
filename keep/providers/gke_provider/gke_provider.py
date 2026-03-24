@@ -20,7 +20,7 @@ from keep.providers.providers_factory import ProvidersFactory
 
 @pydantic.dataclasses.dataclass
 class GkeProviderAuthConfig:
-    """GKE authentication configuration."""
+    """GKE 认证配置。"""
 
     service_account_json: str = dataclasses.field(
         metadata={
@@ -46,7 +46,7 @@ class GkeProviderAuthConfig:
 
 
 class GkeProvider(BaseProvider):
-    """Enrich alerts with data from GKE."""
+    """使用 GKE 数据富化告警。"""
 
     PROVIDER_DISPLAY_NAME = "Google Kubernetes Engine"
     PROVIDER_CATEGORY = ["Cloud Infrastructure"]

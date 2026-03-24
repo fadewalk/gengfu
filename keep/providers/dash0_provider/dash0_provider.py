@@ -1,5 +1,5 @@
 """
-Dash0 Provider allows to receive alerts from Dash0 using Webhook.
+Dash0 提供商，支持通过 Webhook 接收来自 Dash0 的告警。
 """
 
 from keep.api.i18n import t
@@ -11,13 +11,13 @@ from keep.providers.models.provider_config import ProviderConfig
 
 class Dash0Provider(BaseProvider):
     """
-    Get alerts from Dash0 into Keep.
+    从 Dash0 获取告警到 Keep。
     """
 
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 To send alerts from Dash0 to Keep, Use the following webhook url to configure Dash0 send alerts to Keep:
 
 1. In Dash0, go to Organization settings.
@@ -27,7 +27,7 @@ To send alerts from Dash0 to Keep, Use the following webhook url to configure Da
 5. Save the configuration.
 6. Go to Notifications under Alerting in the left sidebar and create a New notification rule if required or change the Notification channel to webhook created in step 3 for an existing Notification Rule.
 7. Go to Checks under Alerting in the left sidebar and create a New Check Rule according to your requirements and assign the Notification Rule.
-"""
+""")
 
     STATUS_MAP = {
         "critical": AlertStatus.FIRING,

@@ -1,5 +1,5 @@
 """
-ServicenowProvider is a class that implements the BaseProvider interface for Service Now updates.
+ServicenowProvider 实现了 BaseProvider 接口，用于处理 ServiceNow 的更新。
 """
 
 import os
@@ -26,7 +26,7 @@ from keep.validation.fields import HttpsUrl
 
 @pydantic.dataclasses.dataclass
 class ServicenowProviderAuthConfig:
-    """ServiceNow authentication configuration."""
+    """ServiceNow 认证配置。"""
 
     service_now_base_url: HttpsUrl = dataclasses.field(
         metadata={
@@ -85,7 +85,7 @@ class ServicenowProviderAuthConfig:
 
 
 class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
-    """Manage ServiceNow tickets and incidents with bidirectional activity sync."""
+    """管理 ServiceNow 工单和事件，支持双向活动同步。"""
     provider_description = t("Manage ServiceNow tickets and incidents with bidirectional activity sync.")
 
     PROVIDER_CATEGORY = ["Ticketing", "Incident Management"]

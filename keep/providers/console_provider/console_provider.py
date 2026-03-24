@@ -1,5 +1,5 @@
 """
-Simple Console Output Provider
+简单的控制台输出提供商。
 """
 
 from keep.api.i18n import t
@@ -10,7 +10,7 @@ from keep.providers.providers_factory import ProvidersFactory
 
 
 class ConsoleProvider(BaseProvider):
-    """Send alerts data to the console (debugging purposes)."""
+    """将告警数据发送到控制台（调试用途）。"""
 
     def __init__(
         self, context_manager: ContextManager, provider_id: str, config: ProviderConfig

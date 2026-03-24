@@ -249,6 +249,7 @@ export function TextField({
   title?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const { t } = useI18n();
   const { data: appConfig } = useConfig();
   const isSensitive = config.sensitive;
   const [touched, setTouched] = useState(false);
@@ -279,7 +280,7 @@ export function TextField({
         placeholder={
           isSensitive && shouldHideSensitiveFields && value && !touched
             ? ""
-            : config.placeholder ?? `Enter ${id}`
+            : config.placeholder ?? t("providers.form.enterField", { id })
         }
         disabled={disabled}
         title={title ?? ""}
@@ -303,6 +304,7 @@ export function SelectField({
   disabled: boolean;
   onChange: (value: string) => void;
 }) {
+  const { t } = useI18n();
   return (
     <>
       <FieldLabel id={id} config={config} />
@@ -310,7 +312,7 @@ export function SelectField({
         name={id}
         value={value?.toString() ?? config.default?.toString()}
         onValueChange={onChange}
-        placeholder={config.placeholder || `Select ${id}`}
+        placeholder={config.placeholder || t("providers.form.selectField", { id })}
         error={Boolean(error)}
         errorMessage={error}
         disabled={disabled}
@@ -338,6 +340,7 @@ export function FileField({
   error?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const { t } = useI18n();
   const [selected, setSelected] = useState<string>();
   const ref = useRef<HTMLInputElement>(null);
 
@@ -364,7 +367,7 @@ export function FileField({
         disabled={disabled}
         onClick={handleClick}
       >
-        {selected ? `File Chosen: ${selected}` : `Upload a ${id}`}
+        {selected ? t("providers.form.fileChosen", { name: selected }) : t("providers.form.uploadFile", { id })}
       </Button>
       <input
         type="file"

@@ -9,6 +9,6 @@ export default async function Page(props: {
 }
 
 export const metadata = {
-  title: "Keep - Providers",
-  description: "Connect providers to Keep to make your alerts better.",
+  title: "Keep - 集成",
+  description: "连接集成到 Keep，让告警更智能。",
 };

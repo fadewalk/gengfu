@@ -1,5 +1,5 @@
 """
-OpenObserve Provider is a class that allows to install webhooks in OpenObserve.
+OpenObserve 提供商，支持在 OpenObserve 中安装 Webhook。
 """
 
 import dataclasses
@@ -74,7 +74,7 @@ class OpenobserveProviderAuthConfig:
 
 
 class OpenobserveProvider(BaseProvider):
-    """Install Webhooks and receive alerts from OpenObserve."""
+    """安装 Webhook 并从 OpenObserve 接收告警。"""
 
     PROVIDER_DISPLAY_NAME = "OpenObserve"
     PROVIDER_CATEGORY = ["Monitoring"]

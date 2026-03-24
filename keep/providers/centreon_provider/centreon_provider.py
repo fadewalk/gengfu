@@ -1,5 +1,5 @@
 """
-Centreon is a class that provides a set of methods to interact with the Centreon API.
+Centreon 提供了一组与 Centreon API 交互的方法。
 """
 
 import dataclasses

@@ -1,5 +1,5 @@
 """
-Coralogix is a modern observability platform delivers comprehensive visibility into all your logs, metrics, traces and security events with end-to-end monitoring.
+Coralogix 是一个现代可观测性平台，通过端到端监控为日志、指标、链路追踪和安全事件提供全面的可见性。
 """
 
 import json
@@ -12,12 +12,12 @@ from keep.providers.models.provider_config import ProviderConfig
 
 
 class CoralogixProvider(BaseProvider):
-    """Get alerts from Coralogix into Keep."""
+    """从 Coralogix 获取告警到 Keep。"""
 
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 To send alerts from Coralogix to Keep, Use the following webhook url to configure Coralogix send alerts to Keep:
 
 1. From the Coralogix toolbar, navigate to Data Flow > Outbound Webhooks.
@@ -28,7 +28,7 @@ To send alerts from Coralogix to Keep, Use the following webhook url to configur
 6. Add a request header with the key "x-api-key" and the value as {api_key}.
 7. Edit the body of the messages that will be sent when the webhook is triggered (optional).
 8. Save the configuration.
-"""
+""")
 
     SEVERITIES_MAP = {
         "debug": AlertSeverity.LOW,

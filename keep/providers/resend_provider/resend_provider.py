@@ -1,5 +1,5 @@
 """
-ResendProvider is a class that implements the Resend API and allows email sending through Keep.
+ResendProvider 实现了 Resend API，支持通过 Keep 发送邮件。
 """
 
 import dataclasses
@@ -26,7 +26,7 @@ class ResendProviderAuthConfig:
 
 
 class ResendProvider(BaseProvider):
-    """Send email using the Resend API."""
+    """通过 Resend API 发送邮件。"""
     provider_description = t("Send email using the Resend API.")
 
     PROVIDER_DISPLAY_NAME = "Resend"

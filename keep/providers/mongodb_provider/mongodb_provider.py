@@ -1,5 +1,5 @@
 """
-MongodbProvider is a class that provides a way to read data from MySQL.
+MongodbProvider 提供了一种从 MongoDB 读取数据的方式。
 """
 
 import dataclasses
@@ -56,7 +56,7 @@ class MongodbProviderAuthConfig:
 
 
 class MongodbProvider(BaseProvider):
-    """Enrich alerts with data from MongoDB."""
+    """使用 MongoDB 数据富化告警。"""
 
     PROVIDER_DISPLAY_NAME = "MongoDB"
     PROVIDER_CATEGORY = ["Database"]

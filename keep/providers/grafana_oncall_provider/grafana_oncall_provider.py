@@ -1,5 +1,5 @@
 """
-Grafana Provider is a class that allows to ingest/digest data from Grafana.
+Grafana OnCall 提供商，支持接入和解析 Grafana OnCall 的数据。
 """
 
 import dataclasses
@@ -44,7 +44,7 @@ class GrafanaOncallProviderAuthConfig:
 
 class GrafanaOncallProvider(BaseProvider):
     """
-    Create incidents with Grafana OnCall.
+    通过 Grafana OnCall 创建事件。
     """
 
     PROVIDER_DISPLAY_NAME = "Grafana OnCall"

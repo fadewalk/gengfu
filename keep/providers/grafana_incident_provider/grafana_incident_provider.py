@@ -1,5 +1,5 @@
 """
-Grafana Incident Provider is a class that allows to query all incidents from Grafana Incident.
+Grafana Incident 提供商，支持从 Grafana Incident 查询所有事件。
 """
 
 import dataclasses
@@ -46,7 +46,7 @@ class GrafanaIncidentProviderAuthConfig:
 
 class GrafanaIncidentProvider(BaseIncidentProvider):
     """
-    GrafanaIncidentProvider is a class that allows to query all incidents from Grafana Incident.
+    Grafana Incident 提供商，支持查询所有 Grafana 事件。
     """
     PROVIDER_DISPLAY_NAME = "Grafana Incident"
     PROVIDER_TAGS = ["alert"]

@@ -1,5 +1,5 @@
 """
-Kafka Provider is a class that allows to ingest/digest data from Grafana.
+Kafka 提供商，支持接入和解析 Kafka 的数据。
 """
 
 import dataclasses
@@ -97,7 +97,7 @@ class ClientIdInjector(logging.Filter):
 
 class KafkaProvider(BaseProvider):
     """
-    Kafka provider class.
+    Kafka 提供商。
     """
 
     PROVIDER_CATEGORY = ["Developer Tools", "Queues"]

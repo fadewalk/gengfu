@@ -1,5 +1,5 @@
 """
-MockProvider is a class that implements the BaseOutputProvider interface for Mock messages.
+MockProvider 实现了 BaseOutputProvider 接口，用于模拟消息。
 """
 
 from keep.api.i18n import t

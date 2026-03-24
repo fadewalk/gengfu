@@ -1,5 +1,5 @@
 """
-WebsocketProvider is a class that implements a simple websocket provider.
+WebsocketProvider 实现了一个简单的 WebSocket 提供商。
 """
 
 import pydantic
@@ -18,7 +18,7 @@ class WebsocketProviderAuthConfig:
 
 
 class WebsocketProvider(BaseProvider):
-    """Enrich alerts with data from a websocket."""
+    """通过 WebSocket 获取数据富化告警。"""
     provider_description = t("Enrich alerts with data from a websocket.")
 
     def __init__(

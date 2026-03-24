@@ -1,5 +1,5 @@
 """
-BigQuery provider.
+BigQuery 提供商。
 """
 
 import dataclasses
@@ -43,7 +43,7 @@ class BigqueryProviderAuthConfig:
 
 
 class BigqueryProvider(BaseProvider):
-    """Enrich alerts with data from BigQuery."""
+    """使用 BigQuery 数据富化告警。"""
 
     provider_id: str
     config: ProviderConfig

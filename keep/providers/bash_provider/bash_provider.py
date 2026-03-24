@@ -1,5 +1,5 @@
 """
-BashProvider is a class that implements the BaseOutputProvider.
+BashProvider 实现了 BaseOutputProvider 接口。
 """
 
 import shlex
@@ -12,7 +12,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 
 class BashProvider(BaseProvider):
-    """Enrich alerts with data using Bash."""
+    """使用 Bash 命令富化告警数据。"""
 
     def __init__(self, context_manager, provider_id: str, config: ProviderConfig):
         super().__init__(context_manager, provider_id, config)

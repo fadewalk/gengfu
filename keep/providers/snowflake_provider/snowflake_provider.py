@@ -1,5 +1,5 @@
 """
-SnowflakeProvider is a class that provides a way to read data from Snowflake.
+SnowflakeProvider 提供了一种从 Snowflake 读取数据的方式。
 """
 
 import dataclasses
@@ -44,7 +44,7 @@ class SnowflakeProviderAuthConfig:
 
 
 class SnowflakeProvider(BaseProvider):
-    """Enrich alerts with data from Snowflake."""
+    """使用 Snowflake 数据富化告警。"""
     provider_description = t("Enrich alerts with data from Snowflake.")
 
     PROVIDER_DISPLAY_NAME = "Snowflake"

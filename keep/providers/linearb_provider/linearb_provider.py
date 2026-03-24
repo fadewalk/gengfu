@@ -15,7 +15,7 @@ from keep.providers.models.provider_config import ProviderConfig, ProviderScope
 
 @pydantic.dataclasses.dataclass
 class LinearbProviderAuthConfig:
-    """LinearB authentication configuration."""
+    """LinearB 认证配置。"""
 
     api_token: str = dataclasses.field(
         metadata={
@@ -27,7 +27,7 @@ class LinearbProviderAuthConfig:
 
 
 class LinearbProvider(BaseProvider):
-    """LinearB provider."""
+    """LinearB 提供商。"""
 
     PROVIDER_DISPLAY_NAME = "LinearB"
     LINEARB_API = "https://public-api.linearb.io"

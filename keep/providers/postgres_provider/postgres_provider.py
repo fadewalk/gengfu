@@ -1,5 +1,5 @@
 """
-PostgresProvider is a class that provides a way to read data from Postgres and write queries to Postgres.
+PostgresProvider 提供了一种从 Postgres 读取数据以及向 Postgres 写入查询的方式。
 """
 
 import dataclasses
@@ -50,7 +50,7 @@ class PostgresProviderAuthConfig:
 
 
 class PostgresProvider(BaseProvider):
-    """Enrich alerts with data from Postgres."""
+    """使用 PostgreSQL 数据富化告警。"""
     provider_description = t("Enrich alerts with data from Postgres.")
 
     PROVIDER_DISPLAY_NAME = "PostgreSQL"

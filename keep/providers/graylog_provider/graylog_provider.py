@@ -1,5 +1,5 @@
 """
-Graylog Provider is a class that allows to install webhooks in Graylog.
+Graylog 提供商，支持在 Graylog 中安装 Webhook。
 """
 
 # Documentation for older versions of graylog: https://github.com/Graylog2/documentation
@@ -68,12 +68,12 @@ class GraylogProviderAuthConfig:
 
 
 class GraylogProvider(BaseProvider):
-    """Install Webhooks and receive alerts from Graylog."""
+    """安装 Webhook 并从 Graylog 接收告警。"""
 
     PROVIDER_CATEGORY = ["Monitoring"]
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 To send alerts from Graylog to Keep, Use the following webhook url to configure Graylog send alerts to Keep:
 
 1. In Graylog, from the Topbar, go to `Alerts` > `Notifications`.
@@ -94,7 +94,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
 8. Click on "Add Notification" and select the "keep-graylog-webhook-integration" that you created in step 3.
 9. Click on "Add Notification".
 10. Click `Next` > `Update` event definition
-"""
+""")
     PROVIDER_DISPLAY_NAME = "Graylog"
     PROVIDER_SCOPES = [
         ProviderScope(

@@ -1,5 +1,5 @@
 """
-DiscordProvider is a class that implements the BaseOutputProvider interface for Discord messages.
+DiscordProvider 实现了 BaseOutputProvider 接口，用于发送 Discord 消息。
 """
 
 import dataclasses
@@ -17,7 +17,7 @@ from keep.validation.fields import HttpsUrl
 
 @pydantic.dataclasses.dataclass
 class DiscordProviderAuthConfig:
-    """Discord authentication configuration."""
+    """Discord 认证配置。"""
 
     webhook_url: HttpsUrl = dataclasses.field(
         metadata={
@@ -30,7 +30,7 @@ class DiscordProviderAuthConfig:
 
 
 class DiscordProvider(BaseProvider):
-    """Send alert message to Discord."""
+    """发送告警消息到 Discord。"""
 
     PROVIDER_DISPLAY_NAME = "Discord"
     PROVIDER_CATEGORY = ["Collaboration"]

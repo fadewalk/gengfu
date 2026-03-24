@@ -1,5 +1,5 @@
 """
-CloudwatchProvider is a class that provides a way to read data from AWS Cloudwatch.
+CloudwatchProvider 提供了一种从 AWS CloudWatch 读取数据的方式。
 """
 
 import dataclasses
@@ -80,7 +80,7 @@ class CloudwatchProviderAuthConfig:
 
 
 class CloudwatchProvider(BaseProvider, ProviderHealthMixin):
-    """Push alarms from AWS Cloudwatch to Keep."""
+    """将 AWS CloudWatch 告警推送到 Keep。"""
 
     PROVIDER_DISPLAY_NAME = "CloudWatch"
     PROVIDER_CATEGORY = ["Cloud Infrastructure", "Monitoring"]

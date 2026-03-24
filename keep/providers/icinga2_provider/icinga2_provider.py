@@ -1,5 +1,5 @@
 """
-Icinga2 Provider is a class that provides a way to receive alerts from Icinga2 using webhooks.
+Icinga2 提供商，支持通过 Webhook 接收来自 Icinga2 的告警。
 """
 
 import dataclasses
@@ -54,19 +54,19 @@ class Icinga2ProviderAuthConfig:
 
 class Icinga2Provider(BaseProvider):
     """
-    Get alerts from Icinga2 into Keep primarily via webhooks.
+    主要通过 Webhook 从 Icinga2 获取告警到 Keep。
 
-    feat:
-    - Fetching alerts from Icinga2 services & hosts
-    - Mapping Icinga2 states to Keep alert status and severity
-    - Formatting alerts according to Keep's alert model
-    - Supporting webhook integration for real-time alerts
+    功能:
+    - 从 Icinga2 服务和主机获取告警
+    - 将 Icinga2 状态映射为 Keep 告警状态和严重级别
+    - 按照 Keep 告警模型格式化告警
+    - 支持 Webhook 集成实现实时告警
     """
 
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 
 To send alerts from Icinga2 to Keep, configure a new notification command:
 
@@ -75,7 +75,7 @@ To send alerts from Icinga2 to Keep, configure a new notification command:
 3. Add header "X-API-KEY" with your Keep API key (webhook role)
 4. Configure notification rules to use this command
 5. For detailed setup instructions, see [Keep documentation](https://docs.keephq.dev/providers/documentation/icinga2-provider)
-    """
+    """)
 
     PROVIDER_DISPLAY_NAME = "Icinga2"
     PROVIDER_TAGS = ["alert"]

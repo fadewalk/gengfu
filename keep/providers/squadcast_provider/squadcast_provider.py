@@ -1,5 +1,5 @@
 """
-SquadcastProvider is a class that implements the Squadcast API and allows creating incidents and notes.
+SquadcastProvider 实现了 Squadcast API，支持创建事件和备注。
 """
 
 import dataclasses
@@ -49,7 +49,7 @@ class SquadcastProviderAuthConfig:
 
 
 class SquadcastProvider(BaseProvider):
-    """Create incidents and notes using the Squadcast API."""
+    """使用 Squadcast API 创建事件和备注。"""
     provider_description = t("Create incidents and notes using the Squadcast API.")
 
     PROVIDER_DISPLAY_NAME = "Squadcast"

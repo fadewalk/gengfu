@@ -1,5 +1,5 @@
 """
-Keep Provider is a class that allows to ingest/digest data from Keep.
+Keep 提供商，支持接入和解析 Keep 的数据。
 """
 
 import copy
@@ -24,7 +24,7 @@ from keep.workflowmanager.workflowstore import WorkflowStore
 
 class KeepProvider(BaseProvider):
     """
-    Automation on your alerts with Keep.
+    使用 Keep 自动化处理告警。
     """
 
     def __init__(

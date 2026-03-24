@@ -44,7 +44,7 @@ class Signl4ProviderAuthConfig:
 
 
 class Signl4Provider(BaseProvider):
-    """Trigger SIGNL4 alerts."""
+    """触发 SIGNL4 告警。"""
     provider_description = t("Trigger SIGNL4 alerts.")
 
     PROVIDER_DISPLAY_NAME = "SIGNL4"

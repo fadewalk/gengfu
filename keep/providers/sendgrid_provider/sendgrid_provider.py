@@ -1,5 +1,5 @@
 """
-SendGridProvider is a class that implements the SendGrid API and allows email sending through Keep.
+SendGridProvider 实现了 SendGrid API，支持通过 Keep 发送邮件。
 """
 
 import dataclasses
@@ -44,7 +44,7 @@ class SendgridProviderAuthConfig:
 
 
 class SendgridProvider(BaseProvider):
-    """Send email using the SendGrid API."""
+    """通过 SendGrid API 发送邮件。"""
     provider_description = t("Send email using the SendGrid API.")
 
     PROVIDER_DISPLAY_NAME = "SendGrid"

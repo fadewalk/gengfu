@@ -1,5 +1,5 @@
 """
-OpensearchProvider is a class that provides a way to read/add data from AWS Opensearch.
+OpensearchProvider 提供了一种从 AWS OpenSearch 读取和添加数据的方式。
 """
 
 import dataclasses
@@ -52,7 +52,7 @@ class OpensearchserverlessProviderAuthConfig:
 
 
 class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
-    """Push alarms from AWS Opensearch to Keep."""
+    """将 AWS OpenSearch 告警推送到 Keep。"""
 
     PROVIDER_DISPLAY_NAME = "Opensearch Serverless"
     PROVIDER_CATEGORY = ["Database", "Observability"]

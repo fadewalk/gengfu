@@ -1,5 +1,5 @@
 """
-Argocd Provider is a class that allows to get Applications and ApplicationSets from ArgoCD and map them to keep services and aplications respectively.
+ArgoCD 提供商，支持从 ArgoCD 获取 Applications 和 ApplicationSets，并将其分别映射到 Keep 服务和应用。
 """
 
 import dataclasses
@@ -42,7 +42,7 @@ class ArgocdProviderAuthConfig:
 
 
 class ArgocdProvider(BaseTopologyProvider):
-    """Install Webhooks and receive alerts from Argocd."""
+    """安装 Webhook 并从 ArgoCD 接收告警。"""
 
     PROVIDER_CATEGORY = ["Cloud Infrastructure"]
 

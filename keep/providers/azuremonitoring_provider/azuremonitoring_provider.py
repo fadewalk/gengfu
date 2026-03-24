@@ -1,5 +1,5 @@
 """
-PrometheusProvider is a class that provides a way to read data from Prometheus.
+PrometheusProvider 提供了一种从 Prometheus 读取数据的方式。
 """
 
 import datetime
@@ -8,14 +8,15 @@ from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig
+from keep.api.i18n import t
 
 
 class AzuremonitoringProvider(BaseProvider):
-    """Get alerts from Azure Monitor into Keep."""
+    """从 Azure Monitor 获取告警到 Keep。"""
 
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 To send alerts from Azure Monitor to Keep, Use the following webhook url to configure Azure Monitor send alerts to Keep:
 
 1. In Azure Monitor, create a new Action Group.
@@ -27,7 +28,7 @@ To send alerts from Azure Monitor to Keep, Use the following webhook url to conf
 5. In the Alert Rule, configure the Action Group to use the Action Group created in step 1.
 6. Save the Alert Rule.
 7. Test the Alert Rule to ensure that the alerts are being sent to Keep.
-"""
+""")
 
     # Maps Azure Monitor severity to Keep's format
     SEVERITIES_MAP = {

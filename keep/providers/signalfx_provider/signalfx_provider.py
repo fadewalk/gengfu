@@ -73,7 +73,7 @@ class SignalfxProviderAuthConfig:
 
 
 class SignalfxProvider(BaseProvider):
-    """Get alerts from SignalFx into Keep."""
+    """从 SignalFx 获取告警到 Keep。"""
     provider_description = t("Get alerts from SignalFx into Keep.")
 
     PROVIDER_CATEGORY = ["Monitoring"]

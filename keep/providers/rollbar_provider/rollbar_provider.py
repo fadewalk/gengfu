@@ -1,5 +1,5 @@
 """
-RollbarProvider is a class that allows to install webhooks and get alerts in Rollbar.
+RollbarProvider 支持在 Rollbar 中安装 Webhook 并获取告警。
 """
 
 import dataclasses

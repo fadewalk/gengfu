@@ -1,5 +1,5 @@
 """
-S3 Provider for querying S3 buckets.
+S3 提供商，用于查询 S3 存储桶。
 """
 
 import dataclasses

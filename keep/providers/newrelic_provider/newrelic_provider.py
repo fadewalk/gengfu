@@ -1,5 +1,5 @@
 """
-NewrelicProvider is a provider that provides a way to interact with New Relic.
+NewrelicProvider 提供了一种与 New Relic 交互的方式。
 """
 
 import dataclasses
@@ -50,7 +50,7 @@ class NewrelicProviderAuthConfig:
 
 
 class NewrelicProvider(BaseProvider):
-    """Get alerts from New Relic into Keep."""
+    """从 New Relic 获取告警到 Keep。"""
 
     PROVIDER_CATEGORY = ["Monitoring"]
     NEWRELIC_WEBHOOK_NAME = "keep-webhook"

@@ -1,5 +1,5 @@
 """
-Thousandseyes provider is a class that allows you to retrieve alerts from Thousandeyes using API endpoints as well as webhooks.
+ThousandEyes 提供商，支持通过 API 端点和 Webhook 获取来自 ThousandEyes 的告警。
 """
 
 import dataclasses
@@ -38,7 +38,7 @@ class ThousandeyesProvider(BaseProvider):
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 To send alerts from ThousandEyes to Keep, Use the following webhook url to configure ThousandEyes send alerts to Keep:
 
 1. In ThousandEyes Dashboard, go to Network & App Synthetics > Agent Settings
@@ -47,7 +47,7 @@ To send alerts from ThousandEyes to Keep, Use the following webhook url to confi
 4. Give it a name and set the URL as {keep_webhook_api_url}&api_key={api_key}
 5. Select Auth Type as None and Add New Webhook
 6. Now, you have successfully configured ThousandEyes to send alerts to Keep
-    """
+    """)
 
     PROVIDER_DISPLAY_NAME = "ThousandEyes"
     PROVIDER_TAGS = ["alert"]

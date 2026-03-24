@@ -1,5 +1,5 @@
 """
-ZoomProvider is a class that provides a way to create Zoom meetings programmatically using Zoom's REST API.
+ZoomProvider 提供了一种通过 Zoom REST API 以编程方式创建 Zoom 会议的方式。
 """
 
 import dataclasses
@@ -41,7 +41,7 @@ class ZoomProviderAuthConfig:
 
 
 class ZoomProvider(BaseProvider):
-    """Create and manage Zoom meetings using REST API."""
+    """通过 REST API 创建和管理 Zoom 会议。"""
     provider_description = t("Create and manage Zoom meetings using REST API.")
 
     PROVIDER_DISPLAY_NAME = "Zoom"

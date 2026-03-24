@@ -1,5 +1,5 @@
 """
-SentryProvider is a class that provides a way to read data from Sentry.
+SentryProvider 提供了一种从 Sentry 读取数据的方式。
 """
 
 import dataclasses
@@ -22,7 +22,7 @@ from keep.validation.fields import HttpsUrl
 
 @pydantic.dataclasses.dataclass
 class SentryProviderAuthConfig:
-    """Sentry authentication configuration."""
+    """Sentry 认证配置。"""
 
     api_key: str = dataclasses.field(
         metadata={
@@ -56,7 +56,7 @@ class SentryProviderAuthConfig:
 
 
 class SentryProvider(BaseProvider):
-    """Enrich alerts with data from Sentry."""
+    """使用 Sentry 数据富化告警。"""
     provider_description = t("Enrich alerts with data from Sentry.")
 
     SENTRY_DEFAULT_API = "https://sentry.io/api/0"

@@ -1,5 +1,5 @@
 """
-Amazonsqs Provider is a class that allows to receive alerts and notify the Amazon SQS Queue
+Amazon SQS 提供商，支持接收告警并发送通知到 Amazon SQS 队列。
 """
 
 import dataclasses
@@ -95,7 +95,7 @@ class ClientIdInjector(logging.Filter):
 
 
 class AmazonsqsProvider(BaseProvider):
-    """Sends and receive alerts from AmazonSQS."""
+    """通过 Amazon SQS 发送和接收告警。"""
 
     PROVIDER_CATEGORY = ["Monitoring", "Queues"]
     PROVIDER_TAGS = ["queue"]

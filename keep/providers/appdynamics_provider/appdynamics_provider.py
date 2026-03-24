@@ -1,5 +1,5 @@
 """
-AppDynamics Provider is a class that allows to install webhooks in AppDynamics.
+AppDynamics 提供商，支持在 AppDynamics 中安装 Webhook。
 """
 
 import dataclasses
@@ -100,7 +100,7 @@ class AppdynamicsProviderAuthConfig:
 
 
 class AppdynamicsProvider(BaseProvider):
-    """Install Webhooks and receive alerts from AppDynamics."""
+    """安装 Webhook 并从 AppDynamics 接收告警。"""
 
     PROVIDER_DISPLAY_NAME = "AppDynamics"
     PROVIDER_CATEGORY = ["Monitoring"]

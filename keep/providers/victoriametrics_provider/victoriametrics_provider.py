@@ -1,5 +1,5 @@
 """
-VictoriametricsProvider is a class that allows to install webhooks and get alerts in Victoriametrics.
+VictoriaMetricsProvider 支持在 VictoriaMetrics 中安装 Webhook 并获取告警。
 """
 
 import dataclasses
@@ -190,10 +190,10 @@ class VictoriametricsProviderAuthConfig:
 
 
 class VictoriametricsProvider(BaseProvider):
-    """Install Webhooks and receive alerts from Victoriametrics."""
+    """安装 Webhook 并从 VictoriaMetrics 接收告警。"""
     provider_description = t("Install Webhooks and receive alerts from Victoriametrics.")
 
-    webhook_description = "This provider takes advantage of configurable webhooks available with Prometheus Alertmanager. Use the following template to configure AlertManager:"
+    webhook_description = t("This provider takes advantage of configurable webhooks available with Prometheus Alertmanager. Use the following template to configure AlertManager:")
     webhook_template = """route:
   receiver: "keep"
   group_by: ['alertname']

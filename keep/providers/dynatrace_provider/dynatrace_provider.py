@@ -1,5 +1,5 @@
 """
-Kafka Provider is a class that allows to ingest/digest data from Grafana.
+Dynatrace 提供商，支持接入和解析 Dynatrace 的数据。
 """
 
 import base64
@@ -56,7 +56,7 @@ class DynatraceProviderAuthConfig:
 
 class DynatraceProvider(BaseProvider):
     """
-    Dynatrace provider class.
+    Dynatrace 提供商。
     """
 
     PROVIDER_CATEGORY = ["Monitoring"]

@@ -1,5 +1,5 @@
 """
-SMTP Provider is a class that provides the functionality to send emails using SMTP protocol.
+SMTP 提供商，支持使用 SMTP 协议发送邮件。
 """
 
 import dataclasses
@@ -203,19 +203,19 @@ if __name__ == "__main__":
     encryption = os.environ.get("ENCRYPTION")
 
     if smtp_username is None:
-        raise Exception("SMTP_USERNAME is required")
+        raise Exception(t("SMTP_USERNAME is required"))
 
     if smtp_password is None:
-        raise Exception("SMTP_PASSWORD is required")
+        raise Exception(t("SMTP_PASSWORD is required"))
 
     if smtp_server is None:
-        raise Exception("SMTP_SERVER is required")
+        raise Exception(t("SMTP_SERVER is required"))
 
     if smtp_port is None:
-        raise Exception("SMTP_PORT is required")
+        raise Exception(t("SMTP_PORT is required"))
 
     if encryption is None:
-        raise Exception("ENCRYPTION is required")
+        raise Exception(t("ENCRYPTION is required"))
 
     config = ProviderConfig(
         description="SMTP Provider",

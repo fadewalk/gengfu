@@ -34,7 +34,7 @@ class PosthogProviderAuthConfig:
 
 
 class PosthogProvider(BaseProvider, ProviderHealthMixin):
-    """Query data from PostHog analytics."""
+    """从 PostHog 分析中查询数据。"""
     provider_description = t("Query data from PostHog analytics.")
 
     PROVIDER_DISPLAY_NAME = "PostHog"

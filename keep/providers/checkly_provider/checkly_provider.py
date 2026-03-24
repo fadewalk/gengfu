@@ -1,5 +1,5 @@
 """
-ChecklyProvider is a class that allows you to receive alerts from Checkly using API endpoints as well as webhooks.
+ChecklyProvider 支持通过 API 端点和 Webhook 接收来自 Checkly 的告警。
 """
 
 import dataclasses
@@ -37,12 +37,12 @@ class ChecklyProviderAuthConfig:
 
 class ChecklyProvider(BaseProvider):
     """
-    Get alerts from Checkly into Keep.
+    从 Checkly 获取告警到 Keep。
     """
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 To send alerts from Checkly to Keep, Use the following webhook url to configure Checkly send alerts to Keep:
 
 1. In Checkly dashboard open "Alerts" tab.
@@ -52,7 +52,7 @@ To send alerts from Checkly to Keep, Use the following webhook url to configure 
 5. Copy the Body template from the [Keep documentation](https://docs.keephq.dev/providers/documentation/checkly-provider) and paste it in the Body field of the webhook.
 6. Add a request header with the key "X-API-KEY" and the value as {api_key}.
 7. Save the webhook.
-    """
+    """)
 
     PROVIDER_DISPLAY_NAME = "Checkly"
     PROVIDER_TAGS = ["alert"]

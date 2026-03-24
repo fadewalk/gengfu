@@ -1,5 +1,5 @@
 """
-YoutrackProvider is a class that provides a way to create new issues in Youtrack.
+YoutrackProvider 提供了一种在 YouTrack 中创建新议题的方式。
 """
 import dataclasses
 

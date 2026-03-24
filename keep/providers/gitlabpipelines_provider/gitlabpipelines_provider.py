@@ -1,5 +1,5 @@
 """
-GitlabPipelinesProvider is a provider that interacts with GitLab Pipelines API.
+GitlabPipelinesProvider 是一个与 GitLab Pipelines API 交互的提供商。
 """
 
 import dataclasses
@@ -30,7 +30,7 @@ class GitlabpipelinesProviderAuthConfig:
 
 
 class GitlabpipelinesProvider(BaseProvider):
-    """Enrich alerts with data from GitLab Pipelines."""
+    """使用 GitLab Pipelines 数据富化告警。"""
 
     PROVIDER_DISPLAY_NAME = "GitLab Pipelines"
     PROVIDER_CATEGORY = ["Developer Tools"]

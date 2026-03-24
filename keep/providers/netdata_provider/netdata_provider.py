@@ -1,5 +1,5 @@
 """
-Netdata is a cloud-based monitoring tool that provides real-time monitoring of servers, applications, and devices.
+Netdata 是一个基于云的监控工具，提供对服务器、应用程序和设备的实时监控。
 """
 
 from keep.api.i18n import t
@@ -10,11 +10,11 @@ from keep.providers.models.provider_config import ProviderConfig
 
 
 class NetdataProvider(BaseProvider):
-    """Get alerts from Netdata into Keep."""
+    """从 Netdata 获取告警到 Keep。"""
 
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
 To send alerts from Netdata to Keep, Use the following webhook url to configure Netdata send alerts to Keep:
 
 1. In Netdata, go to Space settings.
@@ -29,7 +29,7 @@ To send alerts from Netdata to Keep, Use the following webhook url to configure 
 10. Leave the Authentication as "No Authentication".
 11. Add the "Challenge secret" as "keep-netdata-webhook-integration".
 12. Save the configuration.
-"""
+""")
 
     SEVERITIES_MAP = {
         "warning": AlertSeverity.WARNING,

@@ -1,5 +1,5 @@
 """
-GrafanaLokiProvider is a class that allows you to query logs from Grafana Loki.
+GrafanaLokiProvider 提供了一种从 Grafana Loki 查询日志的方式。
 """
 
 import base64

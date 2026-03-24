@@ -1,5 +1,5 @@
 """
-TrelloOutput is a class that implements the BaseOutputProvider interface for Trello updates.
+TrelloOutput 实现了 BaseOutputProvider 接口，用于处理 Trello 的更新。
 """
 
 import dataclasses
@@ -16,7 +16,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 @pydantic.dataclasses.dataclass
 class TrelloProviderAuthConfig:
-    """Trello authentication configuration."""
+    """Trello 认证配置。"""
 
     api_key: str = dataclasses.field(
         metadata={"required": True, "description": t("Trello API Key"), "sensitive": True}
@@ -31,7 +31,7 @@ class TrelloProviderAuthConfig:
 
 
 class TrelloProvider(BaseProvider):
-    """Enrich alerts with data from Trello."""
+    """使用 Trello 数据富化告警。"""
     provider_description = t("Enrich alerts with data from Trello.")
 
     PROVIDER_DISPLAY_NAME = "Trello"

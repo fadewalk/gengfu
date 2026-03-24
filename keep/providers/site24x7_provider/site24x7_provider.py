@@ -1,5 +1,5 @@
 """
-Site24x7Provider is a class that allows to install webhooks and get alerts in Site24x7.
+Site24x7Provider 支持在 Site24x7 中安装 Webhook 并获取告警。
 """
 
 import dataclasses
@@ -62,7 +62,7 @@ class Site24X7ProviderAuthConfig:
 
 
 class Site24X7Provider(BaseProvider):
-    """Install Webhooks and receive alerts from Site24x7."""
+    """安装 Webhook 并从 Site24x7 接收告警。"""
     provider_description = t("Install Webhooks and receive alerts from Site24x7.")
 
     PROVIDER_SCOPES = [

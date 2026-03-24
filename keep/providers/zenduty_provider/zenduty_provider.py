@@ -12,7 +12,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 @pydantic.dataclasses.dataclass
 class ZendutyProviderAuthConfig:
-    """Zenduty authentication configuration."""
+    """Zenduty 认证配置。"""
 
     api_key: str = dataclasses.field(
         metadata={"required": True, "description": t("Zenduty api key"), "sensitive": True}
@@ -20,7 +20,7 @@ class ZendutyProviderAuthConfig:
 
 
 class ZendutyProvider(BaseProvider):
-    """Create incident in Zenduty."""
+    """在 Zenduty 中创建事件。"""
     provider_description = t("Create incident in Zenduty.")
 
     PROVIDER_DISPLAY_NAME = "Zenduty"

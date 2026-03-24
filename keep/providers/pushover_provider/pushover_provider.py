@@ -12,7 +12,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 @pydantic.dataclasses.dataclass
 class PushoverProviderAuthConfig:
-    """Pushover authentication configuration."""
+    """Pushover 认证配置。"""
 
     token: str = dataclasses.field(
         metadata={
@@ -27,7 +27,7 @@ class PushoverProviderAuthConfig:
 
 
 class PushoverProvider(BaseProvider):
-    """Send alert message to Pushover."""
+    """发送告警消息到 Pushover。"""
     provider_description = t("Send alert message to Pushover.")
 
     PROVIDER_DISPLAY_NAME = "Pushover"

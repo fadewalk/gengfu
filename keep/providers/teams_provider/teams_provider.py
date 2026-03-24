@@ -1,5 +1,5 @@
 """
-TeamsProvider is a class that implements the BaseOutputProvider interface for Microsoft Teams messages.
+TeamsProvider 实现了 BaseOutputProvider 接口，用于发送 Microsoft Teams 消息。
 """
 
 import dataclasses
@@ -19,7 +19,7 @@ from keep.validation.fields import HttpsUrl
 
 @pydantic.dataclasses.dataclass
 class TeamsProviderAuthConfig:
-    """Teams authentication configuration."""
+    """Teams 认证配置。"""
 
     webhook_url: HttpsUrl = dataclasses.field(
         metadata={
@@ -32,7 +32,7 @@ class TeamsProviderAuthConfig:
 
 
 class TeamsProvider(BaseProvider):
-    """Send alert message to Teams."""
+    """发送告警消息到 Teams。"""
     provider_description = t("Send alert message to Teams.")
 
     PROVIDER_DISPLAY_NAME = "Microsoft Teams"

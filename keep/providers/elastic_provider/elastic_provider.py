@@ -1,5 +1,5 @@
 """
-Elasticsearch provider.
+Elasticsearch 提供商。
 """
 
 import dataclasses
@@ -19,7 +19,7 @@ from keep.providers.providers_factory import ProvidersFactory
 
 @pydantic.dataclasses.dataclass
 class ElasticProviderAuthConfig:
-    """Elasticsearch authentication configuration."""
+    """Elasticsearch 认证配置。"""
 
     host: pydantic.AnyHttpUrl | None = dataclasses.field(
         default=None,
@@ -91,7 +91,7 @@ class ElasticProviderAuthConfig:
             raise ValueError(t("Missing host or cloud_id in provider config"))
         return values
 class ElasticProvider(BaseProvider):
-    """Enrich alerts with data from Elasticsearch."""
+    """使用 Elasticsearch 数据富化告警。"""
 
     PROVIDER_DISPLAY_NAME = "Elastic"
     PROVIDER_CATEGORY = ["Monitoring", "Database"]

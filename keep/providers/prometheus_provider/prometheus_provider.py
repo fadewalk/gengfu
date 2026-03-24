@@ -1,5 +1,5 @@
 """
-PrometheusProvider is a class that provides a way to read data from Prometheus.
+PrometheusProvider 提供了一种从 Prometheus 读取数据的方式。
 """
 
 import dataclasses
@@ -52,7 +52,7 @@ class PrometheusProviderAuthConfig:
 
 
 class PrometheusProvider(BaseProvider, ProviderHealthMixin):
-    """Get alerts from Prometheus into Keep."""
+    """从 Prometheus 获取告警到 Keep。"""
     provider_description = t("Get alerts from Prometheus into Keep.")
 
     webhook_description = t("This provider takes advantage of configurable webhooks available with Prometheus Alertmanager. Use the following template to configure AlertManager:")

@@ -16,7 +16,7 @@ from keep.providers.models.provider_config import ProviderConfig, ProviderScope
 
 @pydantic.dataclasses.dataclass
 class OpenshiftProviderAuthConfig:
-    """Openshift authentication configuration."""
+    """OpenShift 认证配置。"""
 
     api_server: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
@@ -48,7 +48,7 @@ class OpenshiftProviderAuthConfig:
 
 
 class OpenshiftProvider(BaseProvider):
-    """Perform rollout restart actions and query resources on Openshift."""
+    """在 OpenShift 上执行滚动重启操作并查询资源。"""
 
     provider_id: str
     PROVIDER_DISPLAY_NAME = "Openshift"
@@ -70,7 +70,7 @@ class OpenshiftProvider(BaseProvider):
         self.validate_config()
 
     def dispose(self):
-        """Dispose the provider."""
+        """释放提供商资源。"""
         if self._k8s_client:
             self._k8s_client.api_client.rest_client.pool_manager.clear()
 

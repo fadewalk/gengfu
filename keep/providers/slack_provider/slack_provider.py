@@ -1,5 +1,5 @@
 """
-Slack provider is an interface for Slack messages.
+Slack 提供商，是 Slack 消息的接口。
 """
 
 import dataclasses
@@ -20,7 +20,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 @pydantic.dataclasses.dataclass
 class SlackProviderAuthConfig:
-    """Slack authentication configuration."""
+    """Slack 认证配置。"""
 
     webhook_url: str = dataclasses.field(
         metadata={
@@ -42,7 +42,7 @@ class SlackProviderAuthConfig:
 
 
 class SlackProvider(BaseProvider):
-    """Send alert message to Slack."""
+    """发送告警消息到 Slack。"""
 
     PROVIDER_DISPLAY_NAME = "Slack"
     OAUTH2_URL = os.environ.get("SLACK_OAUTH2_URL")
@@ -85,7 +85,7 @@ class SlackProvider(BaseProvider):
         """
         code = payload.get("code")
         if not code:
-            raise Exception("No code provided")
+            raise Exception(t("No code provided"))
         exchange_request_payload = {
             **payload,
             "client_id": SlackProvider.SLACK_CLIENT_ID,
@@ -321,7 +321,7 @@ if __name__ == "__main__":
         }
     # you need some creds
     else:
-        raise Exception("please provide either access token or webhook url")
+        raise Exception(t("please provide either access token or webhook url"))
 
     provider = ProvidersFactory.get_provider(
         context_manager,

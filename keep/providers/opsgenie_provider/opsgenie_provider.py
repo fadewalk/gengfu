@@ -42,7 +42,7 @@ class OpsGenieRecipient(pydantic.BaseModel):
 
 
 class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
-    """Create incidents in OpsGenie."""
+    """在 OpsGenie 中创建事件。"""
 
     PROVIDER_DISPLAY_NAME = "OpsGenie"
     PROVIDER_CATEGORY = ["Incident Management"]

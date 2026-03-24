@@ -1,5 +1,5 @@
 """
-NtfyProvider is a class that provides a way to send notifications to the user.
+NtfyProvider 提供了一种向用户发送通知的方式。
 """
 
 import base64
@@ -171,13 +171,13 @@ if __name__ == "__main__":
     ntfy_subscription_topic = os.environ.get("NTFY_SUBSCRIPTION_TOPIC")
 
     if ntfy_access_token is None and ntfy_host is None:
-        raise Exception("NTFY_ACCESS_TOKEN or NTFY_HOST is required")
+        raise Exception(t("NTFY_ACCESS_TOKEN or NTFY_HOST is required"))
 
     if ntfy_host is not None:
         if ntfy_username is None:
-            raise Exception("NTFY_USERNAME is required")
+            raise Exception(t("NTFY_USERNAME is required"))
         if ntfy_password is None:
-            raise Exception("NTFY_PASSWORD is required")
+            raise Exception(t("NTFY_PASSWORD is required"))
 
     if ntfy_access_token is not None:
         config = ProviderConfig(

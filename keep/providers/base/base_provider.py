@@ -1,5 +1,5 @@
 """
-Base class for all providers.
+所有提供商的基类。
 """
 
 import abc
@@ -37,6 +37,7 @@ from keep.api.utils.enrichment_helpers import parse_and_enrich_deleted_and_assig
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
 from keep.providers.models.provider_method import ProviderMethod
+from keep.api.i18n import t
 
 tracer = trace.get_tracer(__name__)
 
@@ -255,7 +256,7 @@ class BaseProvider(metaclass=abc.ABCMeta):
                 "No fingerprint found for alert enrichment",
                 extra={"provider": self.provider_id},
             )
-            raise Exception("No fingerprint found for alert enrichment")
+            raise Exception(t("No fingerprint found for alert enrichment"))
         self.logger.debug("Fingerprint extracted", extra={"fingerprint": fingerprint})
 
         _enrichments = {}

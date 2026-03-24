@@ -72,7 +72,7 @@ class PagerdutyProviderAuthConfig:
 class PagerdutyProvider(
     BaseTopologyProvider, BaseIncidentProvider, ProviderHealthMixin
 ):
-    """Pull alerts and query incidents from PagerDuty."""
+    """从 PagerDuty 拉取告警并查询事件。"""
 
     PROVIDER_SCOPES = [
         ProviderScope(

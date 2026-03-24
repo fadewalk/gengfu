@@ -79,7 +79,7 @@ class ClickhouseProviderAuthConfig:
 
 
 class ClickhouseProvider(BaseProvider, ProviderHealthMixin):
-    """Enrich alerts with data from Clickhouse."""
+    """使用 ClickHouse 数据富化告警。"""
 
     PROVIDER_DISPLAY_NAME = "Clickhouse"
     PROVIDER_CATEGORY = ["Database"]

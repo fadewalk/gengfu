@@ -1,5 +1,5 @@
 """
-TelegramProvider is a class that implements the BaseProvider interface for Telegram messages.
+TelegramProvider 实现了 BaseProvider 接口，用于发送 Telegram 消息。
 """
 
 import asyncio
@@ -20,7 +20,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 @pydantic.dataclasses.dataclass
 class TelegramProviderAuthConfig:
-    """Telegram authentication configuration."""
+    """Telegram 认证配置。"""
 
     bot_token: str = dataclasses.field(
         metadata={
@@ -32,7 +32,7 @@ class TelegramProviderAuthConfig:
 
 
 class TelegramProvider(BaseProvider):
-    """Send alert message to Telegram."""
+    """发送告警消息到 Telegram。"""
     provider_description = t("Send alert message to Telegram.")
 
     PROVIDER_DISPLAY_NAME = "Telegram"

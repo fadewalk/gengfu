@@ -1,5 +1,5 @@
 """
-Parseable Provider is a class that allows to ingest/digest data from Parseable.
+Parseable 提供商，支持接入和解析 Parseable 的数据。
 """
 
 import dataclasses
@@ -49,10 +49,10 @@ class ParseableProviderAuthConfig:
 
 
 class ParseableProvider(BaseProvider):
-    """Parseable provider to ingest data from Parseable."""
+    """Parseable 提供商，从 Parseable 接入数据。"""
 
     PROVIDER_CATEGORY = ["Monitoring"]
-    webhook_description = "This is an example of how to configure an alert to be sent to Keep using Parseable's webhook feature. Post this to https://YOUR_PARSEABLE_SERVER/api/v1/logstream/YOUR_STREAM_NAME/alert"
+    webhook_description = t("This is an example of how to configure an alert to be sent to Keep using Parseable's webhook feature. Post this to https://YOUR_PARSEABLE_SERVER/api/v1/logstream/YOUR_STREAM_NAME/alert")
     webhook_template = """{{
     "version": "v1",
     "alerts": [

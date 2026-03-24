@@ -1,5 +1,5 @@
 """
-SshProvider is a class that provides a way to execute SSH commands and get the output.
+SshProvider 提供了一种执行 SSH 命令并获取输出的方式。
 """
 
 import dataclasses
@@ -19,7 +19,7 @@ from keep.validation.fields import NoSchemeUrl, UrlPort
 
 @pydantic.dataclasses.dataclass
 class SshProviderAuthConfig:
-    """SSH authentication configuration."""
+    """SSH 认证配置。"""
 
     host: NoSchemeUrl = dataclasses.field(
         metadata={
@@ -67,7 +67,7 @@ class SshProviderAuthConfig:
 
 
 class SshProvider(BaseProvider):
-    """Enrich alerts with data from SSH."""
+    """通过 SSH 获取数据富化告警。"""
     provider_description = t("Enrich alerts with data from SSH.")
 
     PROVIDER_DISPLAY_NAME = "SSH"

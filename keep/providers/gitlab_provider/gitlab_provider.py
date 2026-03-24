@@ -1,5 +1,5 @@
 """
-GitlabProvider is a class that implements the BaseProvider interface for GitLab updates.
+GitlabProvider 实现了 BaseProvider 接口，用于处理 GitLab 的更新。
 """
 
 import dataclasses
@@ -17,7 +17,7 @@ from keep.providers.models.provider_config import ProviderConfig, ProviderScope
 
 @pydantic.dataclasses.dataclass
 class GitlabProviderAuthConfig:
-    """GitLab authentication configuration."""
+    """GitLab 认证配置。"""
 
     host: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
@@ -40,7 +40,7 @@ class GitlabProviderAuthConfig:
 
 
 class GitlabProvider(BaseProvider):
-    """Enrich alerts with GitLab tickets."""
+    """使用 GitLab 工单富化告警。"""
 
     PROVIDER_SCOPES = [
         ProviderScope(

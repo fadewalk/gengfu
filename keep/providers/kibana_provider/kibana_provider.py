@@ -1,5 +1,5 @@
 """
-Kibana provider.
+Kibana 提供商。
 """
 
 import dataclasses
@@ -27,7 +27,7 @@ from keep.validation.fields import UrlPort
 
 @pydantic.dataclasses.dataclass
 class KibanaProviderAuthConfig:
-    """Kibana authentication configuration."""
+    """Kibana 认证配置。"""
 
     api_key: str = dataclasses.field(
         metadata={
@@ -55,7 +55,7 @@ class KibanaProviderAuthConfig:
 
 
 class KibanaProvider(BaseProvider):
-    """Enrich alerts with data from Kibana."""
+    """使用 Kibana 数据富化告警。"""
 
     PROVIDER_CATEGORY = ["Monitoring", "Developer Tools"]
     DEFAULT_TIMEOUT = 10

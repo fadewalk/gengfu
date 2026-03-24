@@ -1,5 +1,5 @@
 """
-UptimeKuma is a class that provides the necessary methods to interact with the UptimeKuma SDK
+UptimeKuma 提供了与 UptimeKuma SDK 交互所需的方法。
 """
 
 import dataclasses

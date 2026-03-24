@@ -17,7 +17,7 @@ from keep.providers.providers_factory import ProvidersFactory
 
 @pydantic.dataclasses.dataclass
 class AksProviderAuthConfig:
-    """AKS authentication configuration."""
+    """AKS 认证配置。"""
 
     subscription_id: str = dataclasses.field(
         metadata={
@@ -70,7 +70,7 @@ class AksProviderAuthConfig:
 
 
 class AksProvider(BaseProvider):
-    """Enrich alerts using data from AKS."""
+    """使用 AKS 数据富化告警。"""
 
     PROVIDER_DISPLAY_NAME = "Azure AKS"
     PROVIDER_CATEGORY = ["Cloud Infrastructure"]

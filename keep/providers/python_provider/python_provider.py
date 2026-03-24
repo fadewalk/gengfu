@@ -1,5 +1,5 @@
 """
-PythonProvider is a class that implements the BaseOutputProvider.
+PythonProvider 实现了 BaseOutputProvider 接口。
 """
 
 from keep.api.i18n import t
@@ -12,7 +12,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 
 class PythonProvider(BaseProvider):
-    """Python provider eval python code to get results"""
+    """Python 提供商，执行 Python 代码获取结果。"""
     provider_description = t("Python provider eval python code to get results")
 
     def __init__(

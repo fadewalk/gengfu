@@ -1,5 +1,5 @@
 """
-ilert Provider is a class that allows to create/close incidents in ilert.
+ilert 提供商，支持在 ilert 中创建和关闭事件。
 """
 
 import dataclasses
@@ -57,7 +57,7 @@ class IlertProviderAuthConfig:
 
 
 class IlertProvider(BaseProvider):
-    """Create/Resolve incidents in ilert."""
+    """在 ilert 中创建/解决事件。"""
 
     PROVIDER_DISPLAY_NAME = "ilert"
     PROVIDER_SCOPES = [

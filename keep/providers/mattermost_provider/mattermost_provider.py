@@ -13,7 +13,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 @pydantic.dataclasses.dataclass
 class MattermostProviderAuthConfig:
-    """Mattermost authentication configuration."""
+    """Mattermost 认证配置。"""
 
     webhook_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
@@ -26,7 +26,7 @@ class MattermostProviderAuthConfig:
 
 
 class MattermostProvider(BaseProvider):
-    """send alert message to Mattermost."""
+    """发送告警消息到 Mattermost。"""
 
     PROVIDER_DISPLAY_NAME = "Mattermost"
     PROVIDER_CATEGORY = ["Collaboration"]

@@ -1,5 +1,5 @@
 """
-JiraonpremProvider is a class that implements the BaseProvider interface for Jira updates.
+JiraonpremProvider 实现了 BaseProvider 接口，用于处理 Jira 的更新。
 """
 
 import dataclasses
@@ -53,7 +53,7 @@ class JiraonpremProviderAuthConfig:
 
 
 class JiraonpremProvider(BaseProvider):
-    """Enrich alerts with Jira tickets."""
+    """使用 Jira 工单富化告警。"""
 
     PROVIDER_CATEGORY = ["Ticketing"]
 

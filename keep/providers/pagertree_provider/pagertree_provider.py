@@ -1,5 +1,5 @@
 """
-PagetreeProvider is a class that provides a way to read get alerts from Pagetree.
+PagetreeProvider 提供了一种从 PagerTree 获取告警的方式。
 """
 
 import dataclasses
@@ -28,7 +28,7 @@ class PagertreeProviderAuthConfig:
 
 
 class PagertreeProvider(BaseProvider):
-    """Get all alerts from pagertree"""
+    """从 PagerTree 获取所有告警。"""
 
     PROVIDER_DISPLAY_NAME = "PagerTree"
     PROVIDER_CATEGORY = ["Incident Management"]

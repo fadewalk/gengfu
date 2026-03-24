@@ -11,13 +11,13 @@ from keep.providers.models.provider_config import ProviderConfig
 
 class NetboxProvider(BaseProvider):
     """
-    Get alerts from NetBox into Keep.
+    从 NetBox 获取告警到 Keep。
     """
 
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""
     webhook_template = ""
-    webhook_markdown = """
+    webhook_markdown = t("""
   To send alerts from NetBox to Keep, Use the following webhook url to configure NetBox send alerts to Keep:
 
   1. In NetBox, go to Webhooks under Operations.
@@ -26,7 +26,7 @@ class NetboxProvider(BaseProvider):
   4. Add 'X-API-KEY' as the request header with the value as {api_key}.
   5. Save the webhook.
   6. Go to Event Rules and create a new rule and select the webhook created in step 2 to receive alerts.
-  """
+  """)
 
     PROVIDER_DISPLAY_NAME = "NetBox"
     PROVIDER_TAGS = ["alert"]
