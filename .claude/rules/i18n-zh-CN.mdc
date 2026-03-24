@@ -1,0 +1,89 @@
+---
+description: Keep 中英文国际化 (i18n) 规范，前后端汉化要求
+globs: 
+alwaysApply: true
+---
+
+# Keep i18n 中文汉化规范
+
+## 前端 (keep-ui)
+
+### 技术方案
+- 使用 `next-intl` 框架
+- 翻译文件: `keep-ui/messages/zh-CN.json` 和 `en.json` 同步更新
+- Hook: `@/i18n/hooks/useI18n`，调用 `t()` 函数
+- 默认语言已改为中文: `i18n/config.ts` 中 `defaultLocale = "zh-CN"`
+
+### 汉化规则
+1. **`"use client"` 必须在 `import { useI18n }` 之前**（已批量修复 211 个文件）
+2. 翻译文件 zh-CN.json 与 en.json 必须保持 key 一一对应
+3. 不要用 `--turbopack`：与 Next.js 内置 Google Fonts 不兼容
+4. 不要用 docker-compose.dev.yml 启动前端：会覆盖本地汉化代码
+5. 前端用 nohup 后台启动避免被 exec 超时杀掉
+
+## 后端 (keep/)
+
+### 技术方案
+- 翻译框架: `keep/api/i18n/`
+  - `translator.py` — 翻译工具类，提供 `t()` 和 `tr()` 函数
+  - `locales/zh_CN.json` — 中文翻译（1556+ 条）
+  - `locales/en_US.json` — 英文翻译
+- 默认语言: 中文（`KEEP_DEFAULT_LOCALE` 环境变量，默认 `zh_CN`）
+- 支持 `Accept-Language` header 切换语言
+
+### 汉化规则
+1. 用户可见字符串使用 `t()` 包装: `t("Alert not found")`
+2. 带 Request 上下文的使用 `tr(request, "...")` 支持语言切换
+3. 支持 format params: `t("Provider {provider_type} not found", provider_type="slack")`
+4. 翻译 key 用英文原文，value 用中文
+5. 未匹配的 key 自动 fallback 到原文
+
+### 修改范围
+- **需要汉化**: api/、providers/、exceptions/、identitymanager/、workflowmanager/、validation/、conditions/、step/、actions/ 等所有核心模块
+- **不需要汉化**: tests/、docs/、keep-ui/
+
+## Provider 汉化规则
+- 126 个 provider 组件全部需要汉化
+- **保留英文**: 商标名称（Prometheus、Grafana、Datadog、Slack、AWS、GCP、Kubernetes 等）和专业术语
+- **翻译中文**: description 字段、错误信息、验证消息、配置说明、ProviderScope 描述等描述性文字
+- 不要修改 provider 的配置字段名、参数名
+- import 统一: `from keep.api.i18n import t`
+
+## 开发环境
+
+### 后端（Docker）
+```bash
+docker run -d --name keep-backend -p 8080:8080 \
+  -v $(pwd)/state:/state \
+  -e PORT=8080 -e AUTH_TYPE=NO_AUTH \
+  -e SECRET_MANAGER_TYPE=FILE -e SECRET_MANAGER_DIRECTORY=/state \
+  -e DATABASE_CONNECTION_STRING="sqlite:////state/db.sqlite3?check_same_thread=False" \
+  -e PUSHER_APP_ID=1 -e PUSHER_APP_KEY=keepappkey -e PUSHER_APP_SECRET=keepappsecret \
+  -e PUSHER_HOST=localhost -e PUSHER_PORT=6001 -e USE_NGROK=false \
+  us-central1-docker.pkg.dev/keephq/keep/keep-api:latest
+```
+
+### WebSocket（Soketi）
+```bash
+docker run -d --name keep-ws -p 6001:6001 -p 9601:9601 \
+  -e SOKETI_DEFAULT_APP_ID=1 -e SOKETI_DEFAULT_APP_KEY=keepappkey \
+  -e SOKETI_DEFAULT_APP_SECRET=keepappsecret \
+  quay.io/soketi/soketi:1.4-16-debian
+```
+
+### 前端（本地启动，保留汉化修改）
+```bash
+cd keep-ui && pnpm install && node scripts/build-monaco-workers-turbopack.js
+nohup npx next dev -p 3000 > /tmp/keep-frontend.log 2>&1 &
+```
+
+### 停止服务
+```bash
+docker stop keep-backend keep-ws
+kill $(lsof -ti :3000)
+```
+
+## Git 仓库
+- **日常推送**: gitee (`git@gitee.com:wyule/keep.git`)
+- **上游同步**: keephq (`https://github.com/keephq/keep.git`)
+- **开发分支**: develop
