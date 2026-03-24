@@ -16,7 +16,7 @@ from keep.providers.providers_factory import ProvidersFactory
 class PingdomProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
-            "description": "Pingdom API Key",
+            "description": t("Pingdom API Key"),
             "sensitive": True,
             "required": True,
         },
@@ -39,7 +39,7 @@ class PingdomProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="read",
-            description="Read alerts from Pingdom.",
+            description=t("Read alerts from Pingdom."),
             mandatory=True,
         ),
     ]
@@ -174,7 +174,7 @@ class PingdomProvider(BaseProvider):
         # map severity and status to keep's format
         state = event.get("current_state")
         if state is None:
-            provider_instance.logger.warning("'current_state' missing from payload.")
+            provider_instance.logger.warning(t("'current_state' missing from payload."))
             state = ""
         else:
             state = state.lower()

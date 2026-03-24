@@ -14,7 +14,7 @@ class AnthropicProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Anthropic API Key",
+            "description": t("Anthropic API Key"),
             "sensitive": True,
         },
     )

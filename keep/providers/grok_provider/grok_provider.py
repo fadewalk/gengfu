@@ -15,7 +15,7 @@ class GrokProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "X.AI Grok API Key",
+            "description": t("X.AI Grok API Key"),
             "sensitive": True,
         },
     )

@@ -34,7 +34,7 @@ class ZabbixProviderAuthConfig:
     zabbix_frontend_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Zabbix Frontend URL",
+            "description": t("Zabbix Frontend URL"),
             "hint": "https://zabbix.example.com",
             "sensitive": False,
             "validation": "any_http_url",
@@ -43,14 +43,14 @@ class ZabbixProviderAuthConfig:
     auth_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Zabbix Auth Token",
+            "description": t("Zabbix Auth Token"),
             "hint": "Users -> Api tokens",
             "sensitive": True,
         }
     )
     verify: bool = dataclasses.field(
         metadata={
-            "description": "Verify SSL certificates",
+            "description": t("Verify SSL certificates"),
             "hint": "Set to false to allow self-signed certificates",
             "sensitive": False,
         },
@@ -60,7 +60,7 @@ class ZabbixProviderAuthConfig:
 
 class ZabbixProvider(BaseProvider):
     """
-    Pull/Push alerts from Zabbix into Keep.
+    t("Pull/Push alerts from Zabbix into Keep.")
     """
 
     PROVIDER_CATEGORY = ["Monitoring"]
@@ -71,84 +71,84 @@ class ZabbixProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="action.create",
-            description="This method allows to create new actions.",
+            description=t("This method allows to create new actions."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/action/create",
         ),
         ProviderScope(
             name="action.get",
-            description="This method allows to retrieve actions.",
+            description=t("This method allows to retrieve actions."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/action/get",
         ),
         ProviderScope(
             name="event.acknowledge",
-            description="This method allows to update events.",
+            description=t("This method allows to update events."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/event/acknowledge",
         ),
         ProviderScope(
             name="mediatype.create",
-            description="This method allows to create new media types.",
+            description=t("This method allows to create new media types."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/mediatype/create",
         ),
         ProviderScope(
             name="mediatype.get",
-            description="This method allows to retrieve media types.",
+            description=t("This method allows to retrieve media types."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/mediatype/get",
         ),
         ProviderScope(
             name="mediatype.update",
-            description="This method allows to update media types.",
+            description=t("This method allows to update media types."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/mediatype/update",
         ),
         ProviderScope(
             name="problem.get",
-            description="The method allows to retrieve problems.",
+            description=t("The method allows to retrieve problems."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/problem/get",
         ),
         ProviderScope(
             name="script.create",
-            description="This method allows to create new scripts.",
+            description=t("This method allows to create new scripts."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/script/create",
         ),
         ProviderScope(
             name="script.get",
-            description="The method allows to retrieve scripts.",
+            description=t("The method allows to retrieve scripts."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/script/get",
         ),
         ProviderScope(
             name="script.update",
-            description="This method allows to update scripts.",
+            description=t("This method allows to update scripts."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/script/update",
         ),
         ProviderScope(
             name="user.get",
-            description="This method allows to retrieve users.",
+            description=t("This method allows to retrieve users."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/user/get",
         ),
         ProviderScope(
             name="user.update",
-            description="This method allows to update users.",
+            description=t("This method allows to update users."),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://www.zabbix.com/documentation/current/en/manual/api/reference/user/update",
@@ -156,49 +156,49 @@ class ZabbixProvider(BaseProvider):
     ]
     PROVIDER_METHODS = [
         ProviderMethod(
-            name="Close Problem",
+            name=t("Close Problem"),
             func_name="close_problem",
             scopes=["event.acknowledge"],
             type="action",
         ),
         ProviderMethod(
-            name="Change Severity",
+            name=t("Change Severity"),
             func_name="change_severity",
             scopes=["event.acknowledge"],
             type="action",
         ),
         ProviderMethod(
-            name="Suppress Problem",
+            name=t("Suppress Problem"),
             func_name="surrpress_problem",
             scopes=["event.acknowledge"],
             type="action",
         ),
         ProviderMethod(
-            name="Unsuppress Problem",
+            name=t("Unsuppress Problem"),
             func_name="unsurrpress_problem",
             scopes=["event.acknowledge"],
             type="action",
         ),
         ProviderMethod(
-            name="Acknowledge Problem",
+            name=t("Acknowledge Problem"),
             func_name="acknowledge_problem",
             scopes=["event.acknowledge"],
             type="action",
         ),
         ProviderMethod(
-            name="Unacknowledge Problem",
+            name=t("Unacknowledge Problem"),
             func_name="unacknowledge_problem",
             scopes=["event.acknowledge"],
             type="action",
         ),
         ProviderMethod(
-            name="Add Message to Problem",
+            name=t("Add Message to Problem"),
             func_name="add_message_to_problem",
             scopes=["event.acknowledge"],
             type="action",
         ),
         ProviderMethod(
-            name="Get Problem Messages",
+            name=t("Get Problem Messages"),
             func_name="get_problem_messages",
             scopes=["problem.get"],
             type="view",
@@ -408,7 +408,7 @@ class ZabbixProvider(BaseProvider):
                 error = getattr(e, "message", e.args[0])
                 # If we got here, it means it's an exception from Zabbix
                 if "permission" in str(error) or "not authorized" in str(error).lower():
-                    validated_scopes[scope.name] = "Permission denied"
+                    validated_scopes[scope.name] = t("Permission denied")
                     continue
                 else:
                     if error and any(phrase in error.lower() for phrase in [

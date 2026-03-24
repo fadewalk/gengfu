@@ -18,23 +18,23 @@ from keep.validation.fields import NoSchemeUrl
 @pydantic.dataclasses.dataclass
 class MysqlProviderAuthConfig:
     username: str = dataclasses.field(
-        metadata={"required": True, "description": "MySQL username"}
+        metadata={"required": True, "description": t("MySQL username")}
     )
     password: str = dataclasses.field(
-        metadata={"required": True, "description": "MySQL password", "sensitive": True}
+        metadata={"required": True, "description": t("MySQL password"), "sensitive": True}
     )
     host: NoSchemeUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "MySQL hostname",
+            "description": t("MySQL hostname"),
             "validation": "no_scheme_url",
         }
     )
     database: str | None = dataclasses.field(
-        metadata={"required": False, "description": "MySQL database name"}, default=None
+        metadata={"required": False, "description": t("MySQL database name")}, default=None
     )
     port: int | None = dataclasses.field(
-        metadata={"required": False, "description": "MySQL port"}, default=3306
+        metadata={"required": False, "description": t("MySQL port")}, default=3306
     )
 
 
@@ -47,9 +47,9 @@ class MysqlProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="connect_to_server",
-            description="The user can connect to the server",
+            description=t("The user can connect to the server"),
             mandatory=True,
-            alias="Connect to the server",
+            alias=t("Connect to the server"),
         )
     ]
 
@@ -70,7 +70,7 @@ class MysqlProvider(BaseProvider):
                 "connect_to_server": True,
             }
         except Exception as e:
-            self.logger.exception("Error validating scopes")
+            self.logger.exception(t("Error validating scopes"))
             scopes = {
                 "connect_to_server": str(e),
             }
@@ -96,7 +96,7 @@ class MysqlProvider(BaseProvider):
         try:
             self.client.close()
         except Exception:
-            self.logger.exception("Error closing MySQL connection")
+            self.logger.exception(t("Error closing MySQL connection"))
 
     def validate_config(self):
         """

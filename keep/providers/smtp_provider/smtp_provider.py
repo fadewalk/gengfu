@@ -22,7 +22,7 @@ class SmtpProviderAuthConfig:
     smtp_server: NoSchemeUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "SMTP Server Address",
+            "description": t("SMTP Server Address"),
             "config_main_group": "authentication",
             "validation": "no_scheme_url",
         }
@@ -31,7 +31,7 @@ class SmtpProviderAuthConfig:
     smtp_port: UrlPort = dataclasses.field(
         metadata={
             "required": True,
-            "description": "SMTP port",
+            "description": t("SMTP port"),
             "config_main_group": "authentication",
             "validation": "port",
         },
@@ -42,7 +42,7 @@ class SmtpProviderAuthConfig:
         default="TLS",
         metadata={
             "required": True,
-            "description": "SMTP encryption",
+            "description": t("SMTP encryption"),
             "type": "select",
             "options": ["SSL", "TLS", "None"],
             "config_main_group": "authentication",
@@ -52,7 +52,7 @@ class SmtpProviderAuthConfig:
     smtp_username: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "SMTP username",
+            "description": t("SMTP username"),
             "config_main_group": "authentication",
         },
         default="",
@@ -62,7 +62,7 @@ class SmtpProviderAuthConfig:
         metadata={
             "required": False,
             "sensitive": True,
-            "description": "SMTP password",
+            "description": t("SMTP password"),
             "config_main_group": "authentication",
         },
         default="",
@@ -73,9 +73,9 @@ class SmtpProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="send_email",
-            description="Send email using SMTP protocol",
+            description=t("Send email using SMTP protocol"),
             mandatory=True,
-            alias="Send Email",
+            alias=t("Send Email"),
         )
     ]
     PROVIDER_CATEGORY = ["Collaboration"]

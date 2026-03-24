@@ -143,14 +143,14 @@ class KafkaProvider(BaseProvider):
                 self.logger.info("Trying to connect to Kafka with SASL_PLAINTEXT")
                 consumer = KafkaConsumer(self.authentication_config.topic, **conf)
             except NoBrokersAvailable:
-                self.err = f"Auth/Network problem: could not connect to Kafka at {self.authentication_config.host}"
+                self.err = t("Auth/Network problem: could not connect to Kafka at {host}", host=self.authentication_config.host)
                 self.logger.warning(self.err)
                 scopes["topic_read"] = self.err
                 return scopes
         except KafkaError as e:
             self.err = str(e)
             self.logger.warning(f"Error connecting to Kafka: {e}")
-            scopes["topic_read"] = self.err or "Could not connect to Kafka "
+            scopes["topic_read"] = self.err or t("Could not connect to Kafka")
             return scopes
 
         topics = consumer.topics()
@@ -159,7 +159,7 @@ class KafkaProvider(BaseProvider):
             scopes["topic_read"] = True
             return scopes
         else:
-            self.err = f"The user have permission to Kafka, but topic '{self.authentication_config.topic}' does not exist or the user does not have permissions to read it - available topics: {consumer.topics()}"
+            self.err = t("The user have permission to Kafka, but topic '{topic}' does not exist or the user does not have permissions to read it - available topics: {available_topics}", topic=self.authentication_config.topic, available_topics=str(consumer.topics()))
             self.logger.warning(self.err)
             scopes["topic_read"] = self.err
             return scopes

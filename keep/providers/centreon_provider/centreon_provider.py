@@ -25,7 +25,7 @@ class CentreonProviderAuthConfig:
     host_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Centreon Host URL",
+            "description": t("Centreon Host URL"),
             "sensitive": False,
             "validation": "any_http_url",
         },
@@ -34,7 +34,7 @@ class CentreonProviderAuthConfig:
     api_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Centreon API Token",
+            "description": t("Centreon API Token"),
             "sensitive": True,
         },
         default=None,
@@ -46,7 +46,7 @@ class CentreonProvider(BaseProvider):
     PROVIDER_TAGS = ["alert"]
     PROVIDER_CATEGORY = ["Monitoring"]
     PROVIDER_SCOPES = [
-        ProviderScope(name="authenticated", description="User is authenticated"),
+        ProviderScope(name="authenticated", description=t("User is authenticated")),
     ]
 
     """

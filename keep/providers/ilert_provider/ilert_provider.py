@@ -40,16 +40,16 @@ class IlertProviderAuthConfig:
     ilert_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "ILert API token",
-            "hint": "Bearer eyJhbGc...",
+            "description": t("ILert API token"),
+            "hint": t("Bearer eyJhbGc..."),
             "sensitive": True,
         }
     )
     ilert_host: HttpsUrl = dataclasses.field(
         metadata={
             "required": False,
-            "description": "ILert API host",
-            "hint": "https://api.ilert.com/api",
+            "description": t("ILert API host"),
+            "hint": t("https://api.ilert.com/api"),
             "validation": "https_url",
         },
         default="https://api.ilert.com/api",
@@ -62,10 +62,10 @@ class IlertProvider(BaseProvider):
     PROVIDER_DISPLAY_NAME = "ilert"
     PROVIDER_SCOPES = [
         ProviderScope(
-            name="read_permission", description="Read permission", mandatory=True
+            name="read_permission", description=t("Read permission"), mandatory=True
         ),
         ProviderScope(
-            name="write_permission", description="Write permission", mandatory=False
+            name="write_permission", description=t("Write permission"), mandatory=False
         ),
     ]
     PROVIDER_CATEGORY = ["Incident Management"]

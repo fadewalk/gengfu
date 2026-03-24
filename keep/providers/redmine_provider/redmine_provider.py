@@ -21,7 +21,7 @@ class RedmineProviderAuthConfig:
     host: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Redmine Host",
+            "description": t("Redmine Host"),
             "sensitive": False,
             "hint": "http://localhost:8080",
             "validation": "any_http_url",
@@ -31,7 +31,7 @@ class RedmineProviderAuthConfig:
     api_access_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Redmine API Access key",
+            "description": t("Redmine API Access key"),
             "sensitive": True,
             "documentation_url": "https://www.redmine.org/projects/redmine/wiki/rest_api#Authentication",
         }
@@ -40,7 +40,7 @@ class RedmineProviderAuthConfig:
     ticket_creation_url: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "URL for creating new tickets",
+            "description": t("URL for creating new tickets"),
             "sensitive": False,
             "hint": "http://localhost:8080/issues/new",
         },
@@ -50,14 +50,15 @@ class RedmineProviderAuthConfig:
 
 class RedmineProvider(BaseProvider):
     """Enrich alerts with Redmine tickets."""
+    provider_description = t("Enrich alerts with Redmine tickets.")
 
     PROVIDER_DISPLAY_NAME = "Redmine"
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="Authenticated with Redmine API",
+            description=t("Authenticated with Redmine API"),
             mandatory=True,
-            alias="Redmine API Access Key",
+            alias=t("Redmine API Access Key"),
         ),
     ]
     PROVIDER_TAGS = ["ticketing"]
@@ -85,7 +86,7 @@ class RedmineProvider(BaseProvider):
                 scopes = {"authenticated": True}
             else:
                 self.logger.error(
-                    f"Failed to validate scope for {self.provider_id}",
+                    t("Failed to validate scope for {provider_id}", provider_id=self.provider_id),
                     extra=resp.json(),
                 )
                 scopes = {
@@ -96,7 +97,7 @@ class RedmineProvider(BaseProvider):
                 }
         except HTTPError as e:
             self.logger.error(
-                f"HTTPError while validating scope for {self.provider_id}",
+                t("HTTPError while validating scope for {provider_id}", provider_id=self.provider_id),
                 extra={"error": str(e)},
             )
             scopes = {
@@ -190,10 +191,10 @@ class RedmineProvider(BaseProvider):
         try:
             resp.raise_for_status()
         except HTTPError as e:
-            self.logger.error("Error While creating Redmine Issue")
+            self.logger.error(t("Error While creating Redmine Issue"))
             raise Exception(t("Failed to create Redmine issue: {error}", error=str(e)))
         self.logger.info(
-            "Successfully created a Redmine Issue",
+            t("Successfully created a Redmine Issue"),
             extra={"status_code": resp.status_code},
         )
         return resp.json()

@@ -33,7 +33,7 @@ class VictoriametricsProviderAuthConfig:
     VMAlertHost: AnyHttpUrl | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "The hostname or IP address where VMAlert is running",
+            "description": t("The hostname or IP address where VMAlert is running"),
             "hint": "Example: 'http://localhost', 'http://192.168.1.100'",
             "validation": "any_http_url",
             "config_sub_group": "vmalert",
@@ -45,7 +45,7 @@ class VictoriametricsProviderAuthConfig:
     VMAlertPort: UrlPort = dataclasses.field(
         metadata={
             "required": False,
-            "description": "The port number on which VMAlert is listening",
+            "description": t("The port number on which VMAlert is listening"),
             "hint": "Example: 8880",
             "validation": "port",
             "config_sub_group": "vmalert",
@@ -57,7 +57,7 @@ class VictoriametricsProviderAuthConfig:
     VMAlertURL: AnyHttpUrl | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "The full URL to the VMAlert instance. Alternative to Host/Port",
+            "description": t("The full URL to the VMAlert instance. Alternative to Host/Port"),
             "hint": "Example: 'http://vmalert.mydomain.com:8880'",
             "validation": "any_http_url",
             "config_sub_group": "vmalert",
@@ -70,7 +70,7 @@ class VictoriametricsProviderAuthConfig:
     VMBackendHost: AnyHttpUrl | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "The hostname or IP address where VictoriaMetrics backend is running",
+            "description": t("The hostname or IP address where VictoriaMetrics backend is running"),
             "hint": "Example: 'http://localhost', 'http://192.168.1.100'",
             "validation": "any_http_url",
             "config_sub_group": "vmbackend",
@@ -82,7 +82,7 @@ class VictoriametricsProviderAuthConfig:
     VMBackendPort: UrlPort = dataclasses.field(
         metadata={
             "required": False,
-            "description": "The port number on which VictoriaMetrics backend is listening",
+            "description": t("The port number on which VictoriaMetrics backend is listening"),
             "hint": "Example: 8428",
             "validation": "port",
             "config_sub_group": "vmbackend",
@@ -94,7 +94,7 @@ class VictoriametricsProviderAuthConfig:
     VMBackendURL: AnyHttpUrl | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "The full URL to the VictoriaMetrics backend. Alternative to Host/Port",
+            "description": t("The full URL to the VictoriaMetrics backend. Alternative to Host/Port"),
             "hint": "Example: 'http://vm.mydomain.com:8428'",
             "validation": "any_http_url",
             "config_sub_group": "vmbackend",
@@ -107,7 +107,7 @@ class VictoriametricsProviderAuthConfig:
     BasicAuthUsername: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Username for basic authentication",
+            "description": t("Username for basic authentication"),
             "config_sub_group": "auth",
             "config_main_group": "authentication",
         },
@@ -117,7 +117,7 @@ class VictoriametricsProviderAuthConfig:
     BasicAuthPassword: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Password for basic authentication",
+            "description": t("Password for basic authentication"),
             "config_sub_group": "auth",
             "config_main_group": "authentication",
             "sensitive": True,
@@ -129,7 +129,7 @@ class VictoriametricsProviderAuthConfig:
     BasicAuthUsername: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Username for basic authentication",
+            "description": t("Username for basic authentication"),
             "config_sub_group": "auth",
             "config_main_group": "authentication",
         },
@@ -139,7 +139,7 @@ class VictoriametricsProviderAuthConfig:
     BasicAuthPassword: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Password for basic authentication",
+            "description": t("Password for basic authentication"),
             "config_sub_group": "auth",
             "config_main_group": "authentication",
             "sensitive": True,
@@ -171,7 +171,7 @@ class VictoriametricsProviderAuthConfig:
     SkipValidation: bool = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Enter 'true' to skip validation of authentication",
+            "description": t("Enter 'true' to skip validation of authentication"),
             "config_sub_group": "validation",
             "config_main_group": "validation",
         },
@@ -181,7 +181,7 @@ class VictoriametricsProviderAuthConfig:
         default=False,
         metadata={
             "name": "insecure",
-            "description": "Skip TLS verification",
+            "description": t("Skip TLS verification"),
             "required": False,
             "sensitive": False,
             "type": "switch",
@@ -191,6 +191,7 @@ class VictoriametricsProviderAuthConfig:
 
 class VictoriametricsProvider(BaseProvider):
     """Install Webhooks and receive alerts from Victoriametrics."""
+    provider_description = t("Install Webhooks and receive alerts from Victoriametrics.")
 
     webhook_description = "This provider takes advantage of configurable webhooks available with Prometheus Alertmanager. Use the following template to configure AlertManager:"
     webhook_template = """route:
@@ -215,9 +216,9 @@ receivers:
     PROVIDER_SCOPES = [
         ProviderScope(
             name="connected",
-            description="The user can connect to the client",
+            description=t("The user can connect to the client"),
             mandatory=True,
-            alias="Connect to the client",
+            alias=t("Connect to the client"),
         ),
     ]
     PROVIDER_CATEGORY = ["Monitoring"]

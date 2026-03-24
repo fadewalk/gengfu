@@ -25,7 +25,7 @@ class NtfyProviderAuthConfig:
     access_token: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Ntfy Access Token",
+            "description": t("Ntfy Access Token"),
             "sensitive": True,
         },
         default=None,
@@ -34,7 +34,7 @@ class NtfyProviderAuthConfig:
     host: pydantic.AnyHttpUrl | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Ntfy Host URL (For self-hosted Ntfy only)",
+            "description": t("Ntfy Host URL (For self-hosted Ntfy only)"),
             "sensitive": False,
             "hint": "http://localhost:80",
             "validation": "any_http_url",
@@ -45,7 +45,7 @@ class NtfyProviderAuthConfig:
     username: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Ntfy Username (For self-hosted Ntfy only)",
+            "description": t("Ntfy Username (For self-hosted Ntfy only)"),
             "sensitive": False,
         },
         default=None,
@@ -54,7 +54,7 @@ class NtfyProviderAuthConfig:
     password: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Ntfy Password (For self-hosted Ntfy only)",
+            "description": t("Ntfy Password (For self-hosted Ntfy only)"),
             "sensitive": True,
         },
         default=None,
@@ -181,7 +181,7 @@ if __name__ == "__main__":
 
     if ntfy_access_token is not None:
         config = ProviderConfig(
-            description="Ntfy Provider",
+            description=t("Ntfy Provider"),
             authentication={
                 "access_token": ntfy_access_token,
                 "subcription_topic": ntfy_subscription_topic,
@@ -190,7 +190,7 @@ if __name__ == "__main__":
 
     else:
         config = ProviderConfig(
-            description="Ntfy Provider",
+            description=t("Ntfy Provider"),
             authentication={
                 "host": ntfy_host,
                 "username": ntfy_username,

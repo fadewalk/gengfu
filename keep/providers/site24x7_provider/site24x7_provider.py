@@ -30,7 +30,7 @@ class Site24X7ProviderAuthConfig:
     zohoRefreshToken: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Zoho Refresh Token",
+            "description": t("Zoho Refresh Token"),
             "hint": "Refresh token for Zoho authentication",
             "sensitive": True,
         },
@@ -38,7 +38,7 @@ class Site24X7ProviderAuthConfig:
     zohoClientId: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Zoho Client Id",
+            "description": t("Zoho Client Id"),
             "hint": "Client Secret for Zoho authentication.",
             "sensitive": True,
         },
@@ -46,7 +46,7 @@ class Site24X7ProviderAuthConfig:
     zohoClientSecret: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Zoho Client Secret",
+            "description": t("Zoho Client Secret"),
             "hint": "Password associated with yur account",
             "sensitive": True,
         },
@@ -54,7 +54,7 @@ class Site24X7ProviderAuthConfig:
     zohoAccountTLD: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Zoho Account's TLD (.com | .eu | .com.cn | .in | .au | .jp)",
+            "description": t("Zoho Account's TLD (.com | .eu | .com.cn | .in | .au | .jp)"),
             "hint": "Possible: .com | .eu | .com.cn | .in | .com.au | .jp",
             "validation": "tld",
         },
@@ -63,6 +63,7 @@ class Site24X7ProviderAuthConfig:
 
 class Site24X7Provider(BaseProvider):
     """Install Webhooks and receive alerts from Site24x7."""
+    provider_description = t("Install Webhooks and receive alerts from Site24x7.")
 
     PROVIDER_SCOPES = [
         ProviderScope(
@@ -164,7 +165,7 @@ class Site24X7Provider(BaseProvider):
             self.logger.info("Authenticated user successfully")
         else:
             authentication_scope = (
-                f"Error while authenticating user, {response.status_code}"
+                t("Error while authenticating user, {status_code}", status_code=response.status_code)
             )
             self.logger.error(
                 "Error while authenticating user",

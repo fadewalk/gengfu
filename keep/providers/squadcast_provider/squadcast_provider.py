@@ -22,7 +22,7 @@ class SquadcastProviderAuthConfig:
     service_region: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Service region: EU/US",
+            "description": t("Service region: EU/US"),
             "hint": "https://apidocs.squadcast.com/#intro",
             "sensitive": False,
         }
@@ -30,7 +30,7 @@ class SquadcastProviderAuthConfig:
     refresh_token: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Squadcast Refresh Token",
+            "description": t("Squadcast Refresh Token"),
             "hint": "https://support.squadcast.com/docs/squadcast-public-api",
             "sensitive": True,
         },
@@ -39,7 +39,7 @@ class SquadcastProviderAuthConfig:
     webhook_url: HttpsUrl | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Incident webhook url",
+            "description": t("Incident webhook url"),
             "hint": "https://support.squadcast.com/integrations/incident-webhook-incident-webhook-api",
             "sensitive": True,
             "validation": "https_url",
@@ -50,6 +50,7 @@ class SquadcastProviderAuthConfig:
 
 class SquadcastProvider(BaseProvider):
     """Create incidents and notes using the Squadcast API."""
+    provider_description = t("Create incidents and notes using the Squadcast API.")
 
     PROVIDER_DISPLAY_NAME = "Squadcast"
     PROVIDER_TAGS = ["alert"]
@@ -58,9 +59,9 @@ class SquadcastProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="The user can connect to the client",
+            description=t("The user can connect to the client"),
             mandatory=False,
-            alias="Connect to the client",
+            alias=t("Connect to the client"),
         ),
     ]
 

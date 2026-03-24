@@ -15,14 +15,14 @@ class OpenaiProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "OpenAI Platform API Key",
+            "description": t("OpenAI Platform API Key"),
             "sensitive": True,
         },
     )
     organization_id: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "OpenAI Platform Organization ID",
+            "description": t("OpenAI Platform Organization ID"),
             "sensitive": False,
         },
         default=None,

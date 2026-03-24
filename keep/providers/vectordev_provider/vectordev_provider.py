@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 @pydantic.dataclasses.dataclass
 class VectordevProviderAuthConfig:
     api_key: str = dataclasses.field(
-        metadata={"required": True, "description": "API key", "sensitive": True}
+        metadata={"required": True, "description": t("API key"), "sensitive": True}
     )
 
 

@@ -25,7 +25,7 @@ class StatuscakeProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Statuscake API Key",
+            "description": t("Statuscake API Key"),
             "sensitive": True,
         },
         default=None,
@@ -39,7 +39,7 @@ class StatuscakeProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="alerts",
-            description="Read alerts from Statuscake",
+            description=t("Read alerts from Statuscake"),
         )
     ]
 

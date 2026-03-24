@@ -30,7 +30,7 @@ class CloudwatchProviderAuthConfig:
     region: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "AWS region",
+            "description": t("AWS region"),
             "senstive": False,
         },
     )
@@ -38,7 +38,7 @@ class CloudwatchProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "AWS access key (Leave empty if using IAM role at EC2)",
+            "description": t("AWS access key (Leave empty if using IAM role at EC2)"),
             "sensitive": True,
         },
     )
@@ -46,7 +46,7 @@ class CloudwatchProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "AWS access key secret (Leave empty if using IAM role at EC2)",
+            "description": t("AWS access key secret (Leave empty if using IAM role at EC2)"),
             "sensitive": True,
         },
     )
@@ -54,8 +54,8 @@ class CloudwatchProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "AWS Session Token",
-            "hint": "For temporary credentials. Note that if you connect CloudWatch with temporary credentials, the initial connection will succeed, but when the credentials expired alarms won't be sent to Keep.",
+            "description": t("AWS Session Token"),
+            "hint": t("For temporary credentials. Note that if you connect CloudWatch with temporary credentials, the initial connection will succeed, but when the credentials expired alarms won't be sent to Keep."),
             "sensitive": True,
         },
     )
@@ -63,8 +63,8 @@ class CloudwatchProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "AWS Cloudwatch SNS Topic [ARN or name]",
-            "hint": "Default SNS Topic to send notifications (Optional since if your alarms already sends notifications to SNS topic, Keep will use the existing SNS topic)",
+            "description": t("AWS CloudWatch SNS Topic [ARN or name]"),
+            "hint": t("Default SNS Topic to send notifications (Optional since if your alarms already sends notifications to SNS topic, Keep will use the existing SNS topic)"),
             "sensitive": False,
         },
     )
@@ -72,7 +72,7 @@ class CloudwatchProviderAuthConfig:
         default="https",
         metadata={
             "required": True,
-            "description": "Protocol to use for the webhook",
+            "description": t("Protocol to use for the webhook"),
             "type": "select",
             "options": ["https", "http"],
         },
@@ -88,49 +88,49 @@ class CloudwatchProvider(BaseProvider, ProviderHealthMixin):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="cloudwatch:DescribeAlarms",
-            description="Required to retrieve information about alarms.",
+            description=t("Required to retrieve information about alarms."),
             documentation_url="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_DescribeAlarms.html",
             mandatory=True,
             alias="Describe Alarms",
         ),
         ProviderScope(
             name="cloudwatch:PutMetricAlarm",
-            description="Required to update information about alarms. This mainly use to add Keep as an SNS action to the alarm.",
+            description=t("Required to update information about alarms. This mainly use to add Keep as an SNS action to the alarm."),
             documentation_url="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricAlarm.html",
             mandatory=False,
             alias="Update Alarms",
         ),
         ProviderScope(
             name="sns:ListSubscriptionsByTopic",
-            description="Required to list all subscriptions of a topic, so Keep will be able to add itself as a subscription.",
+            description=t("Required to list all subscriptions of a topic, so Keep will be able to add itself as a subscription."),
             documentation_url="https://docs.aws.amazon.com/sns/latest/dg/sns-access-policy-language-api-permissions-reference.html",
             mandatory=False,
             alias="List Subscriptions",
         ),
         ProviderScope(
             name="logs:GetQueryResults",
-            description="Part of CloudWatchLogsReadOnlyAccess role. Required to retrieve the results of CloudWatch Logs Insights queries.",
+            description=t("Part of CloudWatchLogsReadOnlyAccess role. Required to retrieve the results of CloudWatch Logs Insights queries."),
             documentation_url="https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_GetQueryResults.html",
             mandatory=False,
             alias="Read Query results",
         ),
         ProviderScope(
             name="logs:DescribeQueries",
-            description="Part of CloudWatchLogsReadOnlyAccess role. Required to describe the results of CloudWatch Logs Insights queries.",
+            description=t("Part of CloudWatchLogsReadOnlyAccess role. Required to describe the results of CloudWatch Logs Insights queries."),
             documentation_url="https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_DescribeQueries.html",
             mandatory=False,
             alias="Describe Query results",
         ),
         ProviderScope(
             name="logs:StartQuery",
-            description="Part of CloudWatchLogsReadOnlyAccess role. Required to start CloudWatch Logs Insights queries.",
+            description=t("Part of CloudWatchLogsReadOnlyAccess role. Required to start CloudWatch Logs Insights queries."),
             documentation_url="https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_StartQuery.html",
             mandatory=False,
             alias="Start Logs Query",
         ),
         ProviderScope(
             name="iam:SimulatePrincipalPolicy",
-            description="Allow Keep to test the scopes of the current user/role without modifying any resource.",
+            description=t("Allow Keep to test the scopes of the current user/role without modifying any resource."),
             documentation_url="https://docs.aws.amazon.com/IAM/latest/APIReference/API_SimulatePrincipalPolicy.html",
             mandatory=False,
             alias="Simulate IAM Policy",

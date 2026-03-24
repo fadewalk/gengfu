@@ -18,7 +18,7 @@ class S3ProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "S3 Access Token (Leave empty if using IAM role at EC2)",
+            "description": t("S3 Access Token (Leave empty if using IAM role at EC2)"),
             "sensitive": True,
         },
     )
@@ -27,7 +27,7 @@ class S3ProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "S3 Secret Access Token (Leave empty if using IAM role at EC2)",
+            "description": t("S3 Secret Access Token (Leave empty if using IAM role at EC2)"),
             "sensitive": True,
         },
     )
@@ -81,6 +81,6 @@ class S3Provider(BaseProvider):
                     print(files)
                 except Exception as e:
                     self.logger.exception(
-                        "Failed to download object from S3: %s", str(e)
+                        t("Failed to download object from S3: {error}", error=str(e))
                     )
         return files

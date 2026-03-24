@@ -28,15 +28,15 @@ class GrafanaOncallProviderAuthConfig:
     token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Token",
-            "hint": "Grafana OnCall API Token",
+            "description": t("Token"),
+            "hint": t("Grafana OnCall API Token"),
         },
     )
     host: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Grafana OnCall Host",
-            "hint": "E.g. https://oncall-prod-us-central-0.grafana.net/oncall/ or http://localhost:8000/",
+            "description": t("Grafana OnCall Host"),
+            "hint": t("E.g. https://oncall-prod-us-central-0.grafana.net/oncall/ or http://localhost:8000/"),
             "validation": "any_http_url",
         },
     )
@@ -51,7 +51,7 @@ class GrafanaOncallProvider(BaseProvider):
     PROVIDER_CATEGORY = ["Incident Management"]
 
     API_URI = "api/v1"
-    provider_description = "Grafana OnCall is an oncall management solution."
+    provider_description = t("Grafana OnCall is an oncall management solution.")
 
     def __init__(
         self, context_manager: ContextManager, provider_id: str, config: ProviderConfig
@@ -126,7 +126,7 @@ class GrafanaOncallProvider(BaseProvider):
         if "integrations/v1/" in urlsplit(existing_integration_link).path:
             self.config.authentication["oncall_integration_link"] = existing_integration_link
         else:
-            Exception(t("Error creating the integration link, the URL is not OnCall formatted."))
+            raise Exception(t("Error creating the integration link, the URL is not OnCall formatted."))
 
 
     def _notify(

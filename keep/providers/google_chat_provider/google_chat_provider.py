@@ -102,7 +102,7 @@ class GoogleChatProvider(BaseProvider):
             )
 
         self.logger.debug("Alert message sent to Google Chat successfully")
-        return "Alert message sent to Google Chat successfully"
+        return t("Alert message sent to Google Chat successfully")
 
 
 if __name__ == "__main__":

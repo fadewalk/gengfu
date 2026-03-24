@@ -22,7 +22,7 @@ class ChecklyProviderAuthConfig:
     checklyApiKey: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Checkly API Key",
+            "description": t("Checkly API Key"),
             "sensitive": True,
         },
     )
@@ -30,7 +30,7 @@ class ChecklyProviderAuthConfig:
     accountId: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Checkly Account ID",
+            "description": t("Checkly Account ID"),
             "sensitive": True,
         },
     )
@@ -61,7 +61,7 @@ To send alerts from Checkly to Keep, Use the following webhook url to configure 
     PROVIDER_SCOPES = [
         ProviderScope(
             name="read_alerts",
-            description="Read alerts from Checkly",
+            description=t("Read alerts from Checkly"),
         ),
     ]
 

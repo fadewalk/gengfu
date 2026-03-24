@@ -35,14 +35,14 @@ class OpenobserveProviderAuthConfig:
     openObserveUsername: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "OpenObserve Username",
+            "description": t("OpenObserve Username"),
             "hint": "Your Username",
         },
     )
     openObservePassword: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Password",
+            "description": t("Password"),
             "hint": "Password associated with your account",
             "sensitive": True,
         },
@@ -50,7 +50,7 @@ class OpenobserveProviderAuthConfig:
     openObserveHost: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "OpenObserve host url",
+            "description": t("OpenObserve host url"),
             "hint": "e.g. http://localhost",
             "validation": "any_http_url"
         },
@@ -59,7 +59,7 @@ class OpenobserveProviderAuthConfig:
     openObservePort: UrlPort = dataclasses.field(
         metadata={
             "required": True,
-            "description": "OpenObserve Port",
+            "description": t("OpenObserve Port"),
             "hint": "e.g. 5080",
             "validation": "port"
         },
@@ -67,7 +67,7 @@ class OpenobserveProviderAuthConfig:
     organisationID: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "OpenObserve organisationID",
+            "description": t("OpenObserve organisationID"),
             "hint": "default",
         },
     )
@@ -84,7 +84,7 @@ class OpenobserveProvider(BaseProvider):
             description="User is Authorized",
             mandatory=True,
             mandatory_for_webhook=True,
-            alias="Rules Reader",
+            alias=t("Rules Reader"),
         ),
     ]
 
@@ -161,7 +161,7 @@ class OpenobserveProvider(BaseProvider):
             )
         except Exception as e:
             self.logger.error(
-                "Error while validating scopes for OpenObserve",
+                t("Error while validating scopes for OpenObserve"),
                 extra=e,
             )
             return {"authenticated": str(e)}
@@ -177,7 +177,7 @@ class OpenobserveProvider(BaseProvider):
             authenticated = response["status"]
         else:
             self.logger.error(
-                "Error while validating scopes for OpenObserve",
+                t("Error while validating scopes for OpenObserve"),
                 extra={"status_code": response.status_code, "error": response.text},
             )
 
@@ -202,16 +202,16 @@ class OpenobserveProvider(BaseProvider):
         if res.ok:
             res = res.json()
             if res["code"] == 200:
-                self.logger.info("Alert template Updated Successfully")
+                self.logger.info(t("Alert template Updated Successfully"))
             else:
 
                 self.logger.error(
-                    "Failed to update Alert Template",
+                    t("Failed to update Alert Template"),
                     extra={"code": res["code"], "error": res["message"]},
                 )
         else:
             self.logger.error(
-                "Error while updating Alert Template",
+                t("Error while updating Alert Template"),
                 extra={"status_code": res.status_code, "error": res.text},
             )
 
@@ -232,28 +232,28 @@ class OpenobserveProvider(BaseProvider):
             )
             res = res.json()
             if res["code"] == 200:
-                self.logger.info("Alert template Successfully Created")
+                self.logger.info(t("Alert template Successfully Created"))
 
             elif "already exists" in res["message"]:
                 self.logger.info(
-                    "Alert template creation failed as it already exists",
+                    t("Alert template creation failed as it already exists"),
                     extra={"code": res["code"], "error": res["message"]},
                 )
                 self.logger.info(
-                    "Attempting to Update Alert Template with latest data..."
+                    t("Attempting to Update Alert Template with latest data...")
                 )
                 self.__update_alert_template(
                     data={"body": data, "isDefault": False, "name": "KeepAlertTemplate"}
                 )
             else:
                 self.logger.error(
-                    "Alert template creation failed",
+                    t("Alert template creation failed"),
                     extra={"code": res["code"], "error": res["message"]},
                 )
 
         except Exception as e:
             self.logger.error(
-                "Error While making alert Template",
+                t("Error While making alert Template"),
                 extra=e,
             )
 
@@ -268,10 +268,10 @@ class OpenobserveProvider(BaseProvider):
             auth=self.__get_auth(),
         )
         if res.ok:
-            self.logger.info("Destination Successfully Updated")
+            self.logger.info(t("Destination Successfully Updated"))
         else:
             self.logger.error(
-                "Error while updating destination",
+                t("Error while updating destination"),
                 extra={"code": res.status_code, "error": res.text},
             )
 
@@ -298,16 +298,16 @@ class OpenobserveProvider(BaseProvider):
         # if response.ok:
         res = response.json()
         if res["code"] == 200:
-            self.logger.info("Destination Successfully Created")
+            self.logger.info(t("Destination Successfully Created"))
         elif "already exists" in res["message"]:
-            self.logger.info("Destination creation failed as it already exists")
-            self.logger.info("Attempting to Update Destination...")
+            self.logger.info(t("Destination creation failed as it already exists"))
+            self.logger.info(t("Attempting to Update Destination..."))
             self.__update_destination(
                 keep_api_url=keep_api_url, api_key=api_key, data=data
             )
         else:
             self.logger.error(
-                "Destination creation failed",
+                t("Destination creation failed"),
                 extra={"code": res["code"], "error": res["message"]},
             )
 
@@ -363,13 +363,13 @@ class OpenobserveProvider(BaseProvider):
         try:
             self.__create_alert_template()
         except Exception as e:
-            self.logger.error("Error while creating Alert Template", extra=e)
+            self.logger.error(t("Error while creating Alert Template"), extra=e)
         self.__create_destination(keep_api_url=keep_api_url, api_key=api_key)
         try:
             self.__get_and_update_actions()
         except Exception as e:
-            self.logger.error("Error while updating Alerts", extra=e)
-        self.logger.info("Webhook created")
+            self.logger.error(t("Error while updating Alerts"), extra=e)
+        self.logger.info(t("Webhook created"))
 
     @staticmethod
     def _format_alert(
@@ -401,7 +401,7 @@ class OpenobserveProvider(BaseProvider):
             rows = event.pop("rows", "")
             if not rows:
                 logger.exception(
-                    "Rows not found in the aggregated alert event",
+                    t("Rows not found in the aggregated alert event"),
                     extra={"event": event},
                 )
                 raise ValueError(t("No rows found"))

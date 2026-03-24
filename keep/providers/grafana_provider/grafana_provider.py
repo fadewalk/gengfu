@@ -42,24 +42,24 @@ class GrafanaProviderAuthConfig:
     token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Token",
-            "hint": "Grafana Token",
+            "description": t("Token"),
+            "hint": t("Grafana Token"),
             "sensitive": True,
         },
     )
     host: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Grafana host",
-            "hint": "e.g. https://keephq.grafana.net",
+            "description": t("Grafana host"),
+            "hint": t("e.g. https://keephq.grafana.net"),
             "validation": "any_http_url",
         },
     )
     datasource_uid: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Datasource UID",
-            "hint": "Provide if you want to pull topology data",
+            "description": t("Datasource UID"),
+            "hint": t("Provide if you want to pull topology data"),
         },
         default="",
     )
@@ -91,27 +91,27 @@ class GrafanaProvider(BaseTopologyProvider, ProviderHealthMixin):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="alert.rules:read",
-            description="Read Grafana alert rules in a folder and its subfolders.",
+            description=t("Read Grafana alert rules in a folder and its subfolders."),
             mandatory=True,
             mandatory_for_webhook=False,
             documentation_url="https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/custom-role-actions-scopes/",
-            alias="Rules Reader",
+            alias=t("Rules Reader"),
         ),
         ProviderScope(
             name="alert.provisioning:read",
-            description="Read all Grafana alert rules, notification policies, etc via provisioning API.",
+            description=t("Read all Grafana alert rules, notification policies, etc via provisioning API."),
             mandatory=False,
             mandatory_for_webhook=True,
             documentation_url="https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/custom-role-actions-scopes/",
-            alias="Access to alert rules provisioning API",
+            alias=t("Access to alert rules provisioning API"),
         ),
         ProviderScope(
             name="alert.provisioning:write",
-            description="Update all Grafana alert rules, notification policies, etc via provisioning API.",
+            description=t("Update all Grafana alert rules, notification policies, etc via provisioning API."),
             mandatory=False,
             mandatory_for_webhook=True,
             documentation_url="https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/custom-role-actions-scopes/",
-            alias="Access to alert rules provisioning API",
+            alias=t("Access to alert rules provisioning API"),
         ),
     ]
 

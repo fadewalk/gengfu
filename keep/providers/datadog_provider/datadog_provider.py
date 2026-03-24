@@ -135,7 +135,7 @@ class DatadogProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Datadog Api Key",
+            "description": t("Datadog API Key"),
             "hint": "https://docs.datadoghq.com/account_management/api-app-keys/#api-keys",
             "sensitive": True,
         },
@@ -144,7 +144,7 @@ class DatadogProviderAuthConfig:
     app_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Datadog App Key",
+            "description": t("Datadog App Key"),
             "hint": "https://docs.datadoghq.com/account_management/api-app-keys/#application-keys",
             "sensitive": True,
         },
@@ -153,7 +153,7 @@ class DatadogProviderAuthConfig:
     domain: HttpsUrl = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Datadog API domain",
+            "description": t("Datadog API domain"),
             "sensitive": False,
             "hint": "https://api.datadoghq.com",
             "validation": "https_url",
@@ -163,7 +163,7 @@ class DatadogProviderAuthConfig:
     environment: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Topology environment name",
+            "description": t("Topology environment name"),
             "sensitive": False,
             "hint": "Defaults to *",
         },
@@ -171,7 +171,7 @@ class DatadogProviderAuthConfig:
     )
     oauth_token: dict = dataclasses.field(
         metadata={
-            "description": "For OAuth flow",
+            "description": t("For OAuth flow"),
             "required": False,
             "sensitive": True,
             "hidden": True,
@@ -192,13 +192,13 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="events_read",
-            description="Read events data.",
+            description=t("Read events data."),
             mandatory=True,
             alias="Events Data Read",
         ),
         ProviderScope(
             name="monitors_read",
-            description="Read monitors",
+            description=t("Read monitors"),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://docs.datadoghq.com/account_management/rbac/permissions/#monitors",
@@ -206,7 +206,7 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
         ),
         ProviderScope(
             name="monitors_write",
-            description="Write monitors",
+            description=t("Write monitors"),
             mandatory=False,
             mandatory_for_webhook=True,
             documentation_url="https://docs.datadoghq.com/account_management/rbac/permissions/#monitors",
@@ -214,31 +214,31 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
         ),
         ProviderScope(
             name="create_webhooks",
-            description="Create webhooks integrations",
+            description=t("Create webhooks integrations"),
             mandatory=False,
             mandatory_for_webhook=True,
             alias="Integrations Manage",
         ),
         ProviderScope(
             name="metrics_read",
-            description="View custom metrics.",
+            description=t("View custom metrics."),
             mandatory=False,
         ),
         ProviderScope(
             name="logs_read",
-            description="Read log data.",
+            description=t("Read log data."),
             mandatory=False,
             alias="Logs Read Data",
         ),
         ProviderScope(
             name="apm_read",
-            description="Read APM data for Topology creation.",
+            description=t("Read APM data for Topology creation."),
             mandatory=False,
             alias="Read APM Data",
         ),
         ProviderScope(
             name="apm_service_catalog_read",
-            description="Read APM service catalog for Topology creation.",
+            description=t("Read APM service catalog for Topology creation."),
             mandatory=False,
             alias="Read APM service catalog Data",
         ),
@@ -248,49 +248,49 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
             name="Mute a Monitor",
             func_name="mute_monitor",
             scopes=["monitors_write"],
-            description="Mute a monitor",
+            description=t("Mute a monitor"),
             type="action",
         ),
         ProviderMethod(
             name="Unmute a Monitor",
             func_name="unmute_monitor",
             scopes=["monitors_write"],
-            description="Unmute a monitor",
+            description=t("Unmute a monitor"),
             type="action",
         ),
         ProviderMethod(
             name="Get Monitor Events",
             func_name="get_monitor_events",
             scopes=["events_read"],
-            description="Get all events related to this monitor",
+            description=t("Get all events related to this monitor"),
             type="view",
         ),
         ProviderMethod(
             name="Get a Trace",
             func_name="get_trace",
             scopes=["apm_read"],
-            description="Get trace by ID",
+            description=t("Get trace by ID"),
             type="view",
         ),
         ProviderMethod(
             name="Create Incident",
             func_name="create_incident",
             scopes=["incidents_write"],
-            description="Create an incident",
+            description=t("Create an incident"),
             type="action",
         ),
         ProviderMethod(
             name="Resolve Incident",
             func_name="resolve_incident",
             scopes=["incidents_write"],
-            description="Resolve an active incident",
+            description=t("Resolve an active incident"),
             type="action",
         ),
         ProviderMethod(
             name="Add Incident Timeline Note",
             func_name="add_incident_timeline_note",
             scopes=["incidents_write"],
-            description="Add a note to an incident timeline",
+            description=t("Add a note to an incident timeline"),
             type="action",
         ),
     ]

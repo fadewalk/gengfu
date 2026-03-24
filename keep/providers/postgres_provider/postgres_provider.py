@@ -19,31 +19,31 @@ from keep.validation.fields import NoSchemeUrl, UrlPort
 @pydantic.dataclasses.dataclass
 class PostgresProviderAuthConfig:
     username: str = dataclasses.field(
-        metadata={"required": True, "description": "Postgres username"}
+        metadata={"required": True, "description": t("Postgres username")}
     )
     password: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Postgres password",
+            "description": t("Postgres password"),
             "sensitive": True,
         }
     )
     host: NoSchemeUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Postgres hostname",
+            "description": t("Postgres hostname"),
             "validation": "no_scheme_url",
         }
     )
     database: str | None = dataclasses.field(
-        metadata={"required": False, "description": "Postgres database name"},
+        metadata={"required": False, "description": t("Postgres database name")},
         default=None,
     )
     port: UrlPort | None = dataclasses.field(
         default=5432,
         metadata={
             "required": False,
-            "description": "Postgres port",
+            "description": t("Postgres port"),
             "validation": "port",
         },
     )
@@ -51,6 +51,7 @@ class PostgresProviderAuthConfig:
 
 class PostgresProvider(BaseProvider):
     """Enrich alerts with data from Postgres."""
+    provider_description = t("Enrich alerts with data from Postgres.")
 
     PROVIDER_DISPLAY_NAME = "PostgreSQL"
     PROVIDER_CATEGORY = ["Database"]

@@ -37,7 +37,7 @@ class Signl4ProviderAuthConfig:
     signl4_integration_secret: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "SIGNL4 integration or team secret",
+            "description": t("SIGNL4 integration or team secret"),
             "sensitive": True,
         },
     )
@@ -45,6 +45,7 @@ class Signl4ProviderAuthConfig:
 
 class Signl4Provider(BaseProvider):
     """Trigger SIGNL4 alerts."""
+    provider_description = t("Trigger SIGNL4 alerts.")
 
     PROVIDER_DISPLAY_NAME = "SIGNL4"
     PROVIDER_CATEGORY = ["Incident Management"]
@@ -52,9 +53,9 @@ class Signl4Provider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="signl4:create",
-            description="Create SIGNL4 alerts",
+            description=t("Create SIGNL4 alerts"),
             mandatory=True,
-            alias="Create alerts",
+            alias=t("Create alerts"),
         ),
     ]
 

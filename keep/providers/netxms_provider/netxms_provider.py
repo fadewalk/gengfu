@@ -11,7 +11,7 @@ from keep.providers.models.provider_config import ProviderConfig
 @pydantic.dataclasses.dataclass
 class NetxmsProviderAuthConfig:
     api_key: str = dataclasses.field(
-        metadata={"required": True, "description": "NetXMS API key", "sensitive": True}
+        metadata={"required": True, "description": t("NetXMS API key"), "sensitive": True}
     )
 
 

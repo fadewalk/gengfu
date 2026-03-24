@@ -24,13 +24,13 @@ class AxiomProviderAuthConfig:
     """
 
     api_token: str = dataclasses.field(
-        metadata={"required": True, "sensitive": True, "description": "Axiom API Token"}
+        metadata={"required": True, "sensitive": True, "description": t("Axiom API Token")}
     )
     organization_id: Optional[str] = dataclasses.field(
         metadata={
             "required": False,
             "sensitive": False,
-            "description": "Axiom Organization ID",
+            "description": t("Axiom Organization ID"),
         },
         default=None,
     )

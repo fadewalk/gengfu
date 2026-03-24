@@ -24,7 +24,7 @@ class TeamsProviderAuthConfig:
     webhook_url: HttpsUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Teams Webhook Url",
+            "description": t("Teams Webhook Url"),
             "sensitive": True,
             "validation": "https_url",
         }
@@ -33,6 +33,7 @@ class TeamsProviderAuthConfig:
 
 class TeamsProvider(BaseProvider):
     """Send alert message to Teams."""
+    provider_description = t("Send alert message to Teams.")
 
     PROVIDER_DISPLAY_NAME = "Microsoft Teams"
     PROVIDER_CATEGORY = ["Collaboration"]

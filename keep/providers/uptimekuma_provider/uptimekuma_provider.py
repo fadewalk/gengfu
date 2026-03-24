@@ -24,7 +24,7 @@ class UptimekumaProviderAuthConfig:
     host_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "UptimeKuma Host URL",
+            "description": t("UptimeKuma Host URL"),
             "sensitive": False,
             "validation": "any_http_url"
         },
@@ -33,7 +33,7 @@ class UptimekumaProviderAuthConfig:
     username: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "UptimeKuma Username",
+            "description": t("UptimeKuma Username"),
             "sensitive": False,
         },
     )
@@ -41,7 +41,7 @@ class UptimekumaProviderAuthConfig:
     password: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "UptimeKuma Password",
+            "description": t("UptimeKuma Password"),
             "sensitive": True,
         },
     )
@@ -55,7 +55,7 @@ class UptimekumaProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="alerts",
-            description="Read alerts from UptimeKuma",
+            description=t("Read alerts from UptimeKuma"),
         )
     ]
 

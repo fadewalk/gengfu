@@ -19,12 +19,12 @@ class TrelloProviderAuthConfig:
     """Trello authentication configuration."""
 
     api_key: str = dataclasses.field(
-        metadata={"required": True, "description": "Trello API Key", "sensitive": True}
+        metadata={"required": True, "description": t("Trello API Key"), "sensitive": True}
     )
     api_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Trello API Token",
+            "description": t("Trello API Token"),
             "sensitive": True,
         }
     )
@@ -32,6 +32,7 @@ class TrelloProviderAuthConfig:
 
 class TrelloProvider(BaseProvider):
     """Enrich alerts with data from Trello."""
+    provider_description = t("Enrich alerts with data from Trello.")
 
     PROVIDER_DISPLAY_NAME = "Trello"
     PROVIDER_CATEGORY = ["Collaboration"]

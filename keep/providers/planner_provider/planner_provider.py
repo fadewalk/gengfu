@@ -22,21 +22,21 @@ class PlannerProviderAuthConfig:
     tenant_id: str | None = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Planner Tenant ID",
+            "description": t("Planner Tenant ID"),
             "sensitive": True,
         },
     )
     client_id: str | None = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Planner Client ID",
+            "description": t("Planner Client ID"),
             "sensitive": True,
         }
     )
     client_secret: str | None = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Planner Client Secret",
+            "description": t("Planner Client Secret"),
             "sensitive": True,
         }
     )

@@ -22,7 +22,7 @@ class TwilioProviderAuthConfig:
     account_sid: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Twilio Account SID",
+            "description": t("Twilio Account SID"),
             "sensitive": False,
             "documentation_url": "https://support.twilio.com/hc/en-us/articles/223136027-Auth-Tokens-and-How-to-Change-Them",
         }
@@ -31,7 +31,7 @@ class TwilioProviderAuthConfig:
     api_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Twilio API Token",
+            "description": t("Twilio API Token"),
             "sensitive": True,
             "documentation_url": "https://support.twilio.com/hc/en-us/articles/223136027-Auth-Tokens-and-How-to-Change-Them",
         }
@@ -40,7 +40,7 @@ class TwilioProviderAuthConfig:
     from_phone_number: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Twilio Phone Number",
+            "description": t("Twilio Phone Number"),
             "sensitive": False,
             "documentation_url": "https://www.twilio.com/en-us/guidelines/regulatory",
         }
@@ -49,15 +49,16 @@ class TwilioProviderAuthConfig:
 
 class TwilioProvider(BaseProvider):
     """Send SMS via Twilio."""
+    provider_description = t("Send SMS via Twilio.")
 
     PROVIDER_DISPLAY_NAME = "Twilio"
     PROVIDER_CATEGORY = ["Collaboration"]
     PROVIDER_SCOPES = [
         ProviderScope(
             name="send_sms",
-            description="The API token has permission to send the SMS",
+            description=t("The API token has permission to send the SMS"),
             mandatory=True,
-            alias="Send SMS",
+            alias=t("Send SMS"),
         )
     ]
 

@@ -34,7 +34,7 @@ class QuickchartProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Quickchart API Key",
+            "description": t("Quickchart API Key"),
             "sensitive": True,
         },
         default=None,
@@ -74,7 +74,7 @@ class QuickchartProvider(BaseProvider):
 
         if not alerts:
             self.logger.warning(
-                "No alerts found for this fingerprint",
+                t("No alerts found for this fingerprint"),
                 extra={
                     "tenant_id": self.context_manager.tenant_id,
                     "fingerprint": fingerprint,

@@ -25,7 +25,7 @@ class ElasticProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "Elasticsearch host",
+            "description": t("Elasticsearch host"),
             "validation": "any_http_url",
         },
     )
@@ -33,14 +33,14 @@ class ElasticProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "Elasticsearch cloud id",
-            "hint": "Required for elastic.co managed elastic - should be smth like clustername-prod:dXMtY2....==",
+            "description": t("Elasticsearch cloud id"),
+            "hint": t("Required for elastic.co managed elastic - should be smth like clustername-prod:dXMtY2....=="),
         },
     )
     verify: bool = dataclasses.field(
         metadata={
-            "description": "Enable SSL verification",
-            "hint": "SSL verification is enabled by default",
+            "description": t("Enable SSL verification"),
+            "hint": t("SSL verification is enabled by default"),
             "type": "switch",
         },
         default=True,
@@ -48,17 +48,17 @@ class ElasticProviderAuthConfig:
     api_key: typing.Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "Elasticsearch API Key",
+            "description": t("Elasticsearch API Key"),
             "sensitive": True,
             "config_sub_group": "api_key",
             "config_main_group": "authentication",
-            "hint": "Should be the encoded api key in base64",
+            "hint": t("Should be the encoded api key in base64"),
         },
     )
     username: typing.Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "Elasticsearch username",
+            "description": t("Elasticsearch username"),
             "config_sub_group": "username_password",
             "config_main_group": "authentication",
         },
@@ -66,7 +66,7 @@ class ElasticProviderAuthConfig:
     password: typing.Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "Elasticsearch password",
+            "description": t("Elasticsearch password"),
             "sensitive": True,
             "config_sub_group": "username_password",
             "config_main_group": "authentication",
@@ -99,9 +99,9 @@ class ElasticProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="connect_to_server",
-            description="The user can connect to the server",
+            description=t("The user can connect to the server"),
             mandatory=True,
-            alias="Connect to the server",
+            alias=t("Connect to the server"),
         )
     ]
 
@@ -203,8 +203,8 @@ class ElasticProvider(BaseProvider):
     @staticmethod
     def get_neccessary_config_keys():
         return {
-            "host": "Elastic hostname e.g host:port. for cloud_id use cloud_id",
-            "api_key": "Elastic Api Key",
+            "host": t("Elastic hostname e.g host:port. for cloud_id use cloud_id"),
+            "api_key": t("Elastic Api Key"),
         }
 
     def dispose(self):

@@ -24,8 +24,8 @@ class Auth0ProviderAuthConfig:
     domain: HttpsUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Auth0 Domain",
-            "hint": "https://tenantname.us.auth0.com",
+            "description": t("Auth0 Domain"),
+            "hint": t("https://tenantname.us.auth0.com"),
             "validation": "https_url",
         },
     )
@@ -34,8 +34,8 @@ class Auth0ProviderAuthConfig:
         metadata={
             "required": True,
             "sensitive": True,
-            "description": "Auth0 API Token",
-            "hint": "https://manage.auth0.com/dashboard/us/YOUR_ACCOUNT/apis/management/explorer",
+            "description": t("Auth0 API Token"),
+            "hint": t("https://manage.auth0.com/dashboard/us/YOUR_ACCOUNT/apis/management/explorer"),
         },
     )
 

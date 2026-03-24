@@ -22,29 +22,29 @@ class PrometheusProviderAuthConfig:
     url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Prometheus server URL",
+            "description": t("Prometheus server URL"),
             "hint": "https://prometheus-us-central1.grafana.net/api/prom",
             "validation": "any_http_url",
         }
     )
     username: str = dataclasses.field(
         metadata={
-            "description": "Prometheus username",
+            "description": t("Prometheus username"),
             "sensitive": False,
         },
         default="",
     )
     password: str = dataclasses.field(
         metadata={
-            "description": "Prometheus password",
+            "description": t("Prometheus password"),
             "sensitive": True,
         },
         default="",
     )
     verify: bool = dataclasses.field(
         metadata={
-            "description": "Verify SSL certificates",
-            "hint": "Set to false to allow self-signed certificates",
+            "description": t("Verify SSL certificates"),
+            "hint": t("Set to false to allow self-signed certificates"),
             "sensitive": False,
         },
         default=True,
@@ -53,8 +53,9 @@ class PrometheusProviderAuthConfig:
 
 class PrometheusProvider(BaseProvider, ProviderHealthMixin):
     """Get alerts from Prometheus into Keep."""
+    provider_description = t("Get alerts from Prometheus into Keep.")
 
-    webhook_description = "This provider takes advantage of configurable webhooks available with Prometheus Alertmanager. Use the following template to configure AlertManager:"
+    webhook_description = t("This provider takes advantage of configurable webhooks available with Prometheus Alertmanager. Use the following template to configure AlertManager:")
     webhook_template = """route:
   receiver: "keep"
   group_by: ['alertname']
@@ -91,7 +92,7 @@ receivers:
 
     PROVIDER_SCOPES = [
         ProviderScope(
-            name="connectivity", description="Connectivity Test", mandatory=True
+            name="connectivity", description=t("Connectivity Test"), mandatory=True
         )
     ]
     FINGERPRINT_FIELDS = ["fingerprint"]

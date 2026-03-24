@@ -25,7 +25,7 @@ class VictorialogsProviderAuthConfig:
     host_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "VictoriaLogs Host URL",
+            "description": t("VictoriaLogs Host URL"),
             "hint": "e.g. https://victorialogs.example.com",
             "sensitive": False,
             "validation": "any_http_url",
@@ -37,7 +37,7 @@ class VictorialogsProviderAuthConfig:
             default=typing.cast(typing.Literal["NoAuth", "Basic", "Bearer"], "NoAuth"),
             metadata={
                 "required": True,
-                "description": "Authentication Type",
+                "description": t("Authentication Type"),
                 "type": "select",
                 "options": ["NoAuth", "Basic", "Bearer"],
             },
@@ -49,7 +49,7 @@ class VictorialogsProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "HTTP basic authentication - Username",
+            "description": t("HTTP basic authentication - Username"),
             "sensitive": False,
             "config_sub_group": "basic_authentication",
             "config_main_group": "authentication",
@@ -60,7 +60,7 @@ class VictorialogsProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "HTTP basic authentication - Password",
+            "description": t("HTTP basic authentication - Password"),
             "sensitive": True,
             "config_sub_group": "basic_authentication",
             "config_main_group": "authentication",
@@ -72,7 +72,7 @@ class VictorialogsProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "Bearer Token",
+            "description": t("Bearer Token"),
             "sensitive": True,
             "config_sub_group": "bearer_token",
             "config_main_group": "authentication",
@@ -83,7 +83,7 @@ class VictorialogsProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "X-Scope-OrgID Header",
+            "description": t("X-Scope-OrgID Header"),
             "sensitive": False,
             "config_sub_group": "bearer_token",
             "config_main_group": "authentication",
@@ -93,7 +93,7 @@ class VictorialogsProviderAuthConfig:
         default=False,
         metadata={
             "name": "insecure",
-            "description": "Skip TLS verification",
+            "description": t("Skip TLS verification"),
             "required": False,
             "sensitive": False,
             "type": "switch",
@@ -113,7 +113,7 @@ class VictorialogsProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="The instance is valid and the user is authenticated",
+            description=t("The instance is valid and the user is authenticated"),
         ),
     ]
 

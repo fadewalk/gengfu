@@ -21,7 +21,7 @@ class OpenshiftProviderAuthConfig:
     api_server: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "name": "api_server",
-            "description": "The openshift api server url",
+            "description": t("The openshift api server url"),
             "required": True,
             "sensitive": False,
             "validation": "any_http_url",
@@ -30,7 +30,7 @@ class OpenshiftProviderAuthConfig:
     token: str = dataclasses.field(
         metadata={
             "name": "token",
-            "description": "The openshift token",
+            "description": t("The openshift token"),
             "required": True,
             "sensitive": True,
         },
@@ -39,7 +39,7 @@ class OpenshiftProviderAuthConfig:
         default=False,
         metadata={
             "name": "insecure",
-            "description": "Skip TLS verification",
+            "description": t("Skip TLS verification"),
             "required": False,
             "sensitive": False,
             "type": "switch",
@@ -59,7 +59,7 @@ class OpenshiftProvider(BaseProvider):
             name="connect_to_openshift",
             description="Check if the provided token can connect to the openshift server",
             mandatory=True,
-            alias="Connect to the openshift",
+            alias=t("Connect to the openshift"),
         )
     ]
 
@@ -172,7 +172,7 @@ class OpenshiftProvider(BaseProvider):
                 }
                 
         except Exception as e:
-            self.logger.exception("Error validating scopes for OpenShift provider")
+            self.logger.exception(t("Error validating scopes for OpenShift provider"))
             scopes = {
                 "connect_to_openshift": str(e),
             }

@@ -142,7 +142,7 @@ class IncidentioProvider(BaseProvider, ProviderHealthMixin):
             else:
                 self.logger.error(f"Failed to validate scopes: {response.status_code}")
                 scopes = {
-                    "authenticated": "Unable to query incidents: {response.status_code}",
+                    "authenticated": t("Unable to query incidents: {status}", status=response.status_code),
                     "read_access": False,
                 }
         except Exception as e:
@@ -150,7 +150,7 @@ class IncidentioProvider(BaseProvider, ProviderHealthMixin):
                 "Error getting IncidentIO scopes:", extra={"exception": str(e)}
             )
             scopes = {
-                "authenticated": "Unable to query incidents: {e}",
+                "authenticated": t("Unable to query incidents: {error}", error=str(e)),
                 "read_access": False,
             }
 

@@ -25,7 +25,7 @@ class BigqueryProviderAuthConfig:
     service_account_json: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "The service account JSON with container.viewer role",
+            "description": t("The service account JSON with container.viewer role"),
             "sensitive": True,
             "type": "file",
             "name": "service_account_json",
@@ -36,8 +36,8 @@ class BigqueryProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "Google Cloud project ID. If not provided, "
-            "it will try to fetch it from the environment variable 'GOOGLE_CLOUD_PROJECT'",
+            "description": t("Google Cloud project ID. If not provided, "
+            "it will try to fetch it from the environment variable 'GOOGLE_CLOUD_PROJECT'"),
         },
     )
 

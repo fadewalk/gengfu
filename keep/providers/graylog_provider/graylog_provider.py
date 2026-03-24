@@ -37,30 +37,30 @@ class GraylogProviderAuthConfig:
     graylog_user_name: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Username",
-            "hint": "Your Username associated with the Access Token",
+            "description": t("Username"),
+            "hint": t("Your Username associated with the Access Token"),
         },
     )
     graylog_access_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Graylog Access Token",
-            "hint": "Graylog Access Token ",
+            "description": t("Graylog Access Token"),
+            "hint": t("Graylog Access Token "),
             "sensitive": True,
         },
     )
     deployment_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Deployment Url",
-            "hint": "Example: http://127.0.0.1:9000",
+            "description": t("Deployment Url"),
+            "hint": t("Example: http://127.0.0.1:9000"),
             "validation": "any_http_url",
         },
     )
     verify: bool = dataclasses.field(
         metadata={
-            "description": "Verify SSL certificates",
-            "hint": "Set to false to allow self-signed certificates",
+            "description": t("Verify SSL certificates"),
+            "hint": t("Set to false to allow self-signed certificates"),
             "sensitive": False,
         },
         default=True,
@@ -99,17 +99,17 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="Mandatory for all operations, ensures the user is authenticated.",
+            description=t("Mandatory for all operations, ensures the user is authenticated."),
             mandatory=True,
             mandatory_for_webhook=True,
-            alias="Rules Reader",
+            alias=t("Rules Reader"),
         ),
         ProviderScope(
             name="authorized",
-            description="Mandatory for querying incidents and managing resources, ensures the user has `Admin` privileges.",
+            description=t("Mandatory for querying incidents and managing resources, ensures the user has `Admin` privileges."),
             mandatory=True,
             mandatory_for_webhook=True,
-            alias="Rules Reader",
+            alias=t("Rules Reader"),
         ),
     ]
     PROVIDER_METHODS = [
@@ -117,7 +117,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
             name="Search",
             func_name="search",
             scopes=["authorized"],
-            description="Search using elastic query language in Graylog",
+            description=t("Search using elastic query language in Graylog"),
             type="action",
         ),
     ]
@@ -325,7 +325,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
                 authorized = True
             else:
                 self.logger.warning("User lacks required admin privileges")
-                authorized = "Missing admin Privileges"
+                authorized = t("Missing admin Privileges")
 
         except Exception as e:
             self.logger.error(

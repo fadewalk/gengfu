@@ -24,7 +24,7 @@ class AsanaProviderAuthConfig:
     pat_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Personal Access Token for Asana.",
+            "description": t("Personal Access Token for Asana."),
             "sensitive": True,
             "documentation_url": "https://developers.asana.com/docs/personal-access-token",
         }
@@ -41,7 +41,7 @@ class AsanaProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="User is authenticated to Asana.",
+            description=t("User is authenticated to Asana."),
             mandatory=True,
         )
     ]

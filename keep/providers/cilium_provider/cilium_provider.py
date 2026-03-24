@@ -19,7 +19,7 @@ class CiliumProviderAuthConfig:
     cilium_base_endpoint: NoSchemeUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "The base endpoint of the cilium hubble relay",
+            "description": t("The base endpoint of the Cilium Hubble Relay"),
             "sensitive": False,
             "hint": "localhost:4245",
             "validation": "no_scheme_url",

@@ -27,14 +27,14 @@ class WebhookProviderAuthConfig:
     url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Webhook URL",
+            "description": t("Webhook URL"),
             "validation": "any_http_url",
         }
     )
 
     verify: bool = dataclasses.field(
         metadata={
-            "description": "Enable SSL verification",
+            "description": t("Enable SSL verification"),
             "hint": "Whether to verify the SSL certificate of the webhook URL or not",
             "type": "switch",
         },
@@ -45,7 +45,7 @@ class WebhookProviderAuthConfig:
         default="POST",
         metadata={
             "required": True,
-            "description": "HTTP method",
+            "description": t("HTTP method"),
             "type": "select",
             "options": ["POST", "GET", "PUT", "DELETE"],
         },
@@ -54,7 +54,7 @@ class WebhookProviderAuthConfig:
     http_basic_authentication_username: typing.Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "HTTP basic authentication - Username",
+            "description": t("HTTP basic authentication - Username"),
             "config_sub_group": "basic_authentication",
             "config_main_group": "authentication",
         },
@@ -63,7 +63,7 @@ class WebhookProviderAuthConfig:
     http_basic_authentication_password: typing.Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "HTTP basic authentication - Password",
+            "description": t("HTTP basic authentication - Password"),
             "sensitive": True,
             "config_sub_group": "basic_authentication",
             "config_main_group": "authentication",
@@ -73,7 +73,7 @@ class WebhookProviderAuthConfig:
     api_key: typing.Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "API key",
+            "description": t("API key"),
             "sensitive": True,
             "config_sub_group": "api_key",
             "config_main_group": "authentication",
@@ -83,7 +83,7 @@ class WebhookProviderAuthConfig:
     headers: typing.Optional[list[dict[str, str]]] = dataclasses.field(
         default=None,
         metadata={
-            "description": "Headers",
+            "description": t("Headers"),
             "type": "form",
         },
     )
@@ -91,6 +91,7 @@ class WebhookProviderAuthConfig:
 
 class WebhookProvider(BaseProvider):
     """Enrich alerts with data from Webhook."""
+    provider_description = t("Enrich alerts with data from Webhook.")
 
     BLACKLISTED_ENDPOINTS = [
         "metadata.google.internal",
@@ -105,7 +106,7 @@ class WebhookProvider(BaseProvider):
         ProviderScope(
             name="send_webhook",
             mandatory=True,
-            alias="Send Webhook",
+            alias=t("Send Webhook"),
         )
     ]
 

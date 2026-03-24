@@ -151,21 +151,21 @@ To send alerts from LibreNMS to Keep, Use the following webhook url to configure
             return [
                 AlertDto(
                     id=alert.get("id"),
-                    name=alert.get("rule_name", "Could not fetch rule name"),
-                    hostname=alert.get("hostname", "Could not fetch hostname"),
-                    device_id=alert.get("device_id", "Could not fetch device id"),
-                    rule_id=alert.get("rule_id", "Could not fetch rule id"),
+                    name=alert.get("rule_name", t("Could not fetch rule name")),
+                    hostname=alert.get("hostname", t("Could not fetch hostname")),
+                    device_id=alert.get("device_id", t("Could not fetch device id")),
+                    rule_id=alert.get("rule_id", t("Could not fetch rule id")),
                     status=LibreNmsProvider.STATUS_MAP.get(
                         alert.get("state"), AlertStatus.FIRING
                     ),
-                    alerted=alert.get("alerted", "Could not fetch alerted"),
-                    open=alert.get("open", "Could not fetch open"),
-                    note=alert.get("note", "Could not fetch note"),
-                    timestamp=alert.get("timestamp", "Could not fetch timestamp"),
+                    alerted=alert.get("alerted", t("Could not fetch alerted")),
+                    open=alert.get("open", t("Could not fetch open")),
+                    note=alert.get("note", t("Could not fetch note")),
+                    timestamp=alert.get("timestamp", t("Could not fetch timestamp")),
                     lastReceived=alert.get(
-                        "timestamp", "Could not fetch last received"
+                        "timestamp", t("Could not fetch last received")
                     ),
-                    info=alert.get("info", "Could not fetch info"),
+                    info=alert.get("info", t("Could not fetch info")),
                     severity=LibreNmsProvider.SEVERITY_MAP.get(
                         alert.get("severity"), AlertSeverity.INFO
                     ),
@@ -184,13 +184,13 @@ To send alerts from LibreNMS to Keep, Use the following webhook url to configure
     ) -> AlertDto | list[AlertDto]:
 
         if event.get("description") == "":
-            description = event.get("title", "Could not fetch description")
+            description = event.get("title", t("Could not fetch description"))
         else:
-            description = event.get("description", "Could not fetch description")
+            description = event.get("description", t("Could not fetch description"))
 
         alert = AlertDto(
             id=event.get("id"),
-            name=event.get("name", "Could not fetch rule name"),
+            name=event.get("name", t("Could not fetch rule name")),
             status=LibreNmsProvider.STATUS_MAP.get(
                 event.get("state"), AlertStatus.FIRING
             ),
@@ -199,37 +199,37 @@ To send alerts from LibreNMS to Keep, Use the following webhook url to configure
             ),
             timestamp=event.get("timestamp"),
             lastReceived=event.get("timestamp"),
-            title=event.get("title", "Could not fetch title"),
-            hostname=event.get("hostname", "Could not fetch hostname"),
-            device_id=event.get("device_id", "Could not fetch device id"),
-            sysDescr=event.get("sysDescr", "Could not fetch sysDescr"),
-            sysName=event.get("sysName", "Could not fetch sysName"),
-            sysContact=event.get("sysContact", "Could not fetch sysContact"),
-            host_os=event.get("os", "Could not fetch host_os"),
-            host_type=event.get("type", "Could not fetch host_type"),
-            ip=event.get("ip", "Could not fetch ip"),
-            display=event.get("display", "Could not fetch display"),
-            version=event.get("version", "Could not fetch version"),
-            hardware=event.get("hardware", "Could not fetch hardware"),
-            features=event.get("features", "Could not fetch features"),
-            serial=event.get("serial", "Could not fetch serial"),
-            status_reason=event.get("status_reason", "Could not fetch status_reason"),
-            location=event.get("location", "Could not fetch location"),
+            title=event.get("title", t("Could not fetch title")),
+            hostname=event.get("hostname", t("Could not fetch hostname")),
+            device_id=event.get("device_id", t("Could not fetch device id")),
+            sysDescr=event.get("sysDescr", t("Could not fetch sysDescr")),
+            sysName=event.get("sysName", t("Could not fetch sysName")),
+            sysContact=event.get("sysContact", t("Could not fetch sysContact")),
+            host_os=event.get("os", t("Could not fetch host_os")),
+            host_type=event.get("type", t("Could not fetch host_type")),
+            ip=event.get("ip", t("Could not fetch ip")),
+            display=event.get("display", t("Could not fetch display")),
+            version=event.get("version", t("Could not fetch version")),
+            hardware=event.get("hardware", t("Could not fetch hardware")),
+            features=event.get("features", t("Could not fetch features")),
+            serial=event.get("serial", t("Could not fetch serial")),
+            status_reason=event.get("status_reason", t("Could not fetch status_reason")),
+            location=event.get("location", t("Could not fetch location")),
             description=description,
-            notes=event.get("notes", "Could not fetch notes"),
-            uptime=event.get("uptime", "Could not fetch uptime"),
-            uptime_sort=event.get("uptime_sort", "Could not fetch uptime_sort"),
-            uptime_long=event.get("uptime_long", "Could not fetch uptime_long"),
-            elapsed=event.get("elapsed", "Could not fetch elapsed"),
-            alerted=event.get("alerted", "Could not fetch alerted"),
-            alert_id=event.get("alert_id", "Could not fetch alert_id"),
-            alert_notes=event.get("alert_notes", "Could not fetch alert_notes"),
-            proc=event.get("proc", "Could not fetch proc"),
-            rule_id=event.get("rule_id", "Could not fetch rule_id"),
-            faults=event.get("faults", "Could not fetch faults"),
-            uid=event.get("uid", "Could not fetch uid"),
-            rule=event.get("rule", "Could not fetch rule"),
-            builder=event.get("builder", "Could not fetch builder"),
+            notes=event.get("notes", t("Could not fetch notes")),
+            uptime=event.get("uptime", t("Could not fetch uptime")),
+            uptime_sort=event.get("uptime_sort", t("Could not fetch uptime_sort")),
+            uptime_long=event.get("uptime_long", t("Could not fetch uptime_long")),
+            elapsed=event.get("elapsed", t("Could not fetch elapsed")),
+            alerted=event.get("alerted", t("Could not fetch alerted")),
+            alert_id=event.get("alert_id", t("Could not fetch alert_id")),
+            alert_notes=event.get("alert_notes", t("Could not fetch alert_notes")),
+            proc=event.get("proc", t("Could not fetch proc")),
+            rule_id=event.get("rule_id", t("Could not fetch rule_id")),
+            faults=event.get("faults", t("Could not fetch faults")),
+            uid=event.get("uid", t("Could not fetch uid")),
+            rule=event.get("rule", t("Could not fetch rule")),
+            builder=event.get("builder", t("Could not fetch builder")),
             source=["libre_nms"],
         )
 

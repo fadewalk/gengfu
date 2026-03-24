@@ -32,15 +32,15 @@ class DynatraceProviderAuthConfig:
     environment_id: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Dynatrace's environment ID",
-            "hint": "e.g. abcde",
+            "description": t("Dynatrace's environment ID"),
+            "hint": t("e.g. abcde"),
         },
     )
     api_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Dynatrace's API token",
-            "hint": "e.g. dt0c01.abcde...",
+            "description": t("Dynatrace's API token"),
+            "hint": t("e.g. dt0c01.abcde..."),
             "sensitive": True,
         },
     )
@@ -48,8 +48,8 @@ class DynatraceProviderAuthConfig:
         default="Default",
         metadata={
             "required": False,
-            "description": "Dynatrace's alerting profile for the webhook integration. Defaults to 'Default'",
-            "hint": "The name of the alerting profile to use for the webhook integration",
+            "description": t("Dynatrace's alerting profile for the webhook integration. Defaults to 'Default'"),
+            "hint": t("The name of the alerting profile to use for the webhook integration"),
         },
     )
 
@@ -64,19 +64,19 @@ class DynatraceProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="problems.read",
-            description="Read access to Dynatrace problems",
+            description=t("Read access to Dynatrace problems"),
             mandatory=True,
             alias="Problem Read",
         ),
         ProviderScope(
             name="settings.read",
-            description="Read access to Dynatrace settings [for webhook installation]",
+            description=t("Read access to Dynatrace settings [for webhook installation]"),
             mandatory=False,
             alias="Settings Read",
         ),
         ProviderScope(
             name="settings.write",
-            description="Write access to Dynatrace settings [for webhook installation]",
+            description=t("Write access to Dynatrace settings [for webhook installation]"),
             mandatory=False,
             alias="Settings Write",
         ),

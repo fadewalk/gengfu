@@ -27,18 +27,18 @@ class SentryProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Sentry Api Key",
+            "description": t("Sentry Api Key"),
             "sensitive": True,
             "hint": "https://docs.sentry.io/product/integrations/integration-platform/internal-integration/",
         }
     )
     organization_slug: str = dataclasses.field(
-        metadata={"required": True, "description": "Sentry organization slug"}
+        metadata={"required": True, "description": t("Sentry organization slug")}
     )
     api_url: HttpsUrl = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Sentry API URL",
+            "description": t("Sentry API URL"),
             "hint": "https://sentry.io/api/0 (see https://docs.sentry.io/api/)",
             "sensitive": False,
             "validation": "https_url",
@@ -48,8 +48,8 @@ class SentryProviderAuthConfig:
     project_slug: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Sentry project slug within the organization",
-            "hint": "If you want to connect sentry to a specific project within an organization",
+            "description": t("Sentry project slug within the organization"),
+            "hint": t("If you want to connect sentry to a specific project within an organization"),
         },
         default=None,
     )
@@ -57,24 +57,25 @@ class SentryProviderAuthConfig:
 
 class SentryProvider(BaseProvider):
     """Enrich alerts with data from Sentry."""
+    provider_description = t("Enrich alerts with data from Sentry.")
 
     SENTRY_DEFAULT_API = "https://sentry.io/api/0"
     PROVIDER_SCOPES = [
         ProviderScope(
             "event:read",
-            description="Read events and issues",
+            description=t("Read events and issues"),
             mandatory=True,
             documentation_url="https://docs.sentry.io/api/events/list-a-projects-issues/?original_referrer=https%3A%2F%2Fdocs.sentry.io%2Fapi%2F",
         ),
         ProviderScope(
             "project:read",
-            description="Read projects in organization",
+            description=t("Read projects in organization"),
             mandatory=True,
             documentation_url="https://docs.sentry.io/api/projects/list-your-projects/?original_referrer=https%3A%2F%2Fdocs.sentry.io%2Fapi%2F",
         ),
         ProviderScope(
             "project:write",
-            description="Write permission for projects in organization",
+            description=t("Write permission for projects in organization"),
             mandatory=False,
             mandatory_for_webhook=True,
         ),

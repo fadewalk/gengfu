@@ -141,7 +141,7 @@ class JiraProvider(BaseProvider):
             resp.raise_for_status()
         except Exception:
             scopes = {
-                scope.name: "Failed to authenticate with Jira - wrong credentials"
+                scope.name: t("Failed to authenticate with Jira - wrong credentials")
                 for scope in JiraProvider.PROVIDER_SCOPES
             }
             return scopes
@@ -162,7 +162,7 @@ class JiraProvider(BaseProvider):
             resp.raise_for_status()
         except Exception as e:
             scopes = {
-                scope.name: f"Failed to authenticate with Jira: {e}"
+                scope.name: t("Failed to authenticate with Jira: {error}", error=str(e))
                 for scope in JiraProvider.PROVIDER_SCOPES
             }
             return scopes
@@ -302,7 +302,7 @@ class JiraProvider(BaseProvider):
             return transitions
         except Exception as e:
             raise ProviderException(
-                f"Failed to fetch transitions for issue {issue_id}: {e}"
+                t("Failed to fetch transitions for issue {issue_id}: {error}", issue_id=issue_id, error=str(e))
             )
 
     def __transition_issue(

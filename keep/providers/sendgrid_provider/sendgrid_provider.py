@@ -29,7 +29,7 @@ class SendgridProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "SendGrid API key",
+            "description": t("SendGrid API key"),
             "hint": "https://sendgrid.com/docs/ui/account-and-settings/api-keys/",
             "sensitive": True,
         }
@@ -37,7 +37,7 @@ class SendgridProviderAuthConfig:
     from_email: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "From email address",
+            "description": t("From email address"),
             "hint": "e.g. noreply@yourdomain.com",
         }
     )
@@ -45,13 +45,14 @@ class SendgridProviderAuthConfig:
 
 class SendgridProvider(BaseProvider):
     """Send email using the SendGrid API."""
+    provider_description = t("Send email using the SendGrid API.")
 
     PROVIDER_DISPLAY_NAME = "SendGrid"
     PROVIDER_CATEGORY = ["Collaboration"]
     PROVIDER_SCOPES = [
         ProviderScope(
             name="email.send",
-            description="Send emails using SendGrid",
+            description=t("Send emails using SendGrid"),
             mandatory=True,
             documentation_url="https://sendgrid.com/docs/API_Reference/api_v3.html",
             alias="Email Sender",
@@ -93,14 +94,14 @@ class SendgridProvider(BaseProvider):
                         "Failed to validate email.send scope: Unauthorized"
                     )
                     scopes["email.send"] = (
-                        "Unauthorized: Invalid API key or insufficient permissions."
+                        t("Unauthorized: Invalid API key or insufficient permissions.")
                     )
                 except ForbiddenError:
                     self.logger.warning(
                         "Failed to validate email.send scope: Forbidden"
                     )
                     scopes["email.send"] = (
-                        "Forbidden: Insufficient permissions to send email."
+                        t("Forbidden: Insufficient permissions to send email.")
                     )
                 except Exception as e:
                     self.logger.warning(f"Failed to validate email.send scope: {e}")

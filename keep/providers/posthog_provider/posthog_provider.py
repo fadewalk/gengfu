@@ -18,7 +18,7 @@ class PosthogProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "PostHog API key",
+            "description": t("PostHog API key"),
             "hint": "https://posthog.com/docs/api/overview",
             "sensitive": True,
         },
@@ -27,14 +27,15 @@ class PosthogProviderAuthConfig:
     project_id: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "PostHog project ID",
-            "hint": "Found in your PostHog project settings",
+            "description": t("PostHog project ID"),
+            "hint": t("Found in your PostHog project settings"),
         },
     )
 
 
 class PosthogProvider(BaseProvider, ProviderHealthMixin):
     """Query data from PostHog analytics."""
+    provider_description = t("Query data from PostHog analytics.")
 
     PROVIDER_DISPLAY_NAME = "PostHog"
     PROVIDER_CATEGORY = ["Analytics"]
@@ -42,21 +43,21 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="session_recording:read",
-            description="Read PostHog session recordings",
+            description=t("Read PostHog session recordings"),
             mandatory=True,
-            alias="Read session recordings",
+            alias=t("Read session recordings"),
         ),
         ProviderScope(
             name="session_recording_playlist:read",
-            description="Read PostHog session recording playlists",
+            description=t("Read PostHog session recording playlists"),
             mandatory=False,
-            alias="Read recording playlists",
+            alias=t("Read recording playlists"),
         ),
         ProviderScope(
             name="project:read",
-            description="Read PostHog project data",
+            description=t("Read PostHog project data"),
             mandatory=True,
-            alias="Read project data",
+            alias=t("Read project data"),
         ),
     ]
 
@@ -65,14 +66,14 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
             name="Get Session Recording Domains",
             func_name="get_session_recording_domains",
             scopes=["session_recording:read", "project:read"],
-            description="Get a list of domains from session recordings within a time period",
+            description=t("Get a list of domains from session recordings within a time period"),
             type="action",
         ),
         ProviderMethod(
             name="Get Session Recordings",
             func_name="get_session_recordings",
             scopes=["session_recording:read", "project:read"],
-            description="Get session recordings within a time period",
+            description=t("Get session recordings within a time period"),
             type="action",
         ),
     ]
@@ -101,7 +102,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
                 scopes["project:read"] = True
             else:
                 scopes["project:read"] = (
-                    f"Failed to access project data: {project_response.status_code}"
+                    t("Failed to access project data: {status_code}", status_code=project_response.status_code)
                 )
 
             # Test session recording access
@@ -115,7 +116,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
                 scopes["session_recording:read"] = True
             else:
                 scopes["session_recording:read"] = (
-                    f"Failed to access session recordings: {recordings_response.status_code}"
+                    t("Failed to access session recordings: {status_code}", status_code=recordings_response.status_code)
                 )
 
             # Test session recording playlist access
@@ -126,11 +127,11 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
                 scopes["session_recording_playlist:read"] = True
             else:
                 scopes["session_recording_playlist:read"] = (
-                    f"Failed to access recording playlists: {playlists_response.status_code}"
+                    t("Failed to access recording playlists: {status_code}", status_code=playlists_response.status_code)
                 )
 
         except Exception as e:
-            self.logger.exception("Failed to validate PostHog scopes")
+            self.logger.exception(t("Failed to validate PostHog scopes"))
             for scope in [
                 "project:read",
                 "session_recording:read",
@@ -189,7 +190,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
 
         if response.status_code != 200:
             self.logger.error(
-                "Failed to fetch session recordings",
+                t("Failed to fetch session recordings"),
                 extra={"status_code": response.status_code, "response": response.text},
             )
             raise Exception(
@@ -208,7 +209,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
                 recordings.extend(data.get("results", []))
             else:
                 self.logger.error(
-                    "Failed to fetch additional session recordings",
+                    t("Failed to fetch additional session recordings"),
                     extra={"status_code": response.status_code},
                 )
                 break
@@ -224,7 +225,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
             if domain:
                 domains.add(domain)
             else:
-                print(f"No domain found for recording ID {recording_id}")
+                print(t("No domain found for recording ID {recording_id}", recording_id=recording_id))
 
         # Count domain frequencies
         domain_counter = Counter(domains)
@@ -281,7 +282,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
 
         if response.status_code != 200:
             self.logger.error(
-                "Failed to fetch session recordings",
+                t("Failed to fetch session recordings"),
                 extra={"status_code": response.status_code, "response": response.text},
             )
             raise Exception(
@@ -300,7 +301,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
                 recordings.extend(data.get("results", []))
             else:
                 self.logger.error(
-                    "Failed to fetch additional session recordings",
+                    t("Failed to fetch additional session recordings"),
                     extra={"status_code": response.status_code},
                 )
                 break

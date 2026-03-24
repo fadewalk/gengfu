@@ -23,14 +23,14 @@ class ClickhouseProviderAuthConfig:
     username: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Clickhouse username",
+            "description": t("ClickHouse username"),
             "config_main_group": "authentication",
         },
     )
     password: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Clickhouse password",
+            "description": t("ClickHouse password"),
             "sensitive": True,
             "config_main_group": "authentication",
         }
@@ -38,7 +38,7 @@ class ClickhouseProviderAuthConfig:
     host: NoSchemeUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Clickhouse hostname",
+            "description": t("ClickHouse hostname"),
             "validation": "no_scheme_url",
             "config_main_group": "authentication",
         }
@@ -46,13 +46,13 @@ class ClickhouseProviderAuthConfig:
     port: UrlPort = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Clickhouse port",
+            "description": t("ClickHouse port"),
             "validation": "port",
             "config_main_group": "authentication",
         }
     )
     database: str | None = dataclasses.field(
-        metadata={"required": False, "description": "Clickhouse database name"},
+        metadata={"required": False, "description": t("ClickHouse database name")},
         default=None,
     )
     protocol: typing.Literal["clickhouse", "clickhouses", "http", "https"] = (
@@ -60,7 +60,7 @@ class ClickhouseProviderAuthConfig:
             default="clickhouse",
             metadata={
                 "required": True,
-                "description": "Protocol ('clickhouses' for SSL, 'clickhouse' for no SSL, 'http' or 'https')",
+                "description": t("Protocol ('clickhouses' for SSL, 'clickhouse' for no SSL, 'http' or 'https')"),
                 "type": "select",
                 "options": ["clickhouse", "clickhouses", "http", "https"],
                 "config_main_group": "authentication",
@@ -69,8 +69,8 @@ class ClickhouseProviderAuthConfig:
     )
     verify: bool = dataclasses.field(
         metadata={
-            "description": "Enable SSL verification",
-            "hint": "SSL verification is enabled by default",
+            "description": t("Enable SSL verification"),
+            "hint": t("SSL verification is enabled by default"),
             "type": "switch",
             "config_main_group": "authentication",
         },
@@ -87,7 +87,7 @@ class ClickhouseProvider(BaseProvider, ProviderHealthMixin):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="connect_to_server",
-            description="The user can connect to the server",
+            description=t("The user can connect to the server"),
             mandatory=True,
             alias="Connect to the server",
         )

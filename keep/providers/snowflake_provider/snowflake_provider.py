@@ -21,22 +21,22 @@ from keep.providers.providers_factory import ProvidersFactory
 @pydantic.dataclasses.dataclass
 class SnowflakeProviderAuthConfig:
     user: str = dataclasses.field(
-        metadata={"required": True, "description": "Snowflake user"}
+        metadata={"required": True, "description": t("Snowflake user")}
     )
     account: str = dataclasses.field(
-        metadata={"required": True, "description": "Snowflake account"}
+        metadata={"required": True, "description": t("Snowflake account")}
     )
     pkey: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Snowflake private key",
+            "description": t("Snowflake private key"),
             "sensitive": True,
         }
     )
     pkey_passphrase: typing.Optional[str] = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Snowflake password",
+            "description": t("Snowflake password"),
             "sensitive": True,
         },
         default=None,
@@ -45,6 +45,7 @@ class SnowflakeProviderAuthConfig:
 
 class SnowflakeProvider(BaseProvider):
     """Enrich alerts with data from Snowflake."""
+    provider_description = t("Enrich alerts with data from Snowflake.")
 
     PROVIDER_DISPLAY_NAME = "Snowflake"
     PROVIDER_CATEGORY = ["Database"]

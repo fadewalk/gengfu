@@ -249,7 +249,7 @@ class IncidentmanagerProvider(BaseProvider):
         # 4 validate update response plan
         try:
             if not response_plan:
-                raise Exception("No response plan found")
+                raise Exception(t("No response plan found"))
             ssm_incident_client.update_response_plan(
                 arn=self.authentication_config.response_plan_arn, displayName="test"
             )

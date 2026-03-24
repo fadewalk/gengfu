@@ -25,7 +25,7 @@ class TelegramProviderAuthConfig:
     bot_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Telegram Bot Token",
+            "description": t("Telegram Bot Token"),
             "sensitive": True,
         }
     )
@@ -33,6 +33,7 @@ class TelegramProviderAuthConfig:
 
 class TelegramProvider(BaseProvider):
     """Send alert message to Telegram."""
+    provider_description = t("Send alert message to Telegram.")
 
     PROVIDER_DISPLAY_NAME = "Telegram"
     PROVIDER_CATEGORY = ["Collaboration"]

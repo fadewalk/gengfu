@@ -182,7 +182,7 @@ class GrafanaIncidentProvider(BaseIncidentProvider):
                         f"Failed to get incidents from Grafana Incident: {response.status_code}"
                     )
                     raise Exception(
-                        f"Failed to get incidents from Grafana Incident: {response.status_code} - {response.text}"
+                        t("Failed to get incidents from Grafana Incident: {status_code} - {text}", status_code=response.status_code, text=response.text)
                     )
 
                 data = response.json()
@@ -198,7 +198,7 @@ class GrafanaIncidentProvider(BaseIncidentProvider):
                 self.logger.exception(
                     "Failed to get incidents from Grafana Incident")
                 raise Exception(
-                    f"Failed to get incidents from Grafana Incident: {e}")
+                    t("Failed to get incidents from Grafana Incident: {error}", error=e))
             
         self.logger.info(f"Total incidents: {len(incidents)}")
 

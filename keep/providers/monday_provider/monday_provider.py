@@ -25,14 +25,14 @@ class MondayProviderAuthConfig:
     api_token: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Personal API Token",
+            "description": t("Personal API Token"),
             "sensitive": True,
         },
         default="",
     )
     access_token: str = dataclasses.field(
         metadata={
-            "description": "For access token installation flow, use Keep UI",
+            "description": t("For access token installation flow, use Keep UI"),
             "required": False,
             "sensitive": True,
             "hidden": True,
@@ -41,7 +41,7 @@ class MondayProviderAuthConfig:
     )
     scopes: str = dataclasses.field(
         metadata={
-            "description": "Scopes from OAuth logic, comma separated",
+            "description": t("Scopes from OAuth logic, comma separated"),
             "required": False,
             "sensitive": False,
             "hidden": True,
@@ -59,7 +59,7 @@ class MondayProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="create_pulse",
-            description="Create a new pulse",
+            description=t("Create a new pulse"),
         ),
     ]
 
@@ -104,7 +104,7 @@ class MondayProvider(BaseProvider):
             return {"create_pulse": True}
 
         except Exception as e:
-            self.logger.exception("Failed to validate scopes", extra={"error": e})
+            self.logger.exception(t("Failed to validate scopes"), extra={"error": e})
             return {"create_pulse": str(e)}
 
     @staticmethod
@@ -229,7 +229,7 @@ if __name__ == "__main__":
         raise Exception(t("API token is required"))
 
     config = ProviderConfig(
-        description="Monday Provider",
+        description=t("Monday Provider"),
         authentication={
             "api_token": api_token,
         },

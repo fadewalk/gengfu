@@ -13,6 +13,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 class PythonProvider(BaseProvider):
     """Python provider eval python code to get results"""
+    provider_description = t("Python provider eval python code to get results")
 
     def __init__(
         self, context_manager: ContextManager, provider_id: str, config: ProviderConfig
@@ -29,6 +30,7 @@ class PythonProvider(BaseProvider):
         Returns:
             _type_: _description_
         """
+        # Note: method docstring intentionally not wrapped; provider_description used for i18n
         modules = imports
         loaded_modules = {}
         if modules:
@@ -45,7 +47,7 @@ class PythonProvider(BaseProvider):
                     loaded_modules[module] = imported_module
                 except Exception:
                     raise ProviderConfigException(
-                        f"{self.__class__.__name__} failed to import library: {module}",
+                        t("{class_name} failed to import library: {module}", class_name=self.__class__.__name__, module=module),
                         provider_id=self.provider_id,
                     )
         parsed_code = self.io_handler.parse(code)

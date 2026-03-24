@@ -25,8 +25,8 @@ class GrafanaLokiProviderAuthConfig:
     host_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Grafana Loki Host URL",
-            "hint": "e.g. https://keephq.grafana.net",
+            "description": t("Grafana Loki Host URL"),
+            "hint": t("e.g. https://keephq.grafana.net"),
             "sensitive": False,
             "validation": "any_http_url",
         }
@@ -34,8 +34,8 @@ class GrafanaLokiProviderAuthConfig:
 
     verify: bool = dataclasses.field(
         metadata={
-            "description": "Enable SSL verification",
-            "hint": "SSL verification is enabled by default",
+            "description": t("Enable SSL verification"),
+            "hint": t("SSL verification is enabled by default"),
             "type": "switch",
             "config_main_group": "authentication",
             "config_sub_group": "basic_authentication",
@@ -50,7 +50,7 @@ class GrafanaLokiProviderAuthConfig:
             ),
             metadata={
                 "required": True,
-                "description": "Authentication Type",
+                "description": t("Authentication Type"),
                 "type": "select",
                 "options": ["NoAuth", "Basic", "X-Scope-OrgID"],
             },
@@ -61,7 +61,7 @@ class GrafanaLokiProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "HTTP basic authentication - Username",
+            "description": t("HTTP basic authentication - Username"),
             "sensitive": False,
             "config_sub_group": "basic_authentication",
             "config_main_group": "authentication",
@@ -72,7 +72,7 @@ class GrafanaLokiProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "HTTP basic authentication - Password",
+            "description": t("HTTP basic authentication - Password"),
             "sensitive": True,
             "config_sub_group": "basic_authentication",
             "config_main_group": "authentication",
@@ -83,7 +83,7 @@ class GrafanaLokiProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "X-Scope-OrgID Header Authentication",
+            "description": t("X-Scope-OrgID Header Authentication"),
             "sensitive": False,
             "config_sub_group": "x_scope_orgid",
             "config_main_group": "authentication",
@@ -98,7 +98,7 @@ class GrafanaLokiProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="Instance is valid and user is authenticated",
+            description=t("Instance is valid and user is authenticated"),
         ),
     ]
 

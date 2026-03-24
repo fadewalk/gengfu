@@ -25,7 +25,7 @@ class GkeProviderAuthConfig:
     service_account_json: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "The service account JSON with container.viewer role",
+            "description": t("The service account JSON with container.viewer role"),
             "sensitive": True,
             "type": "file",
             "name": "service_account_json",
@@ -33,13 +33,13 @@ class GkeProviderAuthConfig:
         }
     )
     cluster_name: str = dataclasses.field(
-        metadata={"required": True, "description": "The name of the cluster"}
+        metadata={"required": True, "description": t("The name of the cluster")}
     )
     region: str = dataclasses.field(
         default="us-central1",
         metadata={
             "required": False,
-            "description": "The GKE cluster region",
+            "description": t("The GKE cluster region"),
             "hint": "us-central1",
         },
     )
@@ -54,44 +54,44 @@ class GkeProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="roles/container.viewer",
-            description="Read access to GKE resources",
+            description=t("Read access to GKE resources"),
             mandatory=True,
-            alias="Kubernetes Engine Viewer",
+            alias=t("Kubernetes Engine Viewer"),
         ),
         ProviderScope(
             name="pods:delete",
-            description="Required to delete/restart pods",
+            description=t("Required to delete/restart pods"),
             documentation_url="https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
             mandatory=False,
-            alias="Delete/Restart Pods",
+            alias=t("Delete/Restart Pods"),
         ),
         ProviderScope(
             name="deployments:scale",
-            description="Required to scale deployments",
+            description=t("Required to scale deployments"),
             documentation_url="https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
             mandatory=False,
-            alias="Scale Deployments",
+            alias=t("Scale Deployments"),
         ),
         ProviderScope(
             name="pods:list",
-            description="Required to list pods",
+            description=t("Required to list pods"),
             documentation_url="https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
             mandatory=False,
-            alias="List Pods",
+            alias=t("List Pods"),
         ),
         ProviderScope(
             name="pods:get",
-            description="Required to get pod details",
+            description=t("Required to get pod details"),
             documentation_url="https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
             mandatory=False,
-            alias="Get Pod Details",
+            alias=t("Get Pod Details"),
         ),
         ProviderScope(
             name="pods:logs",
-            description="Required to get pod logs",
+            description=t("Required to get pod logs"),
             documentation_url="https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
             mandatory=False,
-            alias="Get Pod Logs",
+            alias=t("Get Pod Logs"),
         ),
     ]
 
@@ -100,56 +100,56 @@ class GkeProvider(BaseProvider):
             name="List Pods",
             func_name="get_pods",
             scopes=["pods:list", "pods:get"],
-            description="List all pods in a namespace or across all namespaces",
+            description=t("List all pods in a namespace or across all namespaces"),
             type="view",
         ),
         ProviderMethod(
             name="List Persistent Volume Claims",
             func_name="get_pvc",
             scopes=["pods:list"],
-            description="List all PVCs in a namespace or across all namespaces",
+            description=t("List all PVCs in a namespace or across all namespaces"),
             type="view",
         ),
         ProviderMethod(
             name="Get Node Pressure",
             func_name="get_node_pressure",
             scopes=["pods:list"],
-            description="Get pressure metrics for all nodes",
+            description=t("Get pressure metrics for all nodes"),
             type="view",
         ),
         ProviderMethod(
             name="Execute Command",
             func_name="exec_command",
             scopes=["pods:exec"],
-            description="Execute a command in a pod",
+            description=t("Execute a command in a pod"),
             type="action",
         ),
         ProviderMethod(
             name="Restart Pod",
             func_name="restart_pod",
             scopes=["pods:delete"],
-            description="Restart a pod by deleting it",
+            description=t("Restart a pod by deleting it"),
             type="action",
         ),
         ProviderMethod(
             name="Get Deployment",
             func_name="get_deployment",
             scopes=["pods:list"],
-            description="Get deployment information",
+            description=t("Get deployment information"),
             type="view",
         ),
         ProviderMethod(
             name="Scale Deployment",
             func_name="scale_deployment",
             scopes=["deployments:scale"],
-            description="Scale a deployment to specified replicas",
+            description=t("Scale a deployment to specified replicas"),
             type="action",
         ),
         ProviderMethod(
             name="Get Pod Logs",
             func_name="get_pod_logs",
             scopes=["pods:logs"],
-            description="Get logs from a pod",
+            description=t("Get logs from a pod"),
             type="view",
         ),
     ]

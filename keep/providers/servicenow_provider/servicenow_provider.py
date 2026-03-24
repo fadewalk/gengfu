@@ -31,7 +31,7 @@ class ServicenowProviderAuthConfig:
     service_now_base_url: HttpsUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "The base URL of the ServiceNow instance",
+            "description": t("The base URL of the ServiceNow instance"),
             "sensitive": False,
             "hint": "https://dev12345.service-now.com",
             "validation": "https_url",
@@ -41,7 +41,7 @@ class ServicenowProviderAuthConfig:
     username: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "The username of the ServiceNow user",
+            "description": t("The username of the ServiceNow user"),
             "sensitive": False,
         }
     )
@@ -49,7 +49,7 @@ class ServicenowProviderAuthConfig:
     password: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "The password of the ServiceNow user",
+            "description": t("The password of the ServiceNow user"),
             "sensitive": True,
         }
     )
@@ -58,7 +58,7 @@ class ServicenowProviderAuthConfig:
     client_id: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "The client ID to use OAuth 2.0 based authentication",
+            "description": t("The client ID to use OAuth 2.0 based authentication"),
             "sensitive": False,
         },
         default="",
@@ -67,7 +67,7 @@ class ServicenowProviderAuthConfig:
     client_secret: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "The client secret to use OAuth 2.0 based authentication",
+            "description": t("The client secret to use OAuth 2.0 based authentication"),
             "sensitive": True,
         },
         default="",
@@ -76,7 +76,7 @@ class ServicenowProviderAuthConfig:
     ticket_creation_url: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "URL for creating new tickets",
+            "description": t("URL for creating new tickets"),
             "sensitive": False,
             "hint": "https://dev12345.service-now.com/now/sow/record/incident/-1",
         },
@@ -86,15 +86,16 @@ class ServicenowProviderAuthConfig:
 
 class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
     """Manage ServiceNow tickets and incidents with bidirectional activity sync."""
+    provider_description = t("Manage ServiceNow tickets and incidents with bidirectional activity sync.")
 
     PROVIDER_CATEGORY = ["Ticketing", "Incident Management"]
     PROVIDER_SCOPES = [
         ProviderScope(
             name="itil",
-            description="The user can read/write tickets from the table",
+            description=t("The user can read/write tickets from the table"),
             documentation_url="https://docs.servicenow.com/bundle/sandiego-platform-administration/page/administer/roles/reference/r_BaseSystemRoles.html",
             mandatory=True,
-            alias="Read from datahase",
+            alias=t("Read from datahase"),
         )
     ]
     PROVIDER_TAGS = ["ticketing"]
@@ -124,21 +125,21 @@ class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
             name="Get Incidents",
             func_name="get_incidents",
             scopes=["itil"],
-            description="Fetch all incidents from ServiceNow",
+            description=t("Fetch all incidents from ServiceNow"),
             type="view",
         ),
         ProviderMethod(
             name="Get Incident Activities",
             func_name="get_incident_activities",
             scopes=["itil"],
-            description="Get work notes and comments from a ServiceNow incident",
+            description=t("Get work notes and comments from a ServiceNow incident"),
             type="view",
         ),
         ProviderMethod(
             name="Add Incident Activity",
             func_name="add_incident_activity",
             scopes=["itil"],
-            description="Add a work note or comment to a ServiceNow incident",
+            description=t("Add a work note or comment to a ServiceNow incident"),
             type="action",
         ),
     ]
@@ -253,7 +254,7 @@ class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
                 else:
                     self.logger.info("User does not have ITIL role")
                     scopes = {
-                        "itil": "This user does not have the ITIL role",
+                        "itil": t("This user does not have the ITIL role"),
                     }
             else:
                 self.logger.error(

@@ -22,14 +22,14 @@ class OpensearchserverlessProviderAuthConfig:
     domain_endpoint: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Domain endpoint",
+            "description": t("Domain endpoint"),
             "senstive": False,
         },
     )
     region: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "AWS region",
+            "description": t("AWS region"),
             "senstive": False,
         },
     )
@@ -37,7 +37,7 @@ class OpensearchserverlessProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "AWS access key",
+            "description": t("AWS access key"),
             "sensitive": True,
         },
     )
@@ -45,7 +45,7 @@ class OpensearchserverlessProviderAuthConfig:
         default=None,
         metadata={
             "required": False,
-            "description": "AWS access key secret",
+            "description": t("AWS access key secret"),
             "sensitive": True,
         },
     )
@@ -60,48 +60,48 @@ class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="iam:SimulatePrincipalPolicy",
-            description="Required to check if we have access to AOSS API.",
+            description=t("Required to check if we have access to AOSS API."),
             mandatory=True,
-            alias="Needed to test the access for next 3 scopes.",
+            alias=t("Needed to test the access for next 3 scopes."),
         ),
         ProviderScope(
             name="aoss:APIAccessAll",
-            description="Required to make API calls to OpenSearch Serverless. (Add from IAM console)",
+            description=t("Required to make API calls to OpenSearch Serverless. (Add from IAM console)"),
             mandatory=True,
-            alias="Access to make API calls to serverless",
+            alias=t("Access to make API calls to serverless"),
         ),
         ProviderScope(
             name="aoss:ListAccessPolicies",
-            description="Required to access all Data Access Policies. (Add from IAM console)",
+            description=t("Required to access all Data Access Policies. (Add from IAM console)"),
             mandatory=True,
-            alias="Needed to list all Data Access Policies.",
+            alias=t("Needed to list all Data Access Policies."),
         ),
         ProviderScope(
             name="aoss:GetAccessPolicy",
-            description="Required to check each policy for read and write scope. (Add from IAM console)",
+            description=t("Required to check each policy for read and write scope. (Add from IAM console)"),
             mandatory=True,
-            alias="Policy read access",
+            alias=t("Policy read access"),
         ),
         ProviderScope(
             name="aoss:CreateIndex",
-            description="Required to create indexes while saving a doc.",
+            description=t("Required to create indexes while saving a doc."),
             documentation_url="https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations",
             mandatory=True,
-            alias="Index Creation Access",
+            alias=t("Index Creation Access"),
         ),
         ProviderScope(
             name="aoss:ReadDocument",
-            description="Required to query.",
+            description=t("Required to query."),
             documentation_url="https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations",
             mandatory=True,
-            alias="Read Access",
+            alias=t("Read Access"),
         ),
         ProviderScope(
             name="aoss:WriteDocument",
-            description="Required to save documents.",
+            description=t("Required to save documents."),
             documentation_url="https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations",
             mandatory=True,
-            alias="Write Access",
+            alias=t("Write Access"),
         ),
     ]
 
@@ -174,7 +174,7 @@ class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
 
         if not all_allowed:
             self.logger.error(
-                "We don't have access to scopes needed to validate the rest"
+                t("We don't have access to scopes needed to validate the rest")
             )
             return scopes
 
@@ -242,7 +242,7 @@ class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
             return response
         except Exception as e:
             self.logger.error(
-                "Error while creating document", extra={"exception": str(e)}
+                t("Error while creating document"), extra={"exception": str(e)}
             )
             raise
 
@@ -259,7 +259,7 @@ class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
             x = response.json()
             return x
         except Exception as e:
-            self.logger.error("Error while querying index", extra={"exception": str(e)})
+            self.logger.error(t("Error while querying index"), extra={"exception": str(e)})
             raise e
 
     def _notify(self, index: str, document: dict, doc_id: str):
@@ -269,11 +269,11 @@ class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
                 raise Exception(
                     t("Failed to notify. Status: {status}, Response: {response}", status=res.status_code, response=res.text)
                 )
-            self.logger.info("Notification document sent to OpenSearch successfully.")
+            self.logger.info(t("Notification document sent to OpenSearch successfully."))
             return res.json()
         except Exception as e:
             self.logger.error(
-                "Error while sending notification to OpenSearch",
+                t("Error while sending notification to OpenSearch"),
                 extra={"exception": str(e)},
             )
             raise

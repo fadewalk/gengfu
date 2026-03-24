@@ -13,7 +13,7 @@ class SalesforceProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Salesforce API key",
+            "description": t("Salesforce API key"),
             "sensitive": True,
         }
     )

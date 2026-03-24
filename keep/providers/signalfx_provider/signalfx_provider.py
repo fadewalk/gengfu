@@ -28,7 +28,7 @@ class SignalfxProviderAuthConfig:
     sf_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "SignalFX token",
+            "description": t("SignalFX token"),
             "hint": "https://dev.splunk.com/observability/docs/administration/authtokens/",
             "sensitive": True,
         },
@@ -37,7 +37,7 @@ class SignalfxProviderAuthConfig:
     realm: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "SignalFX Realm",
+            "description": t("SignalFX Realm"),
             "sensitive": False,
             "hint": "https://api.{{realm}}.signalfx.com e.g. eu0",
         },
@@ -46,7 +46,7 @@ class SignalfxProviderAuthConfig:
     email: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "SignalFX email. Required for setup webhook.",
+            "description": t("SignalFX email. Required for setup webhook."),
             "sensitive": True,
             "hint": "https://dev.splunk.com/observability/reference/api/sessiontokens/latest",
         },
@@ -55,7 +55,7 @@ class SignalfxProviderAuthConfig:
     password: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "SignalFX password. Required for setup webhook.",
+            "description": t("SignalFX password. Required for setup webhook."),
             "sensitive": True,
             "hint": "https://dev.splunk.com/observability/reference/api/sessiontokens/latest",
         },
@@ -64,7 +64,7 @@ class SignalfxProviderAuthConfig:
     org_id: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "SignalFX organization ID. Required for setup webhook.",
+            "description": t("SignalFX organization ID. Required for setup webhook."),
             "sensitive": False,
             "hint": "https://dev.splunk.com/observability/reference/api/sessiontokens/latest",
         },
@@ -74,17 +74,18 @@ class SignalfxProviderAuthConfig:
 
 class SignalfxProvider(BaseProvider):
     """Get alerts from SignalFx into Keep."""
+    provider_description = t("Get alerts from SignalFx into Keep.")
 
     PROVIDER_CATEGORY = ["Monitoring"]
 
     PROVIDER_SCOPES = [
         ProviderScope(
             name="API",
-            description="API authScope - read permission for SignalFx API",
+            description=t("API authScope - read permission for SignalFx API"),
             mandatory=True,
             mandatory_for_webhook=True,
             documentation_url="https://dev.splunk.com/observability/reference/api/org_tokens/latest#endpoint-create-single-token",
-            alias="API Read",
+            alias=t("API Read"),
         ),
     ]
     PROVIDER_METHODS = []

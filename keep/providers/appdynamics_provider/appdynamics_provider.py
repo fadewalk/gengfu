@@ -34,23 +34,23 @@ class AppdynamicsProviderAuthConfig:
     appDynamicsAccountName: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "AppDynamics Account Name",
-            "hint": "AppDynamics Account Name",
+            "description": t("AppDynamics Account Name"),
+            "hint": t("AppDynamics Account Name"),
         },
     )
 
     appId: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "AppDynamics appId",
-            "hint": "the app instance in which the webhook should be installed",
+            "description": t("AppDynamics appId"),
+            "hint": t("the app instance in which the webhook should be installed"),
         },
     )
     host: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "AppDynamics host",
-            "hint": "e.g. https://baseball202404101029219.saas.appdynamics.com",
+            "description": t("AppDynamics host"),
+            "hint": t("e.g. https://baseball202404101029219.saas.appdynamics.com"),
             "validation": "any_http_url"
         },
     )
@@ -58,8 +58,8 @@ class AppdynamicsProviderAuthConfig:
     appDynamicsAccessToken: Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "AppDynamics Access Token",
-            "hint": "Access Token",
+            "description": t("AppDynamics Access Token"),
+            "hint": t("Access Token"),
             "config_sub_group": "access_token",
             "config_main_group": "authentication",
         },
@@ -68,8 +68,8 @@ class AppdynamicsProviderAuthConfig:
     appDynamicsUsername: Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "Username",
-            "hint": "Username associated with your account",
+            "description": t("Username"),
+            "hint": t("Username associated with your account"),
             "config_sub_group": "basic_auth",
             "config_main_group": "authentication",
         },
@@ -77,8 +77,8 @@ class AppdynamicsProviderAuthConfig:
     appDynamicsPassword: Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "Password",
-            "hint": "Password associated with your account",
+            "description": t("Password"),
+            "hint": t("Password associated with your account"),
             "sensitive": True,
             "config_sub_group": "basic_auth",
             "config_main_group": "authentication",
@@ -107,14 +107,14 @@ class AppdynamicsProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="User is Authorized",
+            description=t("User is Authorized"),
             mandatory=True,
             mandatory_for_webhook=True,
             alias="Rules Reader",
         ),
         ProviderScope(
             name="administrator",
-            description="Administrator privileges",
+            description=t("Administrator privileges"),
             mandatory=True,
             mandatory_for_webhook=True,
             alias="Rules Reader",
@@ -198,7 +198,7 @@ class AppdynamicsProvider(BaseProvider):
 
     def validate_scopes(self) -> dict[str, bool | str]:
         authenticated = False
-        administrator = "Missing Administrator Privileges"
+        administrator = t("Missing Administrator Privileges")
         self.logger.info("Validating AppDynamics Scopes")
 
         user_id = self.get_user_id_by_name(

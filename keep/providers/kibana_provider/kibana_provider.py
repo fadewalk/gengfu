@@ -731,7 +731,7 @@ class KibanaProvider(BaseProvider):
         )
         # if its still empty, set a default name
         if not event.get("name"):
-            event["name"] = "Kibana Alert [Could not extract name]"
+            event["name"] = t("Kibana Alert [Could not extract name]")
 
         return AlertDto(
             environment=environment,

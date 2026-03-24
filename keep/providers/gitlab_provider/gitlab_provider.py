@@ -79,7 +79,7 @@ class GitlabProvider(BaseProvider):
         try:
             resp.raise_for_status()
             scopes = {
-                "api": ("Missing api scope", True)["api" in resp.json()["scopes"]]
+                "api": (t("Missing api scope"), True)["api" in resp.json()["scopes"]]
             }
         except HTTPError as e:
             scopes = {"api": str(e)}

@@ -24,21 +24,21 @@ class SshProviderAuthConfig:
     host: NoSchemeUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "SSH hostname",
+            "description": t("SSH hostname"),
             "validation": "no_scheme_url",
         }
     )
     user: str = dataclasses.field(
-        metadata={"required": True, "description": "SSH user"}
+        metadata={"required": True, "description": t("SSH user")}
     )
     port: UrlPort = dataclasses.field(
         default=22,
-        metadata={"required": False, "description": "SSH port", "validation": "port"},
+        metadata={"required": False, "description": t("SSH port"), "validation": "port"},
     )
     pkey: typing.Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "SSH private key",
+            "description": t("SSH private key"),
             "sensitive": True,
             "type": "file",
             "name": "pkey",
@@ -51,7 +51,7 @@ class SshProviderAuthConfig:
     password: typing.Optional[str] = dataclasses.field(
         default=None,
         metadata={
-            "description": "SSH password",
+            "description": t("SSH password"),
             "sensitive": True,
             "config_sub_group": "password",
             "config_main_group": "authentication",
@@ -68,6 +68,7 @@ class SshProviderAuthConfig:
 
 class SshProvider(BaseProvider):
     """Enrich alerts with data from SSH."""
+    provider_description = t("Enrich alerts with data from SSH.")
 
     PROVIDER_DISPLAY_NAME = "SSH"
     PROVIDER_CATEGORY = ["Cloud Infrastructure", "Developer Tools"]
@@ -75,7 +76,7 @@ class SshProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="ssh_access",
-            description="The provided credentials grant access to the SSH server",
+            description=t("The provided credentials grant access to the SSH server"),
         ),
     ]
 

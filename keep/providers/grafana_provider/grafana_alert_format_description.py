@@ -4,6 +4,8 @@ from typing import List, Literal
 
 from pydantic import BaseModel, Field
 
+from keep.api.i18n import t
+
 
 class Evaluator(BaseModel):
     params: List[int]
@@ -62,7 +64,7 @@ class Datum(BaseModel):
 
 class GrafanaAlertFormatDescription(BaseModel):
     condition: str = Field(
-        ..., max_length=1, description="Must be one of the refId in data"
+        ..., max_length=1, description=t("Must be one of the refId in data")
     )
     data: List[Datum]
     execErrState: Literal["OK", "Alerting", "Error"]
@@ -70,19 +72,19 @@ class GrafanaAlertFormatDescription(BaseModel):
         ...,
         min_length=1,
         max_length=30,
-        description="Folder UID, cannot be empty",
+        description=t("Folder UID, cannot be empty"),
         required=True,
     )
-    for_: str = Field(..., alias="for", description="For example: 5m/1h/1d")
+    for_: str = Field(..., alias="for", description=t("For example: 5m/1h/1d"))
     isPaused: bool
-    labels: dict = Field(..., description="Key-value pairs, cannot be empty")
+    labels: dict = Field(..., description=t("Key-value pairs, cannot be empty"))
     noDataState: Literal["NoData", "OK", "Alerting"]
     orgID: int
     ruleGroup: str = Field(
-        ..., max_length=190, min_length=1, description="Rule group name"
+        ..., max_length=190, min_length=1, description=t("Rule group name")
     )
     title: str = Field(
-        ..., max_length=190, min_length=1, description="Alert title", required=True
+        ..., max_length=190, min_length=1, description=t("Alert title"), required=True
     )
 
     class Config:

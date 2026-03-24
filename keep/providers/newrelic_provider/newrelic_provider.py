@@ -32,17 +32,17 @@ class NewrelicProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "New Relic User key. To receive webhooks, use `User key` of an admin account",
+            "description": t("New Relic User key. To receive webhooks, use `User key` of an admin account"),
             "sensitive": True,
         }
     )
     account_id: str = dataclasses.field(
-        metadata={"required": True, "description": "New Relic account ID"}
+        metadata={"required": True, "description": t("New Relic account ID")}
     )
     new_relic_api_url: HttpsUrl = dataclasses.field(
         metadata={
             "required": False,
-            "description": "New Relic API URL",
+            "description": t("New Relic API URL"),
             "validation": "https_url"
         },
         default="https://api.newrelic.com",
@@ -58,43 +58,43 @@ class NewrelicProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="ai.issues:read",
-            description="Required to read issues and related information",
+            description=t("Required to read issues and related information"),
             mandatory=True,
             mandatory_for_webhook=False,
             documentation_url="https://docs.newrelic.com/docs/accounts/accounts-billing/new-relic-one-user-management/user-management-concepts/",
-            alias="Rules Reader",
+            alias=t("Rules Reader"),
         ),
         ProviderScope(
             name="ai.destinations:read",
-            description="Required to read whether keep webhooks are registered",
+            description=t("Required to read whether keep webhooks are registered"),
             mandatory=False,
             mandatory_for_webhook=True,
             documentation_url="https://docs.newrelic.com/docs/accounts/accounts-billing/new-relic-one-user-management/user-management-concepts/",
-            alias="Rules Reader",
+            alias=t("Rules Reader"),
         ),
         ProviderScope(
             name="ai.destinations:write",
-            description="Required to register keep webhooks",
+            description=t("Required to register keep webhooks"),
             mandatory=False,
             mandatory_for_webhook=True,
             documentation_url="https://docs.newrelic.com/docs/accounts/accounts-billing/new-relic-one-user-management/user-management-concepts/",
-            alias="Rules Writer",
+            alias=t("Rules Writer"),
         ),
         ProviderScope(
             name="ai.channels:read",
-            description="Required to know informations about notification channels.",
+            description=t("Required to know informations about notification channels."),
             mandatory=False,
             mandatory_for_webhook=True,
             documentation_url="https://docs.newrelic.com/docs/accounts/accounts-billing/new-relic-one-user-management/user-management-concepts/",
-            alias="Rules Reader",
+            alias=t("Rules Reader"),
         ),
         ProviderScope(
             name="ai.channels:write",
-            description="Required to create notification channel",
+            description=t("Required to create notification channel"),
             mandatory=False,
             mandatory_for_webhook=True,
             documentation_url="https://docs.newrelic.com/docs/accounts/accounts-billing/new-relic-one-user-management/user-management-concepts/",
-            alias="Rules Writer",
+            alias=t("Rules Writer"),
         ),
     ]
 
@@ -219,7 +219,7 @@ class NewrelicProvider(BaseProvider):
                 scopes[read_scope] = True
         except Exception:
             self.logger.exception(
-                "Error while trying to validate read scopes from new relic"
+                t("Error while trying to validate read scopes from new relic")
             )
             return scopes
 
@@ -265,7 +265,7 @@ class NewrelicProvider(BaseProvider):
                 scopes[write_scope] = True
         except Exception:
             self.logger.exception(
-                "Error while trying to validate write scopes from new relic"
+                t("Error while trying to validate write scopes from new relic")
             )
 
         return scopes
@@ -303,7 +303,7 @@ class NewrelicProvider(BaseProvider):
         )
         if not response.ok:
             self.logger.debug(
-                "Failed to query New Relic",
+                t("Failed to query New Relic"),
                 extra={"response": response.text, "query": query},
             )
             raise ProviderException(t("Failed to query New Relic: {error}", error=response.text))
@@ -504,7 +504,7 @@ class NewrelicProvider(BaseProvider):
             ]["policies"]
             return [obj["id"] for obj in all_objects]
         except Exception as e:
-            self.logger.error(f"Error while fetching ploicies: {e}")
+            self.logger.error(t("Error while fetching ploicies: {e}", e=str(e)))
 
         return []
 
@@ -542,7 +542,7 @@ class NewrelicProvider(BaseProvider):
             ]["entities"]
             return id_list[0]["id"]
         except Exception:
-            self.logger.error("Error getting destination id")
+            self.logger.error(t("Error getting destination id"))
 
     def __add_webhook_destination(self, name: str, url: str) -> str | None:
         try:
@@ -556,7 +556,7 @@ class NewrelicProvider(BaseProvider):
             ]["id"]
             return new_id
         except Exception:
-            self.logger.exception("Error creating destination for webhook")
+            self.logger.exception(t("Error creating destination for webhook"))
 
     def __get_channel_id_by_destination_and_name(self, destination_id: str, name: str):
         try:
@@ -591,7 +591,7 @@ class NewrelicProvider(BaseProvider):
             return id_list[0]["id"]
 
         except Exception:
-            self.logger.error("Exception fetching channel id")
+            self.logger.error(t("Exception fetching channel id"))
 
     def __add_new_channel(
         self, destination_id: str, name: str, api_key: str
@@ -655,7 +655,7 @@ class NewrelicProvider(BaseProvider):
             ]
             return new_id
         except Exception:
-            self.logger.exception("Error creating channel for webhook")
+            self.logger.exception(t("Error creating channel for webhook"))
 
     def __get_workflow_by_name_and_channel(
         self, name: str, channel_id: str
@@ -691,7 +691,7 @@ class NewrelicProvider(BaseProvider):
             return id_list[0]["id"]
         except Exception as ex:
             self.logger.warning(
-                "Error getting workflow by name and channel",
+                t("Error getting workflow by name and channel"),
                 exc_info=ex,
                 extra={
                     "name": name,
@@ -745,7 +745,7 @@ class NewrelicProvider(BaseProvider):
                 "id"
             ]
         except Exception:
-            self.logger.exception("Error creating channel for webhook")
+            self.logger.exception(t("Error creating channel for webhook"))
 
     def setup_webhook(
         self, tenant_id: str, keep_api_url: str, api_key: str, setup_alerts: bool = True

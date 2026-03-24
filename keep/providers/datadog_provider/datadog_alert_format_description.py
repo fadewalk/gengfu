@@ -2,6 +2,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from keep.api.i18n import t
+
 
 class Thresholds(BaseModel):
     critical: float
@@ -63,12 +65,12 @@ class DatadogOptions(BaseModel):
 
 class DatadogAlertFormatDescription(BaseModel):
     message: str = Field(
-        ..., description="A message to include with notifications for this monitor."
+        ..., description=t("A message to include with notifications for this monitor.")
     )
-    name: str = Field(..., description="The name of the monitor.")
+    name: str = Field(..., description=t("The name of the monitor."))
     options: DatadogOptions
-    priority: int = Field(..., description="The priority of the monitor.", min=1, max=5)
-    query: str = Field(..., description="The query to monitor.", required=True)
+    priority: int = Field(..., description=t("The priority of the monitor."), min=1, max=5)
+    query: str = Field(..., description=t("The query to monitor."), required=True)
     tags: list[str]
     type: Literal[
         "composite",

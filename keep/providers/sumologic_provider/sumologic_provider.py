@@ -32,14 +32,14 @@ class SumologicProviderAuthConfig:
     sumoAccessId: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "SumoLogic Access ID",
+            "description": t("SumoLogic Access ID"),
             "hint": "Your AccessID",
         },
     )
     sumoAccessKey: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "SumoLogic Access Key",
+            "description": t("SumoLogic Access Key"),
             "hint": "SumoLogic Access Key ",
             "sensitive": True,
         },
@@ -48,7 +48,7 @@ class SumologicProviderAuthConfig:
     deployment: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Deployment Region",
+            "description": t("Deployment Region"),
             "hint": "Your deployment Region: AU | CA | DE | EU | FED | IN | JP | KR | US1 | US2",
         },
     )
@@ -56,23 +56,24 @@ class SumologicProviderAuthConfig:
 
 class SumologicProvider(BaseProvider):
     """Install Webhooks and receive alerts from SumoLogic."""
+    provider_description = t("Install Webhooks and receive alerts from SumoLogic.")
 
     PROVIDER_DISPLAY_NAME = "SumoLogic"
     PROVIDER_CATEGORY = ["Monitoring"]
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="User is Authorized",
+            description=t("User is Authorized"),
             mandatory=True,
             mandatory_for_webhook=True,
-            alias="Rules Reader",
+            alias=t("Rules Reader"),
         ),
         ProviderScope(
             name="authorized",
-            description="Required privileges",
+            description=t("Required privileges"),
             mandatory=True,
             mandatory_for_webhook=True,
-            alias="Rules Reader",
+            alias=t("Rules Reader"),
         ),
     ]
 

@@ -26,7 +26,7 @@ class RollbarProviderAuthConfig:
     rollbarAccessToken: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Project Access Token",
+            "description": t("Project Access Token"),
             "sensitive": True,
         },
         default=None,
@@ -104,7 +104,7 @@ class RollbarProvider(BaseProvider):
                 }
 
         except Exception as e:
-            self.logger.error("Error validating scopes for Rollbar: %s", e)
+            self.logger.error(t("Error validating scopes for Rollbar: {error}", error=e))
             scopes = {"authenticated": f"Error validating scopes for Rollbar: {e}"}
 
         return scopes
@@ -117,7 +117,7 @@ class RollbarProvider(BaseProvider):
 
             if not response.ok:
                 self.logger.error(
-                    "Failed to get occurrences from Rollbar: %s", response.json()
+                    t("Failed to get occurrences from Rollbar: {result}", result=response.json())
                 )
                 raise Exception(t("Could not get occurrences from Rollbar"))
 
@@ -140,17 +140,17 @@ class RollbarProvider(BaseProvider):
             ]
 
         except Exception as e:
-            self.logger.error("Error getting occurrences from Rollbar: %s", e)
+            self.logger.error(t("Error getting occurrences from Rollbar: {error}", error=e))
             raise Exception(t("Error getting occurrences from Rollbar: {error}", error=str(e)))
 
     def _get_alerts(self) -> List[AlertDto]:
         alerts = []
         try:
-            self.logger.info("Collecting alerts (occurrences) from Rollbar")
+            self.logger.info(t("Collecting alerts (occurrences) from Rollbar"))
             occurences_alert = self.__get_occurences()
             alerts.extend(occurences_alert)
         except Exception as e:
-            self.logger.error("Error getting occurrences from Rollbar: %s", e)
+            self.logger.error(t("Error getting occurrences from Rollbar: {error}", error=e))
 
         return alerts
 
@@ -181,8 +181,8 @@ class RollbarProvider(BaseProvider):
     def setup_webhook(
         self, tenant_id: str, keep_api_url: str, api_key: str, setup_alerts: bool = True
     ):
-        self.logger.info("Setting up webhook for Rollbar")
-        self.logger.info("Enabling Webhook in Rollbar")
+        self.logger.info(t("Setting up webhook for Rollbar"))
+        self.logger.info(t("Enabling Webhook in Rollbar"))
         try:
             response = requests.put(
                 self.__get_url("notifications/webhook"),
@@ -204,16 +204,16 @@ class RollbarProvider(BaseProvider):
                     },
                 )
                 if response.ok:
-                    self.logger.info("Created occurrence rule in Rollbar")
+                    self.logger.info(t("Created occurrence rule in Rollbar"))
                 else:
                     self.logger.error(
-                        "Failed to enable webhook in Rollbar: %s", response.json()
+                        t("Failed to enable webhook in Rollbar: {result}", result=response.json())
                     )
                     raise Exception(t("Failed to enable Rollbar webhook"))
 
-            self.logger.info("Webhook enabled in Rollbar")
+            self.logger.info(t("Webhook enabled in Rollbar"))
         except Exception as e:
-            self.logger.error("Error setting up webhook for Rollbar: %s", e)
+            self.logger.error(t("Error setting up webhook for Rollbar: {error}", error=e))
             raise Exception(t("Error setting up Rollbar webhook: {error}", error=str(e)))
 
 
@@ -234,7 +234,7 @@ if __name__ == "__main__":
         raise Exception(t("Rollbar host is not set"))
 
     config = ProviderConfig(
-        description="Rollbar Provider",
+        description=t("Rollbar Provider"),
         authentication={
             "rollbarAccessToken": rollbar_host,
         },

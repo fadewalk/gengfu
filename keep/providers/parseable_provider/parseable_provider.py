@@ -27,7 +27,7 @@ class ParseableProviderAuthConfig:
     parseable_server: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Parseable Frontend URL",
+            "description": t("Parseable Frontend URL"),
             "hint": "https://demo.parseable.io",
             "sensitive": False,
         }
@@ -35,14 +35,14 @@ class ParseableProviderAuthConfig:
     username: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Parseable username",
+            "description": t("Parseable username"),
             "sensitive": False,
         }
     )
     password: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Parseable password",
+            "description": t("Parseable password"),
             "sensitive": True,
         }
     )

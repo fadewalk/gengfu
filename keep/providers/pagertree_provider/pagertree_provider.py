@@ -20,7 +20,7 @@ class PagertreeProviderAuthConfig:
     api_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Your pagertree APIToken",
+            "description": t("Your pagertree APIToken"),
             "sensitive": True,
         },
         default=None,
@@ -38,7 +38,7 @@ class PagertreeProvider(BaseProvider):
             name="authenticated",
             description="The user can connect to the server and is authenticated using their API_Key",
             mandatory=True,
-            alias="Authenticated with pagertree",
+            alias=t("Authenticated with pagertree"),
         )
     ]
 
@@ -67,12 +67,12 @@ class PagertreeProvider(BaseProvider):
                     "authenticated": True,
                 }
             else:
-                self.logger.error("Unable to authenticate user")
+                self.logger.error(t("Unable to authenticate user"))
                 scopes = {
-                    "authenticated": f"User not authorized, StatusCode: {response.status_code}",
+                    "authenticated": t("User not authorized, StatusCode: {status}", status=response.status_code),
                 }
         except Exception as e:
-            self.logger.error("Error validating scopes", extra={"error": str(e)})
+            self.logger.error(t("Error validating scopes"), extra={"error": str(e)})
             scopes = {
                 "authenticated": str(e),
             }
@@ -95,7 +95,7 @@ class PagertreeProvider(BaseProvider):
                 "https://api.pagertree.com/api/v4/alerts", headers=self.__get_headers()
             )
             if not response.ok:
-                self.logger.error("Failed to get alerts", extra=response.json())
+                self.logger.error(t("Failed to get alerts"), extra=response.json())
                 raise Exception(t("Could not get alerts from PagerTree"))
             return [
                 AlertDto(
@@ -112,7 +112,7 @@ class PagertreeProvider(BaseProvider):
 
         except Exception as e:
             self.logger.error(
-                "Error while getting PagerTree alerts", extra={"error": str(e)}
+                t("Error while getting PagerTree alerts"), extra={"error": str(e)}
             )
             raise e
 

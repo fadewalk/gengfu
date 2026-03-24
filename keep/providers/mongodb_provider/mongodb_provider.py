@@ -22,34 +22,34 @@ class MongodbProviderAuthConfig:
     host: MultiHostUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Mongo host_uri",
+            "description": t("Mongo host_uri"),
             "hint": "mongodb+srv://host:port, mongodb://host1:port1,host2:port2?authSource",
             "validation": "multihost_url",
         }
     )
     username: str = dataclasses.field(
-        metadata={"required": False, "description": "MongoDB username"}, default=None
+        metadata={"required": False, "description": t("MongoDB username")}, default=None
     )
     password: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "MongoDB password",
+            "description": t("MongoDB password"),
             "sensitive": True,
         },
         default=None,
     )
     database: str = dataclasses.field(
-        metadata={"required": False, "description": "MongoDB database name"},
+        metadata={"required": False, "description": t("MongoDB database name")},
         default=None,
     )
     auth_source: str | None = dataclasses.field(
-        metadata={"required": False, "description": "Mongo authSource database name"},
+        metadata={"required": False, "description": t("Mongo authSource database name")},
         default=None,
     )
     additional_options: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Mongo kwargs, these will be passed to MongoClient",
+            "description": t("Mongo kwargs, these will be passed to MongoClient"),
         },
         default=None,
     )
@@ -64,9 +64,9 @@ class MongodbProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="connect_to_server",
-            description="The user can connect to the server",
+            description=t("The user can connect to the server"),
             mandatory=True,
-            alias="Connect to the server",
+            alias=t("Connect to the server"),
         )
     ]
 
@@ -90,9 +90,9 @@ class MongodbProvider(BaseProvider):
                 "connect_to_server": True,
             }
         except Exception:
-            self.logger.exception("Error validating scopes")
+            self.logger.exception(t("Error validating scopes"))
             scopes = {
-                "connect_to_server": "Unable to connect to server. Please check the connection details.",
+                "connect_to_server": t("Unable to connect to server. Please check the connection details."),
             }
         return scopes
 
@@ -134,7 +134,7 @@ class MongodbProvider(BaseProvider):
         try:
             self.client.close()
         except Exception:
-            self.logger.exception("Error closing MongoDB connection")
+            self.logger.exception(t("Error closing MongoDB connection"))
 
     def validate_config(self):
         """

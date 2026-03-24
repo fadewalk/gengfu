@@ -19,7 +19,7 @@ class OpsgenieProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "OpsGenie api key",
+            "description": t("OpsGenie api key"),
             "hint": "https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/",
             "sensitive": True,
         },
@@ -29,7 +29,7 @@ class OpsgenieProviderAuthConfig:
     integration_name: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "OpsGenie integration name",
+            "description": t("OpsGenie integration name"),
             "hint": "https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/",
         },
     )
@@ -50,25 +50,25 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="opsgenie:create",
-            description="Create OpsGenie alerts",
+            description=t("Create OpsGenie alerts"),
             mandatory=True,
-            alias="Create alerts",
+            alias=t("Create alerts"),
         ),
     ]
 
     PROVIDER_METHODS = [
         ProviderMethod(
-            name="Close an alert",
+            name=t("Close an alert"),
             func_name="close_alert",
             scopes=["opsgenie:create"],
-            description="Close an alert",
+            description=t("Close an alert"),
             type="action",
         ),
         ProviderMethod(
-            name="Comment an alert",
+            name=t("Comment an alert"),
             func_name="comment_alert",
             scopes=["opsgenie:create"],
-            description="Comment an alert",
+            description=t("Comment an alert"),
             type="action",
         ),
     ]
@@ -128,7 +128,7 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
                 )
 
         except Exception as e:
-            self.logger.exception("Failed to create OpsGenie alert")
+            self.logger.exception(t("Failed to create OpsGenie alert"))
             scopes["opsgenie:create"] = str(e)
         return scopes
 
@@ -143,7 +143,7 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
         response = request.retrieve_result()
         if not response.data.is_success:
             self.logger.error(
-                "Failed to delete OpsGenie alert",
+                t("Failed to delete OpsGenie alert"),
                 extra={"alert_id": alert_id, "response": response.data.to_dict()},
             )
         return response.data.is_success
@@ -202,7 +202,7 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
                 )
             return response.data.to_dict()
         except ApiException:
-            self.logger.exception("Failed to create OpsGenie alert")
+            self.logger.exception(t("Failed to create OpsGenie alert"))
             raise
 
     # https://github.com/opsgenie/opsgenie-python-sdk/blob/master/docs/CloseAlertPayload.md
@@ -221,7 +221,7 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
             api_instance.close_alert(alert_id, close_alert_payload=close_alert_payload)
             self.logger.info("Opsgenie Alert Closed", extra={"alert_id": alert_id})
         except ApiException:
-            self.logger.exception("Failed to close OpsGenie alert")
+            self.logger.exception(t("Failed to close OpsGenie alert"))
             raise
 
     # https://github.com/opsgenie/opsgenie-python-sdk/blob/master/docs/AddNoteToAlertPayload.md
@@ -243,7 +243,7 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
             api_instance.add_note(alert_id, add_note_to_alert_payload)
             self.logger.info("Opsgenie Alert Commented", extra={"alert_id": alert_id})
         except ApiException:
-            self.logger.exception("Failed to comment OpsGenie alert")
+            self.logger.exception(t("Failed to comment OpsGenie alert"))
             raise
 
     def dispose(self):
@@ -293,7 +293,7 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
             # Create an incident
             alert_id = kwargs.get("alert_id")
             if not alert_id:
-                self.logger.error("alert_id is required to close an alert")
+                self.logger.error(t("alert_id is required to close an alert"))
                 return
             self.logger.info(
                 "Closing Opsgenie alert", extra={"alert_id": kwargs["alert_id"]}

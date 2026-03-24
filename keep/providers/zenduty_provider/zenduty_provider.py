@@ -15,12 +15,13 @@ class ZendutyProviderAuthConfig:
     """Zenduty authentication configuration."""
 
     api_key: str = dataclasses.field(
-        metadata={"required": True, "description": "Zenduty api key", "sensitive": True}
+        metadata={"required": True, "description": t("Zenduty api key"), "sensitive": True}
     )
 
 
 class ZendutyProvider(BaseProvider):
     """Create incident in Zenduty."""
+    provider_description = t("Create incident in Zenduty.")
 
     PROVIDER_DISPLAY_NAME = "Zenduty"
     PROVIDER_CATEGORY = ["Incident Management"]

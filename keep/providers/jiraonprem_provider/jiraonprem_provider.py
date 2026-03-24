@@ -126,7 +126,7 @@ class JiraonpremProvider(BaseProvider):
             resp.raise_for_status()
         except Exception:
             scopes = {
-                scope.name: "Failed to authenticate with Jira - wrong credentials"
+                scope.name: t("Failed to authenticate with Jira - wrong credentials")
                 for scope in JiraonpremProvider.PROVIDER_SCOPES
             }
             return scopes
@@ -147,7 +147,7 @@ class JiraonpremProvider(BaseProvider):
             resp.raise_for_status()
         except Exception as e:
             scopes = {
-                scope.name: f"Failed to authenticate with Jira: {e}"
+                scope.name: t("Failed to authenticate with Jira: {error}", error=str(e))
                 for scope in JiraonpremProvider.PROVIDER_SCOPES
             }
             return scopes

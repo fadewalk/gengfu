@@ -18,7 +18,7 @@ class ResendProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Resend API key",
+            "description": t("Resend API key"),
             "hint": "https://resend.com/api-keys",
             "sensitive": True,
         }
@@ -27,6 +27,7 @@ class ResendProviderAuthConfig:
 
 class ResendProvider(BaseProvider):
     """Send email using the Resend API."""
+    provider_description = t("Send email using the Resend API.")
 
     PROVIDER_DISPLAY_NAME = "Resend"
     PROVIDER_CATEGORY = ["Collaboration"]
@@ -54,7 +55,7 @@ class ResendProvider(BaseProvider):
             html (str): Email body
         """
         self.logger.info(
-            "Sending email using Resend API",
+            t("Sending email using Resend API"),
             extra={
                 "from": _from,
                 "to": to,

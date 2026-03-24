@@ -29,32 +29,32 @@ class AmazonsqsProviderAuthConfig:
     region_name: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Region name",
-            "hint": "Region name: eg. us-east-1 | ap-sout-1 | etc.",
+            "description": t("Region name"),
+            "hint": t("Region name: eg. us-east-1 | ap-sout-1 | etc."),
             "sensitive": False,
         },
     )
     sqs_queue_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "SQS Queue URL",
-            "hint": "Example: https://sqs.ap-south-1.amazonaws.com/614100018813/Q2",
+            "description": t("SQS Queue URL"),
+            "hint": t("Example: https://sqs.ap-south-1.amazonaws.com/614100018813/Q2"),
         },
     )
     access_key_id: str = dataclasses.field(
         default=None,
         metadata={
             "required": False,
-            "description": "Access Key Id (Leave empty if using IAM role at EC2)",
-            "hint": "Access Key ID",
+            "description": t("Access Key Id (Leave empty if using IAM role at EC2)"),
+            "hint": t("Access Key ID"),
         },
     )
     secret_access_key: str = dataclasses.field(
         default=None,
         metadata={
             "required": False,
-            "description": "Secret access key (Leave empty if using IAM role at EC2)",
-            "hint": "Secret access key",
+            "description": t("Secret access key (Leave empty if using IAM role at EC2)"),
+            "hint": t("Secret access key"),
             # "sensitive": True,
         },
     )
@@ -112,19 +112,19 @@ class AmazonsqsProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="Key-Id pair is valid and working",
+            description=t("Key-Id pair is valid and working"),
             mandatory=True,
             alias="Authenticated",
         ),
         ProviderScope(
             name="sqs::read",
-            description="Required privileges to receive alert from SQS. If you only want to give read scope to your key-secret pair the permission policy: AmazonSQSReadOnlyAccess.",
+            description=t("Required privileges to receive alert from SQS. If you only want to give read scope to your key-secret pair the permission policy: AmazonSQSReadOnlyAccess."),
             mandatory=True,
             alias="Read Access",
         ),
         ProviderScope(
             name="sqs::write",
-            description="Required privileges to push messages to SQS. If you only want to give read & write scope to your key-secret pair the permission policy: AmazonSQSFullAccess.",
+            description=t("Required privileges to push messages to SQS. If you only want to give read & write scope to your key-secret pair the permission policy: AmazonSQSFullAccess."),
             mandatory=False,
             alias="Write Access",
         ),

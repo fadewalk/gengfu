@@ -22,7 +22,7 @@ class AksProviderAuthConfig:
     subscription_id: str = dataclasses.field(
         metadata={
             "name": "subscription_id",
-            "description": "The azure subscription id",
+            "description": t("The azure subscription id"),
             "required": True,
             "sensitive": True,
         }
@@ -30,7 +30,7 @@ class AksProviderAuthConfig:
     client_id: str = dataclasses.field(
         metadata={
             "name": "client_id",
-            "description": "The azure client id",
+            "description": t("The azure client id"),
             "required": True,
             "sensitive": True,
         }
@@ -38,7 +38,7 @@ class AksProviderAuthConfig:
     client_secret: str = dataclasses.field(
         metadata={
             "name": "client_secret",
-            "description": "The azure client secret",
+            "description": t("The azure client secret"),
             "required": True,
             "sensitive": True,
         }
@@ -46,7 +46,7 @@ class AksProviderAuthConfig:
     tenant_id: str = dataclasses.field(
         metadata={
             "name": "tenant_id",
-            "description": "The azure tenant id",
+            "description": t("The azure tenant id"),
             "required": True,
             "sensitive": True,
         }
@@ -54,7 +54,7 @@ class AksProviderAuthConfig:
     resource_group_name: str = dataclasses.field(
         metadata={
             "name": "resource_group_name",
-            "description": "The azure aks resource group name",
+            "description": t("The azure aks resource group name"),
             "required": True,
             "sensitive": True,
         }
@@ -62,7 +62,7 @@ class AksProviderAuthConfig:
     resource_name: str = dataclasses.field(
         metadata={
             "name": "resource_name",
-            "description": "The azure aks cluster name",
+            "description": t("The azure aks cluster name"),
             "required": True,
             "sensitive": True,
         }

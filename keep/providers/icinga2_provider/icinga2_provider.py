@@ -28,8 +28,8 @@ class Icinga2ProviderAuthConfig:
     host_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Icinga2 Host URL",
-            "hint": "e.g. https://icinga2.example.com",
+            "description": t("Icinga2 Host URL"),
+            "hint": t("e.g. https://icinga2.example.com"),
             "sensitive": False,
             "validation": "any_http_url",
         }
@@ -38,7 +38,7 @@ class Icinga2ProviderAuthConfig:
     api_user: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Icinga2 API User",
+            "description": t("Icinga2 API User"),
             "sensitive": False,
         }
     )
@@ -46,7 +46,7 @@ class Icinga2ProviderAuthConfig:
     api_password: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Icinga2 API Password",
+            "description": t("Icinga2 API Password"),
             "sensitive": True,
         }
     )
@@ -87,7 +87,7 @@ To send alerts from Icinga2 to Keep, configure a new notification command:
     PROVIDER_SCOPES = [
         ProviderScope(
             name="read_alerts",
-            description="Read alerts from Icinga2",
+            description=t("Read alerts from Icinga2"),
         ),
     ]
 

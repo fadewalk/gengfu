@@ -26,15 +26,15 @@ class ZoomProviderAuthConfig:
     """
 
     account_id: str = dataclasses.field(
-        metadata={"required": True, "description": "Zoom Account ID", "sensitive": True}
+        metadata={"required": True, "description": t("Zoom Account ID"), "sensitive": True}
     )
     client_id: str = dataclasses.field(
-        metadata={"required": True, "description": "Zoom Client ID", "sensitive": True}
+        metadata={"required": True, "description": t("Zoom Client ID"), "sensitive": True}
     )
     client_secret: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Zoom Client Secret",
+            "description": t("Zoom Client Secret"),
             "sensitive": True,
         }
     )
@@ -42,6 +42,7 @@ class ZoomProviderAuthConfig:
 
 class ZoomProvider(BaseProvider):
     """Create and manage Zoom meetings using REST API."""
+    provider_description = t("Create and manage Zoom meetings using REST API.")
 
     PROVIDER_DISPLAY_NAME = "Zoom"
     PROVIDER_CATEGORY = ["Communication", "Video Conferencing"]
@@ -50,7 +51,7 @@ class ZoomProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="create_meeting",
-            description="Create a new Zoom meeting",
+            description=t("Create a new Zoom meeting"),
             mandatory=True,
             alias="Create Meeting",
         )

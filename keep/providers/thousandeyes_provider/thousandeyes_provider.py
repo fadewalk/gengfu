@@ -24,7 +24,7 @@ class ThousandeyesProviderAuthConfig:
     oauth2_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "OAuth2 Bearer Token",
+            "description": t("OAuth2 Bearer Token"),
             "sensitive": True,
         },
     )
@@ -32,7 +32,7 @@ class ThousandeyesProviderAuthConfig:
 
 class ThousandeyesProvider(BaseProvider):
     """
-    Get alerts from Thousandeyes into Keep.
+    t("Get alerts from Thousandeyes into Keep.")
     """
 
     webhook_documentation_here_differs_from_general_documentation = True
@@ -56,7 +56,7 @@ To send alerts from ThousandEyes to Keep, Use the following webhook url to confi
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="User is Authenticated",
+            description=t("User is Authenticated"),
         )
     ]
 

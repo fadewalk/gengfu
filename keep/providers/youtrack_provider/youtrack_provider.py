@@ -20,7 +20,7 @@ class YoutrackProviderAuthConfig:
     host_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "YouTrack Host URL",
+            "description": t("YouTrack Host URL"),
             "hint": "e.g. https://example.youtrack.cloud",
             "sensitive": False,
             "validation": "any_http_url",
@@ -30,7 +30,7 @@ class YoutrackProviderAuthConfig:
     project_id: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "YouTrack Project ID",
+            "description": t("YouTrack Project ID"),
             "hint": "e.g. 1-0",
             "sensitive": False,
         }
@@ -39,7 +39,7 @@ class YoutrackProviderAuthConfig:
     permanent_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "YouTrack Permanent Token",
+            "description": t("YouTrack Permanent Token"),
             "sensitive": True,
         }
     )
@@ -47,7 +47,7 @@ class YoutrackProviderAuthConfig:
     ticket_creation_url: str = dataclasses.field(
         metadata={
             "required": False,
-            "description": "URL for creating new tickets",
+            "description": t("URL for creating new tickets"),
             "sensitive": False,
             "hint": "https://example.youtrack.cloud/issues/new",
         },

@@ -11,6 +11,7 @@ from keep.providers.models.provider_config import ProviderConfig
 
 class WazuhProvider(BaseProvider):
     """Get alerts from Wazuh into Keep"""
+    provider_description = t("Get alerts from Wazuh into Keep")
 
     webhook_documentation_here_differs_from_general_documentation = True
     webhook_description = ""

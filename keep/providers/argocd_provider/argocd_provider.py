@@ -26,16 +26,16 @@ class ArgocdProviderAuthConfig:
     argocd_access_token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Argocd Access Token",
-            "hint": "Argocd Access Token ",
+            "description": t("Argocd Access Token"),
+            "hint": t("Argocd Access Token"),
             "sensitive": True,
         },
     )
     deployment_url: pydantic.AnyHttpUrl = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Deployment Url",
-            "hint": "Example: https://loaclhost:8080",
+            "description": t("Deployment Url"),
+            "hint": t("Example: https://loaclhost:8080"),
             "validation": "any_http_url",
         },
     )
@@ -51,7 +51,7 @@ class ArgocdProvider(BaseTopologyProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="authenticated",
-            description="User is Authorized",
+            description=t("User is Authorized"),
             mandatory=True,
             mandatory_for_webhook=True,
             alias="Authenticated",

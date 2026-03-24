@@ -23,25 +23,25 @@ class SplunkProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Splunk API Key",
+            "description": t("Splunk API Key"),
             "sensitive": True,
         }
     )
 
     host: NoSchemeUrl = dataclasses.field(
         metadata={
-            "description": "Splunk Host (default is localhost)",
+            "description": t("Splunk Host (default is localhost)"),
             "validation": "no_scheme_url",
         },
         default="localhost",
     )
     port: UrlPort = dataclasses.field(
-        metadata={"description": "Splunk Port (default is 8089)", "validation": "port"},
+        metadata={"description": t("Splunk Port (default is 8089)"), "validation": "port"},
         default=8089,
     )
     verify: bool = dataclasses.field(
         metadata={
-            "description": "Enable SSL verification",
+            "description": t("Enable SSL verification"),
             "hint": "An `https` protocol will be used if enabled.",
             "type": "switch",
         },
@@ -49,7 +49,7 @@ class SplunkProviderAuthConfig:
     )
     username: str = dataclasses.field(
         metadata={
-            "description": "The username connected with the API key/token provided.",
+            "description": t("The username connected with the API key/token provided."),
             "required": False,
         },
         default="",
@@ -58,21 +58,22 @@ class SplunkProviderAuthConfig:
 
 class SplunkProvider(BaseProvider):
     """Pull alerts and query incidents from Splunk."""
+    provider_description = t("Pull alerts and query incidents from Splunk.")
 
     PROVIDER_DISPLAY_NAME = "Splunk"
 
     PROVIDER_SCOPES = [
         ProviderScope(
             name="list_all_objects",
-            description="The user can get all the alerts",
+            description=t("The user can get all the alerts"),
             mandatory=True,
-            alias="List all Alerts",
+            alias=t("List all Alerts"),
         ),
         ProviderScope(
             name="edit_own_objects",
-            description="The user can edit and add webhook to saved_searches",
+            description=t("The user can edit and add webhook to saved_searches"),
             mandatory=True,
-            alias="Needed to connect to webhook",
+            alias=t("Needed to connect to webhook"),
         ),
     ]
     FINGERPRINT_FIELDS = ["exception", "logger", "service"]

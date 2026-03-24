@@ -29,7 +29,7 @@ class ZoomChatProviderAuthConfig:
     webhook_url: HttpsUrl = dataclasses.field(
         metadata={
             "name": "webhook_url",
-            "description": "Zoom Incoming Webhook Full Format Url",
+            "description": t("Zoom Incoming Webhook Full Format Url"),
             "required": True,
             "sensitive": True,
             "validation": "https_url",
@@ -38,7 +38,7 @@ class ZoomChatProviderAuthConfig:
     authorization_token: str = dataclasses.field(
         metadata={
             "name": "authorization_token",
-            "description": "Incoming Webhook Authorization Token",
+            "description": t("Incoming Webhook Authorization Token"),
             "required": True,
             "sensitive": True,
         },
@@ -47,7 +47,7 @@ class ZoomChatProviderAuthConfig:
         default="zoom_account_id",
         metadata={
             "required": False,
-            "description": "Zoom Account ID",
+            "description": t("Zoom Account ID"),
             "sensitive": True,
         }
     )
@@ -55,7 +55,7 @@ class ZoomChatProviderAuthConfig:
         default="zoom_client_id",
         metadata={
             "required": False,
-            "description": "Zoom Client ID",
+            "description": t("Zoom Client ID"),
             "sensitive": True,
         }
     )
@@ -63,7 +63,7 @@ class ZoomChatProviderAuthConfig:
         default="zoom_client_secret",
         metadata={
             "required": False,
-            "description": "Zoom Client Secret",
+            "description": t("Zoom Client Secret"),
             "sensitive": True,
         }
     )
@@ -71,6 +71,7 @@ class ZoomChatProviderAuthConfig:
 
 class ZoomChatProvider(BaseProvider):
     """Send alert message to Zoom Chat using the Incoming Webhook application."""
+    provider_description = t("Send alert message to Zoom Chat using the Incoming Webhook application.")
 
     PROVIDER_DISPLAY_NAME = "Zoom Chat"
     PROVIDER_TAGS = ["messaging"]
@@ -80,13 +81,13 @@ class ZoomChatProvider(BaseProvider):
     PROVIDER_SCOPES = [
         ProviderScope(
             name="user:read:user:admin",
-            description="View a Zoom user's details",
+            description=t("View a Zoom user's details"),
             mandatory=False,
             alias="View a Zoom user",
         ),
         ProviderScope(
             name="user:read:list_users:admin",
-            description="List Zoom users",
+            description=t("List Zoom users"),
             mandatory=False,
             alias="List Zoom users",
         ),
@@ -162,8 +163,8 @@ class ZoomChatProvider(BaseProvider):
             ]
         ):
             return {
-                "user:read:user:admin": "OAuth credentials not configured",
-                "user:read:list_users:admin": "OAuth credentials not configured",
+                "user:read:user:admin": t("OAuth credentials not configured"),
+                "user:read:list_users:admin": t("OAuth credentials not configured"),
             }
         try:
             # Test API access by listing users
@@ -325,7 +326,7 @@ class ZoomChatProvider(BaseProvider):
                 t("Failed to send message to Zoom Chat: {error}", error=response.text)
             )
         self.logger.debug("Alert message sent to Zoom Chat successfully")
-        return "Alert message sent to Zoom Chat successfully"
+        return t("Alert message sent to Zoom Chat successfully")
 
 
 if __name__ == "__main__":

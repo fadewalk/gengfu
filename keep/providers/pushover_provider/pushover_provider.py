@@ -17,17 +17,18 @@ class PushoverProviderAuthConfig:
     token: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Pushover app token",
+            "description": t("Pushover app token"),
             "sensitive": True,
         }
     )
     user_key: str = dataclasses.field(
-        metadata={"required": True, "description": "Pushover user key"}
+        metadata={"required": True, "description": t("Pushover user key")}
     )
 
 
 class PushoverProvider(BaseProvider):
     """Send alert message to Pushover."""
+    provider_description = t("Send alert message to Pushover.")
 
     PROVIDER_DISPLAY_NAME = "Pushover"
     PROVIDER_CATEGORY = ["Collaboration"]
@@ -94,7 +95,7 @@ if __name__ == "__main__":
     # Initalize the provider and provider config
     config = ProviderConfig(
         id="pushover-test",
-        description="Pushover Output Provider",
+        description=t("Pushover Output Provider"),
         authentication={"token": pushover_token, "user_key": pushover_user_key},
     )
     provider = PushoverProvider(context_manager, provider_id="pushover", config=config)

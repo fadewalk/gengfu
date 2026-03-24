@@ -38,21 +38,21 @@ class PagerdutyProviderAuthConfig:
     routing_key: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Routing Key (an integration or ruleset key)",
+            "description": t("Routing Key (an integration or ruleset key)"),
         },
         default=None,
     )
     api_key: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Api Key (a user or team API key)",
+            "description": t("Api Key (a user or team API key)"),
             "sensitive": True,
         },
         default=None,
     )
     oauth_data: dict = dataclasses.field(
         metadata={
-            "description": "For oauth flow",
+            "description": t("For oauth flow"),
             "required": False,
             "sensitive": True,
             "hidden": True,
@@ -62,7 +62,7 @@ class PagerdutyProviderAuthConfig:
     service_id: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Service Id (if provided, keep will only operate on this service)",
+            "description": t("Service Id (if provided, keep will only operate on this service)"),
             "sensitive": False,
         },
         default=None,
@@ -77,29 +77,29 @@ class PagerdutyProvider(
     PROVIDER_SCOPES = [
         ProviderScope(
             name="incidents_read",
-            description="Read incidents data.",
+            description=t("Read incidents data."),
             mandatory=True,
-            alias="Incidents Data Read",
+            alias=t("Incidents Data Read"),
         ),
         ProviderScope(
             name="incidents_write",
-            description="Write incidents.",
+            description=t("Write incidents."),
             mandatory=False,
-            alias="Incidents Write",
+            alias=t("Incidents Write"),
         ),
         ProviderScope(
             name="webhook_subscriptions_read",
-            description="Read webhook data.",
+            description=t("Read webhook data."),
             mandatory=False,
             mandatory_for_webhook=True,
-            alias="Webhooks Data Read",
+            alias=t("Webhooks Data Read"),
         ),
         ProviderScope(
             name="webhook_subscriptions_write",
-            description="Write webhooks.",
+            description=t("Write webhooks."),
             mandatory=False,
             mandatory_for_webhook=True,
-            alias="Webhooks Write",
+            alias=t("Webhooks Write"),
         ),
     ]
     BASE_API_URL = "https://api.pagerduty.com"
@@ -212,7 +212,7 @@ class PagerdutyProvider(
             }
         except Exception:
             self.logger.exception(
-                "Error while refreshing token",
+                t("Error while refreshing token"),
             )
             raise
 
@@ -278,7 +278,7 @@ class PagerdutyProvider(
             response_text = access_token_response.text
             response_status = access_token_response.status_code
             logger.exception(
-                "Failed to get access token",
+                t("Failed to get access token"),
                 extra={
                     "response_text": response_text,
                     "response_status": response_status,
@@ -327,7 +327,7 @@ class PagerdutyProvider(
                     # This is because incidents_read is mandatory and will not let the provider install otherwise
                     scopes[scope.name] = True
                 else:
-                    scopes[scope.name] = "Skipped due to routing key"
+                    scopes[scope.name] = t("Skipped due to routing key")
                 continue
 
             try:
@@ -353,7 +353,7 @@ class PagerdutyProvider(
                     except Exception:
                         scopes[scope.name] = response.reason
             except Exception as e:
-                self.logger.exception("Error validating scopes")
+                self.logger.exception(t("Error validating scopes"))
                 scopes[scope.name] = str(e)
         return scopes
 
@@ -691,7 +691,7 @@ class PagerdutyProvider(
             json=webhook_payload,
         )
         if not request.ok:
-            self.logger.error("Failed to add webhook", extra=request.json())
+            self.logger.error(t("Failed to add webhook"), extra=request.json())
             raise Exception(t("Could not create webhook"))
         self.logger.info("Webhook created")
 
@@ -958,7 +958,7 @@ class PagerdutyProvider(
                 response = response.json()
             except Exception:
                 self.logger.exception(
-                    "Failed to get incidents or alerts",
+                    t("Failed to get incidents or alerts"),
                     extra={
                         "incident_id": incident_id,
                         "tenant_id": self.context_manager.tenant_id,
@@ -966,7 +966,7 @@ class PagerdutyProvider(
                 )
                 if paginated_response:
                     self.logger.warning(
-                        "Failed to get incidents from offset",
+                        t("Failed to get incidents from offset"),
                         extra={
                             "offset": offset,
                             "tenant_id": self.context_manager.tenant_id,
@@ -975,7 +975,7 @@ class PagerdutyProvider(
                     break
                 else:
                     self.logger.exception(
-                        "Failed to get any incidents or alerts",
+                        t("Failed to get any incidents or alerts"),
                         extra={"tenant_id": self.context_manager.tenant_id},
                     )
                     raise
@@ -1028,7 +1028,7 @@ class PagerdutyProvider(
                 services_response.raise_for_status()
                 services_response = services_response.json()
             except Exception as e:
-                self.logger.error("Failed to get all services", extra={"exception": e})
+                self.logger.error(t("Failed to get all services"), extra={"exception": e})
                 raise e
             more = services_response.get("more", False)
             offset = services_response.get("offset", 0)
@@ -1057,7 +1057,7 @@ class PagerdutyProvider(
             service_map_response.raise_for_status()
             service_map_response = service_map_response.json()
         except Exception:
-            self.logger.exception("Error while getting service dependencies")
+            self.logger.exception(t("Error while getting service dependencies"))
             raise
 
         service_topology = {}
@@ -1114,7 +1114,7 @@ class PagerdutyProvider(
                 incident_dto._alerts = incident_alerts
             except Exception:
                 self.logger.exception(
-                    "Failed to format incident alerts",
+                    t("Failed to format incident alerts"),
                     extra={
                         "provider_id": self.provider_id,
                         "source_incident_id": incident_dto.fingerprint,
@@ -1152,7 +1152,7 @@ class PagerdutyProvider(
         # https://github.com/keephq/keep/issues/4681
         if not original_incident_id:
             logger.warning(
-                "No incident id found in the event",
+                t("No incident id found in the event"),
                 extra={
                     "event": event,
                 },
@@ -1187,7 +1187,7 @@ class PagerdutyProvider(
         title = event.get("title")
         if not title:
             logger.warning(
-                "No title found in the event",
+                t("No title found in the event"),
                 extra={
                     "event": event,
                 },

@@ -16,14 +16,14 @@ class VllmProviderAuthConfig:
     api_url: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "vLLM API endpoint URL",
+            "description": t("vLLM API endpoint URL"),
             "sensitive": False,
         }
     )
     api_key: str | None = dataclasses.field(
         metadata={
             "required": False,
-            "description": "Optional API key if your vLLM deployment requires authentication",
+            "description": t("Optional API key if your vLLM deployment requires authentication"),
             "sensitive": True,
         },
         default=None,

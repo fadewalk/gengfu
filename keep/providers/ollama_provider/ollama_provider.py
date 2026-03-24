@@ -14,7 +14,7 @@ class OllamaProviderAuthConfig:
     host: str = dataclasses.field(
         metadata={
             "required": True,
-            "description": "Ollama API Host URL",
+            "description": t("Ollama API Host URL"),
             "sensitive": False,
         },
         default="http://localhost:11434",
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     )
 
     config = ProviderConfig(
-        description="Ollama Provider",
+        description=t("Ollama Provider"),
         authentication={
             "host": "http://localhost:11434",  # Default Ollama host
         },
