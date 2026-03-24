@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Form, HTTPException
 from pusher import Pusher
 
 from keep.api.core.dependencies import get_pusher_client
+from keep.api.i18n import t
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.identitymanagerfactory import IdentityManagerFactory
 
@@ -35,10 +36,10 @@ def pusher_authentication(
     if not pusher_client:
         raise HTTPException(
             status_code=500,
-            detail="Pusher client not initalized on backend, PUSHER_DISABLED is set to True?",
+            detail=t("Pusher client not initalized on backend, PUSHER_DISABLED is set to True?"),
         )
 
     if channel_name == f"private-{tenant_id}":
         auth = pusher_client.authenticate(channel=channel_name, socket_id=socket_id)
         return auth
-    raise HTTPException(status_code=403, detail="Forbidden")
+    raise HTTPException(status_code=403, detail=t("Forbidden"))

@@ -7,6 +7,7 @@ import uuid
 from fastapi import HTTPException
 
 from keep.api.core.config import config
+from keep.api.i18n import t
 from keep.api.core.db import (
     create_deduplication_event,
     create_deduplication_rule,
@@ -549,13 +550,13 @@ class AlertDeduplicator:
         if not rule_before_update:
             raise HTTPException(
                 status_code=404,
-                detail="Deduplication rule not found",
+                detail=t("Deduplication rule not found"),
             )
 
         if rule_before_update.is_provisioned:
             raise HTTPException(
                 status_code=409,
-                detail="Provisioned deduplication rule cannot be updated",
+                detail=t("Provisioned deduplication rule cannot be updated"),
             )
 
         # else, use the db function to update an existing deduplication rule
@@ -596,13 +597,13 @@ class AlertDeduplicator:
         if not deduplication_rule_to_be_deleted:
             raise HTTPException(
                 status_code=404,
-                detail="Deduplication rule not found",
+                detail=t("Deduplication rule not found"),
             )
 
         if deduplication_rule_to_be_deleted.is_provisioned:
             raise HTTPException(
                 status_code=409,
-                detail="Provisioned deduplication rule cannot be deleted",
+                detail=t("Provisioned deduplication rule cannot be deleted"),
             )
 
         success = delete_deduplication_rule(rule_id=rule_id, tenant_id=self.tenant_id)

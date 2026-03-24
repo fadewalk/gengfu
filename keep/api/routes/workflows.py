@@ -20,6 +20,7 @@ from opentelemetry import trace
 from sqlmodel import Session
 
 from keep.api.core.cel_to_sql.sql_providers.base import CelToSqlException
+from keep.api.i18n import t
 from keep.api.core.config import config
 from keep.api.core.db import (
     get_alert_by_event_id,
@@ -103,7 +104,7 @@ def fetch_facet_options(
         )
         raise HTTPException(
             status_code=400,
-            detail=f"Error parsing CEL expression: {facet_options_query.cel}",
+            detail=t("Error parsing CEL expression: {cel}", cel=facet_options_query.cel),
         ) from e
 
     logger.info(
@@ -231,7 +232,7 @@ def query_workflows(
         logger.exception(f'Error parsing CEL expression "{query.cel}". {str(e)}')
         raise HTTPException(
             status_code=400,
-            detail=f"Error parsing CEL expression: {query.cel}",
+            detail=t("Error parsing CEL expression: {cel}", cel=query.cel),
         ) from e
 
     # iterate workflows
@@ -349,7 +350,7 @@ def get_event_from_body(body: dict, tenant_id: str):
     except TypeError:
         raise HTTPException(
             status_code=400,
-            detail="Invalid event format",
+            detail=t("Invalid event format"),
         )
     return event, inputs
 
@@ -380,7 +381,7 @@ def run_workflow(
             extra={"workflow_id": workflow_id, "tenant_id": tenant_id},
         )
         raise HTTPException(
-            status_code=400, detail=f"Invalid workflow configuration: {e}"
+            status_code=400, detail=t("Invalid workflow configuration: {error}", error=e)
         ) from e
 
     # if there are workflow permissions, check if the user has access
@@ -390,7 +391,7 @@ def run_workflow(
         authenticated_entity.role,
     ):
         raise HTTPException(
-            status_code=403, detail="Insufficient permissions to execute this workflow"
+            status_code=403, detail=t("Insufficient permissions to execute this workflow")
         )
 
     workflowmanager = WorkflowManager.get_instance()
@@ -408,7 +409,7 @@ def run_workflow(
             else:
                 raise HTTPException(
                     status_code=400,
-                    detail=f"Invalid event type: {event_type}",
+                    detail=t("Invalid event type: {event_type}", event_type=event_type),
                 )
         else:
             # Handle regular run from body
@@ -435,7 +436,7 @@ def run_workflow(
         )
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to run workflow {workflow_id}: {e}",
+            detail=t("Failed to run workflow {workflow_id}: {error}", workflow_id=workflow_id, error=e),
         ) from e
 
     logger.info(
@@ -497,7 +498,7 @@ async def run_workflow_from_definition(
     created_by = authenticated_entity.email
     workflow_raw = body.get("workflow_raw", "")
     if not workflow_raw:
-        raise HTTPException(status_code=400, detail="Workflow raw is required")
+        raise HTTPException(status_code=400, detail=t("Workflow raw is required"))
     workflow_dict = await get_workflow_dict_from_string(workflow_raw)
     workflowstore = WorkflowStore()
     workflowmanager = WorkflowManager.get_instance()
@@ -515,7 +516,7 @@ async def run_workflow_from_definition(
                 extra={"workflow_id": workflow_id, "tenant_id": tenant_id},
             )
             raise HTTPException(
-                status_code=400, detail=f"Invalid provider configuration: {e}"
+                status_code=400, detail=t("Invalid provider configuration: {error}", error=e)
             ) from e
         except ValueError as e:
             logger.exception(
@@ -523,7 +524,7 @@ async def run_workflow_from_definition(
                 extra={"workflow_id": workflow_id, "tenant_id": tenant_id},
             )
             raise HTTPException(
-                status_code=400, detail=f"Invalid workflow configuration: {e}"
+                status_code=400, detail=t("Invalid workflow configuration: {error}", error=e)
             ) from e
         except HTTPException:
             # if workflow_id is not found, use dummy workflow id for test run
@@ -539,7 +540,7 @@ async def run_workflow_from_definition(
                 extra={"tenant_id": tenant_id},
             )
             raise HTTPException(
-                status_code=500, detail=f"Failed to create dummy workflow: {e}"
+                status_code=500, detail=t("Failed to create dummy workflow: {error}", error=e)
             )
     try:
         workflow = workflowstore.get_workflow_from_dict(tenant_id, workflow_dict)
@@ -550,7 +551,7 @@ async def run_workflow_from_definition(
         )
         raise HTTPException(
             status_code=400,
-            detail=f"Failed to parse test workflow: {e}",
+            detail=t("Failed to parse test workflow: {error}", error=e),
         )
 
     try:
@@ -571,7 +572,7 @@ async def run_workflow_from_definition(
         )
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to run test workflow: {e}",
+            detail=t("Failed to run test workflow: {error}", error=e),
         )
 
     return WorkflowRunResponseDTO(
@@ -591,7 +592,7 @@ async def get_workflow_dict_from_string(workflow_raw: str | bytes) -> dict:
 
     except cyaml.YAMLError:
         logger.exception("Invalid YAML format")
-        raise HTTPException(status_code=400, detail="Invalid YAML format")
+        raise HTTPException(status_code=400, detail=t("Invalid YAML format"))
     return workflow_data
 
 
@@ -599,7 +600,7 @@ async def __get_workflow_raw_data(
     request: Request | None, file: UploadFile | None
 ) -> dict:
     if not request and not file:
-        raise HTTPException(status_code=400, detail="Nor file nor request provided")
+        raise HTTPException(status_code=400, detail=t("Nor file nor request provided"))
     # we support both File upload (from frontend) or raw yaml (e.g. curl)
     if file:
         workflow_raw_data = await file.read()
@@ -638,7 +639,7 @@ async def create_workflow(
         )
         raise HTTPException(
             status_code=400,
-            detail="Failed to upload workflow. Please contact us via Slack for help.",
+            detail=t("Failed to upload workflow. Please contact us via Slack for help."),
         )
     if workflow.revision == 1:
         return WorkflowCreateOrUpdateDTO(
@@ -704,7 +705,7 @@ async def create_workflow_from_body(
         )
         raise HTTPException(
             status_code=400,
-            detail="Failed to upload workflow. Please contact us via Slack for help.",
+            detail=t("Failed to upload workflow. Please contact us via Slack for help."),
         )
     if workflow.revision == 1:
         return WorkflowCreateOrUpdateDTO(
@@ -831,10 +832,10 @@ async def update_workflow_by_id(
             f"Tenant tried to update workflow {workflow_id} that does not exist",
             extra={"tenant_id": tenant_id},
         )
-        raise HTTPException(404, "Workflow not found")
+        raise HTTPException(404, detail=t("Workflow not found"))
 
     if workflow_from_db.provisioned:
-        raise HTTPException(403, detail="Cannot update a provisioned workflow")
+        raise HTTPException(403, detail=t("Cannot update a provisioned workflow"))
 
     workflow_raw_data = await __get_workflow_raw_data(request, None)
     parser = Parser()
@@ -890,7 +891,7 @@ def get_workflow_by_id(
             f"Tenant tried to get workflow {workflow_id} that does not exist",
             extra={"tenant_id": tenant_id},
         )
-        raise HTTPException(404, "Workflow not found")
+        raise HTTPException(404, detail=t("Workflow not found"))
 
     updated_at = workflow.last_updated
     updated_by = workflow.updated_by or "unknown"
@@ -901,7 +902,7 @@ def get_workflow_by_id(
             tenant_id=tenant_id, workflow_id=workflow_id, revision=revision
         )
         if not workflow_version:
-            raise HTTPException(404, "Workflow version not found")
+            raise HTTPException(404, detail=t("Workflow version not found"))
         updated_at = workflow_version.updated_at
         updated_by = workflow_version.updated_by or "unknown"
         workflow_raw = workflow_version.workflow_raw
@@ -933,7 +934,7 @@ def get_workflow_by_id(
         final_workflow_raw = workflowstore.format_workflow_yaml(workflow_raw)
     except cyaml.YAMLError:
         logger.exception("Invalid YAML format")
-        raise HTTPException(status_code=500, detail="Error fetching workflow meta data")
+        raise HTTPException(status_code=500, detail=t("Error fetching workflow meta data"))
 
     return WorkflowDTO(
         id=workflow.id,
@@ -994,7 +995,7 @@ def get_workflow_runs_by_id(
             f"Tenant tried to get workflow {workflow_id} that does not exist",
             extra={"tenant_id": tenant_id},
         )
-        raise HTTPException(404, "Workflow not found")
+        raise HTTPException(404, detail=t("Workflow not found"))
 
     installed_providers = get_installed_providers(tenant_id)
     installed_providers_by_type = {}
@@ -1179,10 +1180,10 @@ def toggle_workflow_state(
             f"Tenant tried to toggle workflow {workflow_id} that does not exist",
             extra={"tenant_id": tenant_id},
         )
-        raise HTTPException(404, "Workflow not found")
+        raise HTTPException(404, detail=t("Workflow not found"))
 
     if workflow.provisioned:
-        raise HTTPException(403, detail="Cannot modify a provisioned workflow")
+        raise HTTPException(403, detail=t("Cannot modify a provisioned workflow"))
 
     # Toggle the disabled state
     # TODO: update workflow_raw
@@ -1223,7 +1224,7 @@ def write_workflow_secret(
 
     workflow = get_workflow_by_id_db(tenant_id=tenant_id, workflow_id=workflow_id)
     if not workflow:
-        raise HTTPException(404, "Workflow not found")
+        raise HTTPException(404, detail=t("Workflow not found"))
 
     context_manager = ContextManager(tenant_id=tenant_id)
     secret_manager = SecretManagerFactory.get_secret_manager(context_manager)
@@ -1265,7 +1266,7 @@ def read_workflow_secret(
 
     workflow = get_workflow_by_id_db(tenant_id=tenant_id, workflow_id=workflow_id)
     if not workflow:
-        raise HTTPException(404, "Workflow not found")
+        raise HTTPException(404, detail=t("Workflow not found"))
 
     context_manager = ContextManager(tenant_id=tenant_id)
     secret_manager = SecretManagerFactory.get_secret_manager(context_manager)
@@ -1295,7 +1296,7 @@ def delete_workflow_secret(
 
     workflow = get_workflow_by_id_db(tenant_id=tenant_id, workflow_id=workflow_id)
     if not workflow:
-        raise HTTPException(404, "Workflow not found")
+        raise HTTPException(404, detail=t("Workflow not found"))
 
     context_manager = ContextManager(tenant_id=tenant_id)
     secret_manager = SecretManagerFactory.get_secret_manager(context_manager)
@@ -1305,7 +1306,7 @@ def delete_workflow_secret(
     secrets = secret_manager.read_secret(secret_key, is_json=True)
 
     if secret_name not in secrets:
-        raise HTTPException(404, f"Secret '{secret_name}' not found")
+        raise HTTPException(404, detail=t("Secret '{secret_name}' not found", secret_name=secret_name))
 
     del secrets[secret_name]  # Remove only the specific key
     secret_manager.write_secret(

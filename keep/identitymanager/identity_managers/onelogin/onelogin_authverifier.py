@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException
 from keep.api.core.config import config
 from keep.api.core.db import user_exists, create_user, update_user_last_sign_in, update_user_role
 from keep.api.core.dependencies import SINGLE_TENANT_UUID
+from keep.api.i18n import t
 
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.authverifierbase import AuthVerifierBase, oauth2_scheme
@@ -45,7 +46,7 @@ class OneLoginAuthVerifier(AuthVerifierBase):
 
     def _verify_bearer_token(self, token: str = Depends(oauth2_scheme)) -> AuthenticatedEntity:
         if not token:
-            raise HTTPException(status_code=401, detail="No token provided")
+            raise HTTPException(status_code=401, detail=t("No token provided"))
         try:
             # Get the signing key directly from the JWT
             signing_key = self.jwks_client.get_signing_key_from_jwt(token).key
@@ -100,7 +101,7 @@ class OneLoginAuthVerifier(AuthVerifierBase):
                 self.logger.warning(f"No valid role-group mapping found among {onelogin_groups}")
                 raise HTTPException(
                     status_code=403,
-                    detail=f"No valid role found among {onelogin_groups}",
+                    detail=t("No valid role found among {roles}", roles=onelogin_groups),
                 )
 
             # auto provision user
@@ -149,13 +150,13 @@ class OneLoginAuthVerifier(AuthVerifierBase):
 
         except jwt.exceptions.InvalidKeyError as e:
             self.logger.error(f"Invalid key error during token validation: {str(e)}")
-            raise HTTPException(status_code=401, detail="Invalid signing key - token validation failed")
+            raise HTTPException(status_code=401, detail=t("Invalid signing key - token validation failed"))
         except jwt.ExpiredSignatureError:
             self.logger.warning("Token has expired")
-            raise HTTPException(status_code=401, detail="Token has expired")
+            raise HTTPException(status_code=401, detail=t("Token has expired"))
         except jwt.InvalidTokenError as e:
             self.logger.warning(f"Invalid token: {str(e)}")
-            raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
+            raise HTTPException(status_code=401, detail=t("Invalid token: {error}", error=str(e)))
         except Exception as e:
             self.logger.exception("Failed to validate token")
-            raise HTTPException(status_code=401, detail=f"Token validation failed: {str(e)}")
+            raise HTTPException(status_code=401, detail=t("Token validation failed: {error}", error=str(e)))

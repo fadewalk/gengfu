@@ -11,6 +11,7 @@ from keep.api.core.db import (
     user_exists,
 )
 from keep.api.core.dependencies import SINGLE_TENANT_UUID
+from keep.api.i18n import t
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.authverifierbase import AuthVerifierBase
 from keep.identitymanager.rbac import get_role_by_role_name
@@ -65,7 +66,7 @@ class Oauth2proxyAuthVerifier(AuthVerifierBase):
                     except Exception:
                         self.logger.exception("Failed to validate API Key")
                         raise HTTPException(
-                            status_code=401, detail="Invalid authentication credentials"
+                            status_code=401, detail=t("Invalid authentication credentials")
                         )
             except Exception:
                 # If we fail to validate the API key, we need to try to authenticate with the user and role headers
@@ -82,14 +83,14 @@ class Oauth2proxyAuthVerifier(AuthVerifierBase):
         if not user_name:
             raise HTTPException(
                 status_code=401,
-                detail=f"Unauthorized - no user in {self.oauth2_proxy_user_header} header found",
+                detail=t("Unauthorized - no user in {header} header found", header=self.oauth2_proxy_user_header),
             )
 
         role = request.headers.get(self.oauth2_proxy_role_header)
         if not role:
             raise HTTPException(
                 status_code=401,
-                detail=f"Unauthorized - no role in {self.oauth2_proxy_role_header} header found",
+                detail=t("Unauthorized - no role in {header} header found", header=self.oauth2_proxy_role_header),
             )
 
         # else, if its a list seperated by comma e.g. org:admin, org:foobar or role:admin, role:foobar
@@ -130,7 +131,7 @@ class Oauth2proxyAuthVerifier(AuthVerifierBase):
             self.logger.debug(f"No valid role found among {roles}")
             raise HTTPException(
                 status_code=403,
-                detail=f"No valid role found among {roles}",
+                detail=t("No valid role found among {roles}", roles=roles),
             )
 
         # auto provision user

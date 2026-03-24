@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel import Session
 
 from keep.api.bl.enrichments_bl import EnrichmentsBl
+from keep.api.i18n import t
 from keep.api.core.db import get_session
 from keep.api.models.db.enrichment_event import EnrichmentEventWithLogs
 from keep.api.models.db.mapping import (
@@ -88,7 +89,7 @@ def get_rule(
         .first()
     )
     if rule is None:
-        raise HTTPException(status_code=404, detail="Rule not found")
+        raise HTTPException(status_code=404, detail=t("Rule not found"))
     return MappingRuleDtoOut(**rule.model_dump())
 
 
@@ -113,7 +114,7 @@ def create_rule(
 
     if not new_rule.name or not new_rule.matchers:
         raise HTTPException(
-            status_code=400, detail="Rule name and matchers are required"
+            status_code=400, detail=t("Rule name and matchers are required")
         )
 
     session.add(new_rule)
@@ -139,12 +140,12 @@ def delete_rule(
         .first()
     )
     if rule is None:
-        raise HTTPException(status_code=404, detail="Rule not found")
+        raise HTTPException(status_code=404, detail=t("Rule not found"))
 
     session.delete(rule)
     session.commit()
     logger.info("Deleted a mapping rule", extra={"rule_id": rule_id})
-    return {"message": "Rule deleted successfully"}
+    return {"message": t("Rule deleted successfully")}
 
 
 @router.put("/{rule_id}", description="Update an existing rule")
@@ -166,7 +167,7 @@ def update_rule(
         .first()
     )
     if existing_rule is None:
-        raise HTTPException(status_code=404, detail="Rule not found")
+        raise HTTPException(status_code=404, detail=t("Rule not found"))
     existing_rule.name = rule.name
     existing_rule.description = rule.description
     existing_rule.matchers = rule.matchers
@@ -243,7 +244,7 @@ def get_enrichment_event_logs(
     enrichment_event = enrichment_bl.get_enrichment_event(enrichment_event_id)
     logs = enrichment_bl.get_enrichment_event_logs(enrichment_event_id)
     if not logs:
-        raise HTTPException(status_code=404, detail="Logs not found")
+        raise HTTPException(status_code=404, detail=t("Logs not found"))
     logger.info(
         "Got enrichment event logs",
         extra={"logs_count": len(logs)},

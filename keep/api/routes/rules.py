@@ -11,6 +11,7 @@ from keep.api.core.db import get_rule_incidents_count_db
 from keep.api.core.db import get_rules as get_rules_db
 from keep.api.core.db import update_rule as update_rule_db
 from keep.api.models.db.rule import CreateIncidentOn, ResolveOn
+from keep.api.i18n import t
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.identitymanagerfactory import IdentityManagerFactory
 
@@ -98,32 +99,32 @@ async def create_rule(
     assignee = rule_create_request.assignee
 
     if not sql:
-        raise HTTPException(status_code=400, detail="SQL is required")
+        raise HTTPException(status_code=400, detail=t("SQL is required"))
 
     # params can be {} for example on '(( source is not null ))'
     if not params and not params == {}:
-        raise HTTPException(status_code=400, detail="Params are required")
+        raise HTTPException(status_code=400, detail=t("Params are required"))
 
     if not cel_query:
-        raise HTTPException(status_code=400, detail="CEL is required")
+        raise HTTPException(status_code=400, detail=t("CEL is required"))
 
     if not rule_name:
-        raise HTTPException(status_code=400, detail="Rule name is required")
+        raise HTTPException(status_code=400, detail=t("Rule name is required"))
 
     if not timeframe:
-        raise HTTPException(status_code=400, detail="Timeframe is required")
+        raise HTTPException(status_code=400, detail=t("Timeframe is required"))
 
     if not timeunit:
-        raise HTTPException(status_code=400, detail="Timeunit is required")
+        raise HTTPException(status_code=400, detail=t("Timeunit is required"))
 
     if not resolve_on:
-        raise HTTPException(status_code=400, detail="resolveOn is required")
+        raise HTTPException(status_code=400, detail=t("resolveOn is required"))
 
     if not create_on:
-        raise HTTPException(status_code=400, detail="createOn is required")
+        raise HTTPException(status_code=400, detail=t("createOn is required"))
 
     if not threshold:
-        raise HTTPException(status_code=400, detail="threshold is required")
+        raise HTTPException(status_code=400, detail=t("threshold is required"))
 
     rule = create_rule_db(
         tenant_id=tenant_id,
@@ -167,10 +168,10 @@ async def delete_rule(
     logger.info(f"Deleting rule {rule_id}")
     if delete_rule_db(tenant_id=tenant_id, rule_id=rule_id):
         logger.info(f"Rule {rule_id} deleted")
-        return {"message": "Rule deleted"}
+        return {"message": t("Rule deleted")}
     else:
         logger.info(f"Rule {rule_id} not found")
-        raise HTTPException(status_code=404, detail="Rule not found")
+        raise HTTPException(status_code=404, detail=t("Rule not found"))
 
 
 @router.put(
@@ -205,39 +206,39 @@ async def update_rule(
         threshold = body.get("threshold", 1)
         assignee = body.get("assignee", None)
     except Exception:
-        raise HTTPException(status_code=400, detail="Invalid request body")
+        raise HTTPException(status_code=400, detail=t("Invalid request body"))
 
     sql = sql_query.get("sql")
     params = sql_query.get("params")
 
     if not sql:
-        raise HTTPException(status_code=400, detail="SQL is required")
+        raise HTTPException(status_code=400, detail=t("SQL is required"))
 
     if (
         not params and not params == {}
     ):  # params can be {} for example on '(( source is not null ))'
-        raise HTTPException(status_code=400, detail="Params are required")
+        raise HTTPException(status_code=400, detail=t("Params are required"))
 
     if not cel_query:
-        raise HTTPException(status_code=400, detail="CEL is required")
+        raise HTTPException(status_code=400, detail=t("CEL is required"))
 
     if not rule_name:
-        raise HTTPException(status_code=400, detail="Rule name is required")
+        raise HTTPException(status_code=400, detail=t("Rule name is required"))
 
     if not timeframe:
-        raise HTTPException(status_code=400, detail="Timeframe is required")
+        raise HTTPException(status_code=400, detail=t("Timeframe is required"))
 
     if not timeunit:
-        raise HTTPException(status_code=400, detail="Timeunit is required")
+        raise HTTPException(status_code=400, detail=t("Timeunit is required"))
 
     if not resolve_on:
-        raise HTTPException(status_code=400, detail="resolveOn is required")
+        raise HTTPException(status_code=400, detail=t("resolveOn is required"))
 
     if not create_on:
-        raise HTTPException(status_code=400, detail="createOn is required")
+        raise HTTPException(status_code=400, detail=t("createOn is required"))
 
     if not threshold:
-        raise HTTPException(status_code=400, detail="threshold is required")
+        raise HTTPException(status_code=400, detail=t("threshold is required"))
 
     rule = update_rule_db(
         tenant_id=tenant_id,
@@ -268,4 +269,4 @@ async def update_rule(
         return rule
     else:
         logger.info(f"Rule {rule_id} not found")
-        raise HTTPException(status_code=404, detail="Rule not found")
+        raise HTTPException(status_code=404, detail=t("Rule not found"))

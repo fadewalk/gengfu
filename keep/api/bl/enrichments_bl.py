@@ -16,6 +16,7 @@ from sqlalchemy_utils import UUIDType
 from sqlmodel import Session, select
 
 from keep.api.core.config import config
+from keep.api.i18n import t
 from keep.api.core.db import batch_enrich
 from keep.api.core.db import enrich_entity as enrich_alert_db
 from keep.api.core.db import (
@@ -107,13 +108,13 @@ class EnrichmentsBl:
     def run_mapping_rule_by_id(self, rule_id: int, alert_id: UUID) -> AlertDto:
         rule = get_mapping_rule_by_id(self.tenant_id, rule_id, session=self.db_session)
         if not rule:
-            raise HTTPException(status_code=404, detail="Mapping rule not found")
+            raise HTTPException(status_code=404, detail=t("Mapping rule not found"))
 
         alert = get_alert_by_event_id(
             self.tenant_id, str(alert_id), session=self.db_session
         )
         if not alert:
-            raise HTTPException(status_code=404, detail="Alert not found")
+            raise HTTPException(status_code=404, detail=t("Alert not found"))
         return self.check_if_match_and_enrich(alert, rule)
 
     def run_extraction_rule_by_id(self, rule_id: int, alert: Alert) -> AlertDto:
@@ -124,7 +125,7 @@ class EnrichmentsBl:
         # so we can track the enrichment event
         alert.event["event_id"] = alert.id
         if not rule:
-            raise HTTPException(status_code=404, detail="Extraction rule not found")
+            raise HTTPException(status_code=404, detail=t("Extraction rule not found"))
         return self.run_extraction_rules(alert.event, pre=False, rules=[rule])
 
     def run_extraction_rules(
@@ -817,7 +818,7 @@ class EnrichmentsBl:
         )
         enrichment_event = self.db_session.exec(query).one()
         if not enrichment_event:
-            raise HTTPException(status_code=404, detail="Enrichment event not found")
+            raise HTTPException(status_code=404, detail=t("Enrichment event not found"))
         return enrichment_event
 
     def get_enrichment_events(

@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException
 
 from keep.api.core.config import config
+from keep.api.i18n import t
 from keep.api.core.db import get_tenants_configurations
 
 
@@ -53,13 +54,13 @@ class TenantConfiguration:
 
             if tenant_id not in self.configurations:
                 self.logger.exception(
-                    f"Tenant not found [id: {tenant_id}]",
+                    t("Tenant not found [id: {tenant_id}]", tenant_id=tenant_id),
                     extra={
                         "tenant_id": tenant_id,
                     },
                 )
                 raise HTTPException(
-                    status_code=401, detail=f"Tenant not found [id: {tenant_id}]"
+                    status_code=401, detail=t("Tenant not found [id: {tenant_id}]", tenant_id=tenant_id)
                 )
 
             if config_name is None:

@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, stat
 from fastapi.responses import JSONResponse
 
 from keep.actions.actions_factory import ActionsCRUD
+from keep.api.i18n import t
 from keep.functions import cyaml
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.identitymanagerfactory import IdentityManagerFactory
@@ -28,7 +29,7 @@ def get_actions(
     except Exception:
         logger.exception("Failed to get actions")
         raise HTTPException(
-            status_code=400, detail="Unknown exception when getting actions"
+            status_code=400, detail=t("Unknown exception when getting actions")
         )
 
 
@@ -42,7 +43,7 @@ async def _get_action_info(request: Request, file: UploadFile) -> dict:
         action_info = cyaml.safe_load(action_inforaw)
     except cyaml.YAMLError:
         logger.exception("Invalid YAML format when parsing actions file")
-        raise HTTPException(status_code=400, detail="Invalid yaml format")
+        raise HTTPException(status_code=400, detail=t("Invalid yaml format"))
     return action_info
 
 

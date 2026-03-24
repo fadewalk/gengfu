@@ -12,6 +12,7 @@ from sqlmodel import Session
 
 from keep.api.core.config import config
 from keep.api.core.db import get_session
+from keep.api.i18n import t
 from keep.api.core.tenant_configuration import TenantConfiguration
 from keep.api.models.alert import AlertDto
 from keep.api.models.smtp import SMTPSettings
@@ -259,7 +260,7 @@ async def create_key(
         unique_api_key_id = body["name"].replace(" ", "")
         role = identity_manager.get_role_by_role_name(body["role"])
     except Exception:
-        raise HTTPException(status_code=400, detail="Invalid request body")
+        raise HTTPException(status_code=400, detail=t("Invalid request body"))
 
     try:
         api_key = create_api_key(
@@ -290,7 +291,7 @@ async def create_key(
     except APIKeyException as e:
         raise HTTPException(
             status_code=400,
-            detail=f"Error creating API key: {str(e)}",
+            detail=t("Error creating API key: {error}", error=str(e)),
         )
 
 
@@ -335,7 +336,7 @@ async def update_api_key(
         body = await request.json()
         unique_api_key_id = body["apiKeyId"]
     except Exception:
-        raise HTTPException(status_code=400, detail="Invalid request body")
+        raise HTTPException(status_code=400, detail=t("Invalid request body"))
 
     tenant_id = authenticated_entity.tenant_id
 
@@ -352,11 +353,11 @@ async def update_api_key(
 
     if api_key:
         logger.info(f"Api key ({unique_api_key_id}) secret updated")
-        return {"message": "API key secret updated", "apiKey": api_key}
+        return {"message": t("API key secret updated"), "apiKey": api_key}
     else:
         logger.info(f"Api key ({unique_api_key_id}) not found")
         raise HTTPException(
-            status_code=404, detail=f"API key ({unique_api_key_id}) not found"
+            status_code=404, detail=t("API key ({key_id}) not found", key_id=unique_api_key_id)
         )
 
 
@@ -384,7 +385,7 @@ def delete_api_key(
         except Exception as e:
             raise HTTPException(
                 status_code=500,
-                detail=f"Unable to deactivate Api key ({keyId}) secret. Error: {str(e)}",
+                detail=t("Unable to deactivate Api key ({key_id}) secret. Error: {error}", key_id=keyId, error=str(e)),
             )
 
         try:
@@ -393,14 +394,14 @@ def delete_api_key(
         except Exception:
             raise HTTPException(
                 status_code=500,
-                detail=f"Unable to flag Api key ({keyId}) as deactivated",
+                detail=t("Unable to flag Api key ({key_id}) as deactivated", key_id=keyId),
             )
 
         logger.info(f"Api key ({keyId}) has been deactivated")
-        return {"message": "Api key has been deactivated"}
+        return {"message": t("Api key has been deactivated")}
     else:
         logger.info(f"Api key ({keyId}) not found")
-        raise HTTPException(status_code=404, detail=f"Api key ({keyId}) not found")
+        raise HTTPException(status_code=404, detail=t("API key ({key_id}) not found", key_id=keyId))
 
 
 @router.get("/sso")

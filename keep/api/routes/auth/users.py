@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, validator
 
 from keep.api.models.user import User
+from keep.api.i18n import t
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.identitymanagerfactory import IdentityManagerFactory
 
@@ -81,7 +82,7 @@ async def create_user(
     groups = request_data.groups
 
     if not user_email:
-        raise HTTPException(status_code=400, detail="Email is required")
+        raise HTTPException(status_code=400, detail=t("Email is required"))
 
     identity_manager = IdentityManagerFactory.get_identity_manager(tenant_id)
     return identity_manager.create_user(
@@ -106,12 +107,12 @@ async def update_user(
 
     update_data = request_data.dict(exclude_unset=True)
     if not update_data:
-        raise HTTPException(status_code=400, detail="No update data provided")
+        raise HTTPException(status_code=400, detail=t("No update data provided"))
 
     try:
         return identity_manager.update_user(user_email, update_data)
     except NotImplementedError:
         raise HTTPException(
             status_code=501,
-            detail="Updating users is not supported by this identity manager",
+            detail=t("Updating users is not supported by this identity manager"),
         )

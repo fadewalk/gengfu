@@ -9,6 +9,7 @@ from keep.api.core.db import delete_user as delete_user_from_db
 from keep.api.core.db import get_user
 from keep.api.core.db import get_users as get_users_from_db
 from keep.api.core.dependencies import SINGLE_TENANT_UUID
+from keep.api.i18n import t
 from keep.api.models.user import User
 from keep.contextmanager.contextmanager import ContextManager
 from keep.identitymanager.identity_managers.db.db_authverifier import DbAuthVerifier
@@ -48,7 +49,7 @@ class DbIdentityManager(BaseIdentityManager):
             jwt_secret = os.environ.get("KEEP_JWT_SECRET")
             if not jwt_secret:
                 self.logger.info("missing KEEP_JWT_SECRET environment variable")
-                raise HTTPException(status_code=401, detail="Missing JWT secret")
+                raise HTTPException(status_code=401, detail=t("Missing JWT secret"))
             token = jwt.encode(
                 {
                     "email": user.username,
@@ -97,14 +98,14 @@ class DbIdentityManager(BaseIdentityManager):
                 created_at=str(user.created_at),
             )
         except Exception:
-            raise HTTPException(status_code=409, detail="User already exists")
+            raise HTTPException(status_code=409, detail=t("User already exists"))
 
     def delete_user(self, user_email: str) -> dict:
         try:
             delete_user_from_db(user_email)
             return {"status": "OK"}
         except Exception:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=404, detail=t("User not found"))
 
     def get_auth_verifier(self, scopes) -> DbAuthVerifier:
         return DbAuthVerifier(scopes)

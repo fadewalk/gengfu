@@ -3,6 +3,8 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
+from keep.api.i18n import t
+
 from keep.api.core.db import get_session
 from keep.api.models.db.maintenance_window import (
     MaintenanceRuleCreate,
@@ -80,7 +82,7 @@ def update_maintenance_rule(
     )
     if not rule:
         raise HTTPException(
-            status_code=404, detail="Maintenance rule not found or access denied"
+            status_code=404, detail=t("Maintenance rule not found or access denied")
         )
 
     for key, value in rule_dto.dict().items():
@@ -112,7 +114,7 @@ def delete_maintenance_rule(
     )
     if not rule:
         raise HTTPException(
-            status_code=404, detail="Maintenance rule not found or access denied"
+            status_code=404, detail=t("Maintenance rule not found or access denied")
         )
     session.delete(rule)
     session.commit()

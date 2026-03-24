@@ -23,6 +23,7 @@ from starlette_context import plugins
 from starlette_context.middleware import RawContextMiddleware
 
 from keep.api.arq_pool import get_pool
+from keep.api.i18n import t
 import keep.api.logging
 import keep.api.observability
 from keep.api.tasks import process_watcher_task
@@ -348,7 +349,7 @@ def get_app(
         return JSONResponse(
             status_code=500,
             content={
-                "message": "An internal server error occurred.",
+                "message": t("An internal server error occurred."),
                 "trace_id": request.state.trace_id,
                 "error_msg": str(exc),
             },

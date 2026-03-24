@@ -22,6 +22,7 @@ from keep.api.core.db import (
     update_preset_options,
     update_provider_last_pull_time,
 )
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto
 from keep.api.models.db.preset import (
     Preset,
@@ -257,9 +258,9 @@ def create_preset(
 ) -> PresetDto:
     tenant_id = authenticated_entity.tenant_id
     if not body.options or not body.name:
-        raise HTTPException(400, "Options and name are required")
+        raise HTTPException(400, t("Options and name are required"))
     if body.name == "Feed" or body.name == "Deleted":
-        raise HTTPException(400, "Cannot create preset with this name")
+        raise HTTPException(400, t("Cannot create preset with this name"))
     options_dict = [option.dict() for option in body.options]
 
     created_by = authenticated_entity.email
@@ -293,7 +294,7 @@ def create_preset(
         else:
             existing_tag = session.get(Tag, tag.id)
             if existing_tag is None:
-                raise HTTPException(400, f"Tag with id {tag.id} does not exist")
+                raise HTTPException(400, t("Tag with id {tag_id} does not exist", tag_id=tag.id))
             tags.append(existing_tag)
 
     # Add preset and commit to generate preset ID
@@ -337,7 +338,7 @@ def delete_preset(
     )
     preset = session.exec(statement).first()
     if not preset:
-        raise HTTPException(404, "Preset not found")
+        raise HTTPException(404, t("Preset not found"))
     session.delete(preset)
     session.commit()
     logger.info("Deleted preset", extra={"uuid": preset_id})
@@ -365,10 +366,10 @@ def update_preset(
     )
     preset = session.exec(statement).first()
     if not preset:
-        raise HTTPException(404, "Preset not found")
+        raise HTTPException(404, t("Preset not found"))
     if body.name:
         if body.name == "Feed" or body.name == "Deleted":
-            raise HTTPException(400, "Cannot create preset with this name")
+            raise HTTPException(400, t("Cannot create preset with this name"))
         if body.name != preset.name:
             preset.name = body.name
     preset.is_private = body.is_private
@@ -377,7 +378,7 @@ def update_preset(
 
     options_dict = [option.dict() for option in body.options]
     if not options_dict:
-        raise HTTPException(400, "Options cannot be empty")
+        raise HTTPException(400, t("Options cannot be empty"))
     preset.options = options_dict
 
     # Handle tags
@@ -399,7 +400,7 @@ def update_preset(
         else:
             existing_tag = session.get(Tag, tag.id)
             if existing_tag is None:
-                raise HTTPException(400, f"Tag with id {tag.id} does not exist")
+                raise HTTPException(400, t("Tag with id {tag_id} does not exist", tag_id=tag.id))
             tags.append(existing_tag)
 
     # Clear existing tag links
@@ -453,7 +454,7 @@ def get_preset_alerts(
         preset = get_db_preset_by_name(tenant_id, preset_name)
     # if preset does not exist
     if not preset:
-        raise HTTPException(404, "Preset not found")
+        raise HTTPException(404, t("Preset not found"))
     if isinstance(preset, Preset):
         preset_dto = PresetDto(**preset.to_dict())
     else:
@@ -469,7 +470,7 @@ def get_preset_alerts(
         authenticated_entity=authenticated_entity,
     )
     if allowed_preset_ids and str(preset_dto.id) not in allowed_preset_ids:
-        raise HTTPException(403, "Not authorized to access this preset")
+        raise HTTPException(403, t("Not authorized to access this preset"))
 
     search_engine = SearchEngine(tenant_id=tenant_id)
     preset_alerts = search_engine.search_alerts(preset_dto.query)
@@ -505,7 +506,7 @@ def create_preset_tab(
     )
     preset = session.exec(statement).first()
     if not preset:
-        raise HTTPException(404, "Preset not found")
+        raise HTTPException(404, t("Preset not found"))
 
     # get tabs
     tabs = []
@@ -556,7 +557,7 @@ def delete_tab(
     )
     preset = session.exec(statement).first()
     if not preset:
-        raise HTTPException(404, "Preset not found")
+        raise HTTPException(404, t("Preset not found"))
 
     # get tabs
     tabs = []
@@ -569,7 +570,7 @@ def delete_tab(
 
     # if tabs not found, return 404
     if not found:
-        raise HTTPException(404, "Tabs not found")
+        raise HTTPException(404, t("Tabs not found"))
 
     # remove the tab
     tabs = [tab for tab in tabs if tab.get("id") != tab_id]
@@ -617,7 +618,7 @@ def update_preset_column_config(
     )
     preset = session.exec(statement).first()
     if not preset:
-        raise HTTPException(404, "Preset not found")
+        raise HTTPException(404, t("Preset not found"))
 
     # Get current options and remove any existing column config options
     current_options = [
@@ -692,7 +693,7 @@ def get_preset_column_config(
     )
     preset = session.exec(statement).first()
     if not preset:
-        raise HTTPException(404, "Preset not found")
+        raise HTTPException(404, t("Preset not found"))
 
     preset_dto = PresetDto(**preset.to_dict())
     

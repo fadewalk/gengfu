@@ -8,6 +8,7 @@ from keep.api.models.action import ActionDTO
 from keep.api.models.db.action import Action
 from keep.api.core.db import get_all_actions, create_actions, delete_action, get_action, update_action
 from keep.actions.actions_exception import ActionsCRUDException
+from keep.api.i18n import t
 from keep.functions import cyaml
 
 logger = logging.getLogger(__name__)
@@ -51,7 +52,7 @@ class ActionsCRUD:
             create_actions(actions)
         except Exception:
             logger.exception("Failed to create actions")
-            raise ActionsCRUDException(status_code=422, detail="Unable to create the actions")
+            raise ActionsCRUDException(status_code=422, detail=t("Unable to create the actions"))
 
     @staticmethod
     def remove_action(tenant_id: str, action_id: str):
@@ -60,7 +61,7 @@ class ActionsCRUD:
             return deleted_action
         except Exception:
             logger.exception("Unknown exception when delete action from database")
-            raise ActionsCRUDException(status_code=422, detail="Unable to delete the requested action")
+            raise ActionsCRUDException(status_code=422, detail=t("Unable to delete the requested action"))
 
     @staticmethod
     def get_action(tenant_id: str, action_id: str) -> Union[Action, None]:
@@ -68,7 +69,7 @@ class ActionsCRUD:
             return get_action(tenant_id, action_id)
         except Exception:
             logger.exception("Unknown exception when getting action from database")
-            raise ActionsCRUDException(status_code=400, detail="Unable to get an action")
+            raise ActionsCRUDException(status_code=400, detail=t("Unable to get an action"))
 
     @staticmethod
     def update_action(tenant_id: str, action_id: str, payload: dict) -> Union[Action, None]:
@@ -81,7 +82,7 @@ class ActionsCRUD:
             updated_action = update_action(tenant_id, action_id, action_payload)
             if updated_action:
                 return update_action
-            raise ActionsCRUDException(status_code=422, detail="No action matched to be updated")
+            raise ActionsCRUDException(status_code=422, detail=t("No action matched to be updated"))
         except Exception:
             logger.exception("Uknown exception when update an action on database")
-            raise ActionsCRUDException(status_code=400, detail="Unable to update an action")
+            raise ActionsCRUDException(status_code=400, detail=t("Unable to update an action"))

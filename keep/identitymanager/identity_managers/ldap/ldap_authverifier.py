@@ -4,6 +4,7 @@ import jwt
 from fastapi import HTTPException
 
 from keep.api.core.dependencies import SINGLE_TENANT_UUID
+from keep.api.i18n import t
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.authverifierbase import AuthVerifierBase
 from keep.identitymanager.rbac import Admin as AdminRole
@@ -32,12 +33,12 @@ class LdapAuthVerifier(AuthVerifierBase):
             role = get_role_by_role_name(role_name)
         except Exception:
             self.logger.exception("Failed to decode JWT token")
-            raise HTTPException(status_code=401, detail="Invalid JWT token")
+            raise HTTPException(status_code=401, detail=t("Invalid JWT token"))
 
         if not role.has_scopes(self.scopes):
             raise HTTPException(
                 status_code=403,
-                detail="You don't have the required permissions to access this resource",
+                detail=t("You don't have the required permissions to access this resource"),
             )
         return AuthenticatedEntity(tenant_id, email, None, role_name)
 

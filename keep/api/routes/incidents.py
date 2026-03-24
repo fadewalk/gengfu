@@ -18,6 +18,7 @@ from sqlmodel import Session
 
 from keep.api.arq_pool import get_pool
 from keep.api.bl.ai_suggestion_bl import AISuggestionBl
+from keep.api.i18n import t
 from keep.api.bl.enrichments_bl import EnrichmentsBl
 from keep.api.bl.incident_reports import IncidentReportsBl
 from keep.api.bl.incidents_bl import IncidentBl
@@ -204,7 +205,7 @@ def get_all_incidents(
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{cel}". {str(e)}')
         raise HTTPException(
-            status_code=400, detail=f"Error parsing CEL expression: {cel}"
+            status_code=400, detail=t("Error parsing CEL expression: {cel}", cel=cel)
         ) from e
 
 
@@ -342,7 +343,7 @@ def get_incidents_report(
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{cel}". {str(e)}')
         raise HTTPException(
-            status_code=400, detail=f"Error parsing CEL expression: {cel}"
+            status_code=400, detail=t("Error parsing CEL expression: {cel}", cel=cel)
         )
 
 
@@ -366,7 +367,7 @@ def get_incident(
     )
     incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
     if not incident:
-        raise HTTPException(status_code=404, detail="Incident not found")
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
 
     rule = None
     if incident.rule_id:
@@ -400,7 +401,7 @@ def update_incident(
 
     current_incident = get_incident_by_id(tenant_id, incident_id)
     if not current_incident:
-        raise HTTPException(status_code=404, detail="Incident not found")
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
 
     if (
         updated_incident_dto.assignee
@@ -527,7 +528,7 @@ def merge_incidents(
 
         if failed_ids:
             message += f", {pluralize(len(failed_ids), 'incident')} failed to merge"
-            raise HTTPException(f"Some incidents failed to merge. {message}")
+            raise HTTPException(t("Some incidents failed to merge. {message}", message=message))
 
         return MergeIncidentsResponseDto(
             merged_incident_ids=merged_ids,
@@ -562,7 +563,7 @@ def get_incident_alerts(
     )
     incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
     if not incident:
-        raise HTTPException(status_code=404, detail="Incident not found")
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
 
     logger.info(
         "Fetching incident's alert",
@@ -614,7 +615,7 @@ def get_future_incidents_for_an_incident(
     )
     incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
     if not incident:
-        raise HTTPException(status_code=404, detail="Incident not found")
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
 
     logger.info(
         "Fetching future incidents from",
@@ -762,11 +763,11 @@ async def receive_event(
         provider_class = ProvidersFactory.get_provider_class(provider_type)
     except ModuleNotFoundError:
         raise HTTPException(
-            status_code=400, detail=f"Provider {provider_type} not found"
+            status_code=400, detail=t("Provider {provider_type} not found", provider_type=provider_type)
         )
     if not provider_class:
         raise HTTPException(
-            status_code=400, detail=f"Provider {provider_type} not found"
+            status_code=400, detail=t("Provider {provider_type} not found", provider_type=provider_type)
         )
 
     # Parse the raw body
@@ -823,7 +824,7 @@ def assign_incident(
         authenticated_entity.tenant_id, incident_id, session=session
     )
     if not incident:
-        raise HTTPException(status_code=404, detail="Incident not found")
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
     incident.assignee = authenticated_entity.email
     add_audit(
         authenticated_entity.tenant_id,
@@ -1039,7 +1040,7 @@ def confirm_incident(
 
     incident = confirm_predicted_incident_by_id(tenant_id, incident_id)
     if not incident:
-        raise HTTPException(status_code=404, detail="Incident candidate not found")
+        raise HTTPException(status_code=404, detail=t("Incident candidate not found"))
 
     new_incident_dto = IncidentDto.from_db_incident(incident)
 
@@ -1066,7 +1067,7 @@ async def enrich_incident(
     # Get incident to verify it exists
     incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
     if not incident:
-        raise HTTPException(status_code=404, detail="Incident not found")
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
 
     # Use the existing enrichment infrastructure
     enrichment_bl = EnrichmentsBl(tenant_id, db_session)
@@ -1116,11 +1117,11 @@ async def unenrich_incident(
     # Get incident to verify it exists
     incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
     if not incident:
-        raise HTTPException(status_code=404, detail="Incident not found")
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
 
     enrichments_object = get_enrichment(tenant_id, enrichment.fingerprint)
     if not enrichments_object:
-        raise HTTPException(status_code=404, detail="Enrichment not found")
+        raise HTTPException(status_code=404, detail=t("Enrichment not found"))
 
     enrichments = enrichments_object.enrichments
     new_enrichments = {

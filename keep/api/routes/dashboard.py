@@ -14,6 +14,7 @@ from keep.api.core.db import (
     get_combined_workflow_execution_distribution,
     calc_incidents_mttr,
 )
+from keep.api.i18n import t
 from keep.api.core.db import delete_dashboard as delete_dashboard_db
 from keep.api.core.db import get_dashboards as get_dashboards_db
 from keep.api.core.db import update_dashboard as update_dashboard_db
@@ -141,7 +142,7 @@ def delete_dashboard(
     # delete the dashboard from the database
     dashboard = delete_dashboard_db(authenticated_entity.tenant_id, dashboard_id)
     if not dashboard:
-        raise HTTPException(status_code=404, detail="Dashboard not found")
+        raise HTTPException(status_code=404, detail=t("Dashboard not found"))
     return {"ok": True}
 
 

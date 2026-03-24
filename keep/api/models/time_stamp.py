@@ -2,6 +2,7 @@ import json
 from typing import Optional
 
 from fastapi import Query, HTTPException
+from keep.api.i18n import t
 from pydantic import BaseModel, Field
 from datetime import datetime
 
@@ -23,5 +24,5 @@ def _get_time_stamp_filter(time_stamp: Optional[str] = Query(None)) -> TimeStamp
             # Return the TimeStampFilter object, Pydantic will map 'from' -> lower_timestamp and 'to' -> upper_timestamp
             return TimeStampFilter(**time_stamp_dict)
         except (json.JSONDecodeError, TypeError):
-            raise HTTPException(status_code=400, detail="Invalid time_stamp format")
+            raise HTTPException(status_code=400, detail=t("Invalid time_stamp format"))
     return TimeStampFilter()

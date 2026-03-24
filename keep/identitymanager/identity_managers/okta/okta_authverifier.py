@@ -6,6 +6,7 @@ from fastapi import Depends, HTTPException
 
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.authverifierbase import AuthVerifierBase, oauth2_scheme
+from keep.api.i18n import t
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ class OktaAuthVerifier(AuthVerifierBase):
 
     def _verify_bearer_token(self, token: str = Depends(oauth2_scheme)) -> AuthenticatedEntity:
         if not token:
-            raise HTTPException(status_code=401, detail="No token provided")
+            raise HTTPException(status_code=401, detail=t("No token provided"))
         
         try:
             # Get the signing key directly from the JWT
@@ -74,7 +75,7 @@ class OktaAuthVerifier(AuthVerifierBase):
             org_realm = payload.get("org_realm")
             
             if not email:
-                raise HTTPException(status_code=401, detail="No email in token")
+                raise HTTPException(status_code=401, detail=t("No email in token"))
             
             logger.info(f"Successfully verified token for user with email: {email}")
             return AuthenticatedEntity(
@@ -88,13 +89,13 @@ class OktaAuthVerifier(AuthVerifierBase):
             
         except jwt.exceptions.InvalidKeyError as e:
             logger.error(f"Invalid key error during token validation: {str(e)}")
-            raise HTTPException(status_code=401, detail="Invalid signing key - token validation failed")
+            raise HTTPException(status_code=401, detail=t("Invalid signing key - token validation failed"))
         except jwt.ExpiredSignatureError:
             logger.warning("Token has expired")
-            raise HTTPException(status_code=401, detail="Token has expired")
+            raise HTTPException(status_code=401, detail=t("Token has expired"))
         except jwt.InvalidTokenError as e:
             logger.warning(f"Invalid token: {str(e)}")
-            raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
+            raise HTTPException(status_code=401, detail=t("Invalid token: {error}", error=str(e)))
         except Exception as e:
             logger.exception("Failed to validate token")
-            raise HTTPException(status_code=401, detail=f"Token validation failed: {str(e)}") 
+            raise HTTPException(status_code=401, detail=t("Token validation failed: {error}", error=str(e)))

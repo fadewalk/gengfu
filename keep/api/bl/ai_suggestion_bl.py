@@ -10,6 +10,7 @@ from openai import OpenAI, OpenAIError
 from sqlmodel import Session
 
 from keep.api.bl.incidents_bl import IncidentBl
+from keep.api.i18n import t
 from keep.api.consts import OPENAI_BASE_URL, OPENAI_MODEL_NAME
 from keep.api.core.db import get_session_sync
 from keep.api.models.alert import AlertDto
@@ -41,7 +42,7 @@ class AISuggestionBl:
             # if its api key error, we should raise 400
             self.logger.error(f"Failed to initialize OpenAI client: {e}")
             raise HTTPException(
-                status_code=400, detail="AI service is not enabled for the client."
+                status_code=400, detail=t("AI service is not enabled for the client.")
             )
 
     def get_suggestion_by_input(self, suggestion_input: Dict) -> Optional[AISuggestion]:
@@ -237,7 +238,7 @@ class AISuggestionBl:
     ) -> IncidentsClusteringSuggestion:
         """Create incident suggestions using AI."""
         if len(alerts_dto) > 50:
-            raise HTTPException(status_code=400, detail="Too many alerts to process")
+            raise HTTPException(status_code=400, detail=t("Too many alerts to process"))
 
         # Check for existing suggestion
         alerts_fingerprints = [alert.fingerprint for alert in alerts_dto]
@@ -292,7 +293,7 @@ class AISuggestionBl:
 
         except Exception as e:
             self.logger.error(f"AI incident creation failed: {e}")
-            raise HTTPException(status_code=500, detail="AI service is unavailable.")
+            raise HTTPException(status_code=500, detail=t("AI service is unavailable."))
 
     async def commit_incidents(
         self,

@@ -19,6 +19,7 @@ from sqlalchemy_utils import UUIDType
 from sqlmodel import Session
 
 from keep.api.arq_pool import get_pool
+from keep.api.i18n import t
 from keep.api.bl.enrichments_bl import EnrichmentsBl
 from keep.api.consts import KEEP_ARQ_QUEUE_BASIC
 from keep.api.core.alerts import (
@@ -120,7 +121,7 @@ def fetch_alert_facet_options(
         )
         raise HTTPException(
             status_code=400,
-            detail=f"Error parsing CEL expression: {facet_options_query.cel}",
+            detail=t("Error parsing CEL expression: {cel}", cel=facet_options_query.cel),
         ) from e
 
     logger.info(
@@ -226,7 +227,7 @@ def query_alerts(
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{query.cel}". {str(e)}')
         raise HTTPException(
-            status_code=400, detail=f"Error parsing CEL expression: {query.cel}"
+            status_code=400, detail=t("Error parsing CEL expression: {cel}", cel=query.cel)
         ) from e
 
     db_alerts = enrich_alerts_with_incidents(tenant_id, db_alerts)
@@ -623,7 +624,7 @@ async def webhook_challenge(request: Request):
         token = request.query_params.get("token").encode("ascii")
     except Exception as e:
         logger.exception("Failed to get token", extra={"error": str(e)})
-        raise HTTPException(status_code=400, detail="Bad request: failed to get token")
+        raise HTTPException(status_code=400, detail=t("Bad request: failed to get token"))
     KEY = "keep-netdata-webhook-integration"
 
     # creates HMAC SHA-256 hash from incomming token and your consumer secret
@@ -660,27 +661,27 @@ async def receive_event(
     running_tasks: set = request.state.background_tasks
     provider_class = None
     try:
-        t = time.time()
+        start_time = time.time()
         logger.debug(f"Getting provider class for {provider_type}")
         provider_class = ProvidersFactory.get_provider_class(provider_type)
         logger.debug(
             "Got provider class",
             extra={
                 "provider_type": provider_type,
-                "time": time.time() - t,
+                "time": time.time() - start_time,
             },
         )
     except ModuleNotFoundError:
         raise HTTPException(
-            status_code=400, detail=f"Provider {provider_type} not found"
+            status_code=400, detail=t("Provider {provider_type} not found", provider_type=provider_type)
         )
     if not provider_class:
         raise HTTPException(
-            status_code=400, detail=f"Provider {provider_type} not found"
+            status_code=400, detail=t("Provider {provider_type} not found", provider_type=provider_type)
         )
 
     # Parse the raw body
-    t = time.time()
+    start_time = time.time()
     logger.debug("Parsing event raw body")
     try:
         event = provider_class.parse_event_raw_body(event)
@@ -689,8 +690,8 @@ async def receive_event(
             "Failed to parse event raw body",
             extra={"tenant_id": authenticated_entity.tenant_id, "event": event},
         )
-        raise HTTPException(status_code=400, detail="Malformed event")
-    logger.debug("Parsed event raw body", extra={"time": time.time() - t})
+        raise HTTPException(status_code=400, detail=t("Malformed event"))
+    logger.debug("Parsed event raw body", extra={"time": time.time() - start_time})
 
     # If provider_name is provided, try to get provider_id from it
     if provider_name and not provider_id:
@@ -698,7 +699,7 @@ async def receive_event(
         if not provider or provider.type != provider_type:
             raise HTTPException(
                 status_code=404,
-                detail=f"Provider with name '{provider_name}' not found",
+                detail=t("Provider with name '{provider_name}' not found", provider_name=provider_name),
             )
 
         provider_id = provider.id
@@ -762,7 +763,7 @@ def get_alert(
     if alert:
         return alert[0]
     else:
-        raise HTTPException(status_code=404, detail="Alert not found")
+        raise HTTPException(status_code=404, detail=t("Alert not found"))
 
 
 @router.post("/enrich/note", description="Enrich an alert note")
@@ -816,12 +817,12 @@ def batch_enrich_alerts(
 
     if not enrich_data.fingerprints and not enrich_data.cel:
         raise HTTPException(
-            status_code=400, detail="Either fingerprints or cel must be provided"
+            status_code=400, detail=t("Either fingerprints or cel must be provided")
         )
 
     if enrich_data.fingerprints and enrich_data.cel:
         raise HTTPException(
-            status_code=400, detail="Either fingerprints or cel can be provided at once"
+            status_code=400, detail=t("Either fingerprints or cel can be provided at once")
         )
 
     # If CEL is provided, use it to find matching alerts
@@ -847,7 +848,7 @@ def batch_enrich_alerts(
                 )
                 return {
                     "status": "ok",
-                    "message": "No alerts matched the query",
+                    "message": t("No alerts matched the query"),
                 }
 
             fingerprints = [alert.fingerprint for alert in db_alerts]
@@ -865,7 +866,7 @@ def batch_enrich_alerts(
             )
             raise HTTPException(
                 status_code=400,
-                detail=f"Error parsing CEL expression: {enrich_data.cel}",
+                detail=t("Error parsing CEL expression: {cel}", cel=enrich_data.cel),
             ) from e
         except Exception as e:
             logger.exception("Failed to process CEL query", extra={"error": str(e)})
@@ -1272,7 +1273,7 @@ async def search_alerts(
         raise
     except Exception as e:
         logger.exception("Failed to search alerts", extra={"error": str(e)})
-        raise HTTPException(status_code=500, detail="Failed to search alerts")
+        raise HTTPException(status_code=500, detail=t("Failed to search alerts"))
 
 
 @router.post(
@@ -1293,7 +1294,7 @@ def get_multiple_fingerprint_alert_audit(
     alert_audit = get_alert_audit_db(tenant_id, fingerprints)
 
     if not alert_audit:
-        raise HTTPException(status_code=404, detail="Alert not found")
+        raise HTTPException(status_code=404, detail=t("Alert not found"))
     grouped_events = []
 
     # Group the results by fingerprint for "deduplication" (2x, 3x, etc.) thingy..
@@ -1328,7 +1329,7 @@ def get_alert_audit(
     )
     alert_audit = get_alert_audit_db(tenant_id, fingerprint)
     if not alert_audit:
-        raise HTTPException(status_code=404, detail="Alert not found")
+        raise HTTPException(status_code=404, detail=t("Alert not found"))
 
     grouped_events = AlertAuditDto.from_orm_list(alert_audit)
     return grouped_events
@@ -1435,7 +1436,7 @@ def dismiss_error_alerts(
             },
         )
 
-        return {"success": True, "message": "Alert dismissed successfully"}
+        return {"success": True, "message": t("Alert dismissed successfully")}
 
     # If no alert_id is provided, dismiss all alerts
     else:
@@ -1458,4 +1459,4 @@ def dismiss_error_alerts(
             },
         )
 
-        return {"success": True, "message": "Successfully dismissed all alerts"}
+        return {"success": True, "message": t("Successfully dismissed all alerts")}

@@ -16,6 +16,7 @@ from keep.api.core.db import (
     user_exists,
 )
 from keep.api.core.dependencies import SINGLE_TENANT_UUID
+from keep.api.i18n import t
 from keep.api.models.db.user import User as DbUser
 from keep.api.models.user import User
 from keep.contextmanager.contextmanager import ContextManager
@@ -158,7 +159,7 @@ class LdapIdentityManager(BaseIdentityManager):
             self.logger.error(
                 "Missing KEEP_JWT_SECRET environment variable"
             )
-            raise HTTPException(status_code=401, detail="Missing JWT secret")
+            raise HTTPException(status_code=401, detail=t("Missing JWT secret"))
 
         token = jwt.encode(
             {
@@ -302,7 +303,7 @@ class LdapIdentityManager(BaseIdentityManager):
                 ldap=False,
             )
         except Exception:
-            raise HTTPException(status_code=409, detail="User already exists")
+            raise HTTPException(status_code=409, detail=t("User already exists"))
 
     def delete_user(self, user_email: str) -> dict:
         """Delete user from local DB."""
@@ -311,7 +312,7 @@ class LdapIdentityManager(BaseIdentityManager):
             return {"status": "OK"}
         except Exception:
             raise HTTPException(
-                status_code=404, detail="User not found"
+                status_code=404, detail=t("User not found")
             )
 
     def get_auth_verifier(self, scopes) -> LdapAuthVerifier:

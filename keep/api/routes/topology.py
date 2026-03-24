@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel import Session
 
 from keep.api.core.db import get_session, get_session_sync
+from keep.api.i18n import t
 from keep.api.models.db.topology import (
     TopologyApplicationDtoIn,
     TopologyApplicationDtoOut,
@@ -148,7 +149,7 @@ def delete_application(
     try:
         TopologiesService.delete_application_by_id(tenant_id, application_id, session)
         return JSONResponse(
-            status_code=200, content={"message": "Application deleted successfully"}
+            status_code=200, content={"message": t("Application deleted successfully")}
         )
     except ApplicationNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -288,7 +289,7 @@ def pull_topology_data(
             extra={"tenant_id": tenant_id, "error": str(e)},
         )
         raise HTTPException(
-            status_code=500, detail=f"Failed to pull topology data: {str(e)}"
+            status_code=500, detail=t("Failed to pull topology data: {error}", error=str(e))
         )
 
 
@@ -309,7 +310,7 @@ def create_service(
         )
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Failed to create service: {str(e)}"
+            status_code=500, detail=t("Failed to create service: {error}", error=str(e))
         )
 
 
@@ -329,13 +330,13 @@ def update_service(
     except ServiceNotManualException:
         raise HTTPException(
             status_code=404,
-            detail="The service you're trying to updated was not created manually.",
+            detail=t("The service you're trying to updated was not created manually."),
         )
     except ServiceNotFoundException:
-        raise HTTPException(status_code=404, detail="Service not found")
+        raise HTTPException(status_code=404, detail=t("Service not found"))
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Failed to update service: {str(e)}"
+            status_code=500, detail=t("Failed to update service: {error}", error=str(e))
         )
 
 
@@ -354,18 +355,18 @@ def delete_services(
             session=session,
         )
         return JSONResponse(
-            status_code=200, content={"message": "Services deleted successfully"}
+            status_code=200, content={"message": t("Services deleted successfully")}
         )
     except ServiceNotManualException:
         raise HTTPException(
             status_code=404,
-            detail="One or more service(s) you're trying to delete was not created manually.",
+            detail=t("One or more service(s) you're trying to delete was not created manually."),
         )
     except ServiceNotFoundException:
-        raise HTTPException(status_code=404, detail="Service not found")
+        raise HTTPException(status_code=404, detail=t("Service not found"))
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Failed to delete services: {str(e)}"
+            status_code=500, detail=t("Failed to delete services: {error}", error=str(e))
         )
 
 
@@ -386,11 +387,11 @@ def create_dependencies(
     except ServiceNotManualException:
         raise HTTPException(
             status_code=404,
-            detail="You're tying to create a dependency between one or more pulled services.",
+            detail=t("You're tying to create a dependency between one or more pulled services."),
         )
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Failed to create Dependency: {str(e)}"
+            status_code=500, detail=t("Failed to create Dependency: {error}", error=str(e))
         )
 
 
@@ -409,15 +410,15 @@ def update_dependency(
             tenant_id=authenticated_entity.tenant_id,
         )
     except DependencyNotFoundException:
-        raise HTTPException(status_code=404, detail="Dependency not found")
+        raise HTTPException(status_code=404, detail=t("Dependency not found"))
     except ServiceNotManualException:
         raise HTTPException(
             status_code=404,
-            detail="You're tying to update a dependency between one or more pulled services.",
+            detail=t("You're tying to update a dependency between one or more pulled services."),
         )
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Failed to update Dependency: {str(e)}"
+            status_code=500, detail=t("Failed to update Dependency: {error}", error=str(e))
         )
 
 
@@ -438,18 +439,18 @@ def delete_dependency(
             tenant_id=authenticated_entity.tenant_id,
         )
         return JSONResponse(
-            status_code=200, content={"message": "Dependency deleted successfully"}
+            status_code=200, content={"message": t("Dependency deleted successfully")}
         )
     except DependencyNotFoundException:
-        raise HTTPException(status_code=404, detail="Dependency not found")
+        raise HTTPException(status_code=404, detail=t("Dependency not found"))
     except ServiceNotManualException:
         raise HTTPException(
             status_code=404,
-            detail="You're tying to delete a dependency between two or more manual services.",
+            detail=t("You're tying to delete a dependency between two or more manual services."),
         )
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Failed to delete Dependency: {str(e)}"
+            status_code=500, detail=t("Failed to delete Dependency: {error}", error=str(e))
         )
 
 
@@ -513,14 +514,14 @@ async def import_topology_yaml(
         topology_data: dict = cyaml.safe_load(topology_yaml)
         TopologiesService.import_to_db(topology_data, session, tenant_id)
         return JSONResponse(
-            status_code=200, content={"message": "Topology imported successfully"}
+            status_code=200, content={"message": t("Topology imported successfully")}
         )
 
     except cyaml.YAMLError:
         logger.exception("Invalid YAML format")
-        raise HTTPException(status_code=400, detail="Invalid YAML format")
+        raise HTTPException(status_code=400, detail=t("Invalid YAML format"))
 
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Failed to import topology: {str(e)}"
+            status_code=500, detail=t("Failed to import topology: {error}", error=str(e))
         )

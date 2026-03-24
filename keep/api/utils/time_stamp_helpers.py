@@ -1,4 +1,5 @@
 from keep.api.models.time_stamp import TimeStampFilter
+from keep.api.i18n import t
 from fastapi import (
     HTTPException,
     Query
@@ -16,5 +17,5 @@ def get_time_stamp_filter(
             # Return the TimeStampFilter object, Pydantic will map 'from' -> lower_timestamp and 'to' -> upper_timestamp
             return TimeStampFilter(**time_stamp_dict)
         except (json.JSONDecodeError, TypeError):
-            raise HTTPException(status_code=400, detail="Invalid time_stamp format")
+            raise HTTPException(status_code=400, detail=t("Invalid time_stamp format"))
     return TimeStampFilter()

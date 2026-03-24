@@ -10,6 +10,8 @@ import requests
 import validators
 from fastapi import HTTPException
 
+from keep.api.i18n import t
+
 from keep.api.core.db import (
     add_or_update_workflow,
     delete_workflow,
@@ -49,7 +51,7 @@ class WorkflowStore:
         except NoResultFound:
             raise HTTPException(
                 status_code=404,
-                detail=f"Workflow execution {workflow_execution_id} not found",
+                detail=t("Workflow execution {workflow_execution_id} not found", workflow_execution_id=workflow_execution_id),
             )
 
     def get_workflow_execution_with_logs(
@@ -65,7 +67,7 @@ class WorkflowStore:
         except NoResultFound:
             raise HTTPException(
                 status_code=404,
-                detail=f"Workflow execution {workflow_execution_id} not found",
+                detail=t("Workflow execution {workflow_execution_id} not found", workflow_execution_id=workflow_execution_id),
             )
 
     def create_workflow(
@@ -108,16 +110,16 @@ class WorkflowStore:
         workflow = get_workflow_by_id(tenant_id, workflow_id)
         if not workflow:
             raise HTTPException(
-                status_code=404, detail=f"Workflow {workflow_id} not found"
+                status_code=404, detail=t("Workflow {workflow_id} not found", workflow_id=workflow_id)
             )
         if workflow.provisioned:
-            raise HTTPException(403, detail="Cannot delete a provisioned workflow")
+            raise HTTPException(403, detail=t("Cannot delete a provisioned workflow"))
         try:
             delete_workflow(tenant_id, workflow_id)
         except Exception as e:
             self.logger.exception(f"Error deleting workflow {workflow_id}: {str(e)}")
             raise HTTPException(
-                status_code=500, detail=f"Failed to delete workflow {workflow_id}"
+                status_code=500, detail=t("Failed to delete workflow {workflow_id}", workflow_id=workflow_id)
             )
 
     def _parse_workflow_to_dict(self, workflow_path: str) -> dict:
@@ -145,7 +147,7 @@ class WorkflowStore:
         if not workflow:
             raise HTTPException(
                 status_code=404,
-                detail=f"Workflow {workflow_id} not found",
+                detail=t("Workflow {workflow_id} not found", workflow_id=workflow_id),
             )
         return self.format_workflow_yaml(workflow.workflow_raw)
 
@@ -154,7 +156,7 @@ class WorkflowStore:
         if not workflow:
             raise HTTPException(
                 status_code=404,
-                detail=f"Workflow {workflow_id} not found",
+                detail=t("Workflow {workflow_id} not found", workflow_id=workflow_id),
             )
         workflow_yaml = cyaml.safe_load(workflow.workflow_raw)
         workflow = self.parser.parse(
@@ -167,14 +169,14 @@ class WorkflowStore:
         if len(workflow) > 1:
             raise HTTPException(
                 status_code=500,
-                detail=f"More than one workflow with id {workflow_id} found",
+                detail=t("More than one workflow with id {workflow_id} found", workflow_id=workflow_id),
             )
         elif workflow:
             return workflow[0]
         else:
             raise HTTPException(
                 status_code=404,
-                detail=f"Workflow {workflow_id} not found",
+                detail=t("Workflow {workflow_id} not found", workflow_id=workflow_id),
             )
 
     def get_workflow_from_dict(self, tenant_id: str, workflow_dict: dict) -> Workflow:
@@ -185,7 +187,7 @@ class WorkflowStore:
         else:
             raise HTTPException(
                 status_code=500,
-                detail="Unable to parse workflow from dict",
+                detail=t("Unable to parse workflow from dict"),
             )
 
     def get_all_workflows(

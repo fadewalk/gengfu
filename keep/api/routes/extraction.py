@@ -7,6 +7,7 @@ from sqlmodel import Session
 
 from keep.api.bl.enrichments_bl import EnrichmentsBl
 from keep.api.core.db import get_alert_by_event_id, get_session
+from keep.api.i18n import t
 from keep.api.models.db.enrichment_event import EnrichmentEventWithLogs, EnrichmentType
 from keep.api.models.db.extraction import (
     ExtractionRule,
@@ -77,7 +78,7 @@ def update_extraction_rule(
         .first()
     )
     if rule is None:
-        raise HTTPException(status_code=404, detail="Extraction rule not found")
+        raise HTTPException(status_code=404, detail=t("Extraction rule not found"))
 
     for key, value in rule_dto.dict(exclude_unset=True).items():
         setattr(rule, key, value)
@@ -105,10 +106,10 @@ def delete_extraction_rule(
         .first()
     )
     if rule is None:
-        raise HTTPException(status_code=404, detail="Extraction rule not found")
+        raise HTTPException(status_code=404, detail=t("Extraction rule not found"))
     session.delete(rule)
     session.commit()
-    return {"message": "Extraction rule deleted successfully"}
+    return {"message": t("Extraction rule deleted successfully")}
 
 
 @router.post(
@@ -141,7 +142,7 @@ def execute_rule(
     enrichment_bl = EnrichmentsBl(tenant_id=authenticated_entity.tenant_id)
     alert = get_alert_by_event_id(authenticated_entity.tenant_id, str(alert_id))
     if not alert:
-        raise HTTPException(status_code=404, detail="Alert not found")
+        raise HTTPException(status_code=404, detail=t("Alert not found"))
 
     enriched = enrichment_bl.run_extraction_rule_by_id(rule_id, alert)
     if enriched:
@@ -220,7 +221,7 @@ def get_enrichment_event_logs(
     enrichment_event = enrichment_bl.get_enrichment_event(enrichment_event_id)
     logs = enrichment_bl.get_enrichment_event_logs(enrichment_event_id)
     if not logs:
-        raise HTTPException(status_code=404, detail="Logs not found")
+        raise HTTPException(status_code=404, detail=t("Logs not found"))
     logger.info(
         "Got enrichment event logs",
         extra={"logs_count": len(logs)},

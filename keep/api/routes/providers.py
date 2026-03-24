@@ -35,6 +35,7 @@ from keep.providers.providers_factory import (
 )
 from keep.providers.providers_service import ProvidersService
 from keep.secretmanager.secretmanagerfactory import SecretManagerFactory
+from keep.api.i18n import t
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -221,7 +222,7 @@ def get_logs(
     except HTTPException as e:
         raise e
     except ModuleNotFoundError:
-        raise HTTPException(404, detail=f"Provider {provider_type} not found")
+        raise HTTPException(404, detail=t("Provider {provider_type} not found", provider_type=provider_type))
     except Exception:
         logger.exception(
             "Failed to get provider logs",
@@ -248,7 +249,7 @@ def get_alerts_schema(
         provider = ProvidersFactory.get_provider_class(provider_type)
         return provider.get_alert_schema()
     except ModuleNotFoundError:
-        raise HTTPException(404, detail=f"Provider {provider_type} not found")
+        raise HTTPException(404, detail=t("Provider {provider_type} not found", provider_type=provider_type))
 
 
 @router.get(
@@ -268,7 +269,7 @@ def get_alert_count(
     tenant_id = authenticated_entity.tenant_id
     if ever is False and (start_time is None or end_time is None):
         return HTTPException(
-            status_code=400, detail="Missing start_time and/or end_time"
+            status_code=400, detail=t("Missing start_time and/or end_time")
         )
     return ProviderAlertsCountResponseDTO(
         count=count_alerts(
@@ -406,7 +407,7 @@ def validate_provider_scopes(
     ).one()
 
     if not provider:
-        raise HTTPException(404, detail="Provider not found")
+        raise HTTPException(404, detail=t("Provider not found"))
 
     context_manager = ContextManager(tenant_id=tenant_id)
     secret_manager = SecretManagerFactory.get_secret_manager(context_manager)
@@ -449,7 +450,7 @@ async def update_provider(
         provider_info = dict(form_data)
 
     if not provider_info:
-        raise HTTPException(status_code=400, detail="No valid data provided")
+        raise HTTPException(status_code=400, detail=t("No valid data provided"))
 
     for key, value in provider_info.items():
         if isinstance(value, UploadFile):
@@ -484,7 +485,7 @@ async def install_provider(
         provider_info = dict(form_data)
 
     if not provider_info:
-        raise HTTPException(status_code=400, detail="No valid data provided")
+        raise HTTPException(status_code=400, detail=t("No valid data provided"))
 
     try:
         provider_id = provider_info.pop("provider_id")
@@ -493,7 +494,7 @@ async def install_provider(
         pulling_enabled = provider_info.pop("pulling_enabled", True)
     except KeyError as e:
         raise HTTPException(
-            status_code=400, detail=f"Missing required field: {e.args[0]}"
+            status_code=400, detail=t("Missing required field: {field}", field=e.args[0])
         )
 
     for key, value in provider_info.items():
@@ -644,7 +645,7 @@ def _get_provider(tenant_id: str, provider_id: str, session: Session):
         except IndexError:
             raise HTTPException(
                 400,
-                detail="Default provider must be in the format default-<provider_type>",
+                detail=t("Default provider must be in the format default-<provider_type>"),
             )
 
     secret_manager = SecretManagerFactory.get_secret_manager(context_manager)
@@ -666,7 +667,7 @@ def _get_provider(tenant_id: str, provider_id: str, session: Session):
         )
 
     except NoResultFound as e:
-        raise HTTPException(404, detail="Provider not found") from e
+        raise HTTPException(404, detail=t("Provider not found")) from e
 
 
 @router.post(
@@ -694,7 +695,7 @@ def invoke_provider_method(
         # Check if method exists
         func: Callable | None = getattr(provider_instance, method, None)
         if not func:
-            raise HTTPException(400, detail="Method not found")
+            raise HTTPException(400, detail=t("Method not found"))
 
         # Invoke the method with the body as params
         response = func(**body)
@@ -750,7 +751,7 @@ def invoke_provider_method(
                 "method_params": body,
             },
         )
-        raise HTTPException(status_code=500, detail="Internal server error") from e
+        raise HTTPException(status_code=500, detail=t("Internal server error")) from e
 
 
 # Webhook related endpoints
@@ -774,7 +775,7 @@ def install_provider_webhook(
         return JSONResponse(status_code=200, content={"message": "webhook installed"})
     else:
         return JSONResponse(
-            status_code=400, content={"message": "provider does not support webhook"}
+            status_code=400, content={"message": t("provider does not support webhook")}
         )
 
 
@@ -844,7 +845,7 @@ async def healthcheck_provider(
         provider_info = dict(form_data)
 
     if not provider_info:
-        raise HTTPException(status_code=400, detail="No valid data provided")
+        raise HTTPException(status_code=400, detail=t("No valid data provided"))
 
     try:
         provider_id = provider_info.pop("provider_id")
@@ -852,7 +853,7 @@ async def healthcheck_provider(
         provider_name = f"{provider_type} healthcheck"
     except KeyError as e:
         raise HTTPException(
-            status_code=400, detail=f"Missing required field: {e.args[0]}"
+            status_code=400, detail=t("Missing required field: {field}", field=e.args[0])
         )
 
     for key, value in provider_info.items():

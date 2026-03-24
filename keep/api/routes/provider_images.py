@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFil
 from sqlmodel import Session, select
 
 from keep.api.core.db import get_session
+from keep.api.i18n import t
 from keep.api.models.db.provider_image import ProviderImage
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.identitymanagerfactory import IdentityManagerFactory
@@ -32,7 +33,7 @@ async def upload_provider_image(
 
     full_image_name = f"{image_name}-icon.png"
     if not file.content_type.startswith("image/"):
-        raise HTTPException(400, "File must be an image")
+        raise HTTPException(400, t("File must be an image"))
 
     try:
         image_data = await file.read()
@@ -60,11 +61,11 @@ async def upload_provider_image(
             session.add(provider_image)
 
         session.commit()
-        return {"message": "Image uploaded successfully"}
+        return {"message": t("Image uploaded successfully")}
 
     except Exception:
         logger.exception("Failed to upload image")
-        raise HTTPException(500, "Failed to upload image")
+        raise HTTPException(500, t("Failed to upload image"))
 
 
 @router.get("/{image_name}")
@@ -102,7 +103,7 @@ async def get_provider_image(
         with open(DEFAULT_IMAGE_PATH, "rb") as f:
             return Response(content=f.read(), media_type="image/png")
     except FileNotFoundError:
-        raise HTTPException(404, "Default image not found")
+        raise HTTPException(404, t("Default image not found"))
 
 
 @router.get("")

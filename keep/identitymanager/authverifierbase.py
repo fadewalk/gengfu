@@ -14,6 +14,7 @@ from starlette.datastructures import FormData
 from keep.api.core.config import config
 from keep.api.core.db import get_api_key, update_key_last_used
 from keep.api.core.dependencies import extract_generic_body
+from keep.api.i18n import t
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.rbac import Admin as AdminRole
 from keep.identitymanager.rbac import get_role_by_role_name
@@ -126,7 +127,7 @@ class AuthVerifierBase:
                 self.logger.error("Read only instance, but non-read scopes requested")
                 raise HTTPException(
                     status_code=403,
-                    detail="Read only instance, but non-read scopes requested",
+                    detail=t("Read only instance, but non-read scopes requested"),
                 )
 
         authenticated_entity = self.authenticate(request, api_key, authorization, token, body)
@@ -174,7 +175,7 @@ class AuthVerifierBase:
             except Exception:
                 self.logger.exception("Failed to validate token")
                 raise HTTPException(
-                    status_code=401, detail="Invalid authentication credentials"
+                    status_code=401, detail=t("Invalid authentication credentials")
                 )
 
         api_key = self._extract_api_key(request, api_key, authorization)
@@ -191,7 +192,7 @@ class AuthVerifierBase:
             except Exception:
                 self.logger.exception("Failed to validate API Key")
                 raise HTTPException(
-                    status_code=401, detail="Invalid authentication credentials"
+                    status_code=401, detail=t("Invalid authentication credentials")
                 )
         self.logger.error(
             "No valid authentication method found",
@@ -201,7 +202,7 @@ class AuthVerifierBase:
             }
         )
         raise HTTPException(
-            status_code=401, detail="Missing authentication credentials"
+            status_code=401, detail=t("Missing authentication credentials")
         )
 
     def authorize(self, authenticated_entity: AuthenticatedEntity) -> None:
@@ -233,7 +234,7 @@ class AuthVerifierBase:
             self.logger.warning(f"Authorization failed. Required scopes: {self.scopes}")
             raise HTTPException(
                 status_code=403,
-                detail=f"You don't have the required scopes to access this resource [required scopes: {self.scopes}]",
+                detail=t("You don't have the required scopes to access this resource [required scopes: {scopes}]", scopes=self.scopes),
             )
 
     def _extract_api_key(
@@ -300,7 +301,7 @@ class AuthVerifierBase:
                 raise HTTPException(
                     status_code=401,
                     headers={"WWW-Authenticate": "Basic"},
-                    detail="Missing API Key",
+                    detail=t("Missing API Key"),
                 )
 
             auth_header = request.headers.get("Authorization")
@@ -314,20 +315,20 @@ class AuthVerifierBase:
                         "user-agent": request.headers.get("user-agent"),
                     },
                 )
-                raise HTTPException(status_code=401, detail="Missing API Key")
+                raise HTTPException(status_code=401, detail=t("Missing API Key"))
             if scheme.lower() == "basic":
                 api_key = authorization.password
             elif scheme.lower() == "digest":
                 if not credentials:
                     self.logger.error("Invalid Digest credentials")
                     raise HTTPException(
-                        status_code=403, detail="Invalid Digest credentials"
+                        status_code=403, detail=t("Invalid Digest credentials")
                     )
                 else:
                     api_key = credentials
             else:
                 self.logger.error(f"Unsupported authentication scheme: {scheme}")
-                raise HTTPException(status_code=401, detail="Missing API Key")
+                raise HTTPException(status_code=401, detail=t("Missing API Key"))
         self.logger.debug("API key extracted successfully")
         return api_key
 
@@ -355,7 +356,7 @@ class AuthVerifierBase:
         tenant_api_key = get_api_key(api_key)
         if not tenant_api_key:
             self.logger.warning("Invalid API Key")
-            raise HTTPException(status_code=401, detail="Invalid API Key")
+            raise HTTPException(status_code=401, detail=t("Invalid API Key"))
 
         try:
             self.logger.debug("Updating API Key last used")
@@ -412,14 +413,14 @@ class AuthVerifierBase:
         user_name = request.headers.get(self.impersonation_user_header)
         role = request.headers.get(self.impersonation_role_header)
         if not user_name or not role:
-            raise HTTPException(status_code=401, detail="Impersonation headers missing")
+            raise HTTPException(status_code=401, detail=t("Impersonation headers missing"))
 
         # TODO - validate authorization meaning api key X has access to impersonate user Y
         #        for now, only admin users can impersonate
         if tenant_api_key.role != AdminRole.get_name():
             self.logger.error("Impersonation not allowed for non-admin users")
             raise HTTPException(
-                status_code=401, detail="Impersonation not allowed for non-admin users"
+                status_code=401, detail=t("Impersonation not allowed for non-admin users")
             )
 
         # auto provision user

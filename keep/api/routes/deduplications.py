@@ -4,6 +4,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 
 from keep.api.alert_deduplicator.alert_deduplicator import AlertDeduplicator
+from keep.api.i18n import t
 from keep.api.models.alert import DeduplicationRuleRequestDto as DeduplicationRule
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.identitymanagerfactory import IdentityManagerFactory
@@ -124,15 +125,15 @@ def delete_deduplication_rule(
     try:
         uuid.UUID(rule_id)
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid rule id")
+        raise HTTPException(status_code=400, detail=t("Invalid rule id"))
 
     try:
         success = alert_deduplicator.delete_deduplication_rule(rule_id)
         if success:
             logger.info("Deleted deduplication rule")
-            return {"message": "Deduplication rule deleted successfully"}
+            return {"message": t("Deduplication rule deleted successfully")}
         else:
-            raise HTTPException(status_code=404, detail="Deduplication rule not found")
+            raise HTTPException(status_code=404, detail=t("Deduplication rule not found"))
     except HTTPException as e:
         logger.exception("Error deleting deduplication rule")
         # keep the same status code

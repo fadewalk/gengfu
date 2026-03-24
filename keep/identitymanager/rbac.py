@@ -17,6 +17,8 @@ import enum
 
 from fastapi import HTTPException
 
+from keep.api.i18n import t
+
 
 class Roles(enum.Enum):
     ADMIN = "admin"
@@ -88,5 +90,5 @@ def get_role_by_role_name(role_name: str) -> list[str]:
     else:
         raise HTTPException(
             status_code=403,
-            detail=f"Role {role_name} not found",
+            detail=t("Role {role_name} not found", role_name=role_name),
         )

@@ -4,6 +4,7 @@ from typing import List
 from fastapi import APIRouter, Body, Depends
 
 from keep.api.models.user import ResourcePermission
+from keep.api.i18n import t
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.authverifierbase import ALL_RESOURCES
 from keep.identitymanager.identitymanagerfactory import IdentityManagerFactory
@@ -49,7 +50,7 @@ def create_permissions(
         authenticated_entity.tenant_id
     )
     identity_manager.create_permissions(resource_permissions)
-    return {"message": "Permissions created successfully"}
+    return {"message": t("Permissions created successfully")}
 
 
 @router.get("/scopes", description="Get all resources types")

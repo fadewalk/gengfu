@@ -13,6 +13,7 @@ from sqlalchemy.orm.exc import StaleDataError
 from sqlmodel import Session
 
 from keep.api.arq_pool import get_pool
+from keep.api.i18n import t
 from keep.api.bl.enrichments_bl import EnrichmentsBl
 from keep.api.core.db import (
     add_alerts_to_incident,
@@ -142,7 +143,7 @@ class IncidentBl:
             tenant_id=self.tenant_id, incident_id=incident_id, session=self.session
         )
         if not incident:
-            raise HTTPException(status_code=404, detail="Incident not found")
+            raise HTTPException(status_code=404, detail=t("Incident not found"))
 
         add_alerts_to_incident(
             self.tenant_id,
@@ -263,7 +264,7 @@ class IncidentBl:
         )
         incident = get_incident_by_id(tenant_id=self.tenant_id, incident_id=incident_id)
         if not incident:
-            raise HTTPException(status_code=404, detail="Incident not found")
+            raise HTTPException(status_code=404, detail=t("Incident not found"))
 
         remove_alerts_to_incident_by_incident_id(
             self.tenant_id, incident_id, alert_fingerprints
@@ -281,7 +282,7 @@ class IncidentBl:
 
         incident = get_incident_by_id(tenant_id=self.tenant_id, incident_id=incident_id)
         if not incident:
-            raise HTTPException(status_code=404, detail="Incident not found")
+            raise HTTPException(status_code=404, detail=t("Incident not found"))
 
         incident_dto = IncidentDto.from_db_incident(incident)
 
@@ -289,7 +290,7 @@ class IncidentBl:
             tenant_id=self.tenant_id, incident_id=incident_id
         )
         if not deleted:
-            raise HTTPException(status_code=404, detail="Incident not found")
+            raise HTTPException(status_code=404, detail=t("Incident not found"))
 
         self.update_client_on_incident_change()
         self.send_workflow_event(incident_dto, "deleted")
@@ -376,7 +377,7 @@ class IncidentBl:
 
     def __postprocess_incident_change(self, incident):
         if not incident:
-            raise HTTPException(status_code=404, detail="Incident not found")
+            raise HTTPException(status_code=404, detail=t("Incident not found"))
 
         new_incident_dto = IncidentDto.from_db_incident(incident)
 
@@ -499,7 +500,7 @@ class IncidentBl:
         )
 
         if not incident:
-            raise HTTPException(status_code=404, detail="Incident not found")
+            raise HTTPException(status_code=404, detail=t("Incident not found"))
 
         if new_status in [IncidentStatus.RESOLVED, IncidentStatus.ACKNOWLEDGED]:
             enrichments = {"status": new_status.value}

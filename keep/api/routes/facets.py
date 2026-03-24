@@ -6,6 +6,7 @@ from fastapi import (
     HTTPException,
 )
 
+from keep.api.i18n import t
 import keep.api.core.facets as facets
 from keep.api.models.facet import CreateFacetDto, FacetDto
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
@@ -34,7 +35,7 @@ async def add_facet(
     )
 ) -> FacetDto:
     if entity_name not in entity_name_to_entity_type:
-        raise HTTPException(status_code=409, detail="Entity not found")    
+        raise HTTPException(status_code=409, detail=t("Entity not found"))
     entity_type = entity_name_to_entity_type[entity_name]
     tenant_id = authenticated_entity.tenant_id
     logger.info(
@@ -62,7 +63,7 @@ async def delete_facet(
     )
 ):
     if entity_name not in entity_name_to_entity_type:
-        raise HTTPException(status_code=409, detail="Entity not found")
+        raise HTTPException(status_code=409, detail=t("Entity not found"))
     entity_type = entity_name_to_entity_type[entity_name]
     tenant_id = authenticated_entity.tenant_id
     logger.info(
@@ -79,4 +80,4 @@ async def delete_facet(
     )
     
     if not is_deleted:
-        raise HTTPException(status_code=404, detail="Facet not found")
+        raise HTTPException(status_code=404, detail=t("Facet not found"))
