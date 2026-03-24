@@ -6,6 +6,7 @@ import time
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -65,7 +66,7 @@ class GoogleChatProvider(BaseProvider):
         webhook_url = self.authentication_config.webhook_url
 
         if not message:
-            raise ProviderException("Message is required")
+            raise ProviderException(t("Message is required"))
 
         def __send_message(url, body, headers, retries=3):
             for attempt in range(retries):
@@ -85,7 +86,7 @@ class GoogleChatProvider(BaseProvider):
                     time.sleep(1)
 
             raise requests.exceptions.RequestException(
-                f"Failed to notify message after {retries} attempts"
+                t("Failed to notify message after {retries} attempts", retries=retries)
             )
 
         payload = {
@@ -97,7 +98,7 @@ class GoogleChatProvider(BaseProvider):
         response = __send_message(webhook_url, body=payload, headers=request_headers)
         if response.status_code != http.HTTPStatus.OK:
             raise ProviderException(
-                f"Failed to notify message to Google Chat: {response.text}"
+                t("Failed to notify message to Google Chat: {error}", error=response.text)
             )
 
         self.logger.debug("Alert message sent to Google Chat successfully")

@@ -495,13 +495,16 @@ class AlertDeduplicator:
                 break
 
         if not provider and provider_key:
-            message = f"Provider {rule.provider_type} not found"
             if rule.provider_id:
-                message += f" with id {rule.provider_id}"
-            raise HTTPException(
-                status_code=404,
-                detail=message,
-            )
+                raise HTTPException(
+                    status_code=404,
+                    detail=t("Provider {provider_type} not found with id {provider_id}", provider_type=rule.provider_type, provider_id=rule.provider_id),
+                )
+            else:
+                raise HTTPException(
+                    status_code=404,
+                    detail=t("Provider {provider_type} not found", provider_type=rule.provider_type),
+                )
 
         # Use the db function to create a new deduplication rule
         new_rule = create_deduplication_rule(

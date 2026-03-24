@@ -2,6 +2,7 @@
 Netdata is a cloud-based monitoring tool that provides real-time monitoring of servers, applications, and devices.
 """
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider

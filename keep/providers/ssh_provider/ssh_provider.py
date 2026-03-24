@@ -9,6 +9,7 @@ import typing
 import pydantic
 from paramiko import AutoAddPolicy, RSAKey, SSHClient
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -61,7 +62,7 @@ class SshProviderAuthConfig:
     def check_password_or_pkey(cls, values):
         password, pkey = values.get("password"), values.get("pkey")
         if password is None and pkey is None:
-            raise ValueError("either password or private key must be provided")
+            raise ValueError(t("either password or private key must be provided"))
         return values
 
 
@@ -149,7 +150,7 @@ class SshProvider(BaseProvider):
                 return {"ssh_access": True}
         except Exception:
             self.logger.exception("Error validating scopes")
-        return {"ssh_access": "Authentication failed"}
+        return {"ssh_access": t("Authentication failed")}
 
     def _query(self, command: str, **kwargs: dict):
         """

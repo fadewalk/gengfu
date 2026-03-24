@@ -5,6 +5,7 @@ BashProvider is a class that implements the BaseOutputProvider.
 import shlex
 import subprocess
 
+from keep.api.i18n import t
 from keep.iohandler.iohandler import IOHandler
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig

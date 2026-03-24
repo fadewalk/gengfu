@@ -6,6 +6,7 @@ import pydantic
 import requests
 from asteval import Interpreter
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -50,7 +51,7 @@ class LinearbProvider(BaseProvider):
             f"{self.LINEARB_API}/api/v1/health", headers=headers, timeout=10
         )
         if not result.ok:
-            return {"any": "Failed to validate the API token"}
+            return {"any": t("Failed to validate token")}
         return {"any": True}
 
     def validate_config(self):
@@ -104,7 +105,7 @@ class LinearbProvider(BaseProvider):
                     if "message" in r:
                         r["message_from_linearb"] = r.pop("message")
                     self.logger.warning("Failed to delete incident", extra={**r})
-                    raise Exception(f"Failed to notify linearB {result.text}")
+                    raise Exception(t("Failed to delete incident: {error}", error=result.text))
                 return result.text
 
             # Try to get the incident
@@ -188,7 +189,7 @@ class LinearbProvider(BaseProvider):
             else:
                 if not http_url or not title:
                     raise ProviderException(
-                        "http_url and title are required for creating an incident"
+                        t("HTTP URL and title are required")
                     )
 
                 if teams and isinstance(teams, str):
@@ -196,7 +197,7 @@ class LinearbProvider(BaseProvider):
 
                 if not teams:
                     raise ProviderException(
-                        "At least 1 team is required for creating an incident"
+                        t("Team is required")
                     )
 
                 issued_at = issued_at or datetime.datetime.now().isoformat()
@@ -239,12 +240,12 @@ class LinearbProvider(BaseProvider):
                     "Failed to notify linearB",
                     extra={**r, "payload": payload},
                 )
-                raise Exception(f"Failed to notify linearB {result.text}")
+                raise Exception(t("Failed to notify LinearB: {error}", error=result.text))
 
             return result.text
         except Exception as e:
             self.logger.exception("Failed to notify LinearB")
-            raise ProviderException(f"Failed to notify LinearB: {e}")
+            raise ProviderException(t("Failed to notify LinearB: {error}", error=str(e)))
 
 
 if __name__ == "__main__":

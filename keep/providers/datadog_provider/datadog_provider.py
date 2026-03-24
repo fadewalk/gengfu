@@ -39,6 +39,7 @@ from datadog_api_client.v2.api.service_definition_api import ServiceDefinitionAp
 from datadog_api_client.v2.api.users_api import UsersApi, UsersResponse
 from pydantic import Field
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.api.models.db.topology import TopologyServiceInDto
 from keep.contextmanager.contextmanager import ContextManager
@@ -372,7 +373,7 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
                 },
             )
             if not response.ok:
-                raise Exception("Could not refresh token, need to re-authenticate")
+                raise Exception(t("Could not refresh token, need to re-authenticate"))
             response_json = response.json()
             self.configuration.access_token = response_json.get("access_token")
             self.configuration.host = f"https://api.{domain}"
@@ -381,7 +382,7 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
                 "refresh_token"
             ]
         else:
-            raise Exception("No authentication provided")
+            raise Exception(t("No authentication provided"))
         # to be exposed
         self.to = None
         self._from = None
@@ -397,10 +398,10 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
         domain = payload.pop("domain", "datadoghq.com")
         verifier = payload.pop("verifier", None)
         if not verifier:
-            raise Exception("No verifier provided")
+            raise Exception(t("No verifier provided"))
         code = payload.pop("code", None)
         if not code:
-            raise Exception("No code provided")
+            raise Exception(t("No code provided"))
 
         token = requests.post(
             f"https://api.{domain}/oauth2/v1/token",
@@ -416,7 +417,7 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
 
         access_token = token.get("access_token")
         if not access_token:
-            raise Exception("No access token provided")
+            raise Exception(t("No access token provided"))
 
         return {
             "oauth_token": {
@@ -461,7 +462,7 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
             return response.json()
         else:
             raise Exception(
-                f"Failed to add incident timeline note: {response.status_code} {response.text}"
+                t("Failed to add incident timeline note: {status_code} {text}", status_code=response.status_code, text=response.text)
             )
 
     def resolve_incident(self, incident_id: str):
@@ -669,12 +670,12 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
                 },
             )
             raise Exception(
-                f"Failed to get traces: {response.status_code} {response.text}"
+                t("Failed to get traces: {status_code} {text}", status_code=response.status_code, text=response.text)
             )
 
     def search_traces(self, queries: list[str], **kwargs):
         if not queries:
-            raise Exception("No services provided")
+            raise Exception(t("No services provided"))
 
         self.logger.info("Searching traces", extra={"queries": queries})
 
@@ -741,7 +742,7 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
                 },
             )
             raise Exception(
-                f"Failed to get traces: {response.status_code} {response.text}"
+                t("Failed to get traces: {status_code} {text}", status_code=response.status_code, text=response.text)
             )
 
     def get_monitor_events(self, monitor_id: str):
@@ -1574,7 +1575,7 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
         tags_pattern = r"\{(.*?)\}"
         tags_match = re.search(tags_pattern, metric_query)
         if not tags_match:
-            raise ValueError("No tags found in metric query")
+            raise ValueError(t("No tags found in metric query"))
 
         tags_str = tags_match.group(1)
         tags_dict = dict(tag.split(":") for tag in tags_str.split(","))
@@ -1583,7 +1584,7 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
         threshold_pattern = r">\s*(\d+)"
         threshold_match = re.search(threshold_pattern, metric_query)
         if not threshold_match:
-            raise ValueError("No threshold found in metric query")
+            raise ValueError(t("No threshold found in metric query"))
 
         threshold_seconds = int(threshold_match.group(1))
 
@@ -1591,7 +1592,7 @@ class DatadogProvider(BaseTopologyProvider, ProviderHealthMixin):
         operation_pattern = r"trace\.(.*?)\.duration"
         operation_match = re.search(operation_pattern, metric_query)
         if not operation_match:
-            raise ValueError("Could not find operation name in metric query")
+            raise ValueError(t("Could not find operation name in metric query"))
 
         operation_name = operation_match.group(1)
 

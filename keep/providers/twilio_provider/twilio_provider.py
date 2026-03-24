@@ -8,6 +8,7 @@ import pydantic
 from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -128,7 +129,7 @@ class TwilioProvider(BaseProvider):
 
         if not to_phone_number:
             raise ProviderException(
-                f"{self.__class__.__name__} failed to notify alert SMS via Twilio: to_phone_number is required"
+                t("{provider} failed to notify alert SMS via Twilio: to_phone_number is required", provider=self.__class__.__name__)
             )
         twilio_client = Client(
             self.authentication_config.account_sid, self.authentication_config.api_token
@@ -146,7 +147,7 @@ class TwilioProvider(BaseProvider):
                 "Failed to send SMS via Twilio", extra={"reason": str(e)}
             )
             raise ProviderException(
-                f"{self.__class__.__name__} failed to notify alert SMS via Twilio: {e}"
+                t("{provider} failed to notify alert SMS via Twilio: {error}", provider=self.__class__.__name__, error=str(e))
             )
 
 

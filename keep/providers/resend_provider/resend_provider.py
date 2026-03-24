@@ -7,6 +7,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig
@@ -77,7 +78,7 @@ class ResendProvider(BaseProvider):
         )
         if response.status_code != 200:
             error = response.json()
-            raise Exception("Failed to send email: " + error["message"])
+            raise Exception(t("Failed to send email: {error}", error=error["message"]))
         return response.json()
 
     def dispose(self):

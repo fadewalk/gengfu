@@ -10,6 +10,7 @@ from typing import Optional
 import pydantic
 from google.cloud import bigquery
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig
@@ -73,14 +74,14 @@ class BigqueryProvider(BaseProvider):
                 ]
             except KeyError:
                 raise ValueError(
-                    "GOOGLE_CLOUD_PROJECT environment variable is not set."
+                    t("Cloud project is not set")
                 )
             if (
                 self.config.authentication["project_id"] is None
                 or self.config.authentication["project_id"] == ""
             ):
                 # If default project not found, raise error
-                raise ValueError("BigQuery project id is missing.")
+                raise ValueError(t("Project ID is missing"))
 
     def init_client(self):
         if self.authentication_config.service_account_json:
@@ -107,7 +108,7 @@ class BigqueryProvider(BaseProvider):
             self.client.project = os.environ["GOOGLE_CLOUD_PROJECT"]
         else:
             raise ValueError(
-                "Project ID must be set in either the configuration or the 'GOOGLE_CLOUD_PROJECT' environment variable."
+                t("Project ID must be set")
             )
 
     def dispose(self):

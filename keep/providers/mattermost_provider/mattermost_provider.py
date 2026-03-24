@@ -4,6 +4,7 @@ import json5
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -76,7 +77,7 @@ class MattermostProvider(BaseProvider):
 
         if not response.ok:
             raise ProviderException(
-                f"{self.__class__.__name__} failed to notify alert message to Mattermost: {response.text}"
+                t("{provider} failed to notify alert message to Mattermost: {error}", provider=self.__class__.__name__, error=response.text)
             )
 
         self.logger.info(

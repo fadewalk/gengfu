@@ -10,6 +10,7 @@ from smtplib import SMTP, SMTP_SSL
 
 import pydantic
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -124,7 +125,7 @@ class SmtpProvider(BaseProvider):
         elif encryption == "None":
             smtp = SMTP(smtp_server, smtp_port)
         else:
-            raise Exception(f"Invalid encryption: {encryption}")
+            raise Exception(t("Invalid encryption: {encryption}", encryption=encryption))
 
         if smtp_username and smtp_password:
             smtp.login(smtp_username, smtp_password)
@@ -161,7 +162,7 @@ class SmtpProvider(BaseProvider):
         elif body:
             msg.attach(MIMEText(body, "plain"))
         else:
-            raise ValueError("Either 'body' or 'html' must be provided")
+            raise ValueError(t("Either 'body' or 'html' must be provided"))
 
         smtp = self.generate_smtp_client()
         smtp.sendmail(from_email, to_email, msg.as_string())

@@ -9,6 +9,7 @@ import pydantic
 from quickchart import QuickChart
 
 # internals
+from keep.api.i18n import t
 from keep.api.core.db import get_alerts_by_fingerprint
 from keep.api.utils.enrichment_helpers import convert_db_alerts_to_dto_alerts
 from keep.contextmanager.contextmanager import ContextManager

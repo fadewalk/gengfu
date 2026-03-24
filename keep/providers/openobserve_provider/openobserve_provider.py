@@ -13,6 +13,7 @@ from urllib.parse import urlencode, urljoin
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -403,7 +404,7 @@ class OpenobserveProvider(BaseProvider):
                     "Rows not found in the aggregated alert event",
                     extra={"event": event},
                 )
-                raise ValueError("Rows not found in the aggregated alert event")
+                raise ValueError(t("No rows found"))
             alerts = []
             number_of_rows = event.pop("alert_count", "")
             rows = rows.split("\n")

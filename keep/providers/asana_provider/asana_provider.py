@@ -8,6 +8,7 @@ import typing
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -121,7 +122,7 @@ class AsanaProvider(BaseProvider):
 
         except Exception as e:
             self.logger.exception("Failed to create task", extra={"exception": e})
-            raise ProviderException(str(e))
+            raise ProviderException(t("Failed to create Asana task: {error}", error=str(e)))
 
     def _update_task(self, task_id: str, **kwargs: dict):
         """
@@ -147,7 +148,7 @@ class AsanaProvider(BaseProvider):
 
         except Exception as e:
             self.logger.exception("Failed to update task", extra={"exception": e})
-            raise ProviderException(str(e))
+            raise ProviderException(t("Failed to update Asana task: {error}", error=str(e)))
 
     def _notify(self, name: str, projects: typing.List[str], **kwargs: dict):
         """

@@ -9,6 +9,7 @@ from urllib.parse import urlencode, urljoin
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -209,7 +210,7 @@ class Site24X7Provider(BaseProvider):
                     "response": response_json,
                 },
             )
-            raise Exception(response_json["message"])
+            raise Exception(t("Site24x7 request failed: {message}", message=response_json["message"]))
         else:
             self.logger.info("Webhook created successfully")
 
@@ -246,4 +247,4 @@ class Site24X7Provider(BaseProvider):
             self.logger.error(
                 "Failed to get alerts", extra={"response": response.json()}
             )
-            raise Exception("Could not get alerts")
+            raise Exception(t("Could not get alerts from Site24x7"))

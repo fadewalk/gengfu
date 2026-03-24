@@ -6,6 +6,7 @@ from azure.identity import ClientSecretCredential
 from azure.mgmt.containerservice import ContainerServiceClient
 from kubernetes import client, config
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.functions import cyaml
@@ -124,7 +125,7 @@ class AksProvider(BaseProvider):
 
             return client.CoreV1Api()
         except Exception as e:
-            raise ProviderException(f"Failed to load kubeconfig: {e}")
+            raise ProviderException(t("Failed to load kubeconfig: {error}", error=e))
 
     def _query(self, command_type: str, **kwargs: dict):
         """
@@ -160,7 +161,7 @@ class AksProvider(BaseProvider):
                 node_pressures.append(pressures)
             return node_pressures
 
-        raise NotImplementedError("command type not implemented")
+        raise NotImplementedError(t("command type not implemented"))
 
 
 if __name__ == "__main__":

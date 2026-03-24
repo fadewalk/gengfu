@@ -3,6 +3,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig
@@ -83,7 +84,7 @@ class OllamaProvider(BaseProvider):
             }
 
         except requests.exceptions.RequestException as e:
-            raise Exception(f"Error calling Ollama API: {str(e)}")
+            raise Exception(t("Ollama API error: {error}", error=str(e)))
 
 
 if __name__ == "__main__":

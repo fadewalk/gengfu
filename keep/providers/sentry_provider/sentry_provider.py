@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_config_exception import ProviderConfigException
@@ -122,7 +123,7 @@ class SentryProvider(BaseProvider):
         )
         if "sntryu_" in self.authentication_config.api_key:
             raise ProviderConfigException(
-                "Invalid user-based token provided instead of API token",
+                t("Invalid token"),
                 self.provider_id,
             )
 
@@ -226,7 +227,7 @@ class SentryProvider(BaseProvider):
         if not event_data:
             event_data = event.get("data", {}).get("event", {})
             if not event_data:
-                raise Exception("Failed to get event data")
+                raise Exception(t("Failed to get event data"))
         tags_as_dict = {v[0]: v[1] for v in event_data.get("tags", [])}
 
         # Remove duplicate keys
@@ -310,7 +311,7 @@ class SentryProvider(BaseProvider):
         ):
             raise ProviderConfigException(
                 provider_id=self.provider_id,
-                message="Cannot setup webhook with localhost, please use a public url",
+                message=t("Localhost webhooks are not supported"),
             )
 
         if self.project_slug:
@@ -322,7 +323,7 @@ class SentryProvider(BaseProvider):
                 headers=self.__headers,
             )
             if not projects_response.ok:
-                raise Exception("Failed to get projects")
+                raise Exception(t("Failed to get projects"))
             project_slugs = [
                 project.get("slug") for project in projects_response.json()
             ]
@@ -447,7 +448,7 @@ class SentryProvider(BaseProvider):
             headers=self.__headers,
         )
         if not issues_response.ok:
-            raise Exception(issues_response.json())
+            raise Exception(t("Failed to get issues: {error}", error=str(issues_response.json())))
         return {issue["id"]: issue for issue in issues_response.json()}
 
     def _get_alerts(self) -> list[AlertDto]:
@@ -460,7 +461,7 @@ class SentryProvider(BaseProvider):
                 timeout=SentryProvider.DEFAULT_TIMEOUT,
             )
             if not response.ok:
-                raise Exception(response.json())
+                raise Exception(t("Failed to get events: {error}", error=str(response.json())))
             all_events_by_project[self.project_slug] = response.json()
             all_issues_by_project[self.project_slug] = self.__get_issues(
                 self.project_slug
@@ -472,7 +473,7 @@ class SentryProvider(BaseProvider):
                 timeout=SentryProvider.DEFAULT_TIMEOUT,
             )
             if not projects_response.ok:
-                raise Exception("Failed to get projects")
+                raise Exception(t("Failed to get projects"))
             projects = projects_response.json()
             for project in projects:
                 project_slug = project.get("slug")

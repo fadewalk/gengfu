@@ -6,6 +6,7 @@ from urllib.parse import quote, urlparse
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import (
@@ -115,7 +116,7 @@ class SignalfxProvider(BaseProvider):
         self.api_url = f"https://api.{self.authentication_config.realm}.signalfx.com"
         self.api_token = self.authentication_config.sf_token
         if not self.api_token:
-            raise ValueError("SignalFx token is required")
+            raise ValueError(t("SignalFx token is required"))
 
     def _get_headers(self):
         return {

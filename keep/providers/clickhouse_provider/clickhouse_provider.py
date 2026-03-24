@@ -7,6 +7,7 @@ import requests
 from clickhouse_driver import connect
 from clickhouse_driver.dbapi.extras import DictCursor
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider, ProviderHealthMixin
@@ -138,7 +139,7 @@ class ClickhouseProvider(BaseProvider, ProviderHealthMixin):
             clickhouse_driver.Connection: Clickhouse connection object
         """
         if self._is_http_protocol():
-            raise ProviderException("Cannot generate native client for HTTP protocol")
+            raise ProviderException(t("Cannot generate native ClickHouse client"))
 
         user = self.authentication_config.username
         password = self.authentication_config.password
@@ -202,7 +203,7 @@ class ClickhouseProvider(BaseProvider, ProviderHealthMixin):
         )
 
         if not response.ok:
-            raise ProviderException(f"HTTP query failed: {response.text}")
+            raise ProviderException(t("ClickHouse HTTP query failed: {error}", error=response.text))
 
         # Parse response - split by newlines as each line is a JSON object
         results = []

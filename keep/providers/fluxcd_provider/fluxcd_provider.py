@@ -89,6 +89,7 @@ except ImportError as e:
             self.alias = alias
 
 
+from keep.api.i18n import t
 from keep.providers.models.provider_method import ProviderMethodDTO
 
 
@@ -425,12 +426,12 @@ class FluxcdProvider(BaseTopologyProvider):
         try:
             # Check if we have a Kubernetes client
             if self.k8s_client is None:
-                authenticated = "No Kubernetes cluster available"
+                authenticated = t("No Kubernetes cluster available")
             else:
                 # Check if Flux CD is installed
                 if not self.__check_flux_installed():
                     # This message must match exactly what the test expects
-                    authenticated = "Flux CD is not installed in the cluster"
+                    authenticated = t("Flux CD is not installed in the cluster")
                 else:
                     # Try to list GitRepositories to validate authentication
                     self.__list_git_repositories()
@@ -463,7 +464,7 @@ class FluxcdProvider(BaseTopologyProvider):
         if action == "reconcile":
             return self.__trigger_reconcile(**kwargs)
         else:
-            raise NotImplementedError(f"Action {action} is not implemented")
+            raise NotImplementedError(t("Action {action} is not implemented", action=action))
 
     def __trigger_reconcile(self, kind: str, name: str, namespace: str, force: bool = False, **kwargs):
         """
@@ -476,7 +477,7 @@ class FluxcdProvider(BaseTopologyProvider):
         """
         self.logger.info(f"Triggering reconciliation for {kind}/{name} in namespace {namespace}")
         if self.k8s_client is None:
-            raise Exception("Kubernetes client is not available.")
+            raise Exception(t("Kubernetes client is not available."))
 
         # Mapping from kind to the API group, version, and plural form
         kind_map = {
@@ -490,7 +491,7 @@ class FluxcdProvider(BaseTopologyProvider):
         kind_lower = kind.lower()
         kind_map_lower = {k.lower(): v for k, v in kind_map.items()}
         if kind_lower not in kind_map_lower:
-            raise ValueError(f"Unsupported kind: {kind}. Supported kinds are: {list(kind_map.keys())}")
+            raise ValueError(t("Unsupported kind: {kind}. Supported kinds are: {supported_kinds}", kind=kind, supported_kinds=list(kind_map.keys())))
 
         group, version, plural = kind_map_lower[kind_lower]
 

@@ -9,6 +9,7 @@ from urllib.parse import urljoin
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -93,12 +94,12 @@ class NtfyProvider(BaseProvider):
             self.authentication_config.access_token is None
             and self.authentication_config.host is None
         ):
-            raise ProviderException("Either Access Token or Host is required")
+            raise ProviderException(t("Either Access Token or Host is required"))
         if self.authentication_config.host is not None:
             if self.authentication_config.username is None:
-                raise ProviderException("Username is required when host is provided")
+                raise ProviderException(t("Username is required when host is provided"))
             if self.authentication_config.password is None:
-                raise ProviderException("Password is required when host is provided")
+                raise ProviderException(t("Password is required when host is provided"))
 
     def __get_auth_headers(self):
         if self.authentication_config.access_token is not None:
@@ -133,7 +134,7 @@ class NtfyProvider(BaseProvider):
 
             if response.status_code == 401:
                 raise ProviderException(
-                    f"Failed to send notification to {NTFY_URL}. Error: Unauthorized"
+                    t("Failed to send notification to {url}. Error: Unauthorized", url=NTFY_URL)
                 )
 
             response.raise_for_status()
@@ -141,13 +142,13 @@ class NtfyProvider(BaseProvider):
 
         except Exception as e:
             raise ProviderException(
-                f"Failed to send notification to {NTFY_URL}. Error: {e}"
+                t("Failed to send notification to {url}. Error: {error}", url=NTFY_URL, error=str(e))
             )
 
     def _notify(self, message="", topic=None, **kwargs):
         if not message or not topic:
             raise ProviderException(
-                "Message and Topic are required to send notification"
+                t("Message and Topic are required to send notification")
             )
         return self.__send_alert(message, topic, **kwargs)
 

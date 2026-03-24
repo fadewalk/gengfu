@@ -13,6 +13,7 @@ from urllib.parse import quote
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -121,7 +122,7 @@ class DynatraceProvider(BaseProvider):
             self.logger.exception(
                 f"Failed to get problems from Dynatrace: {response.text}"
             )
-            raise Exception(f"Failed to get problems from Dynatrace: {response.text}")
+            raise Exception(t("Failed to get problems from Dynatrace: {error}", error=response.text))
         else:
             return [
                 self._format_alert(event)
@@ -140,7 +141,7 @@ class DynatraceProvider(BaseProvider):
                     "Failed to validate dynatrace scopes - wrong environment id"
                 )
                 scopes["problems.read"] = (
-                    "Failed to validate scope, wrong environment id (Keep got 404)"
+                    t("Failed to validate scope, wrong environment id (Keep got 404)")
                 )
                 scopes["settings.read"] = scopes["problems.read"]
                 scopes["settings.write"] = scopes["problems.read"]
@@ -151,7 +152,7 @@ class DynatraceProvider(BaseProvider):
                     "Failed to validate dynatrace scopes - invalid API token"
                 )
                 scopes["problems.read"] = (
-                    "Invalid API token - authentication failed (401)"
+                    t("Invalid API token - authentication failed (401)")
                 )
                 scopes["settings.read"] = scopes["problems.read"]
                 scopes["settings.write"] = scopes["problems.read"]
@@ -161,7 +162,7 @@ class DynatraceProvider(BaseProvider):
                     "Failed to validate dynatrace scopes - no problems.read scopes"
                 )
                 scopes["problems.read"] = (
-                    "Token is missing required scope - problems.read (403)"
+                    t("Token is missing required scope - problems.read (403)")
                 )
         else:
             self.logger.info("Validated dynatrace scopes - problems.read")
@@ -179,7 +180,7 @@ class DynatraceProvider(BaseProvider):
             )
             scopes["settings.read"] = str(e)
             scopes["settings.write"] = (
-                "Cannot validate the settings.write scope without the settings.read scope, you need to first add the settings.read scope"
+                t("Cannot validate the settings.write scope without the settings.read scope, you need to first add the settings.read scope")
             )
             # we are done
             return scopes
@@ -202,7 +203,7 @@ class DynatraceProvider(BaseProvider):
             # understand if its localhost:
             if "The environment does not allow for site-local URLs" in str(e):
                 scopes["settings.write"] = (
-                    "Cannot use localhost as a webhook URL, please use a public URL when installing dynatrace webhook (you can use Keep with ngrok or similar)"
+                    t("Cannot use localhost as a webhook URL, please use a public URL when installing dynatrace webhook (you can use Keep with ngrok or similar)")
                 )
             else:
                 scopes["settings.write"] = (
@@ -323,13 +324,13 @@ class DynatraceProvider(BaseProvider):
             self.logger.info(
                 "Failed to get alerting profiles - missing settings.read scope"
             )
-            raise Exception("Token is missing required scope - settings.read (403)")
+            raise Exception(t("Token is missing required scope - settings.read (403)"))
         else:
             self.logger.info(
                 f"Failed to get alerting profiles - {response.status_code} {response.text}"
             )
             raise Exception(
-                f"Failed to get alerting profiles: {response.status_code} {response.text}"
+                t("Failed to get alerting profiles: {status_code} {text}", status_code=response.status_code, text=response.text)
             )
 
     def setup_webhook(
@@ -362,7 +363,7 @@ class DynatraceProvider(BaseProvider):
                 f"Cannot find alerting profile {self.authentication_config.alerting_profile} in {alerting_profiles}"
             )
             raise Exception(
-                f"Cannot find alerting profile {self.authentication_config.alerting_profile}"
+                t("Cannot find alerting profile {profile}", profile=self.authentication_config.alerting_profile)
             )
 
         auth_header = f"api_key:{api_key}"
@@ -421,11 +422,11 @@ class DynatraceProvider(BaseProvider):
                 == "The environment does not allow for site-local URLs"
             ):
                 raise Exception(
-                    "Dynatrace doesn't support use localhost as a webhook URL, use a public URL when installing dynatrace webhook."
+                    t("Dynatrace doesn't support use localhost as a webhook URL, use a public URL when installing dynatrace webhook.")
                 )
             else:
                 raise Exception(
-                    f"Failed to setup Dynatrace webhook: {response.status_code} {response.text}"
+                    t("Failed to setup Dynatrace webhook: {status_code} {text}", status_code=response.status_code, text=response.text)
                 )
 
     def dispose(self):

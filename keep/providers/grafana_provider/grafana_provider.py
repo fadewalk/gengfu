@@ -14,6 +14,7 @@ import pydantic
 import requests
 from packaging.version import Version
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.api.models.db.topology import TopologyServiceInDto
 from keep.contextmanager.contextmanager import ContextManager
@@ -163,14 +164,14 @@ class GrafanaProvider(BaseTopologyProvider, ProviderHealthMixin):
         except requests.exceptions.ConnectionError:
             self.logger.exception("Failed to connect to Grafana")
             validated_scopes = {
-                scope.name: "Failed to connect to Grafana. Please check your host."
+                scope.name: t("Failed to connect to Grafana. Please check your host.")
                 for scope in self.PROVIDER_SCOPES
             }
             return validated_scopes
         except Exception:
             self.logger.exception("Failed to get permissions from Grafana")
             validated_scopes = {
-                scope.name: "Failed to get permissions. Please check your token."
+                scope.name: t("Failed to get permissions. Please check your token.")
                 for scope in self.PROVIDER_SCOPES
             }
             return validated_scopes
@@ -179,7 +180,7 @@ class GrafanaProvider(BaseTopologyProvider, ProviderHealthMixin):
             if scope.name in response:
                 validated_scopes[scope.name] = True
             else:
-                validated_scopes[scope.name] = "Missing scope"
+                validated_scopes[scope.name] = t("Missing scope")
         return validated_scopes
 
     def get_provider_metadata(self) -> dict:

@@ -8,6 +8,7 @@ from typing import Literal
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -95,7 +96,7 @@ class PagertreeProvider(BaseProvider):
             )
             if not response.ok:
                 self.logger.error("Failed to get alerts", extra=response.json())
-                raise Exception("Could not get alerts")
+                raise Exception(t("Could not get alerts from PagerTree"))
             return [
                 AlertDto(
                     id=alert["id"],
@@ -244,7 +245,7 @@ class PagertreeProvider(BaseProvider):
             == 0
         ):
             raise Exception(
-                "at least 1 destination (Team, Router, or Account User) is required"
+                t("Destination is required")
             )
         if not incident:
             self.__send_alert(

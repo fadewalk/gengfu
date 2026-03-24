@@ -8,6 +8,7 @@ import datetime
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
@@ -124,7 +125,7 @@ class CentreonProvider(BaseProvider):
                 self.logger.error(
                     "Failed to get host status from Centreon: %s", response.json()
                 )
-                raise ProviderException("Failed to get host status from Centreon")
+                raise ProviderException(t("Failed to get host status from Centreon"))
 
             return [
                 AlertDto(
@@ -148,7 +149,7 @@ class CentreonProvider(BaseProvider):
         except Exception as e:
             self.logger.error("Error getting host status from Centreon: %s", e)
             raise ProviderException(
-                f"Error getting host status from Centreon: {e}"
+                t("Error getting host status from Centreon: {error}", error=str(e))
             ) from e
 
     def __get_service_status(self) -> list[AlertDto]:
@@ -160,7 +161,7 @@ class CentreonProvider(BaseProvider):
                 self.logger.error(
                     "Failed to get service status from Centreon: %s", response.json()
                 )
-                raise ProviderException("Failed to get service status from Centreon")
+                raise ProviderException(t("Failed to get service status from Centreon"))
 
             return [
                 AlertDto(
@@ -183,7 +184,7 @@ class CentreonProvider(BaseProvider):
         except Exception as e:
             self.logger.error("Error getting service status from Centreon: %s", e)
             raise ProviderException(
-                f"Error getting service status from Centreon: {e}"
+                t("Error getting service status from Centreon: {error}", error=str(e))
             ) from e
 
     def _get_alerts(self) -> list[AlertDto]:
@@ -220,7 +221,7 @@ if __name__ == "__main__":
     api_token = os.environ.get("CENTREON_API_TOKEN")
 
     if host_url is None:
-        raise ProviderException("CENTREON_HOST_URL is not set")
+        raise ProviderException(t("Centreon host URL is not set"))
 
     config = ProviderConfig(
         description="Centreon Provider",

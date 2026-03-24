@@ -11,6 +11,7 @@ from typing import Literal
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -129,9 +130,7 @@ class IlertProvider(BaseProvider):
                     res.raise_for_status()
                     data = res.json()
                     if data["role"] not in ["USER", "ADMIN"]:
-                        warning_msg = (
-                            f"User role '{data['role']}' has limited permissions"
-                        )
+                        warning_msg = t("Limited permissions: {role}", role=data['role'])
                         self.logger.warning(warning_msg)
                         scopes[scope.name] = warning_msg
                     else:
@@ -173,7 +172,7 @@ class IlertProvider(BaseProvider):
                 },
             )
             raise Exception(
-                f"Failed to query ilert incident: {response.status_code} {response.text}"
+                t("Failed to query ilert incident: {status_code} {text}", status_code=response.status_code, text=response.text)
             )
         self.logger.info(
             "ilert incident queried",
@@ -204,7 +203,7 @@ class IlertProvider(BaseProvider):
                 },
             )
             raise Exception(
-                f"Failed to get alerts: {response.status_code} {response.text}"
+                t("Failed to get alerts from ilert: {status_code} {text}", status_code=response.status_code, text=response.text)
             )
 
         alerts = response.json()
@@ -278,7 +277,7 @@ class IlertProvider(BaseProvider):
                 )
                 raise
             if not summary:
-                raise Exception("summary is required")
+                raise Exception(t("Summary is required"))
             payload["summary"] = summary
             response = requests.post(
                 f"{self.authentication_config.ilert_host}/incidents",
@@ -305,7 +304,7 @@ class IlertProvider(BaseProvider):
                 },
             )
             raise Exception(
-                f"Failed to create/update ilert incident: {response.status_code} {response.text}"
+                t("Failed to create/update ilert incident: {status_code} {text}", status_code=response.status_code, text=response.text)
             )
         self.logger.info(
             "ilert incident created/updated",

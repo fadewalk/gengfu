@@ -10,6 +10,7 @@ import pydantic
 import requests
 from urllib.parse import urljoin
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -122,7 +123,7 @@ class DatabendProvider(BaseProvider):
           return response.json()
       except Exception as e:
           self.logger.exception("Failed to execute query", extra={"error": str(e)})
-          raise Exception("Failed to execute query")
+          raise Exception(t("Failed to execute query"))
 
 if __name__ == "__main__":
     import logging

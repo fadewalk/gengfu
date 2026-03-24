@@ -10,6 +10,7 @@ from typing import OrderedDict
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.functions import utcnowtimestamp
@@ -63,7 +64,7 @@ class SlackProvider(BaseProvider):
             not self.authentication_config.webhook_url
             and not self.authentication_config.access_token
         ):
-            raise Exception("Slack webhook url OR Slack access token is required")
+            raise Exception(t("Slack webhook url OR Slack access token is required"))
 
     def dispose(self):
         """
@@ -110,7 +111,7 @@ class SlackProvider(BaseProvider):
 
     def _notify_reaction(self, channel: str, emoji: str, timestamp: str):
         if not self.authentication_config.access_token:
-            raise ProviderException("Access token is required to notify reaction")
+            raise ProviderException(t("Access token is required to notify reaction"))
 
         self.logger.info(
             "Notifying reaction to Slack using",
@@ -132,7 +133,7 @@ class SlackProvider(BaseProvider):
         )
         if not response.ok:
             raise ProviderException(
-                f"Failed to notify reaction to Slack: {response.text}"
+                t("Failed to notify reaction to Slack: {error}", error=response.text)
             )
         self.logger.info("Reaction notified to Slack")
         return response.json()
@@ -182,7 +183,7 @@ class SlackProvider(BaseProvider):
         if not message:
             if not blocks and not attachments:
                 raise ProviderException(
-                    "Message is required - see for example https://github.com/keephq/keep/blob/main/examples/workflows/slack_basic.yml#L16"
+                    t("Message is required - see for example https://github.com/keephq/keep/blob/main/examples/workflows/slack_basic.yml#L16")
                 )
         payload = OrderedDict(
             {
@@ -225,12 +226,12 @@ class SlackProvider(BaseProvider):
                 )
             if not response.ok:
                 raise ProviderException(
-                    f"{self.__class__.__name__} failed to notify alert message to Slack: {response.text}"
+                    t("{provider} failed to notify alert message to Slack: {error}", provider=self.__class__.__name__, error=response.text)
                 )
             notify_data = {"slack_timestamp": utcnowtimestamp()}
         elif self.authentication_config.access_token:
             if not channel:
-                raise ProviderException("Channel is required (E.g. C12345)")
+                raise ProviderException(t("Channel is required (E.g. C12345)"))
             self.logger.info(
                 "Adding access token to payload",
                 extra={
@@ -279,7 +280,7 @@ class SlackProvider(BaseProvider):
             response_json = response.json()
             if not response.ok or not response_json.get("ok"):
                 raise ProviderException(
-                    f"Failed to notify alert message to Slack: {response_json.get('error')}"
+                    t("Failed to notify alert message to Slack: {error}", error=response_json.get('error'))
                 )
             notify_data = {"slack_timestamp": response_json["ts"]}
         self.logger.info("Message notified to Slack")

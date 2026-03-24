@@ -8,6 +8,7 @@ import pydantic
 from socketio.exceptions import BadNamespaceError
 from uptime_kuma_api import UptimeKumaApi
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -148,7 +149,7 @@ class UptimekumaProvider(BaseProvider):
             return heartbeats
         except Exception as e:
             self.logger.error("Error getting heartbeats from UptimeKuma: %s", e)
-            raise Exception(f"Error getting heartbeats from UptimeKuma: {e}")
+            raise Exception(t("Error getting heartbeats from UptimeKuma: {error}", error=str(e)))
 
     def _get_alerts(self) -> list[AlertDto]:
         try:
@@ -157,7 +158,7 @@ class UptimekumaProvider(BaseProvider):
             return alerts
         except Exception as e:
             self.logger.error("Error getting alerts from UptimeKuma: %s", e)
-            raise Exception(f"Error getting alerts from UptimeKuma: {e}")
+            raise Exception(t("Error getting alerts from UptimeKuma: {error}", error=str(e)))
 
 
     @classmethod
@@ -197,11 +198,11 @@ if __name__ == "__main__":
     uptimekuma_password = os.environ.get("UPTIMEKUMA_PASSWORD")
 
     if uptimekuma_host is None:
-        raise Exception("UPTIMEKUMA_HOST is required")
+        raise Exception(t("UPTIMEKUMA_HOST is required"))
     if uptimekuma_username is None:
-        raise Exception("UPTIMEKUMA_USERNAME is required")
+        raise Exception(t("UPTIMEKUMA_USERNAME is required"))
     if uptimekuma_password is None:
-        raise Exception("UPTIMEKUMA_PASSWORD is required")
+        raise Exception(t("UPTIMEKUMA_PASSWORD is required"))
 
     config = ProviderConfig(
         description="UptimeKuma Provider",

@@ -10,6 +10,7 @@ from urllib.parse import urlencode, urljoin
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -247,7 +248,7 @@ class JiraonpremProvider(BaseProvider):
 
             return response.json()
         except Exception as e:
-            raise ProviderException(f"Failed to fetch createmeta: {e}")
+            raise ProviderException(t("Failed to fetch createmeta: {error}", error=str(e)))
 
     def __get_single_createmeta(self, project_key: str):
         """
@@ -267,13 +268,13 @@ class JiraonpremProvider(BaseProvider):
 
             issue_type_name = issuetype.get("name", "")
             if not issue_type_name:
-                raise ProviderException("No issue types found!")
+                raise ProviderException(t("No issue types found!"))
 
             self.logger.info("Fetched single createmeta!")
 
             return {"issue_type_name": issue_type_name}
         except Exception as e:
-            raise ProviderException(f"Failed to fetch single createmeta: {e}")
+            raise ProviderException(t("Failed to fetch single createmeta: {error}", error=str(e)))
 
     def __create_issue(
         self,
@@ -331,12 +332,12 @@ class JiraonpremProvider(BaseProvider):
                 self.logger.exception(
                     "Failed to create an issue", extra=response.json()
                 )
-                raise ProviderException(f"Failed to create an issue: {response.json()}")
+                raise ProviderException(t("Failed to create Jira issue: {response}", response=str(response.json())))
             self.logger.info("Created an issue!")
 
             return {"issue": response.json()}
         except Exception as e:
-            raise ProviderException(f"Failed to create an issue: {e}")
+            raise ProviderException(t("Failed to create Jira issue: {error}", error=str(e)))
 
     def __update_issue(
         self,
@@ -396,7 +397,7 @@ class JiraonpremProvider(BaseProvider):
                     response.raise_for_status()
             except Exception:
                 self.logger.exception("Failed to update an issue", extra=response.text)
-                raise ProviderException("Failed to update an issue")
+                raise ProviderException(t("Failed to update Jira issue"))
 
             result = {
                 "issue": {
@@ -410,7 +411,7 @@ class JiraonpremProvider(BaseProvider):
             return result
 
         except Exception as e:
-            raise ProviderException(f"Failed to update an issue: {e}")
+            raise ProviderException(t("Failed to update Jira issue: {error}", error=str(e)))
 
     def _extract_project_key_from_board_name(self, board_name: str):
         headers = {
@@ -439,7 +440,7 @@ class JiraonpremProvider(BaseProvider):
                     )
                     if board_configuration.status_code != 200:
                         raise Exception(
-                            f"Could not fetch board configuration for board {board_name}"
+                            t("Could not fetch board configuration for board {board_name}", board_name=board_name)
                         )
                     # get the filter id
                     filter_id = board_configuration.json()["filter"]["id"]
@@ -452,7 +453,7 @@ class JiraonpremProvider(BaseProvider):
                     )
                     if filter_response.status_code != 200:
                         raise Exception(
-                            f"Could not fetch filter for board {board_name}"
+                            t("Could not fetch filter for board {board_name}", board_name=board_name)
                         )
                     # get the project key
                     # todo: should be more robust way but that's enough for now. note that the user can use projectKey directly
@@ -469,10 +470,10 @@ class JiraonpremProvider(BaseProvider):
             # if we got here, we didn't find the board name so let's throw an indicative exception
             board_names = [board["name"] for board in boards]
             raise Exception(
-                f"Could not find board {board_name} - please verify your board name is in this list: {board_names}."
+                t("Could not find board {board_name} - please verify your board name is in this list: {board_names}.", board_name=board_name, board_names=str(board_names))
             )
         else:
-            raise Exception("Could not fetch boards: " + boards_response.text)
+            raise Exception(t("Failed to fetch boards: {error}", error=boards_response.text))
 
     def _extract_issue_key_from_issue_id(self, issue_id: str):
         headers = {
@@ -490,7 +491,7 @@ class JiraonpremProvider(BaseProvider):
         if issue_key.status_code == 200:
             return issue_key.json()["key"]
         else:
-            raise Exception("Could not fetch issue key: " + issue_key.text)
+            raise Exception(t("Failed to fetch issue key: {error}", error=issue_key.text))
 
     def _notify(
         self,
@@ -545,7 +546,7 @@ class JiraonpremProvider(BaseProvider):
                 project_key = self._extract_project_key_from_board_name(board_name)
             if not project_key or not summary or not issue_type or not description:
                 raise ProviderException(
-                    f"Project key and summary are required! - {project_key}, {summary}, {issue_type}, {description}"
+                    t("Project key, summary, issue type, and description are required (project_key: {project_key}, summary: {summary}, issue_type: {issue_type}, description: {description})", project_key=project_key, summary=summary, issue_type=issue_type, description=description)
                 )
 
             result = self.__create_issue(
@@ -570,7 +571,7 @@ class JiraonpremProvider(BaseProvider):
                 "issue_type": issue_type,
                 "project_key": project_key,
             }
-            raise ProviderException(f"Failed to notify jira: {e} - Params: {context}")
+            raise ProviderException(t("Failed to notify Jira: {error} - Params: {params}", error=str(e), params=str(context)))
 
     def _query(self, ticket_id="", board_id="", **kwargs: dict):
         """
@@ -590,7 +591,7 @@ class JiraonpremProvider(BaseProvider):
             )
             if not response.ok:
                 raise ProviderException(
-                    f"{self.__class__.__name__} failed to fetch data from Jira: {response.text}"
+                    t("Failed to fetch data from {class_name}: {error}", class_name=self.__class__.__name__, error=response.text)
                 )
             issues = response.json()
             return {"number_of_issues": issues["total"]}
@@ -601,7 +602,7 @@ class JiraonpremProvider(BaseProvider):
             )
             if not response.ok:
                 raise ProviderException(
-                    f"{self.__class__.__name__} failed to fetch data from Jira: {response.text}"
+                    t("Failed to fetch data from {class_name}: {error}", class_name=self.__class__.__name__, error=response.text)
                 )
             issue = response.json()
             return {"issue": issue}

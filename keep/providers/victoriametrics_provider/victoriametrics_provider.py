@@ -9,6 +9,7 @@ import pydantic
 import requests
 from pydantic import AnyHttpUrl
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -322,7 +323,7 @@ receivers:
         )
 
         if not vmalert_configured and not vmbackend_configured:
-            raise Exception("At least one of VMAlert or VM Backend must be configured")
+            raise Exception(t("At least one of VMAlert or VM Backend must be configured"))
 
     @property
     def vmalert_enabled(self) -> bool:
@@ -456,7 +457,7 @@ receivers:
     def _get_alerts(self) -> list[AlertDto]:
         """Get alerts from VMAlert."""
         if not self.vmalert_enabled:
-            raise Exception("VMAlert is not configured")
+            raise Exception(t("VMAlert is not configured"))
 
         response = requests.get(
             f"{self.vmalert_host}/api/v1/alerts",
@@ -503,7 +504,7 @@ receivers:
     def _query(self, query="", start="", end="", step="", queryType="", **kwargs: dict):
         """Query metrics from VM Backend."""
         if not self.vmbackend_enabled:
-            raise Exception("VM Backend is not configured")
+            raise Exception(t("VM Backend is not configured"))
 
         auth = self._get_auth()
 
@@ -539,11 +540,11 @@ receivers:
                 self.logger.error(
                     "Failed to perform range query", extra=response.json()
                 )
-                raise Exception("Could not range query")
+                raise Exception(t("Could not range query"))
 
         else:
             self.logger.error("Invalid query type")
-            raise Exception("Invalid query type")
+            raise Exception(t("Invalid query type"))
 
 
 if __name__ == "__main__":

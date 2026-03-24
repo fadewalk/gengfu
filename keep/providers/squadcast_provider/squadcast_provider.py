@@ -9,6 +9,7 @@ import pydantic
 import requests
 from requests import HTTPError
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_config_exception import ProviderConfigException
 from keep.providers.base.base_provider import BaseProvider
@@ -110,7 +111,7 @@ class SquadcastProvider(BaseProvider):
             and not self.authentication_config.webhook_url
         ):
             raise ProviderConfigException(
-                "SquadcastProvider requires either refresh_token or webhook_url",
+                t("Refresh token or webhook is required"),
                 provider_id=self.provider_id,
             )
 
@@ -143,7 +144,7 @@ class SquadcastProvider(BaseProvider):
             body = json.dumps({**additional_fields, **core_fields})
         except json.JSONDecodeError as e:
             raise ProviderConfigException(
-                f"Invalid additional_json format: {str(e)}",
+                t("Invalid additional JSON: {error}", error=str(e)),
                 provider_id=self.provider_id
             )
 
@@ -197,7 +198,7 @@ class SquadcastProvider(BaseProvider):
         if notify_type == "incident":
             if message == "" or description == "":
                 raise Exception(
-                    f'message: "{message}" and description: "{description}" cannot be empty'
+                    t("Message and description are required (message: {message}, description: {description})", message=message, description=description)
                 )
             resp = self._create_incidents(
                 headers=headers,
@@ -212,7 +213,7 @@ class SquadcastProvider(BaseProvider):
         elif notify_type == "notes":
             if message == "" or incident_id == "":
                 raise Exception(
-                    f'message: "{message}" and incident_id: "{incident_id}" cannot be empty'
+                    t("Message and incident id are required (message: {message}, incident_id: {incident_id})", message=message, incident_id=incident_id)
                 )
             resp = self._crete_notes(
                 headers=headers,
@@ -222,13 +223,13 @@ class SquadcastProvider(BaseProvider):
             )
         else:
             raise Exception(
-                "notify_type is a mandatory field, expected: incident | notes"
+                t("Invalid notify type")
             )
         try:
             resp.raise_for_status()
             return resp.json()
         except HTTPError as e:
-            raise Exception(f"Failed to create issue: {str(e)}")
+            raise Exception(t("Failed to create Squadcast issue: {error}", error=str(e)))
 
     def dispose(self):
         """

@@ -9,6 +9,7 @@ import json5 as json
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -159,7 +160,7 @@ class TeamsProvider(BaseProvider):
         response = requests.post(webhook_url, json=payload)
         if not response.ok:
             raise ProviderException(
-                f"{self.__class__.__name__} failed to notify alert message to Teams: {response.text}"
+                t("{provider} failed to notify alert message to Teams: {error}", provider=self.__class__.__name__, error=response.text)
             )
 
         self.logger.debug("Alert message notified to Teams")

@@ -8,6 +8,7 @@ import os
 import mysql.connector
 import pydantic
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -151,7 +152,7 @@ class MysqlProvider(BaseProvider):
                 return results[0]
             else:
                 self.logger.warning("No results found for query: %s", query)
-                raise ValueError(f"Query {query} returned no rows")
+                raise ValueError(t("Query returned no rows: {query}", query=query))
 
         return results
 

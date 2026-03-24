@@ -6,6 +6,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -115,7 +116,7 @@ class YoutrackProvider(BaseProvider):
             self.logger.info("Successfully created issue in Youtrack", extra={"response": response.json()})
         except Exception as e:
             self.logger.exception("Error creating issue in Youtrack")
-            raise Exception(f"Error creating issue in Youtrack: {e}")
+            raise Exception(t("Error creating YouTrack issue: {error}", error=str(e)))
         return response.json()
 
     def _get_url(self, endpoint: str):

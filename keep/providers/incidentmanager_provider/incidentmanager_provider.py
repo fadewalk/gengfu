@@ -12,6 +12,7 @@ import boto3
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -177,7 +178,7 @@ class IncidentmanagerProvider(BaseProvider):
         except Exception:
             self.logger.info("Error validating AWS IAM scopes")
             scopes["iam:SimulatePrincipalPolicy"] = (
-                "No permissions to simulate_principal_policy (but its cool, its not a must)"
+                t("No permissions to simulate_principal_policy (but its cool, its not a must)")
             )
 
         self.logger.info("Validating aws incident manager scopes")
@@ -198,7 +199,7 @@ class IncidentmanagerProvider(BaseProvider):
         if results:
             if len(results) <= 0:
                 scopes["ssm-incidents:UpdateIncidentRecord"] = (
-                    "We need atleast on incident to test the update scope. Please create an incident manually and try again."
+                    t("We need atleast on incident to test the update scope. Please create an incident manually and try again.")
                 )
                 raise
             try:
@@ -215,7 +216,7 @@ class IncidentmanagerProvider(BaseProvider):
                 scopes["ssm-incidents:UpdateIncidentRecord"] = True
             except Exception:
                 scopes["ssm-incidents:UpdateIncidentRecord"] = (
-                    "No permissions to update incidents it seems"
+                    t("No permissions to update incidents it seems")
                 )
                 raise
         # 2 validate if we are already getting user's sns topic and able to fetch sns from aws, not mandatory though
@@ -241,7 +242,7 @@ class IncidentmanagerProvider(BaseProvider):
             scopes["ssm-incidents:GetResponsePlan"] = True
         except Exception:
             scopes["ssm-incidents:GetResponsePlan"] = (
-                "No permissions to get response plan"
+                t("No permissions to get response plan")
             )
             raise
 
@@ -259,7 +260,7 @@ class IncidentmanagerProvider(BaseProvider):
             scopes["ssm-incidents:UpdateResponsePlan"] = True
         except Exception:
             scopes["ssm-incidents:UpdateResponsePlan"] = (
-                "No permissions to update response plan"
+                t("No permissions to update response plan")
             )
             raise
 

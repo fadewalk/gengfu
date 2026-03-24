@@ -12,6 +12,7 @@ import pydantic
 import requests
 from requests.auth import HTTPBasicAuth
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -90,13 +91,13 @@ class ZoomProvider(BaseProvider):
 
             if response.status_code != 200:
                 raise ProviderException(
-                    f"Failed to get access token: {response.json()}"
+                    t("Failed to get access token response: {error}", error=str(response.json()))
                 )
 
             return response.json()["access_token"]
 
         except Exception as e:
-            raise ProviderException(f"Failed to get access token: {str(e)}")
+            raise ProviderException(t("Failed to get Zoom access token: {error}", error=str(e)))
 
     def _get_headers(self) -> dict:
         """
@@ -122,7 +123,7 @@ class ZoomProvider(BaseProvider):
             )
 
             if response.status_code != 200:
-                raise Exception(f"Failed to validate scopes: {response.json()}")
+                raise Exception(t("Failed to validate Zoom scopes: {error}", error=str(response.json())))
 
             return {"create_meeting": True}
         except Exception as e:
@@ -182,13 +183,13 @@ class ZoomProvider(BaseProvider):
 
                 if users_response.status_code != 200:
                     raise ProviderException(
-                        f"Failed to find host: {users_response.json()}"
+                        t("Failed to find Zoom host: {error}", error=str(users_response.json()))
                     )
 
                 user = users_response.json()
                 user_id = user.get("id")
                 if not user_id:
-                    raise ProviderException(f"Host not found: {host_email}")
+                    raise ProviderException(t("Zoom host not found: {host_email}", host_email=host_email))
                 create_url = f"{self.BASE_URL}/users/{user_id}/meetings"
             else:
                 # Create meeting under authenticated user
@@ -199,7 +200,7 @@ class ZoomProvider(BaseProvider):
             )
 
             if response.status_code != 201:
-                raise ProviderException(f"Failed to create meeting: {response.json()}")
+                raise ProviderException(t("Failed to create Zoom meeting: {error}", error=str(response.json())))
 
             response = response.json()
             auto_recording = response.get("settings", {}).get("auto_recording")
@@ -216,7 +217,7 @@ class ZoomProvider(BaseProvider):
             return response
 
         except Exception as e:
-            raise ProviderException(f"Failed to create meeting: {str(e)}")
+            raise ProviderException(t("Failed to create Zoom meeting: {error}", error=str(e)))
 
     def _notify(
         self,
@@ -250,7 +251,7 @@ class ZoomProvider(BaseProvider):
             )
             return meeting
         except Exception as e:
-            raise ProviderException(f"Failed to create meeting: {str(e)}")
+            raise ProviderException(t("Failed to create Zoom meeting: {error}", error=str(e)))
 
 
 if __name__ == "__main__":
@@ -267,7 +268,7 @@ if __name__ == "__main__":
 
     if not all([client_id, client_secret, account_id]):
         raise Exception(
-            "ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET, and ZOOM_ACCOUNT_ID are required"
+            t("Zoom OAuth credentials are required")
         )
 
     # Create context manager

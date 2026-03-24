@@ -8,6 +8,7 @@ import pydantic
 import requests
 from requests.exceptions import JSONDecodeError
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig
@@ -83,7 +84,7 @@ class GitlabpipelinesProvider(BaseProvider):
         elif method == "DELETE":
             response = requests.delete(url, headers=headers, **kwargs)
         else:
-            raise Exception(f"Unsupported HTTP method: {method}")
+            raise Exception(t("Unsupported method: {method}", method=method))
 
         result = {
             "status": response.ok,

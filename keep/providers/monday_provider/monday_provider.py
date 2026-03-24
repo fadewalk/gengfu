@@ -9,6 +9,7 @@ import pydantic
 import requests
 
 from keep.api.core.config import config
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -82,7 +83,7 @@ class MondayProvider(BaseProvider):
             not self.authentication_config.access_token
             and not self.authentication_config.api_token
         ):
-            raise ProviderException("API token or access token is required")
+            raise ProviderException(t("API token is required"))
 
     def validate_scopes(self) -> dict[str, bool | str]:
         """
@@ -191,10 +192,10 @@ class MondayProvider(BaseProvider):
                 self.logger.exception(
                     "Failed to create item", extra={"resp": response.json()}
                 )
-                raise ProviderException(f"Failed to create item: {response.json()}")
+                raise ProviderException(t("Failed to create item: {response}", response=str(response.json())))
 
         except Exception as e:
-            raise ProviderException(f"Failed to create item: {e}")
+            raise ProviderException(t("Failed to create item: {error}", error=str(e)))
 
     def _notify(
         self,
@@ -208,7 +209,7 @@ class MondayProvider(BaseProvider):
             self._create_new_pulse(board_id, group_id, item_name, column_values)
             self.logger.info("Item created successfully")
         except Exception as e:
-            raise ProviderException(f"Failed to create item: {e}")
+            raise ProviderException(t("Failed to create item: {error}", error=str(e)))
 
 
 if __name__ == "__main__":
@@ -225,7 +226,7 @@ if __name__ == "__main__":
     api_token = os.environ.get("API_TOKEN")
 
     if api_token is None:
-        raise Exception("API_TOKEN is required")
+        raise Exception(t("API token is required"))
 
     config = ProviderConfig(
         description="Monday Provider",

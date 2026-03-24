@@ -13,6 +13,7 @@ from typing import Union
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -375,7 +376,7 @@ class ZabbixProvider(BaseProvider):
             if 0 <= severity_int <= 5:
                 severity = severity_int
             else:
-                raise ValueError(f"Invalid severity number: {new_severity}. Must be between 0-5.")
+                raise ValueError(t("Invalid severity number: {severity}", severity=new_severity))
         else:
             # Handle string input
             severity_lower = new_severity.lower().strip()
@@ -383,7 +384,7 @@ class ZabbixProvider(BaseProvider):
                 severity = ZabbixProvider.SEVERITY_NAME_TO_ID_MAP[severity_lower]
             else:
                 valid_severities = list(ZabbixProvider.SEVERITY_NAME_TO_ID_MAP.keys()) + ["0", "1", "2", "3", "4", "5"]
-                raise ValueError(f"Invalid severity: {new_severity}. Valid values are: {valid_severities}")
+                raise ValueError(t("Invalid severity: {severity}. Valid severities: {valid_severities}", severity=new_severity, valid_severities=str(valid_severities)))
 
         self.__send_request(
             "event.acknowledge", {"eventids": id, "severity": severity, "action": 8}

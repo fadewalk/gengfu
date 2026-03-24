@@ -11,6 +11,7 @@ from cryptography.hazmat.primitives import serialization
 from snowflake.connector import connect
 from snowflake.connector.connection import SnowflakeConnection
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig

@@ -8,6 +8,7 @@ import google.api_core.exceptions
 import google.cloud.logging
 import pydantic
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider, ProviderHealthMixin
@@ -125,7 +126,7 @@ To send alerts from GCP Monitoring to Keep, Use the following webhook url to con
             scopes["roles/logs.viewer"] = True
         except google.api_core.exceptions.PermissionDenied:
             scopes["roles/logs.viewer"] = (
-                "Permission denied, make sure IAM permissions are set correctly"
+                t("Permission denied, make sure IAM permissions are set correctly")
             )
         except Exception as e:
             scopes["roles/logs.viewer"] = str(e)
@@ -207,11 +208,11 @@ To send alerts from GCP Monitoring to Keep, Use the following webhook url to con
         if isinstance(documentation, dict):
             name = (
                 documentation.get("subject", description)
-                or "GCPMontirong Alert (No subject)"
+                or t("GCPMontirong Alert (No subject)")
             )
             content = documentation.get("content", "")
         else:
-            name = "Test notification"
+            name = t("Test notification")
             content = documentation
 
         incident_id = incident.get("incident_id", "")

@@ -9,6 +9,7 @@ from html import unescape
 
 import yaml
 
+from keep.api.i18n import t
 from keep.api.core.db import get_alerts_with_filters
 from keep.api.models.alert import AlertDto, AlertStatus
 from keep.api.tasks.process_event_task import process_event
@@ -103,7 +104,7 @@ class KeepProvider(BaseProvider):
         if version == 1:
             # filters are mandatory for version 1
             if not filters:
-                raise ValueError("Filters are required for version")
+                raise ValueError(t("Filters are required"))
             db_alerts = get_alerts_with_filters(
                 self.context_manager.tenant_id, filters=filters, time_delta=time_delta
             )
@@ -122,7 +123,7 @@ class KeepProvider(BaseProvider):
         else:
             search_engine = SearchEngine(tenant_id=self.context_manager.tenant_id)
             if not filter:
-                raise ValueError("Filter is required for version 2")
+                raise ValueError(t("Filter is required for version 2"))
             try:
                 alerts = search_engine.search_alerts_by_cel(
                     cel_query=filter, limit=limit or 100, timeframe=float(time_delta)
@@ -286,7 +287,7 @@ class KeepProvider(BaseProvider):
                         value = int(_for[:-1])
                         unit = _for[-1]
                     except ValueError:
-                        raise ValueError(f"Invalid duration format: {_for}")
+                        raise ValueError(t("Invalid duration format: {duration}", duration=_for))
                     if unit == "m":
                         duration = timedelta(minutes=value)
                     elif unit == "h":
@@ -294,7 +295,7 @@ class KeepProvider(BaseProvider):
                     elif unit == "s":
                         duration = timedelta(seconds=value)
                     else:
-                        raise ValueError(f"Invalid duration unit: {unit}")
+                        raise ValueError(t("Invalid duration unit: {unit}", unit=unit))
 
                     curr_alert.lastReceived = datetime.now(timezone.utc).isoformat()
                     if now - activeAt >= duration:
@@ -637,7 +638,7 @@ class KeepProvider(BaseProvider):
                         f"Failed to delete workflow {workflow.id}: {e}"
                     )
                     raise ProviderException(
-                        f"Failed to delete workflow {workflow.id}: {e}"
+                        t("Failed to delete workflow {workflow_id}: {error}", workflow_id=workflow.id, error=str(e))
                     )
             else:
                 self.logger.info(
@@ -729,7 +730,7 @@ class KeepProvider(BaseProvider):
                         "workflow": self.context_manager.workflow_id,
                     },
                 )
-                raise ProviderException(f"Failed to create workflow: {e}")
+                raise ProviderException(t("Failed to create workflow: {error}", error=str(e)))
         elif not is_workflow_action:
             self.logger.info("Notifying Alerts")
             # for backward compatibility

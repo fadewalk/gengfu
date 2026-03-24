@@ -8,6 +8,7 @@ import typing
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -182,7 +183,7 @@ class MailgunProvider(BaseProvider):
         self, tenant_id: str, keep_api_url: str, api_key: str, setup_alerts: bool = True
     ) -> dict[str, str]:
         if not MailgunProvider.MAILGUN_API_KEY:
-            raise Exception("MAILGUN_API_KEY is not set")
+            raise Exception(t("MAILGUN_API_KEY is not set"))
 
         # Use custom domain from config, env var, or default
         email_domain = (
@@ -197,7 +198,7 @@ class MailgunProvider(BaseProvider):
             "match_header" in self.authentication_config.sender
             or "match_recipient" in self.authentication_config.sender
         ):  # validate that somebody doesn't try to use match_header or match_recipient
-            raise ValueError("Invalid sender value")
+            raise ValueError(t("Invalid sender value"))
         if self.authentication_config.sender:
             sender = self.authentication_config.sender
             # Bob <bob@example.com>
@@ -267,7 +268,7 @@ class MailgunProvider(BaseProvider):
 
         if not name or not message:
             raise Exception(
-                "Could not create alert from email when name or message is missing."
+                t("Could not create alert from email when name or message is missing.")
             )
 
         try:

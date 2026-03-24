@@ -8,6 +8,7 @@ from kubernetes import client
 from kubernetes.client.rest import ApiException
 from openshift_client import Context
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -212,7 +213,7 @@ class OpenshiftProvider(BaseProvider):
         elif command_type == "get_projects":
             return self.__get_projects(**kwargs)
         else:
-            raise NotImplementedError(f"Command type {command_type} is not implemented")
+            raise NotImplementedError(t("Command type {command_type} is not implemented", command_type=command_type))
 
     def _notify(self, action: str, **kwargs):
         """
@@ -234,7 +235,7 @@ class OpenshiftProvider(BaseProvider):
         elif action == "scale_deploymentconfig":
             return self.__scale_deploymentconfig(**kwargs)
         else:
-            raise NotImplementedError(f"Action {action} is not implemented")
+            raise NotImplementedError(t("Action {action} is not implemented", action=action))
 
     def __get_logs(self, k8s_client, namespace, pod_name, container_name=None, tail_lines=100, **kwargs):
         """Get logs from a pod."""
@@ -260,7 +261,7 @@ class OpenshiftProvider(BaseProvider):
             return logs.splitlines()
         except ApiException as e:
             self.logger.error(f"Error getting logs for pod {pod_name}: {e}")
-            raise Exception(f"Error getting logs for pod {pod_name}: {e}")
+            raise Exception(t("Error getting logs for pod {pod_name}: {error}", pod_name=pod_name, error=e))
 
     def __get_events(self, k8s_client, namespace, pod_name=None, sort_by=None, **kwargs):
         """Get events for a namespace or specific pod."""
@@ -300,7 +301,7 @@ class OpenshiftProvider(BaseProvider):
             return [event.to_dict() for event in events.items]
         except ApiException as e:
             self.logger.exception("Error getting events")
-            raise Exception(f"Error getting events: {e}") from e
+            raise Exception(t("Error getting events: {error}", error=e)) from e
 
     def __get_pods(self, k8s_client, namespace=None, label_selector=None, **kwargs):
         """List pods in a namespace or across all namespaces."""
@@ -321,7 +322,7 @@ class OpenshiftProvider(BaseProvider):
             return [pod.to_dict() for pod in pods.items]
         except ApiException as e:
             self.logger.error(f"Error listing pods: {e}")
-            raise Exception(f"Error listing pods: {e}")
+            raise Exception(t("Error listing pods: {error}", error=e))
 
     def __get_node_pressure(self, k8s_client, **kwargs):
         """Get node pressure conditions (Memory, Disk, PID)."""
@@ -349,7 +350,7 @@ class OpenshiftProvider(BaseProvider):
             return node_pressures
         except ApiException as e:
             self.logger.error(f"Error getting node pressures: {e}")
-            raise Exception(f"Error getting node pressures: {e}")
+            raise Exception(t("Error getting node pressures: {error}", error=e))
 
     def __get_pvc(self, k8s_client, namespace=None, **kwargs):
         """List persistent volume claims in a namespace or across all namespaces."""
@@ -368,7 +369,7 @@ class OpenshiftProvider(BaseProvider):
             return [pvc.to_dict() for pvc in pvcs.items]
         except ApiException as e:
             self.logger.error(f"Error listing PVCs: {e}")
-            raise Exception(f"Error listing PVCs: {e}")
+            raise Exception(t("Error listing PVCs: {error}", error=e))
 
     def __get_routes(self, namespace=None, **kwargs):
         """List OpenShift routes."""
@@ -396,7 +397,7 @@ class OpenshiftProvider(BaseProvider):
             
         except Exception as e:
             self.logger.error(f"Error getting routes: {e}")
-            raise Exception(f"Error getting routes: {e}")
+            raise Exception(t("Error getting routes: {error}", error=e))
 
     def __get_deploymentconfigs(self, namespace=None, **kwargs):
         """List OpenShift deployment configs."""
@@ -424,7 +425,7 @@ class OpenshiftProvider(BaseProvider):
             
         except Exception as e:
             self.logger.error(f"Error getting deployment configs: {e}")
-            raise Exception(f"Error getting deployment configs: {e}")
+            raise Exception(t("Error getting deployment configs: {error}", error=e))
 
     def __get_projects(self, **kwargs):
         """List OpenShift projects."""
@@ -448,7 +449,7 @@ class OpenshiftProvider(BaseProvider):
             
         except Exception as e:
             self.logger.error(f"Error getting projects: {e}")
-            raise Exception(f"Error getting projects: {e}")
+            raise Exception(t("Error getting projects: {error}", error=e))
 
     def __rollout_restart(self, kind, name, namespace, labels=None, **kwargs):
         """Perform a rollout restart on a deployment, statefulset, or daemonset using REST API."""
@@ -476,7 +477,7 @@ class OpenshiftProvider(BaseProvider):
                     )
                     if not deployment_list.items:
                         raise ValueError(
-                            f"Deployment with labels {labels} not found in namespace {namespace}"
+                            t("Deployment with labels {labels} not found in namespace {namespace}", labels=labels, namespace=namespace)
                         )
                 apps_v1.patch_namespaced_deployment(
                     name=name, namespace=namespace, body=body
@@ -488,7 +489,7 @@ class OpenshiftProvider(BaseProvider):
                     )
                     if not statefulset_list.items:
                         raise ValueError(
-                            f"StatefulSet with labels {labels} not found in namespace {namespace}"
+                            t("StatefulSet with labels {labels} not found in namespace {namespace}", labels=labels, namespace=namespace)
                         )
                 apps_v1.patch_namespaced_stateful_set(
                     name=name, namespace=namespace, body=body
@@ -500,7 +501,7 @@ class OpenshiftProvider(BaseProvider):
                     )
                     if not daemonset_list.items:
                         raise ValueError(
-                            f"DaemonSet with labels {labels} not found in namespace {namespace}"
+                            t("DaemonSet with labels {labels} not found in namespace {namespace}", labels=labels, namespace=namespace)
                         )
                 apps_v1.patch_namespaced_daemon_set(
                     name=name, namespace=namespace, body=body
@@ -509,15 +510,15 @@ class OpenshiftProvider(BaseProvider):
                 # Handle OpenShift DeploymentConfig using REST API
                 return self.__rollout_restart_deploymentconfig(name, namespace)
             else:
-                raise ValueError(f"Unsupported kind {kind} to perform rollout restart")
+                raise ValueError(t("Unsupported kind {kind} to perform rollout restart", kind=kind))
         except ApiException as e:
             self.logger.error(f"Error performing rollout restart for {kind} {name}: {e}")
-            raise Exception(f"Error performing rollout restart for {kind} {name}: {e}")
+            raise Exception(t("Error performing rollout restart for {kind} {name}: {error}", kind=kind, name=name, error=e))
 
         self.logger.info(f"Successfully performed rollout restart for {kind} {name}")
         return {
             "status": "success",
-            "message": f"Successfully performed rollout restart for {kind} {name}",
+            "message": t("Successfully performed rollout restart for {kind} {name}", kind=kind, name=name),
         }
 
     def __rollout_restart_deploymentconfig(self, name, namespace):
@@ -546,12 +547,12 @@ class OpenshiftProvider(BaseProvider):
             self.logger.info(f"Successfully restarted DeploymentConfig {name}")
             return {
                 "status": "success",
-                "message": f"Successfully restarted DeploymentConfig {name}",
+                "message": t("Successfully restarted DeploymentConfig {name}", name=name),
             }
             
         except Exception as e:
             self.logger.error(f"Error restarting DeploymentConfig {name}: {e}")
-            raise Exception(f"Error restarting DeploymentConfig {name}: {e}")
+            raise Exception(t("Error restarting DeploymentConfig {name}: {error}", name=name, error=e))
 
     def __restart_pod(self, namespace, pod_name, container_name=None, message=None, **kwargs):
         """Restart a pod by deleting it (it will be recreated by its controller)."""
@@ -575,7 +576,7 @@ class OpenshiftProvider(BaseProvider):
             response_message = (
                 message
                 if message
-                else f"Pod {pod_name} in namespace {namespace} was restarted"
+                else t("Pod {pod_name} in namespace {namespace} was restarted", pod_name=pod_name, namespace=namespace)
             )
             self.logger.info(response_message)
 
@@ -590,7 +591,7 @@ class OpenshiftProvider(BaseProvider):
                 },
             }
         except ApiException as e:
-            error_message = f"Error restarting pod {pod_name}: {e}"
+            error_message = t("Error restarting pod {pod_name}: {error}", pod_name=pod_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
 
@@ -610,10 +611,10 @@ class OpenshiftProvider(BaseProvider):
             
             return {
                 "status": "success",
-                "message": f"Successfully scaled deployment {deployment_name} to {replicas} replicas",
+                "message": t("Successfully scaled deployment {deployment_name} to {replicas} replicas", deployment_name=deployment_name, replicas=replicas),
             }
         except ApiException as e:
-            error_message = f"Error scaling deployment {deployment_name}: {e}"
+            error_message = t("Error scaling deployment {deployment_name}: {error}", deployment_name=deployment_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
 
@@ -640,12 +641,12 @@ class OpenshiftProvider(BaseProvider):
             self.logger.info(f"Successfully scaled DeploymentConfig {deploymentconfig_name} to {replicas} replicas")
             return {
                 "status": "success",
-                "message": f"Successfully scaled DeploymentConfig {deploymentconfig_name} to {replicas} replicas",
+                "message": t("Successfully scaled DeploymentConfig {deploymentconfig_name} to {replicas} replicas", deploymentconfig_name=deploymentconfig_name, replicas=replicas),
             }
             
         except Exception as e:
             self.logger.error(f"Error scaling DeploymentConfig {deploymentconfig_name}: {e}")
-            raise Exception(f"Error scaling DeploymentConfig {deploymentconfig_name}: {e}")
+            raise Exception(t("Error scaling DeploymentConfig {deploymentconfig_name}: {error}", deploymentconfig_name=deploymentconfig_name, error=e))
 
 
 if __name__ == "__main__":

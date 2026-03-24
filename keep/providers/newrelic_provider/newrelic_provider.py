@@ -10,6 +10,7 @@ from datetime import datetime
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_config_exception import ProviderConfigException
@@ -289,7 +290,7 @@ class NewrelicProvider(BaseProvider):
         """
         if not nrql:
             raise ProviderConfigException(
-                "Missing NRQL query", provider_id=self.provider_id
+                t("Missing NRQL query"), provider_id=self.provider_id
             )
 
         query = f'{{actor {{account(id: {self.newrelic_config.account_id}) {{nrql(query: "{nrql}") {{results}}}}'
@@ -305,7 +306,7 @@ class NewrelicProvider(BaseProvider):
                 "Failed to query New Relic",
                 extra={"response": response.text, "query": query},
             )
-            raise ProviderException(f"Failed to query New Relic: {response.text}")
+            raise ProviderException(t("Failed to query New Relic: {error}", error=response.text))
         # results are in response.json()['data']['actor']['account']['nrql']['results'], should we return this?
         return response.json()
 
@@ -766,7 +767,7 @@ class NewrelicProvider(BaseProvider):
         self.logger.info("Fetching policies")
         policy_ids = self.__get_all_policy_ids()
         if not policy_ids:
-            raise Exception("Not able to get policies")
+            raise Exception(t("Not able to get policies"))
 
         destination_id = self.__get_webhook_destination_id_by_name_and_url(
             name=webhook_name, url=keep_api_url
@@ -776,7 +777,7 @@ class NewrelicProvider(BaseProvider):
                 name=webhook_name, url=keep_api_url
             )
         if not destination_id:
-            raise Exception("Not able to get webhook destination")
+            raise Exception(t("Not able to get webhook destination"))
 
         channel_id = self.__get_channel_id_by_destination_and_name(
             destination_id, webhook_name
@@ -786,7 +787,7 @@ class NewrelicProvider(BaseProvider):
                 name=webhook_name, destination_id=destination_id, api_key=api_key
             )
         if not channel_id:
-            raise Exception("Not able to get channels")
+            raise Exception(t("Not able to get channels"))
 
         worflow_id = self.__get_workflow_by_name_and_channel(
             name=webhook_name, channel_id=channel_id
@@ -797,7 +798,7 @@ class NewrelicProvider(BaseProvider):
                 name=webhook_name, channel_id=channel_id, policy_ids=policy_ids
             )
         if not worflow_id:
-            raise Exception("Not able to add worflow")
+            raise Exception(t("Not able to add worflow"))
 
         self.logger.info(f"New relic webhook successfuly setup {worflow_id}")
 

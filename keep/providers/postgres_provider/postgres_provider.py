@@ -8,6 +8,7 @@ import os
 import psycopg2
 import pydantic
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -136,7 +137,7 @@ class PostgresProvider(BaseProvider):
             list | tuple: list of results or single result if single_row is True
         """
         if not query:
-            raise ValueError("Query is required")
+            raise ValueError(t("Query is required"))
 
         conn = self.__init_connection()
         try:
@@ -161,7 +162,7 @@ class PostgresProvider(BaseProvider):
         """
         # notify and query are the same for Postgres
         if not query:
-            raise ValueError("Query is required")
+            raise ValueError(t("Query is required"))
 
         conn = self.__init_connection()
         try:

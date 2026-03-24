@@ -7,6 +7,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -201,7 +202,7 @@ To send alerts from Icinga2 to Keep, configure a new notification command:
 
         except Exception as e:
             self.logger.exception("Failed to get alerts from Icinga2")
-            raise Exception(f"Failed to get alerts from Icinga2: {str(e)}")
+            raise Exception(t("Failed to get alerts from Icinga2: {error}", error=str(e)))
 
     @staticmethod
     def _format_alert(

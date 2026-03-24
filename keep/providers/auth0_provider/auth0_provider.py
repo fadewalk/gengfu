@@ -8,6 +8,7 @@ import os
 
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig
@@ -81,7 +82,7 @@ class Auth0Provider(BaseProvider):
             "Authorization": f"Bearer {self.authentication_config.token}",
         }
         if not log_type:
-            raise Exception("log_type is required")
+            raise Exception(t("Log type is required"))
         params = {
             "q": f"type:{log_type}",  # Lucene query syntax to search for logs with type 's' (Success Signup)
             "per_page": 100,  # specify the number of entries per page

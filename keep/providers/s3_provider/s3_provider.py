@@ -7,6 +7,7 @@ import dataclasses
 import boto3
 import pydantic
 
+from keep.api.i18n import t
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
 
@@ -51,7 +52,7 @@ class S3Provider(BaseProvider):
         try:
             s3_client.list_buckets()
         except Exception as e:
-            raise ProviderException(f"Failed to list S3 buckets: {e}")
+            raise ProviderException(t("Failed to list S3 buckets: {error}", error=e))
 
     def _query(self, bucket: str, **kwargs: dict):
         """
@@ -68,7 +69,7 @@ class S3Provider(BaseProvider):
         try:
             response = s3_client.list_objects_v2(Bucket=bucket)
         except Exception as e:
-            raise ProviderException(f"Failed to list objects in bucket: {e}")
+            raise ProviderException(t("Failed to list objects in bucket: {error}", error=e))
         files = []
         for obj in response.get("Contents", []):
             key = obj.get("Key")

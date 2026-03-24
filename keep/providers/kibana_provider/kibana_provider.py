@@ -16,6 +16,7 @@ from fastapi import HTTPException
 from packaging.version import Version
 from starlette.datastructures import FormData
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -189,7 +190,7 @@ class KibanaProvider(BaseProvider):
         if isinstance(raw_body, dict):
             return raw_body
 
-        raise ValueError(f"Unsupported raw_body type: {type(raw_body)}")
+        raise ValueError(t("Unsupported raw body type: {type}", type=str(type(raw_body))))
 
     def validate_scopes(self) -> dict[str, bool | str]:
         """
@@ -212,7 +213,7 @@ class KibanaProvider(BaseProvider):
                         "POST", "api/alerting/rule", json=self.MOCK_ALERT_PAYLOAD
                     )
                     if not alert:
-                        raise Exception("Failed validating rulesSettings:write")
+                        raise Exception(t("Failed to validate rules"))
                     self.request("DELETE", f"api/alerting/rule/{alert.get('id')}")
                 elif scope.name == "actions:read":
                     self.request("GET", "api/actions/connectors")
@@ -223,7 +224,7 @@ class KibanaProvider(BaseProvider):
                         json=self.MOCK_CONNECTOR_PAYLOAD,
                     )
                     if not connector:
-                        raise Exception("Failed validating actions:write")
+                        raise Exception(t("Failed to validate actions"))
                     self.request(
                         "DELETE", f"api/actions/connector/{connector.get('id')}"
                     )
@@ -287,7 +288,7 @@ class KibanaProvider(BaseProvider):
             response_json: dict = response.json()
             raise HTTPException(
                 response_json.get("statusCode", 404),
-                detail=response_json.get("message"),
+                detail=t("Error detail: {message}", message=response_json.get("message")),
             )
         try:
             return response.json()

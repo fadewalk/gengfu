@@ -11,6 +11,7 @@ import pydantic
 import requests
 from requests.auth import HTTPBasicAuth
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -246,7 +247,7 @@ class JiraProvider(BaseProvider):
 
             return response.json()
         except Exception as e:
-            raise ProviderException(f"Failed to fetch createmeta: {e}")
+            raise ProviderException(t("Failed to fetch createmeta: {error}", error=str(e)))
 
     def __get_single_createmeta(self, project_key: str):
         """
@@ -266,13 +267,13 @@ class JiraProvider(BaseProvider):
 
             issue_type_name = issuetype.get("name", "")
             if not issue_type_name:
-                raise ProviderException("No issue types found!")
+                raise ProviderException(t("No issue types found!"))
 
             self.logger.info("Fetched single createmeta!")
 
             return {"issue_type_name": issue_type_name}
         except Exception as e:
-            raise ProviderException(f"Failed to fetch single createmeta: {e}")
+            raise ProviderException(t("Failed to fetch single createmeta: {error}", error=str(e)))
 
     def __get_available_transitions(self, issue_id: str):
         """
@@ -325,7 +326,7 @@ class JiraProvider(BaseProvider):
             if not transition_id:
                 if not transition_name:
                     raise ProviderException(
-                        "Either transition_name or transition_id must be provided"
+                        t("Transition name or id is required")
                     )
 
                 transitions = self.__get_available_transitions(issue_id)
@@ -343,8 +344,7 @@ class JiraProvider(BaseProvider):
                 if not transition_id:
                     available_names = [t["name"] for t in transitions]
                     raise ProviderException(
-                        f"Transition '{transition_name}' not found. "
-                        f"Available transitions: {', '.join(available_names)}"
+                        t("Transition {transition_name} not found. Available transitions: {available_transitions}", transition_name=transition_name, available_transitions=", ".join(available_names))
                     )
 
             # Execute the transition
@@ -369,7 +369,7 @@ class JiraProvider(BaseProvider):
             }
 
         except Exception as e:
-            raise ProviderException(f"Failed to transition issue {issue_id}: {e}")
+            raise ProviderException(t("Failed to transition issue {issue_id}: {error}", issue_id=issue_id, error=str(e)))
 
     def __create_issue(
         self,
@@ -438,12 +438,12 @@ class JiraProvider(BaseProvider):
                 self.logger.exception(
                     "Failed to create an issue", extra=response.json()
                 )
-                raise ProviderException(f"Failed to create an issue: {response.json()}")
+                raise ProviderException(t("Failed to create Jira issue: {response}", response=str(response.json())))
             self.logger.info("Created an issue!")
 
             return {"issue": response.json()}
         except Exception as e:
-            raise ProviderException(f"Failed to create an issue: {e}")
+            raise ProviderException(t("Failed to create Jira issue: {error}", error=str(e)))
 
     def __update_issue(
         self,
@@ -493,7 +493,7 @@ class JiraProvider(BaseProvider):
                     response.raise_for_status()
             except Exception:
                 self.logger.exception("Failed to update an issue", extra=response.text)
-                raise ProviderException("Failed to update an issue")
+                raise ProviderException(t("Failed to update Jira issue"))
             self.logger.info("Updated an issue!")
             return {
                 "issue": {
@@ -504,7 +504,7 @@ class JiraProvider(BaseProvider):
             }
 
         except Exception as e:
-            raise ProviderException(f"Failed to update an issue: {e}")
+            raise ProviderException(t("Failed to update Jira issue: {error}", error=str(e)))
 
     def _extract_project_key_from_board_name(self, board_name: str):
         boards_response = requests.get(
@@ -525,10 +525,10 @@ class JiraProvider(BaseProvider):
             # if we got here, we didn't find the board name so let's throw an indicative exception
             board_names = [board["name"] for board in boards]
             raise Exception(
-                f"Could not find board {board_name} - please verify your board name is in this list: {board_names}."
+                t("Could not find board {board_name} - please verify your board name is in this list: {board_names}.", board_name=board_name, board_names=str(board_names))
             )
         else:
-            raise Exception("Could not fetch boards: " + boards_response.text)
+            raise Exception(t("Failed to fetch boards: {error}", error=boards_response.text))
 
     def _extract_issue_key_from_issue_id(self, issue_id: str):
         issue_key = requests.get(
@@ -541,7 +541,7 @@ class JiraProvider(BaseProvider):
         if issue_key.status_code == 200:
             return issue_key.json()["key"]
         else:
-            raise Exception("Could not fetch issue key: " + issue_key.text)
+            raise Exception(t("Failed to fetch issue key: {error}", error=issue_key.text))
 
     def _notify(
         self,
@@ -613,7 +613,7 @@ class JiraProvider(BaseProvider):
                 project_key = self._extract_project_key_from_board_name(board_name)
             if not project_key or not summary or not issue_type or not description:
                 raise ProviderException(
-                    f"Project key and summary are required! - {project_key}, {summary}, {issue_type}, {description}"
+                    t("Project key, summary, issue type, and description are required (project_key: {project_key}, summary: {summary}, issue_type: {issue_type}, description: {description})", project_key=project_key, summary=summary, issue_type=issue_type, description=description)
                 )
 
             result = self.__create_issue(
@@ -647,7 +647,7 @@ class JiraProvider(BaseProvider):
                 "issue_type": issue_type,
                 "project_key": project_key,
             }
-            raise ProviderException(f"Failed to notify jira: {e} - Params: {context}")
+            raise ProviderException(t("Failed to notify Jira: {error} - Params: {params}", error=str(e), params=str(context)))
 
     def _query(self, ticket_id="", board_id="", **kwargs: dict):
         """
@@ -663,7 +663,7 @@ class JiraProvider(BaseProvider):
             response = requests.get(request_url, auth=self.__get_auth(), verify=False)
             if not response.ok:
                 raise ProviderException(
-                    f"{self.__class__.__name__} failed to fetch data from Jira: {response.text}"
+                    t("Failed to fetch data from {class_name}: {error}", class_name=self.__class__.__name__, error=response.text)
                 )
             issues = response.json()
             return {"number_of_issues": issues["total"]}
@@ -672,7 +672,7 @@ class JiraProvider(BaseProvider):
             response = requests.get(request_url, auth=self.__get_auth(), verify=False)
             if not response.ok:
                 raise ProviderException(
-                    f"{self.__class__.__name__} failed to fetch data from Jira: {response.text}"
+                    t("Failed to fetch data from {class_name}: {error}", class_name=self.__class__.__name__, error=response.text)
                 )
             issue = response.json()
             return {"issue": issue}

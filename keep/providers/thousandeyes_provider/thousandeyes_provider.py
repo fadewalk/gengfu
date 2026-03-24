@@ -7,6 +7,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -215,7 +216,7 @@ To send alerts from ThousandEyes to Keep, Use the following webhook url to confi
 
         except Exception as e:
             self.logger.exception("Error while getting alerts")
-            raise Exception("Error while getting alerts from Thousandeyes", str(e))
+            raise Exception(t("Error getting alerts from ThousandEyes: {error}", error=str(e)))
 
     @staticmethod
     def _format_alert(

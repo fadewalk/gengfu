@@ -12,6 +12,7 @@ import pydantic
 import requests
 from requests.exceptions import JSONDecodeError
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -143,7 +144,7 @@ class WebhookProvider(BaseProvider):
         """
         for endpoint in WebhookProvider.BLACKLISTED_ENDPOINTS:
             if endpoint in url:
-                raise Exception(f"URL {url} is blacklisted")
+                raise Exception(t("URL {url} is blacklisted", url=url))
 
     def _notify(
         self,
@@ -192,7 +193,7 @@ class WebhookProvider(BaseProvider):
                 headers = {header["key"]: header["value"] for header in headers}
             except Exception:
                 raise Exception(
-                    "Headers must be a list of dictionaries with 'key' and 'value' fields, e.g. [{'key': 'Content-Type', 'value': 'application/json'}]"
+                    t("Headers must be a list of dictionaries with 'key' and 'value' fields, e.g. [{'key': 'Content-Type', 'value': 'application/json'}]")
                 )
         if body is None:
             body = {}

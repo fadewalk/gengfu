@@ -9,6 +9,7 @@ import os
 import pydantic
 from pymongo import MongoClient
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_config_exception import ProviderConfigException
 from keep.providers.base.base_provider import BaseProvider
@@ -112,7 +113,7 @@ class MongodbProvider(BaseProvider):
                 self.logger.debug("Successfully casted the additional_options to dict")
             except Exception:
                 self.logger.debug("Failed to cast the additional_options to dict")
-                raise ValueError("additional_options must be a valid dict")
+                raise ValueError(t("Invalid additional options"))
         else:
             additional_options = {}
 
@@ -141,9 +142,9 @@ class MongodbProvider(BaseProvider):
         """
         host = self.config.authentication["host"]
         if host is None:
-            raise ProviderConfigException("Please provide a value for `host`")
+            raise ProviderConfigException(t("Host is required"))
         if not host.strip():
-            raise ProviderConfigException("Host cannot be empty")
+            raise ProviderConfigException(t("Host is empty"))
         if not (host.startswith("mongodb://") or host.startswith("mongodb+srv://")):
             host = f"mongodb://{host}"
 

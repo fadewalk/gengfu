@@ -20,6 +20,7 @@ from keep.api.core.db import (
     get_provider_by_name,
     get_provider_logs,
 )
+from keep.api.i18n import t
 from keep.api.models.db.provider import Provider, ProviderExecutionLog
 from keep.api.models.provider import Provider as ProviderModel
 from keep.api.utils.tenant_utils import get_or_create_api_key
@@ -229,7 +230,7 @@ class ProvidersService:
                     logger.exception("Failed to delete the secret")
                     pass
                 raise HTTPException(
-                    status_code=409, detail="Provider already installed"
+                    status_code=409, detail=t("Provider already installed")
                 )
 
             if provider_model.consumer:
@@ -263,10 +264,10 @@ class ProvidersService:
             ).one_or_none()
 
             if not provider:
-                raise HTTPException(404, detail="Provider not found")
+                raise HTTPException(404, detail=t("Provider not found"))
 
             if provider.provisioned and not allow_provisioned:
-                raise HTTPException(403, detail="Cannot update a provisioned provider")
+                raise HTTPException(403, detail=t("Cannot update a provisioned provider"))
 
             pulling_enabled = provider_info.pop("pulling_enabled", True)
 
@@ -329,10 +330,10 @@ class ProvidersService:
             ).one_or_none()
 
             if not provider_model:
-                raise HTTPException(404, detail="Provider not found")
+                raise HTTPException(404, detail=t("Provider not found"))
 
             if provider_model.provisioned and not allow_provisioned:
-                raise HTTPException(403, detail="Cannot delete a provisioned provider")
+                raise HTTPException(403, detail=t("Cannot delete a provisioned provider"))
 
             context_manager = ContextManager(tenant_id=tenant_id)
             secret_manager = SecretManagerFactory.get_secret_manager(context_manager)
@@ -379,7 +380,7 @@ class ProvidersService:
         ).one_or_none()
 
         if not provider:
-            raise HTTPException(404, detail="Provider not found")
+            raise HTTPException(404, detail=t("Provider not found"))
 
         context_manager = ContextManager(tenant_id=tenant_id)
         secret_manager = SecretManagerFactory.get_secret_manager(context_manager)
@@ -734,6 +735,6 @@ class ProvidersService:
         tenant_id: str, provider_id: str
     ) -> List[ProviderExecutionLog]:
         if not config("KEEP_STORE_PROVIDER_LOGS", cast=bool, default=False):
-            raise HTTPException(404, detail="Provider logs are not enabled")
+            raise HTTPException(404, detail=t("Provider logs are not enabled"))
 
         return get_provider_logs(tenant_id, provider_id)

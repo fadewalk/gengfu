@@ -7,6 +7,7 @@ import pydantic
 import requests
 from opsgenie_sdk.rest import ApiException
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider, ProviderHealthMixin
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -107,7 +108,7 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
             else:
                 self.logger.error("Failed to find OpsGenie integration")
                 return {
-                    "opsgenie:create": f"Failed to find Integration name {self.authentication_config.integration_name}"
+                    "opsgenie:create": t("Failed to find Integration name {name}", name=self.authentication_config.integration_name)
                 }
 
             # Get the integration details and check if it has write access
@@ -123,7 +124,7 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
                 scopes["opsgenie:create"] = True
             else:
                 scopes["opsgenie:create"] = (
-                    "OpsGenie integration does not have write access"
+                    t("OpsGenie integration does not have write access")
                 )
 
         except Exception as e:
@@ -197,7 +198,7 @@ class OpsgenieProvider(BaseProvider, ProviderHealthMixin):
             response = alert.retrieve_result()
             if not response.data.is_success:
                 raise Exception(
-                    f"Failed to create OpsGenie alert: {response.data.status}"
+                    t("Failed to create OpsGenie alert: {status}", status=response.data.status)
                 )
             return response.data.to_dict()
         except ApiException:

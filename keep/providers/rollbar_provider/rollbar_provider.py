@@ -10,6 +10,7 @@ from urllib.parse import urljoin
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -118,7 +119,7 @@ class RollbarProvider(BaseProvider):
                 self.logger.error(
                     "Failed to get occurrences from Rollbar: %s", response.json()
                 )
-                raise Exception("Could not get occurrences from Rollbar")
+                raise Exception(t("Could not get occurrences from Rollbar"))
 
             return [
                 AlertDto(
@@ -140,7 +141,7 @@ class RollbarProvider(BaseProvider):
 
         except Exception as e:
             self.logger.error("Error getting occurrences from Rollbar: %s", e)
-            raise Exception(f"Error getting occurrences from Rollbar: {e}")
+            raise Exception(t("Error getting occurrences from Rollbar: {error}", error=str(e)))
 
     def _get_alerts(self) -> List[AlertDto]:
         alerts = []
@@ -208,12 +209,12 @@ class RollbarProvider(BaseProvider):
                     self.logger.error(
                         "Failed to enable webhook in Rollbar: %s", response.json()
                     )
-                    raise Exception("Failed to enable webhook in Rollbar")
+                    raise Exception(t("Failed to enable Rollbar webhook"))
 
             self.logger.info("Webhook enabled in Rollbar")
         except Exception as e:
             self.logger.error("Error setting up webhook for Rollbar: %s", e)
-            raise Exception(f"Error setting up webhook for Rollbar: {e}")
+            raise Exception(t("Error setting up Rollbar webhook: {error}", error=str(e)))
 
 
 if __name__ == "__main__":
@@ -230,7 +231,7 @@ if __name__ == "__main__":
     rollbar_host = os.environ.get("ROLLBAR_HOST")
 
     if rollbar_host is None:
-        raise Exception("ROLLBAR_HOST is not set")
+        raise Exception(t("Rollbar host is not set"))
 
     config = ProviderConfig(
         description="Rollbar Provider",

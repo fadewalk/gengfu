@@ -17,6 +17,7 @@ import boto3
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.core.config import config as keep_config
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
@@ -272,7 +273,7 @@ class CloudwatchProvider(BaseProvider, ProviderHealthMixin):
                 scopes["cloudwatch:PutMetricAlarm"] = str(e)
         else:
             scopes["cloudwatch:PutMetricAlarm"] = (
-                "cloudwatch:DescribeAlarms scope is not granted, so we cannot validate cloudwatch:PutMetricAlarm scope"
+                t("cloudwatch:DescribeAlarms scope is not granted, so we cannot validate cloudwatch:PutMetricAlarm scope")
             )
         # 3. validate list subscriptions by topic
         if self.authentication_config.cloudwatch_sns_topic:
@@ -292,7 +293,7 @@ class CloudwatchProvider(BaseProvider, ProviderHealthMixin):
                 scopes["sns:ListSubscriptionsByTopic"] = str(e)
         else:
             scopes["sns:ListSubscriptionsByTopic"] = (
-                "cloudwatch_sns_topic is not set, so we cannot validate sns:ListSubscriptionsByTopic scope"
+                t("cloudwatch_sns_topic is not set, so we cannot validate sns:ListSubscriptionsByTopic scope")
             )
 
         # 4. validate start query
@@ -344,7 +345,7 @@ class CloudwatchProvider(BaseProvider, ProviderHealthMixin):
                 },
             )
             scopes["logs:DescribeQueries"] = (
-                "Could not validate logs:GetQueryResults scope without logs:DescribeQueries, so assuming the scope is not granted."
+                t("Could not validate logs:GetQueryResults scope without logs:DescribeQueries, so assuming the scope is not granted.")
             )
 
         self.logger.info(
@@ -365,7 +366,7 @@ class CloudwatchProvider(BaseProvider, ProviderHealthMixin):
                 scopes["logs:StartQuery"] = str(e)
         else:
             scopes["logs:StartQuery"] = (
-                "Could not validate logs:StartQuery scope without logs:DescribeQueries, so assuming the scope is not granted."
+                t("Could not validate logs:StartQuery scope without logs:DescribeQueries, so assuming the scope is not granted.")
             )
 
         # 5. validate get query results
@@ -384,7 +385,7 @@ class CloudwatchProvider(BaseProvider, ProviderHealthMixin):
                 scopes["logs:GetQueryResults"] = str(e)
         else:
             scopes["logs:DescribeQueries"] = (
-                "Could not validate logs:GetQueryResults scope without logs:DescribeQueries, so assuming the scope is not granted."
+                t("Could not validate logs:GetQueryResults scope without logs:DescribeQueries, so assuming the scope is not granted.")
             )
 
         # Finally

@@ -7,6 +7,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -175,7 +176,7 @@ To send alerts from LibreNMS to Keep, Use the following webhook url to configure
 
         except Exception as e:
             self.logger.exception("Failed to get alerts from LibreNMS")
-            raise Exception(f"Failed to get alerts from LibreNMS: {str(e)}")
+            raise Exception(t("Failed to get alerts from LibreNMS: {error}", error=str(e)))
 
     @staticmethod
     def _format_alert(

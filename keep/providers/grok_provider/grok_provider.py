@@ -3,6 +3,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -85,7 +86,7 @@ class GrokProvider(BaseProvider):
             }
 
         except requests.exceptions.RequestException as e:
-            raise ProviderException(f"Error calling Grok API: {str(e)}")
+            raise ProviderException(t("Grok API error: {error}", error=str(e)))
 
 
 if __name__ == "__main__":

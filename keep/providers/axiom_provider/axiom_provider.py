@@ -9,6 +9,7 @@ from datetime import datetime
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -100,10 +101,10 @@ class AxiomProvider(BaseProvider):
         )
         organization_id = organization_id or self.authentication_config.organization_id
         if not organization_id:
-            raise Exception("organization_id is required for Axiom provider")
+            raise Exception(t("organization_id is required for Axiom provider"))
 
         if not dataset:
-            raise Exception("dataset is required for Axiom provider")
+            raise Exception(t("dataset is required for Axiom provider"))
 
         nocache = kwargs.get("nocache", "true")
 

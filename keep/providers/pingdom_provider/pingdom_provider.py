@@ -4,6 +4,7 @@ import datetime
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -234,7 +235,7 @@ if __name__ == "__main__":
 
     api_key = os.environ.get("PINGDOM_API_KEY")
     if not api_key:
-        raise Exception("PINGDOM_API_KEY environment variable is not set")
+        raise Exception(t("API key is not set"))
     context_manager = ContextManager(
         tenant_id="singletenant",
         workflow_id="test",

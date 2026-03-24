@@ -2,6 +2,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -65,9 +66,9 @@ class FlashdutyProvider(BaseProvider):
 
         self.logger.info("Notifying incident to Flashduty")
         if not title:
-            raise ProviderException("Title is required")
+            raise ProviderException(t("Title is required"))
         if not event_status:
-            raise ProviderException("Event status is required")
+            raise ProviderException(t("Event status is required"))
 
         body = {
             "title": title,

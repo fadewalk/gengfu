@@ -11,6 +11,7 @@ import pydantic
 import requests
 from requests_aws4auth import AWS4Auth
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider, ProviderHealthMixin
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -139,7 +140,7 @@ class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
 
     def validate_scopes(self):
         scopes = {
-            scope.name: "Access needed to all previous scopes to continue"
+            scope.name: t("Access needed to all previous scopes to continue")
             for scope in self.PROVIDER_SCOPES
         }
         actions = scopes.keys()
@@ -168,7 +169,7 @@ class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
                 scopes[res["EvalActionName"]] = (
                     True
                     if res["EvalDecision"] == "allowed"
-                    else f'{res["EvalActionName"]} is not allowed'
+                    else t('{action} is not allowed', action=res["EvalActionName"])
                 )
 
         if not all_allowed:
@@ -197,7 +198,7 @@ class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
                                     if left in rule["Permission"]:
                                         scopes[left] = True
                                     else:
-                                        scopes[left] = "No Access"
+                                        scopes[left] = t("No Access")
 
         except Exception as e:
             for left in left_to_validate:
@@ -266,7 +267,7 @@ class OpensearchserverlessProvider(BaseProvider, ProviderHealthMixin):
             res = self.__create_doc(index, doc_id, document)
             if res.status_code not in [200, 201]:
                 raise Exception(
-                    f"Failed to notify. Status: {res.status_code}, Response: {res.text}"
+                    t("Failed to notify. Status: {status}, Response: {response}", status=res.status_code, response=res.text)
                 )
             self.logger.info("Notification document sent to OpenSearch successfully.")
             return res.json()

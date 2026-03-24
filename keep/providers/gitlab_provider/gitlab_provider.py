@@ -9,6 +9,7 @@ import pydantic
 import requests
 from requests import HTTPError
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -172,7 +173,7 @@ class GitlabProvider(BaseProvider):
         try:
             resp.raise_for_status()
         except HTTPError as e:
-            raise Exception(f"Failed to create issue: {str(e)}")
+            raise Exception(t("Failed to create GitLab issue: {error}", error=str(e)))
         return resp.json()
 
 

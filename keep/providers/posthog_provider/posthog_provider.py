@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider, ProviderHealthMixin
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -192,7 +193,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
                 extra={"status_code": response.status_code, "response": response.text},
             )
             raise Exception(
-                f"API request failed with status code {response.status_code}: {response.text}"
+                t("PostHog API request failed: {status_code} {text}", status_code=response.status_code, text=response.text)
             )
 
         # Parse response
@@ -284,7 +285,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
                 extra={"status_code": response.status_code, "response": response.text},
             )
             raise Exception(
-                f"API request failed with status code {response.status_code}: {response.text}"
+                t("PostHog API request failed: {status_code} {text}", status_code=response.status_code, text=response.text)
             )
 
         # Parse response
@@ -342,7 +343,7 @@ class PosthogProvider(BaseProvider, ProviderHealthMixin):
         elif query_type == "session_recordings":
             return self.get_session_recordings(hours=hours, limit=limit)
         else:
-            raise NotImplementedError(f"Query type {query_type} not implemented")
+            raise NotImplementedError(t("Query type not implemented: {query_type}", query_type=query_type))
 
     def dispose(self):
         """

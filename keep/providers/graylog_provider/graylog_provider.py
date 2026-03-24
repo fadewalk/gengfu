@@ -14,6 +14,7 @@ from urllib.parse import urlencode, urljoin, urlparse
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -315,7 +316,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
             )
             self.logger.debug("User information request sent")
             if user_response.status_code != 200:
-                raise Exception(user_response.text)
+                raise Exception(t("Failed to validate Graylog user: {error}", error=user_response.text))
 
             authenticated = True
             user_response = user_response.json()
@@ -347,7 +348,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
                 verify=self.authentication_config.verify,
             )
             if version_response.status_code != 200:
-                raise Exception(version_response.text)
+                raise Exception(t("Failed to validate Graylog version: {error}", error=version_response.text))
             version = version_response.json()["version"].strip()
             self.logger.info(f"We are working with Graylog version: {version}")
             return version
@@ -367,7 +368,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
                 verify=self.authentication_config.verify,
             )
             if whitelist_response.status_code != 200:
-                raise Exception(whitelist_response.text)
+                raise Exception(t("Failed to validate Graylog whitelist: {error}", error=whitelist_response.text))
             self.logger.info("Successfully retrieved URL Whitelist")
             return whitelist_response.json()
         except Exception as e:
@@ -387,7 +388,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
                 verify=self.authentication_config.verify,
             )
             if whitelist_response.status_code != 204:
-                raise Exception(whitelist_response.text)
+                raise Exception(t("Failed to validate Graylog whitelist: {error}", error=whitelist_response.text))
             self.logger.info("Successfully updated URL whitelist")
         except Exception as e:
             self.logger.error(
@@ -409,7 +410,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
             )
 
             if events_response.status_code != 200:
-                raise Exception(events_response.text)
+                raise Exception(t("Failed to get Graylog events: {error}", error=events_response.text))
 
             events_response = events_response.json()
             self.logger.info("Successfully fetched events from Graylog")
@@ -434,7 +435,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
             )
 
             if event_update_response.status_code != 200:
-                raise Exception(event_update_response.text)
+                raise Exception(t("Failed to update Graylog event: {error}", error=event_update_response.text))
 
             self.logger.info(f"Successfully updated event with ID: {event['id']}")
 
@@ -461,7 +462,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
                 verify=self.authentication_config.verify,
             )
             if notifications_response.status_code != 200:
-                raise Exception(notifications_response.text)
+                raise Exception(t("Failed to get Graylog notifications: {error}", error=notifications_response.text))
             self.logger.info(f"Successfully fetched notification: {notification_name}")
             return notifications_response.json()
         except Exception as e:
@@ -483,7 +484,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
                 verify=self.authentication_config.verify,
             )
             if notification_delete_response.status_code != 204:
-                raise Exception(notification_delete_response.text)
+                raise Exception(t("Failed to delete Graylog notification: {error}", error=notification_delete_response.text))
 
             self.logger.info(
                 f"Successfully deleted notification with ID: {notification_id}"
@@ -508,7 +509,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
                 verify=self.authentication_config.verify,
             )
             if notification_creation_response.status_code != 200:
-                raise Exception(notification_creation_response.text)
+                raise Exception(t("Failed to create Graylog notification: {error}", error=notification_creation_response.text))
 
             self.logger.info(f"Successfully created notification: {notification_name}")
             return notification_creation_response.json()
@@ -533,7 +534,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
                 verify=self.authentication_config.verify,
             )
             if notification_update_response.status_code != 200:
-                raise Exception(notification_update_response.text)
+                raise Exception(t("Failed to update Graylog notification: {error}", error=notification_update_response.text))
 
             self.logger.info(
                 f"Successfully updated notification with ID: {notification_id}"
@@ -766,7 +767,7 @@ To send alerts from Graylog to Keep, Use the following webhook url to configure 
             )
 
             if alert_response.status_code != 200:
-                raise Exception(alert_response.text)
+                raise Exception(t("Failed to get Graylog alert: {error}", error=alert_response.text))
 
             self.logger.info("Successfully fetched alerts")
             return alert_response.json()

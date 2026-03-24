@@ -10,6 +10,7 @@ import typing
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -233,8 +234,7 @@ class VictorialogsProvider(BaseProvider):
             except Exception as e:
                 self.logger.exception("Failed to query logs")
                 raise Exception(
-                    "Could not query logs from VictoriaLogs on /query endpoint: ",
-                    str(e),
+                    t("Could not query logs from VictoriaLogs on /query endpoint: {error}", error=str(e))
                 )
 
         elif queryType == "hits":
@@ -259,7 +259,7 @@ class VictorialogsProvider(BaseProvider):
             except Exception as e:
                 self.logger.exception("Failed to query logs")
                 raise Exception(
-                    "Could not query logs from VictoriaLogs on /hits endpoint: ", str(e)
+                    t("Could not query logs from VictoriaLogs on /hits endpoint: {error}", error=str(e))
                 )
 
         elif queryType == "stats_query":
@@ -280,8 +280,7 @@ class VictorialogsProvider(BaseProvider):
             except Exception as e:
                 self.logger.exception("Failed to query logs")
                 raise Exception(
-                    "Could not query logs from VictoriaLogs on /stats_query endpoint: ",
-                    str(e),
+                    t("Could not query logs from VictoriaLogs on /stats_query endpoint: {error}", error=str(e))
                 )
 
         elif queryType == "stats_query_range":
@@ -302,13 +301,12 @@ class VictorialogsProvider(BaseProvider):
             except Exception as e:
                 self.logger.exception("Failed to query logs")
                 raise Exception(
-                    "Could not query logs from VictoriaLogs on /stats_query_range endpoint: ",
-                    str(e),
+                    t("Could not query logs from VictoriaLogs on /stats_query_range endpoint: {error}", error=str(e))
                 )
 
         else:
             self.logger.exception("Invalid queryType")
-            raise Exception("Invalid queryType")
+            raise Exception(t("Invalid queryType"))
 
 
 if __name__ == "__main__":

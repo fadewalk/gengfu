@@ -4,6 +4,7 @@ import pydantic
 import requests
 from typing import Optional, Dict, Any
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -109,7 +110,7 @@ class VllmProvider(BaseProvider):
                     generated_text = json.loads(generated_text)
                 except json.JSONDecodeError:
                     raise ProviderException(
-                        f"Failed to parse generated text as JSON: {generated_text}. Model not following the structured output format. Response: {result}"
+                        t("Failed to parse JSON from generated text: {generated_text}, result: {result}", generated_text=generated_text, result=str(result))
                     )
 
             return {
@@ -117,7 +118,7 @@ class VllmProvider(BaseProvider):
             }
 
         except requests.exceptions.RequestException as e:
-            raise ProviderException(f"Error querying vLLM API: {str(e)}")
+            raise ProviderException(t("vLLM API error: {error}", error=str(e)))
 
 
 if __name__ == "__main__":

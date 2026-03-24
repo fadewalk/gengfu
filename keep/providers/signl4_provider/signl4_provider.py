@@ -4,6 +4,7 @@ import enum
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -148,7 +149,7 @@ class Signl4Provider(BaseProvider):
             else:
                 # Error
                 self.logger.exception("Error: " + str(result.status_code))
-                raise Exception("Error: " + str(result.status_code))
+                raise Exception(t("SIGNL4 error status: {status_code}", status_code=str(result.status_code)))
 
         except:
             self.logger.exception("Failed to create SIGNL4 alert")

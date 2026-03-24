@@ -10,6 +10,7 @@ import pydantic
 import requests
 from requests.auth import HTTPBasicAuth
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider, ProviderHealthMixin
@@ -124,7 +125,7 @@ receivers:
             list | tuple: list of results or single result if single_row is True
         """
         if not query:
-            raise ValueError("Query is required")
+            raise ValueError(t("Query is required"))
 
         auth = None
         if self.authentication_config.username and self.authentication_config.password:
@@ -145,7 +146,7 @@ receivers:
         )
 
         if response.status_code != 200:
-            raise Exception(f"Prometheus query failed: {response.content}")
+            raise Exception(t("Prometheus query failed: {content}", content=str(response.content)))
 
         return response.json()
 
@@ -235,7 +236,7 @@ receivers:
         """
         Notifies the Prometheus server.
         """
-        raise NotImplementedError("Prometheus provider does not support notify()")
+        raise NotImplementedError(t("Prometheus provider does not support notify()"))
 
     @classmethod
     def simulate_alert(cls, **kwargs) -> dict:

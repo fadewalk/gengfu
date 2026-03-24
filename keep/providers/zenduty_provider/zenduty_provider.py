@@ -3,6 +3,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -64,9 +65,9 @@ class ZendutyProvider(BaseProvider):
         self.logger.debug("Notifying incident to Zenduty")
 
         if not service:
-            raise ProviderException("Service is required")
+            raise ProviderException(t("Service is required"))
         if not title or not summary:
-            raise ProviderException("Title and summary are required")
+            raise ProviderException(t("Title and summary are required"))
 
         body = {
             "service": service,

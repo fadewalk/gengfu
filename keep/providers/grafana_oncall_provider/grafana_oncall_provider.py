@@ -10,6 +10,7 @@ from urllib.parse import urlparse, urlsplit, urlunparse
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig
@@ -120,12 +121,12 @@ class GrafanaOncallProvider(BaseProvider):
             existing_integration_link = response_json.get("link")
         else:
             logger.error(f"Error installing the provider: {response.status_code}")
-            raise Exception(f"Error installing the provider: {response.status_code}")
+            raise Exception(t("Error installing the provider: {status_code}", status_code=response.status_code))
         
         if "integrations/v1/" in urlsplit(existing_integration_link).path:
             self.config.authentication["oncall_integration_link"] = existing_integration_link
         else:
-            Exception("Error creating the integration link, the URL is not OnCall formatted.")
+            Exception(t("Error creating the integration link, the URL is not OnCall formatted."))
 
 
     def _notify(

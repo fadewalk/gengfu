@@ -10,6 +10,7 @@ from urllib.parse import urljoin
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -204,7 +205,7 @@ class GrafanaLokiProvider(BaseProvider):
                 self.logger.error(
                     "Failed to query logs from Grafana Loki", extra={"error": e}
                 )
-                raise Exception("Could not query logs from Grafana Loki with query")
+                raise Exception(t("Could not query logs from Grafana Loki with query"))
 
         elif queryType == "query_range":
             params = {
@@ -236,12 +237,12 @@ class GrafanaLokiProvider(BaseProvider):
                     "Failed to query logs from Grafana Loki", extra={"error": e}
                 )
                 raise Exception(
-                    "Could not query logs from Grafana Loki with query_range"
+                    t("Could not query logs from Grafana Loki with query_range")
                 )
 
         else:
             self.logger.error("Invalid query type")
-            raise Exception("Invalid query type")
+            raise Exception(t("Invalid query type"))
 
 
 if __name__ == "__main__":

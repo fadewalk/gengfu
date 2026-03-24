@@ -12,6 +12,7 @@ import pydantic
 import requests
 from requests.auth import HTTPBasicAuth
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -110,7 +111,7 @@ class ZoomChatProvider(BaseProvider):
             and not self.authentication_config.authorization_token
         ):
             raise Exception(
-                "Zoom Incoming Webhook URL and authorization token are required."
+                t("Zoom Chat webhook and token are required")
             )
 
     def _get_access_token(self) -> str:
@@ -132,11 +133,11 @@ class ZoomChatProvider(BaseProvider):
             response = requests.post(token_url, auth=auth, data=data)
             if response.status_code != 200:
                 raise ProviderException(
-                    f"Failed to get access token: {response.json()}"
+                    t("Failed to get access token response: {error}", error=str(response.json()))
                 )
             return response.json()["access_token"]
         except Exception as e:
-            raise ProviderException(f"Failed to get access token: {str(e)}")
+            raise ProviderException(t("Failed to get Zoom Chat access token: {error}", error=str(e)))
 
     def _get_headers(self) -> dict:
         """
@@ -170,7 +171,7 @@ class ZoomChatProvider(BaseProvider):
                 f"{self.BASE_URL}/users", headers=self._get_headers()
             )
             if response.status_code != 200:
-                raise Exception(f"Failed to validate scopes: {response.json()}")
+                raise Exception(t("Failed to validate Zoom Chat scopes: {error}", error=str(response.json())))
             return {
                 "user:read:user:admin": True,
                 "user:read:list_users:admin": True,
@@ -199,10 +200,10 @@ class ZoomChatProvider(BaseProvider):
                 return response.json()
             else:
                 raise ProviderException(
-                    f"Failed to retrieve user info for {email}: {response.status_code} - {response.text}"
+                    t("Failed to retrieve user info for {email}: {status_code} - {text}", email=email, status_code=response.status_code, text=response.text)
                 )
         except requests.exceptions.RequestException as e:
-            raise ProviderException(f"Failed to retrieve user info: {str(e)}")
+            raise ProviderException(t("Failed to retrieve Zoom Chat user info: {error}", error=str(e)))
 
     def _notify(
         self,
@@ -228,7 +229,7 @@ class ZoomChatProvider(BaseProvider):
         webhook_url = self.authentication_config.webhook_url
         authorization_token = self.authentication_config.authorization_token
         if not message:
-            raise ProviderException("Message is required")
+            raise ProviderException(t("Message is required"))
 
         def __send_message(url, body, headers, retries=3):
             for attempt in range(retries):
@@ -321,7 +322,7 @@ class ZoomChatProvider(BaseProvider):
         response = __send_message(webhook_url, body=payload, headers=request_headers)
         if response.status_code != http.HTTPStatus.OK:
             raise ProviderException(
-                f"Failed to send message to Zoom Chat: {response.text}"
+                t("Failed to send message to Zoom Chat: {error}", error=response.text)
             )
         self.logger.debug("Alert message sent to Zoom Chat successfully")
         return "Alert message sent to Zoom Chat successfully"
@@ -339,7 +340,7 @@ if __name__ == "__main__":
 
     if not all([webhook_url, webhook_auth_token]):
         raise Exception(
-            "ZOOM_WEBHOOK_URL and ZOOM_WEBHOOK_AUTH_TOKEN are required"
+            t("Zoom Chat webhook credentials are required")
         )
 
     # Create context manager

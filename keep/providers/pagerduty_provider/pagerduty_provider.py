@@ -11,6 +11,7 @@ import uuid
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.api.models.db.incident import IncidentSeverity, IncidentStatus
 from keep.api.models.db.topology import TopologyServiceInDto
@@ -183,7 +184,7 @@ class PagerdutyProvider(
             # No need to do anything
             return
         else:
-            raise Exception("WTF Exception: No authentication provided")
+            raise Exception(t("No authentication provided"))
 
     def __refresh_token(self):
         """
@@ -225,7 +226,7 @@ class PagerdutyProvider(
             and not self.authentication_config.oauth_data
         ):
             raise ProviderConfigException(
-                "PagerdutyProvider requires either routing_key or api_key or OAuth configuration",
+                t("PagerdutyProvider requires either routing_key or api_key or OAuth configuration"),
                 provider_id=self.provider_id,
             )
 
@@ -246,15 +247,15 @@ class PagerdutyProvider(
         """
         code_verifier = payload.get("verifier")
         if not code_verifier:
-            raise Exception("No code verifier")
+            raise Exception(t("No code verifier"))
 
         code = payload.get("code")
         if not code:
-            raise Exception("No code")
+            raise Exception(t("No code"))
 
         redirect_uri = payload.get("redirect_uri")
         if not redirect_uri:
-            raise Exception("Missing redirect URI")
+            raise Exception(t("Missing redirect URI"))
 
         access_token_params = {
             "client_id": PagerdutyProvider.PAGERDUTY_CLIENT_ID,
@@ -287,7 +288,7 @@ class PagerdutyProvider(
 
         access_token = access_token_response.get("access_token")
         if not access_token:
-            raise Exception("No access token provided")
+            raise Exception(t("No access token provided"))
         return {
             "oauth_data": {
                 "access_token": access_token_response["access_token"],
@@ -583,7 +584,7 @@ class PagerdutyProvider(
         headers = self.__get_headers()
         request = requests.get(self.SUBSCRIPTION_API_URL, headers=headers)
         if not request.ok:
-            raise Exception("Could not get existing webhooks")
+            raise Exception(t("Could not get existing webhooks"))
         existing_webhooks = request.json().get("webhook_subscriptions", [])
         webhook_exists = next(
             iter(
@@ -603,7 +604,7 @@ class PagerdutyProvider(
                 f"{self.SUBSCRIPTION_API_URL}/{webhook_id}", headers=headers
             )
             if not request.ok:
-                raise Exception("Could not remove existing webhook")
+                raise Exception(t("Could not remove existing webhook"))
             self.logger.info("Webhook removed", extra={"webhook_id": webhook_id})
 
     def dispose(self):
@@ -628,7 +629,7 @@ class PagerdutyProvider(
         headers = self.__get_headers()
         request = requests.get(self.SUBSCRIPTION_API_URL, headers=headers)
         if not request.ok:
-            raise Exception("Could not get existing webhooks")
+            raise Exception(t("Could not get existing webhooks"))
         existing_webhooks = request.json().get("webhook_subscriptions", [])
         webhook_exists = next(
             iter(
@@ -680,7 +681,7 @@ class PagerdutyProvider(
                 f"{self.SUBSCRIPTION_API_URL}/{webhook_id}", headers=headers
             )
             if not request.ok:
-                raise Exception("Could not remove existing webhook")
+                raise Exception(t("Could not remove existing webhook"))
             self.logger.info("Webhook removed", extra={"webhook_id": webhook_id})
 
         self.logger.info("Creating Pagerduty webhook")
@@ -691,7 +692,7 @@ class PagerdutyProvider(
         )
         if not request.ok:
             self.logger.error("Failed to add webhook", extra=request.json())
-            raise Exception("Could not create webhook")
+            raise Exception(t("Could not create webhook"))
         self.logger.info("Webhook created")
 
     def _notify(

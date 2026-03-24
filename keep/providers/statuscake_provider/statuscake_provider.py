@@ -9,6 +9,7 @@ from urllib.parse import urlencode, urljoin
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -113,7 +114,7 @@ class StatuscakeProvider(BaseProvider):
         )
         if self.authentication_config.api_key is None:
             self.logger.error("Statuscake API Key is missing")
-            raise ValueError("Statuscake API Key is required")
+            raise ValueError(t("Statuscake API Key is required"))
         self.logger.info("Configuration validated successfully")
 
     def __get_auth_headers(self):
@@ -137,7 +138,7 @@ class StatuscakeProvider(BaseProvider):
                 )
 
                 if not response.ok:
-                    raise Exception(response.text)
+                    raise Exception(t("Unable to read alerts from Statuscake, statusCode: {status_code}", status_code=response.status_code))
 
                 response = response.json()
                 data.extend(response["data"])
@@ -168,7 +169,7 @@ class StatuscakeProvider(BaseProvider):
                 },
             )
             if response.status_code != 204:
-                raise Exception(response.text)
+                raise Exception(t("Statuscake request failed: {error}", error=response.text))
             self.logger.info(f"Successfully updated contact group {contact_group_id}")
         except Exception as e:
             self.logger.error(
@@ -188,7 +189,7 @@ class StatuscakeProvider(BaseProvider):
                 },
             )
             if response.status_code != 201:
-                raise Exception(response.text)
+                raise Exception(t("Statuscake request failed: {error}", error=response.text))
             self.logger.info("Successfully created contact group")
             return response.json()["data"]["new_id"]
         except Exception as e:
@@ -461,7 +462,7 @@ if __name__ == "__main__":
     statuscake_api_key = os.environ.get("STATUSCAKE_API_KEY")
 
     if statuscake_api_key is None:
-        raise Exception("STATUSCAKE_API_KEY is required")
+        raise Exception(t("Statuscake API Key is required"))
 
     config = ProviderConfig(
         description="Statuscake Provider",

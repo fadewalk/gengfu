@@ -10,6 +10,7 @@ from python_http_client.exceptions import ForbiddenError, UnauthorizedError
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.functions import cyaml
 from keep.providers.base.base_provider import BaseProvider
@@ -84,7 +85,7 @@ class SendgridProvider(BaseProvider):
                     response = sg.send(test_email)
                     if response.status_code >= 400:
                         raise Exception(
-                            f"Failed to validate email.send scope: {response.body}"
+                            t("Failed to validate email.send scope: {error}", error=response.body)
                         )
                     scopes["email.send"] = True
                 except UnauthorizedError:
@@ -151,7 +152,7 @@ class SendgridProvider(BaseProvider):
                 self.logger.error(
                     f"Failed to send email to {to} with subject {subject}: {response.body}"
                 )
-                raise Exception(f"Failed to send email: {response.body}")
+                raise Exception(t("Failed to send email: {error}", error=response.body))
 
             self.logger.info(f"Email sent to {to} with subject {subject}")
             return {
@@ -172,16 +173,16 @@ class SendgridProvider(BaseProvider):
                 "Unauthorized: Invalid API key or insufficient permissions."
             )
             raise Exception(
-                "Failed to send email: Unauthorized. Please check your API key and permissions."
+                t("Failed to send email: Unauthorized. Please check your API key and permissions.")
             )
         except ForbiddenError:
             self.logger.error("Forbidden: Insufficient permissions to send email.")
             raise Exception(
-                "Failed to send email: Forbidden. Your API key does not have the necessary permissions."
+                t("Failed to send email: Forbidden. Your API key does not have the necessary permissions.")
             )
         except Exception as e:
             self.logger.error(f"Exception occurred: {e}")
-            raise Exception(f"Failed to send email: {str(e)}")
+            raise Exception(t("Failed to send email: {error}", error=str(e)))
 
     def dispose(self):
         """

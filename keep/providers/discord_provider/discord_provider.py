@@ -7,6 +7,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -64,7 +65,7 @@ class DiscordProvider(BaseProvider):
 
         if not content and not components:
             raise ProviderException(
-                f"{self.__class__.__name__} Keyword Arguments Missing : content or components atleast one of them needed to trigger message"
+                t("{provider} Keyword Arguments Missing : content or components atleast one of them needed to trigger message", provider=self.__class__.__name__)
             )
         # verify components is a list
         if components and not isinstance(components, list):
@@ -86,18 +87,18 @@ class DiscordProvider(BaseProvider):
             # unknown response
             except Exception:
                 raise ProviderException(
-                    f"{self.__class__.__name__} failed to notify alert message to Discord: {response.text}"
+                    t("{provider} failed to notify alert message to Discord: {error}", provider=self.__class__.__name__, error=response.text)
                 )
 
             # there can be plenty of errors, will be added over time
             if "components" in r and "ListType" in r["components"][0]:
                 raise ProviderException(
-                    f"{self.__class__.__name__} failed to notify alert message to Discord: components should be a list of components"
+                    t("{provider} failed to notify alert message to Discord: components should be a list of components", provider=self.__class__.__name__)
                 )
             # TODO: Add more error handling
             else:
                 raise ProviderException(
-                    f"{self.__class__.__name__} failed to notify alert message to Discord: {response.text}"
+                    t("{provider} failed to notify alert message to Discord: {error}", provider=self.__class__.__name__, error=response.text)
                 )
 
         self.logger.debug("Alert message notified to Discord")

@@ -6,6 +6,7 @@ import dataclasses
 import json
 import typing
 
+from keep.api.i18n import t
 import pydantic
 from elasticsearch import Elasticsearch
 
@@ -79,7 +80,7 @@ class ElasticProviderAuthConfig:
         password = values.get("password")
         if api_key is None and username is None and password is None:
             raise ValueError(
-                "Missing api_key or username and password in provider config"
+                t("Missing api_key or username and password in provider config")
             )
         return values
 
@@ -87,10 +88,8 @@ class ElasticProviderAuthConfig:
     def check_host_or_cloud_id(cls, values):
         host, cloud_id = values.get("host"), values.get("cloud_id")
         if host is None and cloud_id is None:
-            raise ValueError("Missing host or cloud_id in provider config")
+            raise ValueError(t("Missing host or cloud_id in provider config"))
         return values
-
-
 class ElasticProvider(BaseProvider):
     """Enrich alerts with data from Elasticsearch."""
 
@@ -130,7 +129,7 @@ class ElasticProvider(BaseProvider):
 
         if host and "cloud.es" in host and not cloud_id:
             raise ValueError(
-                "Cloud ID is required for elastic.co managed elastic search"
+                t("Cloud ID is required for elastic.co managed elastic search")
             )
 
         # Elastic.co requires you to connect with cloud_id
@@ -164,14 +163,14 @@ class ElasticProvider(BaseProvider):
                 )
             )
         else:
-            raise ValueError("Missing host or cloud_id in provider config")
+            raise ValueError(t("Missing host or cloud_id in provider config"))
 
         # Check if the connection was successful
         try:
             es.info()
         except Exception as e:
             raise ProviderConnectionFailed(
-                f"Failed to connect to Elasticsearch: {str(e)}"
+                t("Failed to connect to Elasticsearch: {error}", error=str(e))
             )
 
         return es

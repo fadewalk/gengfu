@@ -11,6 +11,7 @@ import telegram
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -82,7 +83,7 @@ class TelegramProvider(BaseProvider):
 
         if not chat_id:
             raise ProviderException(
-                f"{self.__class__.__name__} failed to notify alert message to Telegram: chat_id is required"
+                t("{provider} failed to notify alert message to Telegram: chat_id is required", provider=self.__class__.__name__)
             )
 
         parse_mode_mapping = {"markdown": ParseMode.MARKDOWN_V2, "html": ParseMode.HTML}
@@ -104,7 +105,7 @@ class TelegramProvider(BaseProvider):
                     buttons = [[button] for button in buttons]
                 else:
                     raise ProviderException(
-                        f"{self.__class__.__name__} failed to notify alert message to Telegram: reply_markup_direction should be either horizontal or vertical"
+                        t("{provider} failed to notify alert message to Telegram: reply_markup_direction should be either horizontal or vertical", provider=self.__class__.__name__)
                     )
 
                 keyboard_markup = InlineKeyboardMarkup(
@@ -163,7 +164,7 @@ class TelegramProvider(BaseProvider):
             loop.run_until_complete(task)
         except Exception as e:
             raise ProviderException(
-                f"{self.__class__.__name__} failed to notify alert message to Telegram: {e}"
+                t("{provider} failed to notify alert message to Telegram: {error}", provider=self.__class__.__name__, error=str(e))
             )
 
         self.logger.debug("Alert message notified to Telegram")

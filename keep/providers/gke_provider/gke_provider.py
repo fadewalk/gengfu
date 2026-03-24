@@ -9,6 +9,7 @@ from google.oauth2 import service_account
 from kubernetes import client, config
 from kubernetes.stream import stream
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -181,7 +182,7 @@ class GkeProvider(BaseProvider):
     def validate_scopes(self) -> dict[str, bool | str]:
         """Validate if the service account has the required permissions."""
         if not self._service_account_data or not self._project_id:
-            return {"roles/container.viewer": "Service account JSON is invalid"}
+            return {"roles/container.viewer": t("Service account JSON is invalid")}
 
         scopes = {scope.name: False for scope in self.PROVIDER_SCOPES}
 
@@ -202,11 +203,11 @@ class GkeProvider(BaseProvider):
             except Exception as e:
                 if "404" in str(e):
                     scopes["roles/container.viewer"] = (
-                        "Cluster not found (404 from GKE), please check the cluster name and region"
+                        t("Cluster not found (404 from GKE), please check the cluster name and region")
                     )
                 elif "403" in str(e):
                     scopes["roles/container.viewer"] = (
-                        "Permission denied (403 from GKE)"
+                        t("Permission denied (403 from GKE)")
                     )
                 else:
                     scopes["roles/container.viewer"] = str(e)
@@ -324,7 +325,7 @@ class GkeProvider(BaseProvider):
         """Execute a command in a pod."""
         if not all([namespace, pod_name]):
             raise ProviderException(
-                "namespace and pod_name are required for exec_command"
+                t("namespace and pod_name are required for exec_command")
             )
 
         # Get the pod
@@ -357,13 +358,13 @@ class GkeProvider(BaseProvider):
             return result
 
         except Exception as e:
-            raise ProviderException(f"Failed to execute command: {str(e)}")
+            raise ProviderException(t("Failed to execute command: {error}", error=str(e)))
 
     def restart_pod(self, namespace: str, pod_name: str):
         """Restart a pod by deleting it."""
         if not all([namespace, pod_name]):
             raise ProviderException(
-                "namespace and pod_name are required for restart_pod"
+                t("namespace and pod_name are required for restart_pod")
             )
 
         self.logger.info(f"Deleting pod {pod_name} in namespace {namespace}")
@@ -372,7 +373,7 @@ class GkeProvider(BaseProvider):
     def get_deployment(self, deployment_name: str, namespace: str = "default"):
         """Get deployment information."""
         if not deployment_name:
-            raise ProviderException("deployment_name is required for get_deployment")
+            raise ProviderException(t("deployment_name is required for get_deployment"))
 
         apps_v1 = client.AppsV1Api()
         try:
@@ -381,13 +382,13 @@ class GkeProvider(BaseProvider):
             )
             return deployment.to_dict()
         except Exception as e:
-            raise ProviderException(f"Failed to get deployment info: {str(e)}")
+            raise ProviderException(t("Failed to get deployment info: {error}", error=str(e)))
 
     def scale_deployment(self, namespace: str, deployment_name: str, replicas: int):
         """Scale a deployment to specified replicas."""
         if not all([namespace, deployment_name, replicas is not None]):
             raise ProviderException(
-                "namespace, deployment_name and replicas are required for scale_deployment"
+                t("namespace, deployment_name and replicas are required for scale_deployment")
             )
 
         apps_v1 = client.AppsV1Api()
@@ -410,7 +411,7 @@ class GkeProvider(BaseProvider):
         """Get logs from a pod."""
         if not all([namespace, pod_name]):
             raise ProviderException(
-                "namespace and pod_name are required for get_pod_logs"
+                t("namespace and pod_name are required for get_pod_logs")
             )
 
         self.logger.info(f"Getting logs for pod {pod_name} in namespace {namespace}")
@@ -481,7 +482,7 @@ class GkeProvider(BaseProvider):
             return client.CoreV1Api()
 
         except Exception as e:
-            raise ProviderException(f"Failed to generate GKE client: {e}")
+            raise ProviderException(t("Failed to generate GKE client: {error}", error=e))
 
     def _query(self, command_type: str, **kwargs: dict):
         """Query GKE cluster resources.
@@ -509,7 +510,7 @@ class GkeProvider(BaseProvider):
         }
 
         if command_type not in command_map:
-            raise NotImplementedError(f"Command type '{command_type}' not implemented")
+            raise NotImplementedError(t("Command type '{command_type}' not implemented", command_type=command_type))
 
         method = command_map[command_type]
         return method(**kwargs)

@@ -5,6 +5,7 @@ import pydantic
 from kubernetes import client
 from kubernetes.client.rest import ApiException
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig, ProviderScope
@@ -118,7 +119,7 @@ class KubernetesProvider(BaseProvider):
             except Exception as e:
                 self.logger.error(f"Failed to load kube config: {str(e)}")
                 raise Exception(
-                    "Kubernetes provider requires either manual configuration (API Server + Token) or in-cluster configuration (ServiceAccount)."
+                    t("Kubernetes provider requires either manual configuration (API Server + Token) or in-cluster configuration (ServiceAccount).")
                 )
 
     def validate_scopes(self):
@@ -193,7 +194,7 @@ class KubernetesProvider(BaseProvider):
             return self.__get_jobs(api_client, **kwargs)
 
         else:
-            raise NotImplementedError(f"Command type {command_type} is not implemented")
+            raise NotImplementedError(t("Command type {command_type} is not implemented", command_type=command_type))
 
     def _notify(self, action: str, **kwargs):
         """
@@ -227,7 +228,7 @@ class KubernetesProvider(BaseProvider):
         elif action == "exec_pod_command":
             return self.__exec_pod_command(**kwargs)
         else:
-            raise NotImplementedError(f"Action {action} is not implemented")
+            raise NotImplementedError(t("Action {action} is not implemented", action=action))
 
     def __get_logs(
         self,
@@ -263,7 +264,7 @@ class KubernetesProvider(BaseProvider):
             return logs.splitlines()
         except ApiException as e:
             self.logger.error(f"Error getting logs for pod {pod_name}: {e}")
-            raise Exception(f"Error getting logs for pod {pod_name}: {e}")
+            raise Exception(t("Error getting logs for pod {pod_name}: {error}", pod_name=pod_name, error=e))
 
     def __get_deployment_logs(
         self,
@@ -327,7 +328,7 @@ class KubernetesProvider(BaseProvider):
             
         except ApiException as e:
             self.logger.error(f"Error getting deployment logs for {deployment_name}: {e}")
-            raise Exception(f"Error getting deployment logs for {deployment_name}: {e}")
+            raise Exception(t("Error getting deployment logs for {deployment_name}: {error}", deployment_name=deployment_name, error=e))
 
     def __get_events(
         self, api_client, namespace, pod_name=None, sort_by=None, **kwargs
@@ -395,7 +396,7 @@ class KubernetesProvider(BaseProvider):
                     "workflow_id": self.context_manager.workflow_id,
                 },
             )
-            raise Exception(f"Error getting events: {e}") from e
+            raise Exception(t("Error getting events: {error}", error=e)) from e
 
     def __get_nodes(self, api_client, label_selector=None, return_full=False, **kwargs):
         """
@@ -426,7 +427,7 @@ class KubernetesProvider(BaseProvider):
                 return basic_info
         except ApiException as e:
             self.logger.error(f"Error listing nodes: {e}")
-            raise Exception(f"Error listing nodes: {e}")
+            raise Exception(t("Error listing nodes: {error}", error=e))
 
     def __get_pods(self, api_client, namespace=None, label_selector=None, **kwargs):
         """
@@ -449,7 +450,7 @@ class KubernetesProvider(BaseProvider):
             return [pod.to_dict() for pod in pods.items]
         except ApiException as e:
             self.logger.error(f"Error listing pods: {e}")
-            raise Exception(f"Error listing pods: {e}")
+            raise Exception(t("Error listing pods: {error}", error=e))
 
     def __get_node_pressure(self, api_client, **kwargs):
         """
@@ -479,7 +480,7 @@ class KubernetesProvider(BaseProvider):
             return node_pressures
         except ApiException as e:
             self.logger.error(f"Error getting node pressures: {e}")
-            raise Exception(f"Error getting node pressures: {e}")
+            raise Exception(t("Error getting node pressures: {error}", error=e))
 
     def __get_pvc(self, api_client, namespace=None, **kwargs):
         """
@@ -500,7 +501,7 @@ class KubernetesProvider(BaseProvider):
             return [pvc.to_dict() for pvc in pvcs.items]
         except ApiException as e:
             self.logger.error(f"Error listing PVCs: {e}")
-            raise Exception(f"Error listing PVCs: {e}")
+            raise Exception(t("Error listing PVCs: {error}", error=e))
 
     def __get_services(self, api_client, namespace=None, return_full=False, **kwargs):
         """
@@ -548,7 +549,7 @@ class KubernetesProvider(BaseProvider):
                 return [service.metadata.name for service in services.items]
         except ApiException as e:
             self.logger.error(f"Error listing services: {e}")
-            raise Exception(f"Error listing services: {e}")
+            raise Exception(t("Error listing services: {error}", error=e))
 
     def __get_deployments(self, api_client, namespace=None, return_full=False, **kwargs):
         """
@@ -570,7 +571,7 @@ class KubernetesProvider(BaseProvider):
                 return [deployment.metadata.name for deployment in deployments.items]
         except ApiException as e:
             self.logger.error(f"Error listing deployments: {e}")
-            raise Exception(f"Error listing deployments: {e}")
+            raise Exception(t("Error listing deployments: {error}", error=e))
 
     def __get_statefulsets(self, api_client, namespace=None, return_full=False, **kwargs):
         """
@@ -590,7 +591,7 @@ class KubernetesProvider(BaseProvider):
                 return [statefulset.metadata.name for statefulset in statefulsets.items]
         except ApiException as e:
             self.logger.error(f"Error listing statefulsets: {e}")
-            raise Exception(f"Error listing statefulsets: {e}")
+            raise Exception(t("Error listing statefulsets: {error}", error=e))
 
     def __get_daemonsets(self, api_client, namespace=None, return_full=False, **kwargs):
         """
@@ -606,7 +607,7 @@ class KubernetesProvider(BaseProvider):
                 daemonsets = apps_v1.list_daemon_set_for_all_namespaces()
         except ApiException as e:
             self.logger.error(f"Error listing daemonsets: {e}")
-            raise Exception(f"Error listing daemonsets: {e}")
+            raise Exception(t("Error listing daemonsets: {error}", error=e))
 
         if return_full:
             return [daemonset.to_dict() for daemonset in daemonsets.items]
@@ -633,7 +634,7 @@ class KubernetesProvider(BaseProvider):
                 return [namespace.metadata.name for namespace in namespaces.items]
         except ApiException as e:
             self.logger.error(f"Error listing namespaces: {e}")
-            raise Exception(f"Error listing namespaces: {e}")
+            raise Exception(t("Error listing namespaces: {error}", error=e))
 
     def __get_ingresses(self, api_client, namespace=None, return_full=False, **kwargs):
         """
@@ -659,7 +660,7 @@ class KubernetesProvider(BaseProvider):
                 return [ingress.metadata.name for ingress in ingresses.items]
         except ApiException as e:
             self.logger.error(f"Error listing ingresses: {e}")
-            raise Exception(f"Error listing ingresses: {e}")
+            raise Exception(t("Error listing ingresses: {error}", error=e))
 
     def __get_jobs(self, api_client, namespace=None, return_full=False, **kwargs):
         """
@@ -686,7 +687,7 @@ class KubernetesProvider(BaseProvider):
                 return [job.metadata.name for job in jobs.items]
         except ApiException as e:
             self.logger.error(f"Error listing jobs: {e}")
-            raise Exception(f"Error listing jobs: {e}")
+            raise Exception(t("Error listing jobs: {error}", error=e))
 
 
     def __rollout_restart(self, kind, name, namespace, labels=None, **kwargs):
@@ -719,7 +720,7 @@ class KubernetesProvider(BaseProvider):
                     )
                     if not deployment_list.items:
                         raise ValueError(
-                            f"Deployment with labels {labels} not found in namespace {namespace}"
+                            t("Deployment with labels {labels} not found in namespace {namespace}", labels=labels, namespace=namespace)
                         )
                 apps_v1.patch_namespaced_deployment(
                     name=name, namespace=namespace, body=body
@@ -731,7 +732,7 @@ class KubernetesProvider(BaseProvider):
                     )
                     if not statefulset_list.items:
                         raise ValueError(
-                            f"StatefulSet with labels {labels} not found in namespace {namespace}"
+                            t("StatefulSet with labels {labels} not found in namespace {namespace}", labels=labels, namespace=namespace)
                         )
                 apps_v1.patch_namespaced_stateful_set(
                     name=name, namespace=namespace, body=body
@@ -743,23 +744,23 @@ class KubernetesProvider(BaseProvider):
                     )
                     if not daemonset_list.items:
                         raise ValueError(
-                            f"DaemonSet with labels {labels} not found in namespace {namespace}"
+                            t("DaemonSet with labels {labels} not found in namespace {namespace}", labels=labels, namespace=namespace)
                         )
                 apps_v1.patch_namespaced_daemon_set(
                     name=name, namespace=namespace, body=body
                 )
             else:
-                raise ValueError(f"Unsupported kind {kind} to perform rollout restart")
+                raise ValueError(t("Unsupported kind {kind} to perform rollout restart", kind=kind))
         except ApiException as e:
             self.logger.error(
                 f"Error performing rollout restart for {kind} {name}: {e}"
             )
-            raise Exception(f"Error performing rollout restart for {kind} {name}: {e}")
+            raise Exception(t("Error performing rollout restart for {kind} {name}: {error}", kind=kind, name=name, error=e))
 
         self.logger.info(f"Successfully performed rollout restart for {kind} {name}")
         return {
             "status": "success",
-            "message": f"Successfully performed rollout restart for {kind} {name}",
+            "message": t("Successfully performed rollout restart for {kind} {name}", kind=kind, name=name),
         }
 
     def __restart_pod(
@@ -789,7 +790,7 @@ class KubernetesProvider(BaseProvider):
             response_message = (
                 message
                 if message
-                else f"Pod {pod_name} in namespace {namespace} was restarted"
+                else t("Pod {pod_name} in namespace {namespace} was restarted", pod_name=pod_name, namespace=namespace)
             )
             self.logger.info(response_message)
 
@@ -804,7 +805,7 @@ class KubernetesProvider(BaseProvider):
                 },
             }
         except ApiException as e:
-            error_message = f"Error restarting pod {pod_name}: {e}"
+            error_message = t("Error restarting pod {pod_name}: {error}", pod_name=pod_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
 
@@ -830,10 +831,10 @@ class KubernetesProvider(BaseProvider):
             self.logger.info(f"Successfully cordoned node {node_name}")
             return {
                 "status": "success",
-                "message": f"Node {node_name} has been cordoned (marked unschedulable)",
+                "message": t("Node {node_name} has been cordoned (marked unschedulable)", node_name=node_name),
             }
         except ApiException as e:
-            error_message = f"Error cordoning node {node_name}: {e}"
+            error_message = t("Error cordoning node {node_name}: {error}", node_name=node_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
 
@@ -859,10 +860,10 @@ class KubernetesProvider(BaseProvider):
             self.logger.info(f"Successfully uncordoned node {node_name}")
             return {
                 "status": "success",
-                "message": f"Node {node_name} has been uncordoned (marked schedulable)",
+                "message": t("Node {node_name} has been uncordoned (marked schedulable)", node_name=node_name),
             }
         except ApiException as e:
-            error_message = f"Error uncordoning node {node_name}: {e}"
+            error_message = t("Error uncordoning node {node_name}: {error}", node_name=node_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
 
@@ -910,7 +911,7 @@ class KubernetesProvider(BaseProvider):
                         failed_pods.append({
                             "name": pod.metadata.name,
                             "namespace": pod.metadata.namespace,
-                            "reason": "Has emptyDir volumes (use delete_emptydir_data=True to override)"
+                            "reason": t("Has emptyDir volumes (use delete_emptydir_data=True to override)")
                         })
                         continue
                 
@@ -954,13 +955,13 @@ class KubernetesProvider(BaseProvider):
                                 failed_pods.append({
                                     "name": pod.metadata.name,
                                     "namespace": pod.metadata.namespace,
-                                    "reason": f"Could not force delete: {delete_e}"
+                                    "reason": t("Could not force delete: {error}", error=delete_e)
                                 })
                         else:
                             failed_pods.append({
                                 "name": pod.metadata.name,
                                 "namespace": pod.metadata.namespace,
-                                "reason": f"Blocked by PodDisruptionBudget (use force=True to override): {e}"
+                                "reason": t("Blocked by PodDisruptionBudget (use force=True to override): {error}", error=e)
                             })
                     else:
                         failed_pods.append({
@@ -971,7 +972,7 @@ class KubernetesProvider(BaseProvider):
             
             result = {
                 "status": "success" if not failed_pods else "partial_success",
-                "message": f"Node {node_name} drain completed",
+                "message": t("Node {node_name} drain completed", node_name=node_name),
                 "evicted_pods": evicted_pods,
                 "failed_pods": failed_pods,
                 "summary": {
@@ -984,7 +985,7 @@ class KubernetesProvider(BaseProvider):
             return result
             
         except ApiException as e:
-            error_message = f"Error draining node {node_name}: {e}"
+            error_message = t("Error draining node {node_name}: {error}", node_name=node_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
 
@@ -1018,12 +1019,12 @@ class KubernetesProvider(BaseProvider):
             self.logger.info(f"Successfully scaled deployment {deployment_name} from {current_replicas} to {replicas} replicas")
             return {
                 "status": "success",
-                "message": f"Deployment {deployment_name} scaled from {current_replicas} to {replicas} replicas",
+                "message": t("Deployment {deployment_name} scaled from {current_replicas} to {replicas} replicas", deployment_name=deployment_name, current_replicas=current_replicas, replicas=replicas),
                 "previous_replicas": current_replicas,
                 "new_replicas": replicas,
             }
         except ApiException as e:
-            error_message = f"Error scaling deployment {deployment_name}: {e}"
+            error_message = t("Error scaling deployment {deployment_name}: {error}", deployment_name=deployment_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
 
@@ -1057,12 +1058,12 @@ class KubernetesProvider(BaseProvider):
             self.logger.info(f"Successfully scaled statefulset {statefulset_name} from {current_replicas} to {replicas} replicas")
             return {
                 "status": "success",
-                "message": f"StatefulSet {statefulset_name} scaled from {current_replicas} to {replicas} replicas",
+                "message": t("StatefulSet {statefulset_name} scaled from {current_replicas} to {replicas} replicas", statefulset_name=statefulset_name, current_replicas=current_replicas, replicas=replicas),
                 "previous_replicas": current_replicas,
                 "new_replicas": replicas,
             }
         except ApiException as e:
-            error_message = f"Error scaling statefulset {statefulset_name}: {e}"
+            error_message = t("Error scaling statefulset {statefulset_name}: {error}", statefulset_name=statefulset_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
 
@@ -1126,11 +1127,11 @@ class KubernetesProvider(BaseProvider):
             return result
             
         except ApiException as e:
-            error_message = f"Error executing command in pod {pod_name}: {e}"
+            error_message = t("Error executing command in pod {pod_name}: {error}", pod_name=pod_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
         except Exception as e:
-            error_message = f"Error executing command in pod {pod_name}: {e}"
+            error_message = t("Error executing command in pod {pod_name}: {error}", pod_name=pod_name, error=e)
             self.logger.error(error_message)
             raise Exception(error_message)
 

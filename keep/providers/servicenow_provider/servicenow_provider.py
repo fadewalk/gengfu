@@ -13,6 +13,7 @@ import pydantic
 import requests
 from requests.auth import HTTPBasicAuth
 
+from keep.api.i18n import t
 from keep.api.models.db.topology import TopologyServiceInDto
 from keep.api.models.incident import IncidentDto, IncidentStatus, IncidentSeverity
 from keep.contextmanager.contextmanager import ContextManager
@@ -180,8 +181,7 @@ class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
                     },
                 )
                 raise ProviderException(
-                    f"Failed to get OAuth access token from ServiceNow: {response.status_code}, {response.text}."
-                    " Please check your ServiceNow logs, information about this error should be there."
+                    t("Failed to get OAuth access token from ServiceNow: {status_code}, {text}.", status_code=response.status_code, text=response.text)
                 )
 
     def _get_auth(self):
@@ -561,7 +561,7 @@ class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
         """
         if activity_type not in ("work_notes", "comments"):
             raise ProviderException(
-                f"Invalid activity_type '{activity_type}'. Must be 'work_notes' or 'comments'."
+                t("Invalid activity type: {activity_type}", activity_type=activity_type)
             )
 
         self.logger.info(
@@ -575,7 +575,7 @@ class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
         sys_id = self._resolve_incident_sys_id(incident_id)
         if not sys_id:
             raise ProviderException(
-                f"Could not resolve incident sys_id for '{incident_id}'"
+                t("Could not resolve incident sys_id: {incident_id}", incident_id=incident_id)
             )
 
         url = (
@@ -602,7 +602,7 @@ class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
                 },
             )
             raise ProviderException(
-                f"Failed to add activity to incident: {response.status_code}"
+                t("Failed to add activity to incident: {status_code}", status_code=response.status_code)
             )
 
         result = response.json().get("result", {})
@@ -856,7 +856,7 @@ class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
             headers["Authorization"] = f"Bearer {self._access_token}"
         # otherwise, create the ticket
         if not table_name:
-            raise ProviderException("Table name is required")
+            raise ProviderException(t("Table name is required"))
 
         # TODO - this could be separated into a ServicenowUpdateProvider once we support
         if "ticket_id" in kwargs:
@@ -889,7 +889,7 @@ class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
         # if the instance is down due to hibranate you'll get 200 instead of 201
         elif response.status_code == 200:
             raise ProviderException(
-                "ServiceNow instance is down, you need to restart the instance."
+                t("ServiceNow instance is down, trying to restart")
             )
 
         else:
@@ -921,7 +921,7 @@ class ServicenowProvider(BaseTopologyProvider, BaseIncidentProvider):
             # if the instance is down due to hibranate you'll get 200 instead of 201
             if "Want to find out why instances hibernate?" in resp:
                 raise ProviderException(
-                    "ServiceNow instance is down, you need to restart the instance."
+                    t("ServiceNow instance is down, trying to restart")
                 )
             # else, we are ok
             else:

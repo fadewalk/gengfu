@@ -9,6 +9,7 @@ import typing
 import requests
 from requests.exceptions import JSONDecodeError
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
 from keep.providers.models.provider_config import ProviderConfig
@@ -36,7 +37,7 @@ class HttpProvider(BaseProvider):
         """
         for endpoint in HttpProvider.BLACKLISTED_ENDPOINTS:
             if endpoint in url:
-                raise Exception(f"URL {url} is blacklisted")
+                raise Exception(t("URL is blacklisted: {url}", url=url))
 
     def dispose(self):
         """
@@ -148,7 +149,7 @@ class HttpProvider(BaseProvider):
                 **extra_args,
             )
         else:
-            raise Exception(f"Unsupported HTTP method: {method}")
+            raise Exception(t("Unsupported HTTP method: {method}", method=method))
 
         self.logger.debug(
             f"Sent {method} request to {url}",

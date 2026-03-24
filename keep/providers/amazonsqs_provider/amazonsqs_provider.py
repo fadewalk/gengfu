@@ -13,6 +13,7 @@ import boto3
 import botocore
 import pydantic
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertSeverity, AlertStatus
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -257,7 +258,7 @@ class AmazonsqsProvider(BaseProvider):
                         "Mandatory to provide dedup_id (Message deduplication ID) & group_id (Message group ID) when pushing to fifo queue"
                     )
                     raise Exception(
-                        "Mandatory to provide dedup_id (Message deduplication ID) & group_id (Message group ID) when pushing to fifo queue"
+                        t("Mandatory to provide dedup_id (Message deduplication ID) & group_id (Message group ID) when pushing to fifo queue")
                     )
                 response = self.__get_sqs_client.send_message(
                     QueueUrl=self.authentication_config.sqs_queue_url,

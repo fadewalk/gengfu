@@ -10,6 +10,7 @@ import pydantic
 from kubernetes import client, config
 from kubernetes.stream import stream
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -419,7 +420,7 @@ class EksProvider(BaseProvider):
                 continue
 
         raise ProviderException(
-            f"No shell access available in pod {pod.metadata.name} container {container_name}"
+            t("No shell access available in pod {pod_name} container {container_name}", pod_name=pod.metadata.name, container_name=container_name)
         )
 
     def exec_command(
@@ -435,7 +436,7 @@ class EksProvider(BaseProvider):
         """
         if not all([namespace, pod_name]):
             raise ProviderException(
-                "namespace and pod_name are required for exec_command"
+                t("namespace and pod_name are required for exec_command")
             )
 
         # Get the pod
@@ -486,7 +487,7 @@ class EksProvider(BaseProvider):
             ws_client.close()
 
             if error:
-                raise ProviderException(f"Command execution failed: {error}")
+                raise ProviderException(t("Command execution failed: {error}", error=error))
 
             return result.strip()
 
@@ -496,8 +497,7 @@ class EksProvider(BaseProvider):
             )
             image = container_info.image if container_info else "unknown"
             raise ProviderException(
-                f"Failed to execute command in pod {pod_name} (container: {container}, "
-                f"image: {image}): {str(e)}"
+                t("Failed to execute command in pod {pod_name} (container: {container}, image: {image}): {error}", pod_name=pod_name, container=container, image=image, error=str(e))
             )
 
     def restart_pod(self, namespace: str, pod_name: str):
@@ -509,7 +509,7 @@ class EksProvider(BaseProvider):
         """
         if not all([namespace, pod_name]):
             raise ProviderException(
-                "namespace and pod_name are required for restart_pod"
+                t("namespace and pod_name are required for restart_pod")
             )
 
         self.logger.info(f"Deleting pod {pod_name} in namespace {namespace}")
@@ -523,7 +523,7 @@ class EksProvider(BaseProvider):
             namespace: Target namespace (defaults to “default”)
         """
         if not deployment_name:
-            raise ProviderException("deployment_name is required for get_deployment")
+            raise ProviderException(t("deployment_name is required for get_deployment"))
 
         apps_v1 = client.AppsV1Api()
         try:
@@ -532,7 +532,7 @@ class EksProvider(BaseProvider):
             )
             return deployment.to_dict()
         except Exception as e:
-            raise ProviderException(f"Failed to get deployment info: {str(e)}")
+            raise ProviderException(t("Failed to get deployment info: {error}", error=str(e)))
 
     def scale_deployment(self, namespace: str, deployment_name: str, replicas: int):
         """
@@ -544,7 +544,7 @@ class EksProvider(BaseProvider):
         """
         if not all([namespace, deployment_name, replicas is not None]):
             raise ProviderException(
-                "namespace, deployment_name and replicas are required for scale_deployment"
+                t("namespace, deployment_name and replicas are required for scale_deployment")
             )
 
         apps_v1 = client.AppsV1Api()
@@ -574,7 +574,7 @@ class EksProvider(BaseProvider):
         """
         if not all([namespace, pod_name]):
             raise ProviderException(
-                "namespace and pod_name are required for get_pod_logs"
+                t("namespace and pod_name are required for get_pod_logs")
             )
 
         self.logger.info(f"Getting logs for pod {pod_name} in namespace {namespace}")
@@ -631,7 +631,7 @@ class EksProvider(BaseProvider):
             return client.CoreV1Api()
 
         except Exception as e:
-            raise ProviderException(f"Failed to generate EKS client: {e}")
+            raise ProviderException(t("Failed to generate EKS client: {error}", error=e))
 
     def __get_token(self):
         """Get a token for EKS authentication using awscli's token generator."""
@@ -682,7 +682,7 @@ class EksProvider(BaseProvider):
         }
 
         if command_type not in command_map:
-            raise NotImplementedError(f"Command type '{command_type}' not implemented")
+            raise NotImplementedError(t("Command type '{command_type}' not implemented", command_type=command_type))
 
         method = command_map[command_type]
         return method(**kwargs)

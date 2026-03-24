@@ -13,6 +13,7 @@ import pydantic
 import requests
 from dateutil import parser
 
+from keep.api.i18n import t
 from keep.api.models.alert import AlertDto, AlertSeverity
 from keep.contextmanager.contextmanager import ContextManager
 from keep.providers.base.base_provider import BaseProvider
@@ -93,7 +94,7 @@ class AppdynamicsProviderAuthConfig:
         )
         if not (username and password) and not token:
             raise ValueError(
-                "Either username/password or access token must be provided"
+                t("Credentials are required")
             )
         return values
 
@@ -286,7 +287,7 @@ class AppdynamicsProvider(BaseProvider):
                     extra=res,
                 )
                 raise ResourceAlreadyExists()
-            raise Exception(res["errors"])
+            raise Exception(t("AppDynamics request failed: {error}", error=str(res["errors"])))
 
     def __create_action(self):
         response = requests.post(
@@ -313,7 +314,7 @@ class AppdynamicsProvider(BaseProvider):
             self.logger.info("Action Creation failed")
             if "already exists" in response["message"]:
                 raise ResourceAlreadyExists()
-            raise Exception(response["message"])
+            raise Exception(t("AppDynamics request failed: {error}", message=response["message"]))
 
     def setup_webhook(
         self, tenant_id: str, keep_api_url: str, api_key: str, setup_alerts: bool = True
@@ -391,7 +392,7 @@ class AppdynamicsProvider(BaseProvider):
             )
             if not request.ok:
                 self.logger.info("Failed to add Webhook")
-                raise Exception("Could not create webhook")
+                raise Exception(t("Could not create AppDynamics webhook"))
         self.logger.info("Webhook created")
 
     @staticmethod

@@ -7,6 +7,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -69,7 +70,7 @@ class TrelloProvider(BaseProvider):
         response = requests.get(request_url)
         if not response.ok:
             raise ProviderException(
-                f"{self.__class__.__name__} failed to fetch data from Trello: {response.text}"
+                t("Failed to fetch data from {class_name}: {error}", class_name=self.__class__.__name__, error=response.text)
             )
         self.logger.debug("Fetched data from Trello")
 

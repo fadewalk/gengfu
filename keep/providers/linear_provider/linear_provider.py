@@ -3,6 +3,7 @@ import dataclasses
 import pydantic
 import requests
 
+from keep.api.i18n import t
 from keep.contextmanager.contextmanager import ContextManager
 from keep.exceptions.provider_exception import ProviderException
 from keep.providers.base.base_provider import BaseProvider
@@ -101,7 +102,7 @@ class LinearProvider(BaseProvider):
 
             return {"projects": projects}
         except Exception as e:
-            raise ProviderException(f"Failed to fetch linear projects: {e}")
+            raise ProviderException(t("Failed to fetch projects from Linear: {error}", error=str(e)))
 
     def __query_linear_data(self, team_name="", project_name=""):
         """Helper method to fetch the linear team and project data."""
@@ -153,7 +154,7 @@ class LinearProvider(BaseProvider):
 
             if project_id == "" or team_id == "":
                 raise ProviderException(
-                    f"Linear team:{team_name} or project:{project_name}, doesn't exists"
+                    t("Team {team_name} or project {project_name} does not exist", team_name=team_name, project_name=project_name)
                 )
 
             self.logger.info(
@@ -164,7 +165,7 @@ class LinearProvider(BaseProvider):
         except Exception as e:
             self.logger.error(e)
             raise ProviderException(
-                f"Failed to fetch linear data for team:{team_name}, project:{project_name} : {e}"
+                t("Failed to fetch data from Linear (team: {team_name}, project: {project_name}): {error}", team_name=team_name, project_name=project_name, error=str(e))
             )
 
     def __create_issue(
@@ -225,7 +226,7 @@ class LinearProvider(BaseProvider):
 
             return {"issue": issue}
         except Exception as e:
-            raise ProviderException(f"Failed to create an issue in linear: {e}")
+            raise ProviderException(t("Failed to create Linear issue: {error}", error=str(e)))
 
     def _notify(
         self,
@@ -254,7 +255,7 @@ class LinearProvider(BaseProvider):
 
             return result
         except Exception as e:
-            raise ProviderException(f"Failed to notify linear: {e}")
+            raise ProviderException(t("Failed to notify Linear: {error}", error=str(e)))
 
     def _query(self, team_name: str, **kwargs: dict):
         """
@@ -269,7 +270,7 @@ class LinearProvider(BaseProvider):
 
             return result
         except Exception as e:
-            raise ProviderException(f"Failed to query linear: {e}")
+            raise ProviderException(t("Failed to query Linear: {error}", error=str(e)))
 
 
 if __name__ == "__main__":
