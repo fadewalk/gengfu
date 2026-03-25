@@ -11,7 +11,8 @@
       "Bash(jq .timeline[].event)",
       "Bash(xargs kill:*)",
       "Bash(git fetch:*)",
-      "Bash(chmod +x /Users/fadewalk/Documents/mycode/keep/keep-ui/start-dev.sh)"
+      "Bash(chmod +x /Users/fadewalk/Documents/mycode/keep/keep-ui/start-dev.sh)",
+      "Bash(python3:*)"
     ]
   }
 }
