@@ -34,7 +34,8 @@ COPY keep keep
 COPY ee keep/ee
 COPY examples examples
 COPY keep-ui/public/icons/unknown-icon.png unknown-icon.png
-RUN /venv/bin/pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple --use-deprecated=legacy-resolver . && \
+# Install local package in editable mode to include custom providers
+RUN /venv/bin/pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple --use-deprecated=legacy-resolver -e . && \
     find /venv -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true && \
     find /venv -type f -name "*.pyc" -delete 2>/dev/null || true
 

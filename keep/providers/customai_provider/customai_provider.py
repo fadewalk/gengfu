@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @pydantic.dataclasses.dataclass
-class CustomAIProviderAuthConfig:
+class CustomaiProviderAuthConfig:
     api_key: str = dataclasses.field(
         metadata={
             "required": True,
@@ -47,7 +47,7 @@ class CustomAIProviderAuthConfig:
     )
 
 
-class CustomAIProvider(BaseProvider):
+class CustomaiProvider(BaseProvider):
     PROVIDER_DISPLAY_NAME = "Custom AI"
     PROVIDER_CATEGORY = ["AI"]
     PROVIDER_SCOPE = ["connected"]
@@ -59,7 +59,7 @@ class CustomAIProvider(BaseProvider):
         self._client = None
 
     def validate_config(self):
-        self.authentication_config = CustomAIProviderAuthConfig(
+        self.authentication_config = CustomaiProviderAuthConfig(
             **self.config.authentication
         )
         # Parse models into a list
@@ -211,7 +211,7 @@ if __name__ == "__main__":
         },
     )
 
-    provider = CustomAIProvider(
+    provider = CustomaiProvider(
         context_manager=context_manager,
         provider_id="customai_provider",
         config=config,
