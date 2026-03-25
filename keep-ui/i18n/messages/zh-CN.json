@@ -331,6 +331,45 @@
         "provider": "集成",
         "descriptionRequired": "描述为必填项"
       },
+      "form": {
+        "keepProvider": "Keep",
+        "addRule": "添加去重规则",
+        "editRule": "编辑 {name}",
+        "defaultRuleBadge": "默认",
+        "editingDefaultRule": {
+          "title": "编辑默认规则",
+          "message": "编辑默认去重规则需要高级知识。默认规则经过精心设计，为特定告警类型提供最佳去重效果。修改这些规则可能影响告警处理效率。如果您不确定如何修改，建议创建新的自定义规则。",
+          "learnMore": "了解更多去重规则"
+        },
+        "editingProvisionedRule": {
+          "title": "编辑预配置规则",
+          "message": "不允许编辑预配置的去重规则。请联系系统管理员了解更多信息。"
+        },
+        "ruleName": "规则名称",
+        "description": "描述",
+        "provider": "集成",
+        "providerTooltip": "选择此去重规则适用的集成。这将决定由此规则处理的告警来源。",
+        "fingerprintFields": "用于指纹的字段",
+        "fingerprintFieldsTooltip": "指纹字段用于识别和分组相似告警。选择能唯一标识告警类型的字段，如 'service'、'error_type' 或 'affected_component'。",
+        "fullDeduplication": "完全去重",
+        "fullDeduplicationTooltip": "1. 完全去重：如果事件相同（不包括'忽略字段'），Keep 将丢弃重复事件。2. 部分去重（默认）：使用指定字段关联告警。例如，具有相同 'service' 和 'env' 字段的两个告警将被去重为一个。",
+        "ignoreFields": "忽略字段",
+        "noOptions": "无选项",
+        "chooseProviderFirst": "请先选择集成以查看可用字段",
+        "saveError": "保存规则时出错",
+        "saving": "保存中...",
+        "validation": {
+          "ruleNameRequired": "规则名称为必填项",
+          "descriptionRequired": "描述为必填项",
+          "providerRequired": "请选择集成",
+          "fingerprintFieldRequired": "至少需要一个指纹字段"
+        },
+        "placeholders": {
+          "selectProvider": "选择集成",
+          "selectFingerprintFields": "选择指纹字段",
+          "selectIgnoreFields": "选择忽略字段"
+        }
+      },
       "title": "去重规则",
       "addRule": "添加去重规则"
     },

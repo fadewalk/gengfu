@@ -1658,6 +1658,45 @@
         "errorWhileSaving": "Error while saving rule",
         "saving": "Saving...",
         "save": "Save"
+      },
+      "form": {
+        "keepProvider": "Keep",
+        "addRule": "Add Deduplication Rule",
+        "editRule": "Edit {name}",
+        "defaultRuleBadge": "Default",
+        "editingDefaultRule": {
+          "title": "Editing a Default Rule",
+          "message": "Editing a default deduplication rule requires advanced knowledge. Default rules are carefully designed to provide optimal deduplication for specific alert types. Modifying these rules may impact the efficiency of your alert processing. If you're unsure about making changes, we recommend creating a new custom rule instead of modifying the default one.",
+          "learnMore": "Learn more about deduplication rules"
+        },
+        "editingProvisionedRule": {
+          "title": "Editing a Provisioned Rule",
+          "message": "Editing a provisioned deduplication rule is not allowed. Please contact your system administrator for more information."
+        },
+        "ruleName": "Rule name",
+        "description": "Description",
+        "provider": "Provider",
+        "providerTooltip": "Select the provider for which this deduplication rule will apply. This determines the source of alerts that will be processed by this rule.",
+        "fingerprintFields": "Fields to use for fingerprint",
+        "fingerprintFieldsTooltip": "Fingerprint fields are used to identify and group similar alerts. Choose fields that uniquely identify an alert type, such as 'service', 'error_type', or 'affected_component'.",
+        "fullDeduplication": "Full deduplication",
+        "fullDeduplicationTooltip": "1. Full deduplication: Keep will discard events if they are the same (excluding the 'Ignore Fields'). 2. Partial deduplication (default): Uses specified fields to correlate alerts. E.g., two alerts with same 'service' and 'env' fields will be deduped into one alert.",
+        "ignoreFields": "Ignore fields",
+        "noOptions": "No options",
+        "chooseProviderFirst": "Please choose provider to see available fields",
+        "saveError": "Error while saving rule",
+        "saving": "Saving...",
+        "validation": {
+          "ruleNameRequired": "Rule name is required",
+          "descriptionRequired": "Description is required",
+          "providerRequired": "Provider is required",
+          "fingerprintFieldRequired": "At least one fingerprint field is required"
+        },
+        "placeholders": {
+          "selectProvider": "Select provider",
+          "selectFingerprintFields": "Select fingerprint fields",
+          "selectIgnoreFields": "Select ignore fields"
+        }
       }
     },
     "labels": {
