@@ -1,11 +1,11 @@
-# Create the organizational unit for 九坤投资
-dn: OU=九坤投资,dc=ubiq2,dc=com
+# Create the organizational unit for 坤九
+dn: OU=坤九,dc=ubiq2,dc=com
 objectClass: top
 objectClass: organizationalUnit
-ou: 九坤投资
+ou: 坤九
 
 # Test user 1: zhangsan
-dn: CN=zhangsan,OU=九坤投资,dc=ubiq2,dc=com
+dn: CN=zhangsan,OU=坤九,dc=ubiq2,dc=com
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
@@ -19,7 +19,7 @@ telephoneNumber: 13800000001
 userPassword: Test@123456
 
 # Test user 2: lisi
-dn: CN=lisi,OU=九坤投资,dc=ubiq2,dc=com
+dn: CN=lisi,OU=坤九,dc=ubiq2,dc=com
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
@@ -33,7 +33,7 @@ telephoneNumber: 13800000002
 userPassword: Test@123456
 
 # Test user 3: wangwu
-dn: CN=wangwu,OU=九坤投资,dc=ubiq2,dc=com
+dn: CN=wangwu,OU=坤九,dc=ubiq2,dc=com
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
