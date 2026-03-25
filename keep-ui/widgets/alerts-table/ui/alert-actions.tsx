@@ -15,6 +15,7 @@ import { useConfig } from "@/utils/hooks/useConfig";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDoubleRightIcon } from "@heroicons/react/24/solid";
 import { AlertChangeStatusModal } from "@/features/alerts/alert-change-status/ui/alert-change-status-modal";
+import { useTranslations } from "next-intl";
 
 interface Props {
   selectedAlertsFingerprints: string[];
@@ -39,6 +40,7 @@ export default function AlertActions({
   setIsCreateIncidentWithAIOpen,
   isCreateIncidentWithAIOpen,
 }: Props) {
+  const t = useTranslations("alerts.actions");
   const router = useRouter();
   const api = useApi();
   const { data: config } = useConfig();
@@ -57,7 +59,7 @@ export default function AlertActions({
     .rows.map((row) => row.original);
 
   async function addOrUpdatePreset() {
-    const newPresetName = prompt("Enter new preset name");
+    const newPresetName = prompt(t("enterPresetName"));
     if (newPresetName) {
       const distinctAlertNames = Array.from(
         new Set(selectedAlerts.map((alert) => alert.name))
@@ -78,7 +80,7 @@ export default function AlertActions({
           name: newPresetName,
           options: options,
         });
-        toast(`Preset ${newPresetName} created!`, {
+        toast(t("presetCreated", { name: newPresetName }), {
           position: "top-left",
           type: "success",
         });
@@ -86,7 +88,7 @@ export default function AlertActions({
         clearRowSelection();
         router.replace(`/alerts/${newPresetName}`);
       } catch (error) {
-        toast(`Error creating preset ${newPresetName}`, {
+        toast(t("errorCreatingPreset", { name: newPresetName }), {
           position: "top-left",
           type: "error",
         });
@@ -122,21 +124,21 @@ export default function AlertActions({
         icon={XMarkIcon}
         size="xs"
         color="slate"
-        title="Clear Selection"
+        title={t("clearSelection")}
         onClick={clearRowSelection}
       >
-        Clear Selection
+        {t("clearSelection")}
       </Button>
       <Button
         icon={ChevronDoubleRightIcon}
         size="xs"
         color="blue"
-        title="Resolve"
+        title={t("resolveAlert")}
         onClick={() => {
           setModalAlert(selectedAlerts);
         }}
       >
-        Change status of {selectedAlertsFingerprints.length} alert(s)
+        {t("changeStatusOf", { count: selectedAlertsFingerprints.length })}
       </Button>
       {modalAlert && (
         <AlertChangeStatusModal
@@ -152,31 +154,31 @@ export default function AlertActions({
         icon={SilencedDoorbellNotification}
         size="xs"
         color="red"
-        title="Delete"
+        title={t("deleteAlert")}
         onClick={() => {
           setDismissModalAlert?.(selectedAlerts);
           clearRowSelection();
         }}
       >
-        Dismiss {selectedAlertsFingerprints.length} alert(s)
+        {t("dismissAlerts", { count: selectedAlertsFingerprints.length })}
       </Button>
       <Button
         icon={PlusIcon}
         size="xs"
         color="orange"
         onClick={async () => await addOrUpdatePreset()}
-        tooltip="Save current filter as a view"
+        tooltip={t("createPresetTooltip")}
       >
-        Create Preset
+        {t("createPreset")}
       </Button>
       <Button
         icon={PlusIcon}
         size="xs"
         color="orange"
         onClick={showIncidentSelector}
-        tooltip="Associate events with incident"
+        tooltip={t("associateWithIncidentTooltip")}
       >
-        Associate with incident
+        {t("associateWithIncident")}
       </Button>
       <Button
         icon={RocketIcon}
@@ -185,12 +187,12 @@ export default function AlertActions({
         onClick={showCreateIncidentWithAI}
         tooltip={
           config?.OPEN_AI_API_KEY_SET
-            ? "Create incidents with AI"
-            : "AI is not configured"
+            ? t("createIncidentsWithAITooltip")
+            : t("aiNotConfigured")
         }
         disabled={!config?.OPEN_AI_API_KEY_SET}
       >
-        Create incidents with AI
+        {t("createIncidentsWithAI")}
       </Button>
       <AlertAssociateIncidentModal
         isOpen={isIncidentSelectorOpen}
