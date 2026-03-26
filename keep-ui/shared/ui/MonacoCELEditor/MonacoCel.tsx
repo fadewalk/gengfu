@@ -2,7 +2,6 @@
 
 import { Editor, EditorProps, loader } from "@monaco-editor/react";
 import { useEffect, useRef, useState } from "react";
-import * as monaco from "monaco-editor";
 
 interface MonacoCelProps extends EditorProps {
   onMonacoLoaded?: (monacoInstance: typeof import("monaco-editor")) => void;
@@ -11,7 +10,10 @@ interface MonacoCelProps extends EditorProps {
 
 // Monaco Editor - imported as an npm package instead of loading from the CDN to support air-gapped environments
 // https://github.com/suren-atoyan/monaco-react?tab=readme-ov-file#use-monaco-editor-as-an-npm-package
-loader.config({ monaco });
+// Dynamic import to avoid SSR "window is not defined" error
+loader.config({
+  monaco: () => import("monaco-editor"),
+});
 
 export function MonacoCelBase(props: MonacoCelProps) {
   const [isLoaded, setIsLoaded] = useState(false);
