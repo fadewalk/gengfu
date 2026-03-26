@@ -20,8 +20,6 @@ ENV NEXT_TELEMETRY_DISABLED 1
 ENV API_URL http://localhost:8080
 ENV NEXT_LINT_IGNORE=1
 ENV SENTRY_DISABLED=true
-ENV NEXT_IGNORE_TS_ERRORS=true
-
 RUN NODE_OPTIONS=--max-old-space-size=8192 npx next build --no-lint
 
 FROM base AS runner
