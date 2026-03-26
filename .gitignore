@@ -235,3 +235,4 @@ posthog.py
 .playwright-mcp/
 .venv*
 .claude/settings.local.json
+.next/
