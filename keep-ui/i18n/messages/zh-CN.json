@@ -608,7 +608,7 @@
   "correlation": {
     "form": {
       "incidentPrefix": "事件前缀",
-      "incidentNameTemplateTooltip": "您可以在模板中使用告警字段，用花括号包裹，例如 'Incident on hosts {{ alert.host }}'。如果有来自 'host1' 和 'host2' 的两个告警，事件名称将是 'Incident on hosts host1, host2'。默认使用关联规则名称。",
+      "incidentNameTemplateTooltip": "您可以在模板中使用告警字段，用花括号包裹，例如 'Incident on hosts '{' alert.host }'。如果有来自 'host1' 和 'host2' 的两个告警，事件名称将是 'Incident on hosts host1, host2'。默认使用关联规则名称。",
       "allAlertsResolved": "所有告警恢复",
       "incidentPrefixTooLong": "事件前缀必须少于 10 个字符",
       "minutes": "分钟",
@@ -633,7 +633,7 @@
       "appendIncident": "如果告警之间的延迟低于此值，则追加到同一事件",
       "groupByTooltip": "属性用于区分不同事件。例如，按 'host' 分组会将 hostX 和 hostY 的告警关联到不同事件。没有告警无法计算属性。",
       "incidentPrefixRequired": "事件前缀为必填项",
-      "incidentNameTemplatePlaceholder": "使用 Keep 表达式创建事件名称，例如：'Incident on hosts {{ alert.host }}' 将创建类似 'Incident on hosts host1, host2' 的事件名称。默认使用关联规则名称。",
+      "incidentNameTemplatePlaceholder": "使用 Keep 表达式创建事件名称，例如：'Incident on hosts '{' alert.host }' 将创建类似 'Incident on hosts host1, host2' 的事件名称。默认使用关联规则名称。",
       "allConditionsMet": "满足所有条件",
       "firstAlertResolved": "首个告警恢复",
       "incidentNameTemplate": "事件名称模板",
