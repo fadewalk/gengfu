@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as DrawerPrimitives from "@radix-ui/react-dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 import { cx, focusRing } from "@/shared/lib/tremor-utils";
 
@@ -88,8 +89,11 @@ const DrawerContent = React.forwardRef<
             className
           )}
           {...props}
-        />
-      </DrawerOverlay>
+        >
+          <VisuallyHidden>
+            <DrawerPrimitives.Title />
+          </VisuallyHidden>
+        </DrawerPrimitives.Content>
     </DrawerPortal>
   );
 });
