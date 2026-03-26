@@ -212,12 +212,12 @@ const IncidentCard: React.FC<IncidentCardProps> = ({
         <>
           <Title>{editedIncident.name || t("alerts.createIncidentAI.unnamedIncident")}</Title>
           <Subtitle className="mt-2">{t("common.labels.description")}</Subtitle>
-          <Text className="mt-2">
+          <div className="mt-2">
             <FormattedContent
               content={editedIncident.description || t("alerts.createIncidentAI.noDescription")}
               format={editedIncident.description_format}
             />
-          </Text>
+          </div>
           <Subtitle className="mt-2">{t("common.labels.severity")}</Subtitle>
           <Badge color="orange">{editedIncident.severity || t("common.messages.notApplicable")}</Badge>
           <Subtitle className="mt-2">{t("alerts.createIncidentAI.confidenceScore")}</Subtitle>

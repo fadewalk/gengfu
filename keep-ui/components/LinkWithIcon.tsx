@@ -118,14 +118,12 @@ export const LinkWithIcon = ({
             size="xs"
             color="orange"
             data-testid={`${testId}-badge`}
-            className="px-1 mr-0.5 min-w-5"
+            className="px-1 mr-0.5 min-w-5 flex gap-1 items-center"
           >
-            <div className="flex gap-1 items-center">
-              {renderBeforeCount && renderBeforeCount() && (
-                <span>{renderBeforeCount()}</span>
-              )}
-              <ShortNumber value={count}></ShortNumber>
-            </div>
+            {renderBeforeCount && renderBeforeCount() && (
+              <span>{renderBeforeCount()}</span>
+            )}
+            <ShortNumber value={count}></ShortNumber>
           </Badge>
         )}
         {isBeta && (

@@ -89,19 +89,19 @@ export const alertSidebarFieldsConfig: Record<
     name: "service",
     shouldRender: (alert) => !!alert.service,
     render: ({ alert, t }) => (
-      <p>
+      <div>
         <FieldHeader>{t?.("alerts.fields.service") ?? "Service"}</FieldHeader>
         <Badge size="sm" color="gray">
           {alert.service}
         </Badge>
-      </p>
+      </div>
     ),
   },
   source: {
     name: "source",
     shouldRender: (alert) => !!alert.source && alert.source.length > 0,
     render: ({ alert, providerName, t }) => (
-      <p>
+      <div>
         <FieldHeader>{t?.("alerts.fields.source") ?? "Source"}</FieldHeader>
         <DynamicImageProviderIcon
           src={`/icons/${alert.source![0]}-icon.png`}
@@ -112,37 +112,37 @@ export const alertSidebarFieldsConfig: Record<
           className="inline-block w-6 h-6 mr-2"
         />
         <span>{providerName}</span>
-      </p>
+      </div>
     ),
   },
   description: {
     name: "description",
     shouldRender: (alert) => !!alert.description,
     render: ({ alert, t }) => (
-      <p>
+      <div>
         <FieldHeader>{t?.("alerts.fields.description") ?? "Description"}</FieldHeader>
         <FormattedContent
           content={alert.description}
           format={alert.description_format}
         />
-      </p>
+      </div>
     ),
   },
   message: {
     name: "message",
     shouldRender: (alert) => !!alert.message,
     render: ({ alert, t }) => (
-      <p>
+      <div>
         <FieldHeader>{t?.("alerts.fields.message") ?? "Message"}</FieldHeader>
         <span className="break-words">{alert.message}</span>
-      </p>
+      </div>
     ),
   },
   fingerprint: {
     name: "fingerprint",
     shouldRender: () => true,
     render: ({ alert, config, handleCopyFingerprint, t }) => (
-      <p>
+      <div>
         <FieldHeader className="flex items-center gap-1">
           {t?.("alerts.fields.fingerprint") ?? "Fingerprint"}
           <Tooltip
@@ -183,14 +183,14 @@ export const alertSidebarFieldsConfig: Record<
             />
           )}
         </div>
-      </p>
+      </div>
     ),
   },
   url: {
     name: "url",
     shouldRender: (alert) => !!alert.url,
     render: ({ alert, handleCopyUrl, t }) => (
-      <p>
+      <div>
         <FieldHeader>{t?.("alerts.fields.url") ?? "URL"}</FieldHeader>
         <div className="flex items-center gap-2">
           <Link
@@ -216,7 +216,7 @@ export const alertSidebarFieldsConfig: Record<
             />
           )}
         </div>
-      </p>
+      </div>
     ),
   },
   incidents: {
@@ -312,10 +312,10 @@ export function renderCustomField(
   }
 
   return (
-    <p>
+    <div>
       <FieldHeader>{displayName}</FieldHeader>
       {displayValue}
-    </p>
+    </div>
   );
 }
 

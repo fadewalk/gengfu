@@ -32,7 +32,7 @@ export function SameIncidentField({ incident }: { incident: IncidentDto }) {
     <>
       <FieldHeader>{t("incidents.sameIncident.sameInThePast")}</FieldHeader>
       {same_incident_in_the_past ? (
-        <p className="flex gap-2">
+        <div className="flex gap-2">
           <Link
             icon={() => (
               <StatusIcon
@@ -53,10 +53,10 @@ export function SameIncidentField({ incident }: { incident: IncidentDto }) {
           >
             {t("incidents.sameIncident.change")}
           </Button>
-        </p>
+        </div>
       ) : (
         <>
-          <p className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-2">
             {t("incidents.sameIncident.noLinkedIncidents")}
             <Button
               color="orange"
@@ -67,7 +67,7 @@ export function SameIncidentField({ incident }: { incident: IncidentDto }) {
             >
               {t("incidents.sameIncident.linkIncident")}
             </Button>
-          </p>
+          </div>
           <p className="text-sm text-tremor-content-subtle">
             {t("incidents.sameIncident.linkHelpText")}
           </p>
