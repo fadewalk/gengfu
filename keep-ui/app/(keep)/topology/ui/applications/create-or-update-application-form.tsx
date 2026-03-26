@@ -67,13 +67,13 @@ export function CreateOrUpdateApplicationForm({
   ): FormErrors => {
     const newErrors: FormErrors = {};
     if (!formValues.name.trim()) {
-      newErrors.name = t("topology.application.nameRequired");
+      newErrors.name = t("topology.applications.nameRequired");
     }
     if (formValues.services.length === 0) {
-      newErrors.services = t("topology.application.selectAtLeastOne");
+      newErrors.services = t("topology.applications.selectAtLeastOne");
     }
     if (formValues.repository && !isValidUrl(formValues.repository)) {
-      newErrors.repository = t("topology.application.validUrl");
+      newErrors.repository = t("topology.applications.validUrl");
     }
     return newErrors;
   };
@@ -137,16 +137,16 @@ export function CreateOrUpdateApplicationForm({
       className="flex flex-col gap-4 text-tremor-content-emphasis"
       onSubmit={handleSubmit}
     >
-      <p className="">{t("topology.application.groupServices")}</p>
+      <p className="">{t("topology.applications.form.title")}</p>
       <div>
         <div className="mb-1">
-          <span className="font-bold">{t("topology.application.applicationName")}</span>
+          <span className="font-bold">{t("topology.applications.applicationName")}</span>
           {errors.name && (
             <p className="text-red-500 text-sm mt-1">{errors.name}</p>
           )}
         </div>
         <TextInput
-          placeholder={t("topology.application.namePlaceholder")}
+          placeholder={t("topology.applications.form.placeholders.applicationName")}
           value={applicationName}
           onChange={(e) => setApplicationName(e.target.value)}
           required={true}
@@ -154,30 +154,30 @@ export function CreateOrUpdateApplicationForm({
       </div>
       <div>
         <div className="mb-1">
-          <span className="font-bold">{t("topology.application.description")}</span>
+          <span className="font-bold">{t("topology.applications.description")}</span>
         </div>
         <Textarea
-          placeholder={t("topology.application.descriptionPlaceholder")}
+          placeholder={t("topology.applications.form.placeholders.description")}
           value={applicationDescription}
           onChange={(e) => setApplicationDescription(e.target.value)}
         />
       </div>
       <div>
         <div className="mb-1">
-          <span className="font-bold">{t("topology.application.repositoryUrl")}</span>
+          <span className="font-bold">{t("topology.applications.repositoryUrl")}</span>
           {errors.repository && (
             <p className="text-red-500 text-sm mt-1">{errors.repository}</p>
           )}
         </div>
         <TextInput
-          placeholder={t("topology.application.repositoryUrlPlaceholder")}
+          placeholder={t("topology.applications.form.placeholders.repositoryUrl")}
           value={applicationRepo}
           onChange={(e) => setApplicationRepo(e.target.value)}
         />
       </div>
       <div className="flex flex-col gap-2">
         <div>
-          <span className="font-bold">{t("topology.application.selectedServices")}</span>
+          <span className="font-bold">{t("topology.applications.selectedServices")}</span>
           {errors.services && (
             <p className="text-red-500 text-sm mt-1">{errors.services}</p>
           )}
@@ -212,7 +212,7 @@ export function CreateOrUpdateApplicationForm({
             </ul>
           )}
           <TopologySearchAutocomplete
-            placeholder={t("topology.application.searchPlaceholder")}
+            placeholder={t("topology.applications.form.searchServices")}
             includeApplications={false}
             excludeServiceIds={selectedServices.map((s) => s.service)}
             onSelect={({ value }: { value: TopologyServiceMinimal }) => {

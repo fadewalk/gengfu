@@ -405,8 +405,8 @@
     },
     "messages": {
       "notFound": "Alert not found",
-      "noAlerts": "No alerts to display",
-      "noAlertsDescription": "There are no alerts matching your criteria.",
+      "noAlerts": "No Alerts to Display",
+      "noAlertsDescription": "Connect a data source to start receiving alerts, or simulate an alert to test the platform",
       "showFiringOnly": "Show Firing Alerts Only",
       "totalAlerts": "Total Alerts",
       "firingAlerts": "Firing Alerts",
@@ -419,8 +419,6 @@
       "noIncident": "No incident",
       "dismissed": "Dismissed",
       "notDismissed": "Not dismissed",
-      "noAlerts": "No Alerts to Display",
-      "noAlertsDescription": "Connect a data source to start receiving alerts, or simulate an alert to test the platform",
       "all": "All",
       "only": "Only",
       "addFacet": "Add Facet",
@@ -549,7 +547,7 @@
       "mapFieldValues": "Map alert field values to custom bar colors",
       "enableCustomMapping": "Enable custom severity mapping",
       "sourceField": "Source field",
-      "valueToColor": "Value \u2192 Color",
+      "valueToColor": "Value → Color",
       "addMapping": "Add mapping",
       "removeMapping": "Remove mapping"
     },
@@ -1399,44 +1397,97 @@
     }
   },
   "providers": {
-    "title": "Providers",
-    "installed": "Installed Providers",
-    "available": "Available Providers",
-    "linked": "Linked Providers",
-    "actions": {
-      "addProvider": "Add Provider",
-      "configureProvider": "Configure Provider",
-      "deleteProvider": "Delete Provider",
-      "testConnection": "Test Connection",
-      "refreshScopes": "Refresh Scopes"
+    "layout": {
+      "title": "Providers",
+      "subtitle": "Connect monitoring services for Keep to ingest alerts, and other integrations to automate your workflows."
     },
-    "labels": {
-      "providerName": "Provider Name",
-      "provider": "provider",
-      "type": "Type",
-      "status": "Connection Status",
-      "installed": "Installed",
-      "notInstalled": "Not Installed",
-      "connected": "Connected",
-      "disconnected": "Disconnected",
-      "error": "Error"
+    "tiles": {
+      "linkedTooltip": "Providers that send alerts to Keep and are not installed."
     },
-    "messages": {
-      "installSuccess": "Provider installed successfully",
-      "installFailed": "Failed to install provider",
-      "connectionSuccess": "Connection test successful",
-      "connectionFailed": "Connection test failed",
-      "confirmDelete": "Are you sure you want to delete this provider?",
-      "found": "found",
-      "noProviders": "No providers found matching your filters."
+    "connectTo": "Connect to {providerName}",
+    "logs": {
+      "title": "Provider Logs",
+      "loading": "Loading logs...",
+      "notEnabledTitle": "Provider logs are not enabled",
+      "notEnabledDescription": "Provider logs must be enabled in the backend. Check the documentation for instructions on enabling provider logs.",
+      "viewDocumentation": "View documentation",
+      "noLogsFound": "No logs found"
     },
-    "categories": {
-      "monitoring": "Monitoring",
+    "providerName": "Provider Name",
+    "enterProviderName": "Enter provider name",
+    "webhook": {
+      "installing": "Installing...",
+      "installedSuccess": "Successfully installed {provider}",
+      "installFailed": "Installation failed",
+      "scopesRequired": "Scopes validation required",
+      "useSavedCredentials": "Use saved credentials",
+      "webhookDisabledNoExternalUrl": "Webhook installation is disabled because Keep is running without an external URL.",
+      "clickToLearnMore": "Click to learn more"
+    },
+    "scopes": {
+      "revalidateFailed": "Failed to revalidate scopes",
+      "title": "Scopes",
+      "validate": "Validate Scopes",
+      "installedWithMissing": "Installed with missing scopes",
+      "missingScopesMessage": "Provider is installed. If you don't need the related features, you can ignore the missing scopes.",
+      "name": "Name",
+      "lastStatus": "Last Status",
+      "description": "Description",
+      "valid": "Valid",
+      "notChecked": "Not Checked",
+      "mandatoryForWebhook": "Mandatory for webhook installation"
+    },
+    "connectionProblem": "Connection Problem",
+    "updateSuccess": "Provider updated successfully",
+    "updateFailed": "Failed to update provider",
+    "errors": {
+      "badResponse": "Bad response, please check your configuration",
+      "connectionFailed": "Connection failed"
+    },
+    "pullingEnabled": "Pulling Enabled",
+    "pullingTooltip": "Whether Keep should try to pull alerts automatically from the provider once in a while",
+    "needHelp": "Need help? Check out the",
+    "providerDocumentation": "Provider Documentation",
+    "orAskSlackCommunity": ", or ask Slack Community",
+    "lastPullTime": "Provider last pull time: ",
+    "editingProvisionedNotPossible": "Editing provisioned providers is not possible from UI.",
+    "filterProviders": "Filter providers...",
+    "allLabels": "All Labels",
+    "noProvidersMatching": "No providers found matching your filters.",
+    "selectProvider": "Select provider",
+    "tile": {
+      "webhookAvailable": "Webhook available",
+      "oauth2Available": "OAuth2 available",
+      "provisioned": "Provisioned",
+      "comingSoon": "(Coming Soon)",
+      "name": "Name: ",
+      "lastAlert": "Last alert: ",
+      "modify": "Modify"
+    },
+    "form": {
+      "installWithOAuth2": "Install with OAuth2",
+      "installWebhook": "Install Webhook",
+      "installOrUpdateWebhook": "Install/Update Webhook",
+      "id": "Id: ",
+      "slackCommunity": "Slack Community",
+      "checkHealth": "Check health",
+      "providerNameDisabled": "This field is disabled because it is pre-filled from the workflow."
+    },
+    "formFields": {
+      "addEntry": "Add Entry"
+    },
+    "semiAutomated": {
+      "pushAlertsFrom": "Push alerts from",
+      "description": "Seamlessly push alerts without actively connecting"
+    },
+    "filterLabels": {
+      "alert": "Alert",
+      "topology": "Topology",
+      "messaging": "Messaging",
       "ticketing": "Ticketing",
-      "communication": "Communication",
-      "cloud": "Cloud",
-      "database": "Database",
-      "security": "Security"
+      "data": "Data",
+      "queue": "Queue",
+      "incident": "Incident"
     }
   },
   "rules": {
@@ -2093,100 +2144,6 @@
       "multiLevelPropertyName": "Multi-level property name",
       "multiLevelPropertyNameTooltip": "The property name to use for the multi-level correlation. For example, if the property name is 'host', the correlation will be 'host1, host2'.",
       "multiLevelPropertyNameRequired": "Multi-level property name is required"
-    }
-  },
-  "providers": {
-    "layout": {
-      "title": "Providers",
-      "subtitle": "Connect monitoring services for Keep to ingest alerts, and other integrations to automate your workflows."
-    },
-    "tiles": {
-      "linkedTooltip": "Providers that send alerts to Keep and are not installed."
-    },
-    "connectTo": "Connect to {providerName}",
-    "logs": {
-      "title": "Provider Logs",
-      "loading": "Loading logs...",
-      "notEnabledTitle": "Provider logs are not enabled",
-      "notEnabledDescription": "Provider logs must be enabled in the backend. Check the documentation for instructions on enabling provider logs.",
-      "viewDocumentation": "View documentation",
-      "noLogsFound": "No logs found"
-    },
-    "providerName": "Provider Name",
-    "enterProviderName": "Enter provider name",
-    "webhook": {
-      "installing": "Installing...",
-      "installedSuccess": "Successfully installed {provider}",
-      "installFailed": "Installation failed",
-      "scopesRequired": "Scopes validation required",
-      "useSavedCredentials": "Use saved credentials",
-      "webhookDisabledNoExternalUrl": "Webhook installation is disabled because Keep is running without an external URL.",
-      "clickToLearnMore": "Click to learn more"
-    },
-    "scopes": {
-      "revalidateFailed": "Failed to revalidate scopes",
-      "title": "Scopes",
-      "validate": "Validate Scopes",
-      "installedWithMissing": "Installed with missing scopes",
-      "missingScopesMessage": "Provider is installed. If you don't need the related features, you can ignore the missing scopes.",
-      "name": "Name",
-      "lastStatus": "Last Status",
-      "description": "Description",
-      "valid": "Valid",
-      "notChecked": "Not Checked",
-      "mandatoryForWebhook": "Mandatory for webhook installation"
-    },
-    "connectionProblem": "Connection Problem",
-    "updateSuccess": "Provider updated successfully",
-    "updateFailed": "Failed to update provider",
-    "errors": {
-      "badResponse": "Bad response, please check your configuration",
-      "connectionFailed": "Connection failed"
-    },
-    "pullingEnabled": "Pulling Enabled",
-    "pullingTooltip": "Whether Keep should try to pull alerts automatically from the provider once in a while",
-    "needHelp": "Need help? Check out the",
-    "providerDocumentation": "Provider Documentation",
-    "orAskSlackCommunity": ", or ask Slack Community",
-    "lastPullTime": "Provider last pull time: ",
-    "editingProvisionedNotPossible": "Editing provisioned providers is not possible from UI.",
-    "filterProviders": "Filter providers...",
-    "allLabels": "All Labels",
-    "noProvidersMatching": "No providers found matching your filters.",
-    "selectProvider": "Select provider",
-    "tile": {
-      "webhookAvailable": "Webhook available",
-      "oauth2Available": "OAuth2 available",
-      "provisioned": "Provisioned",
-      "comingSoon": "(Coming Soon)",
-      "name": "Name: ",
-      "lastAlert": "Last alert: ",
-      "modify": "Modify"
-    },
-    "form": {
-      "installWithOAuth2": "Install with OAuth2",
-      "installWebhook": "Install Webhook",
-      "installOrUpdateWebhook": "Install/Update Webhook",
-      "id": "Id: ",
-      "slackCommunity": "Slack Community",
-      "checkHealth": "Check health",
-      "providerNameDisabled": "This field is disabled because it is pre-filled from the workflow."
-    },
-    "formFields": {
-      "addEntry": "Add Entry"
-    },
-    "semiAutomated": {
-      "pushAlertsFrom": "Push alerts from",
-      "description": "Seamlessly push alerts without actively connecting"
-    },
-    "filterLabels": {
-      "alert": "Alert",
-      "topology": "Topology",
-      "messaging": "Messaging",
-      "ticketing": "Ticketing",
-      "data": "Data",
-      "queue": "Queue",
-      "incident": "Incident"
     }
   },
   "userSidebar": {

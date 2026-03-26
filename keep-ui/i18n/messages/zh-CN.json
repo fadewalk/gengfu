@@ -295,7 +295,11 @@
         "fullDeduplication": "完全去重",
         "defaultDeduplicationRule": "{provider} 去重规则",
         "saveFailed": "保存规则失败",
-        "unexpectedError": "发生意外错误"
+        "unexpectedError": "发生意外错误",
+        "tooltips": {
+          "distribution": "显示过去 24 小时内每小时处理的告警数量。一致或较高的分布表示此去重规则活动稳定。",
+          "dedupRatio": "表示成功去重的告警百分比。值越高表示去重效率越好，冗余告警越少。"
+        }
       },
       "table": {
         "description": "描述",
@@ -791,6 +795,12 @@
     "userDetails": "用户详情"
   },
   "providers": {
+    "labels": {
+      "provider": "个集成"
+    },
+    "messages": {
+      "found": "已找到"
+    },
     "tiles": {
       "linkedTooltip": "向 Keep 发送告警但未安装的集成。"
     },
@@ -886,11 +896,15 @@
     "form": {
       "installWithOAuth2": "使用 OAuth2 安装",
       "installWebhook": "安装 Webhook",
-      "installOrUpdateWebhook": "安装/更新 Webhook",
-      "id": "ID：",
+      "installOrUpdateWebhook": "安装或更新 Webhook",
+      "id": "ID",
       "slackCommunity": "Slack 社区",
       "checkHealth": "检查健康状态",
-      "providerNameDisabled": "此字段已禁用，因为它是预先从工作流中填充的。"
+      "providerNameDisabled": "已安装的集成无法修改名称",
+      "enterField": "输入 {id}",
+      "selectField": "选择 {id}",
+      "fileChosen": "已选择文件：{name}",
+      "uploadFile": "上传 {id}"
     },
     "formFields": {
       "addEntry": "添加条目"
@@ -942,19 +956,6 @@
       "urlMaxLength": "URL 长度无效，最大长度为 {max}。",
       "fileTypeOneOf": "文件类型应为 {types} 之一。",
       "fileType": "文件类型应为 {type}。"
-    },
-    "form": {
-      "installWithOAuth2": "使用 OAuth2 安装",
-      "installWebhook": "安装 Webhook",
-      "installOrUpdateWebhook": "安装或更新 Webhook",
-      "id": "ID",
-      "slackCommunity": "Slack 社区",
-      "checkHealth": "检查健康状态",
-      "providerNameDisabled": "已安装的集成无法修改名称",
-      "enterField": "输入 {id}",
-      "selectField": "选择 {id}",
-      "fileChosen": "已选择文件：{name}",
-      "uploadFile": "上传 {id}"
     }
   },
   "common": {
@@ -1251,7 +1252,9 @@
       "message": "您没有权限访问此页面。",
       "contactUs": "如需帮助，请联系我们",
       "slack": "Slack",
-      "goBack": "返回"
+      "goBack": "返回",
+      "defaultMessage": "您没有权限访问此页面。",
+      "contactSupport": "如需帮助，请联系"
     },
     "unauthorized": "未授权",
     "validation": {
