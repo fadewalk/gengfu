@@ -72,13 +72,18 @@
         "clientSecret": "客户端密钥",
         "clientId": "客户端 ID"
       },
-      "configure": "配置 SSO"
+      "configure": "配置 SSO",
+      "messages": {
+        "managementDisabledWith": "SSO 管理已禁用。更多信息请查看文档。"
+      }
     },
     "apiKeys": {
       "messages": {
         "deleteConfirm": "此操作不可撤销。这将永久删除 API 密钥，使用此密钥的后续请求将失败。",
         "regenerateConfirm": "此操作不可撤销。这将撤销密钥并生成新密钥。使用此密钥的后续请求将失败。请确保更新使用此密钥的应用程序。",
-        "creationDisabled": "Keep 运行在 NO_AUTH 模式下，无法创建 API 密钥。"
+        "creationDisabled": "Keep 运行在 NO_AUTH 模式下，无法创建 API 密钥。",
+        "createFailed": "创建 API 密钥失败",
+        "managementDisabledWith": "API 密钥管理已禁用。更多信息请查看文档。"
       },
       "labels": {
         "expiresAt": "过期时间",
@@ -92,14 +97,27 @@
     },
     "groups": {
       "messages": {
-        "confirmDelete": "确定要删除此分组吗？"
+        "confirmDelete": "确定要删除此分组吗？",
+        "failedToSave": "保存分组失败",
+        "managementDisabledWith": "分组管理已禁用。更多信息请查看文档。",
+        "savingError": "保存分组时出错",
+        "unexpectedError": "发生意外错误"
       },
       "addGroup": "添加分组",
       "searchPlaceholder": "按分组名搜索",
       "title": "分组管理",
       "subtitle": "管理用户分组",
       "deleteGroup": "删除分组",
-      "editGroup": "编辑分组"
+      "editGroup": "编辑分组",
+      "cancel": "取消",
+      "createGroup": "创建分组",
+      "groupDetails": "分组详情",
+      "groupName": "分组名称",
+      "groupNameRequired": "分组名称为必填项",
+      "members": "成员",
+      "roles": "角色",
+      "save": "保存",
+      "saving": "保存中..."
     },
     "tenant": {
       "title": "租户设置"
@@ -109,11 +127,15 @@
     "permissions": {
       "title": "权限管理",
       "subtitle": "管理资源权限",
-      "searchPlaceholder": "搜索资源"
+      "searchPlaceholder": "搜索资源",
+      "messages": {
+        "managementDisabledWith": "权限管理已禁用。更多信息请查看文档。"
+      }
     },
     "roles": {
       "messages": {
-        "confirmDelete": "确定要删除此角色吗？"
+        "confirmDelete": "确定要删除此角色吗？",
+        "managementDisabledWith": "角色管理已禁用。更多信息请查看文档。"
       },
       "addRole": "添加角色",
       "deleteRole": "删除角色",
@@ -321,7 +343,7 @@
           "fullDeduplication": "完全去重"
         },
         "actions": {
-          "delete": "禁用规则"
+          "delete": "删除"
         }
       },
       "sidebar": {
@@ -353,7 +375,8 @@
         "editingProvisionedDescription": "不允许编辑预配置的去重规则。请联系系统管理员了解更多信息。",
         "fullDeduplicationTooltip": "1. 完全去重：如果事件相同（不包括'忽略字段'），Keep 将丢弃重复事件。2. 部分去重（默认）：使用指定字段关联告警。例如，具有相同 'service' 和 'env' 字段的两个告警将被去重为一个。",
         "provider": "集成",
-        "descriptionRequired": "描述为必填项"
+        "descriptionRequired": "描述为必填项",
+        "activeHint": "此页面将在第一个告警注册后激活。"
       },
       "form": {
         "keepProvider": "Keep",
@@ -484,7 +507,8 @@
         "description1": "一个用于分组和整合告警的多功能工具。在我们的",
         "groupDescription": "将多个告警分组为一个事件",
         "errorWhileSaving": "保存关联规则时出错"
-      }
+      },
+      "subtitle": "创建关联规则，将告警分组为事件"
     },
     "extraction": {
       "messages": {
@@ -537,7 +561,8 @@
         "executions": "执行记录",
         "executionDetails": "执行详情",
         "logs": "日志",
-        "alertId": "告警 ID："
+        "alertId": "告警 ID：",
+        "title": "执行记录"
       },
       "table": {
         "name": "名称",
@@ -739,7 +764,13 @@
       "noApplicationsDescription": "将协同工作的服务分组为应用，便于管理和监控",
       "showOnMap": "在地图上显示",
       "edit": "编辑",
-      "description": "将协同工作的服务组合为应用，便于管理和监控"
+      "description": "将协同工作的服务组合为应用，便于管理和监控",
+      "applicationName": "应用名称",
+      "nameRequired": "应用名称为必填项",
+      "repositoryUrl": "仓库地址",
+      "selectAtLeastOne": "请至少选择一个服务",
+      "selectedServices": "已选服务",
+      "validUrl": "请输入有效的 URL"
     },
     "title": "服务拓扑",
     "map": {
@@ -762,7 +793,13 @@
       "map": "拓扑地图"
     },
     "infrastructure": "基础设施",
-    "description": "描述环境中组件的拓扑数据"
+    "description": "描述环境中组件的拓扑数据",
+    "addNode": {
+      "failed": "添加节点失败",
+      "success": "节点添加成功",
+      "updateFailed": "更新节点失败",
+      "updateSuccess": "节点更新成功"
+    }
   },
   "providerImages": {
     "subtitle": "自定义集成图标",
@@ -792,14 +829,17 @@
     "externallyManaged": "用户由外部管理",
     "failedToSave": "保存用户失败",
     "close": "关闭",
-    "userDetails": "用户详情"
+    "userDetails": "用户详情",
+    "errorWhileAdding": "添加用户时出错"
   },
   "providers": {
     "labels": {
       "provider": "个集成"
     },
     "messages": {
-      "found": "已找到"
+      "found": "已找到",
+      "installSuccess": "集成安装成功",
+      "noProviders": "未找到集成"
     },
     "tiles": {
       "linkedTooltip": "向 Keep 发送告警但未安装的集成。"
@@ -956,7 +996,8 @@
       "urlMaxLength": "URL 长度无效，最大长度为 {max}。",
       "fileTypeOneOf": "文件类型应为 {types} 之一。",
       "fileType": "文件类型应为 {type}。"
-    }
+    },
+    "notConnected": "未连接"
   },
   "common": {
     "actions": {
@@ -1009,7 +1050,9 @@
       "confirm": "确认",
       "view": "查看",
       "selectAll": "全选",
-      "edit": "编辑"
+      "edit": "编辑",
+      "actions": "操作",
+      "goBack": "返回"
     },
     "messages": {
       "info": "信息",
@@ -1100,7 +1143,12 @@
       "lastLogin": "最后登录",
       "scopes": "权限范围",
       "predefined": "预定义",
-      "by": "由"
+      "by": "由",
+      "createdBy": "创建者",
+      "logs": "日志",
+      "notApplicable": "不适用",
+      "rows": "行",
+      "updatedBy": "更新者"
     },
     "language": {
       "title": "语言",
@@ -1192,7 +1240,8 @@
       "page": "页",
       "previous": "上一页",
       "next": "下一步"
-    }
+    },
+    "error": "错误"
   },
   "shared": {
     "error": {
@@ -1267,7 +1316,8 @@
       "required": "此字段为必填项"
     },
     "notFound": "未找到",
-    "forbidden": "访问被拒绝"
+    "forbidden": "访问被拒绝",
+    "message": "错误"
   },
   "notAuthorized": {
     "title": "403 未授权",
@@ -1709,11 +1759,29 @@
       "addCommentPlaceholder": "添加评论...",
       "confirmBulkDelete": "确定要删除 {count} 个事件吗？此操作无法撤销。",
       "noIncidentsMatchingFilters": "没有匹配筛选条件的事件",
-      "tryChangingFilters": "请尝试调整筛选条件"
+      "tryChangingFilters": "请尝试调整筛选条件",
+      "alertsWillShowUpHere": "告警将在此显示",
+      "commentAdded": "评论已添加",
+      "confirmIncident": "确认事件",
+      "enterTicketUrlPlaceholder": "输入工单链接",
+      "failedToAddComment": "添加评论失败",
+      "linkFailed": "关联工单失败",
+      "linkedSuccess": "工单关联成功",
+      "linking": "关联中...",
+      "loadingProviders": "正在加载提供商...",
+      "noAlertsYet": "暂无告警",
+      "noProvidersConfigured": "未配置提供商",
+      "noTicketingProvidersConfigured": "未配置工单提供商",
+      "orphaned": "孤立",
+      "pleaseEnterTicketUrl": "请输入工单链接",
+      "pleaseSelectProvider": "请选择提供商",
+      "ticketNote": "您将被重定向到提供商网站以完成工单创建。",
+      "topology": "拓扑",
+      "topologyTooltip": "此事件由拓扑关联创建"
     },
     "labels": {
       "duration": "持续时间",
-      "assignee": "处理人",
+      "assignee": "负责人",
       "endTime": "结束时间",
       "description": "描述",
       "reporter": "报告人",
@@ -1724,7 +1792,31 @@
       "affectedServices": "受影响的服务",
       "appName": "应用",
       "service": "服务",
-      "linkedIncident": "关联事件"
+      "linkedIncident": "关联事件",
+      "action": "操作",
+      "alertSources": "告警来源",
+      "correlation": "关联方式",
+      "date": "日期",
+      "enterTicketDescription": "输入工单描述",
+      "enterTicketTitle": "输入工单标题",
+      "fingerprint": "指纹",
+      "groupedBy": "分组依据",
+      "incidentDetails": "事件详情",
+      "involvedServices": "涉及服务",
+      "lastSeenAt": "最后出现时间",
+      "name": "名称",
+      "numberOfAlerts": "告警数量",
+      "selectProvider": "选择提供商",
+      "selectTicketingProvider": "选择工单提供商",
+      "selectedProvider": "已选提供商",
+      "severity": "严重程度",
+      "source": "来源",
+      "startedAt": "开始时间",
+      "ticketDescription": "工单描述",
+      "ticketIdOptional": "工单 ID（可选）",
+      "ticketTitle": "工单标题",
+      "ticketUrl": "工单链接",
+      "ticketing": "工单系统"
     },
     "table": {
       "status": "状态",
@@ -1795,7 +1887,8 @@
       "notAvailableDescription": "当告警分配到此事件后，事件助手将可用。",
       "placeholder": "例如：查找此事件的根本原因",
       "addedToRCA": "已添加到 RCA",
-      "initialMessage": "你好！让我们一起解决这个事件！有什么问题尽管问"
+      "initialMessage": "你好！让我们一起解决这个事件！有什么问题尽管问",
+      "traceNotFound": "未找到追踪"
     },
     "enrichments": {
       "addName": "添加名称",
@@ -1813,7 +1906,13 @@
       "unlinkFromIncident": "从事件中取消关联",
       "split": "拆分",
       "unlink": "取消关联",
-      "viewInFeed": "在动态中查看"
+      "viewInFeed": "在动态中查看",
+      "ai": "AI",
+      "correlatedAI": "由 AI 关联",
+      "correlatedManually": "手动关联",
+      "correlatedTopology": "由拓扑关联",
+      "manually": "手动",
+      "topology": "拓扑"
     },
     "workflows": {
       "name": "名称",
@@ -1840,7 +1939,15 @@
       "mergeIncidents": "合并事件",
       "addAlerts": "添加告警",
       "editIncident": "编辑事件",
-      "removeAlerts": "移除告警"
+      "removeAlerts": "移除告警",
+      "addAlertsManually": "手动添加告警",
+      "confirm": "确认",
+      "createTicket": "创建工单",
+      "discard": "丢弃",
+      "linkTicket": "关联工单",
+      "runAWorkflow": "运行工作流",
+      "runWorkflow": "运行工作流",
+      "tryAiCorrelation": "尝试 AI 关联"
     },
     "predictions": {
       "title": "事件预测",
@@ -2069,7 +2176,21 @@
     "signUpToKeep": "注册 Keep"
   },
   "rolesSidebar": {
-    "errorWhileAdding": "添加角色时出错"
+    "errorWhileAdding": "添加角色时出错",
+    "addRole": "添加角色",
+    "atLeastOneScope": "请至少选择一个权限范围",
+    "delete": "删除",
+    "description": "描述",
+    "descriptionRequired": "描述为必填项",
+    "editRole": "编辑角色",
+    "predefinedRole": "预定义",
+    "read": "读取",
+    "roleName": "角色名称",
+    "roleNameRequired": "角色名称为必填项",
+    "saveRole": "保存角色",
+    "scopes": "权限范围",
+    "update": "更新",
+    "write": "写入"
   },
   "auth": {
     "logout": {
@@ -2164,7 +2285,11 @@
       "revision": "版本",
       "triggeredBy": "触发方式",
       "manuallyBy": "由 {user} 手动触发",
-      "executionDuration": "执行耗时"
+      "executionDuration": "执行耗时",
+      "copyExecutionIdFailed": "复制执行 ID 失败，请检查浏览器权限。",
+      "executionIdCopied": "执行 ID 已复制到剪贴板",
+      "status": "状态",
+      "workflow": "工作流"
     },
     "emptyStates": {
       "resetFilter": "重置筛选",
@@ -2309,7 +2434,10 @@
       "youCanAlso": "您也可以",
       "uploadWorkflows": "上传工作流",
       "or": "或",
-      "startFromScratch": "从头开始"
+      "startFromScratch": "从头开始",
+      "cannotDeleteProvisioned": "无法删除已配置的工作流",
+      "cannotModifyProvisioned": "无法修改已配置的工作流",
+      "noTriggers": "暂无触发器"
     },
     "errorLoading": "加载工作流出错",
     "execution": {
@@ -2357,7 +2485,17 @@
       "lastExecution": "最后执行",
       "nextExecution": "下次执行",
       "workflowId": "工作流 ID",
-      "executionCount": "执行次数"
+      "executionCount": "执行次数",
+      "alertRule": "告警规则",
+      "disabled": "已禁用",
+      "issue": "个问题",
+      "issues": "个问题",
+      "noDescription": "暂无描述",
+      "provisioned": "已配置",
+      "seconds": "秒",
+      "triggers": "触发器",
+      "unknown": "未知",
+      "validYAML": "YAML 有效"
     },
     "preview": {
       "title": "工作流预览",
@@ -2383,7 +2521,8 @@
       "allWorkflows": "全部工作流",
       "workflowRevision": "工作流版本 {revision}",
       "executionDetails": "执行详情",
-      "workflowDetails": "工作流详情"
+      "workflowDetails": "工作流详情",
+      "workflowExecutionDetails": "工作流执行详情"
     },
     "tabs": {
       "secrets": "密钥",
@@ -2392,7 +2531,8 @@
       "yaml": "YAML 定义",
       "documentation": "文档",
       "versions": "版本",
-      "tutorials": "教程"
+      "tutorials": "教程",
+      "yamlDefinition": "YAML 定义"
     },
     "versions": {
       "errorLoading": "加载工作流版本时出错",
@@ -2566,5 +2706,12 @@
     "noColumnsFound": "未找到匹配\"{search}\"的列",
     "savingChanges": "保存中...",
     "saveChanges": "保存更改"
+  },
+  "extraction": {
+    "fingerprint": "指纹",
+    "noAlerts": "未找到告警",
+    "runFailed": "提取规则运行失败",
+    "selectAlertPlaceholder": "选择一个告警...",
+    "selectAlertTitle": "选择一个告警来运行提取规则"
   }
 }

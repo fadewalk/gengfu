@@ -50,7 +50,9 @@
       "configure": "Configure",
       "manage": "Manage",
       "learnMore": "Learn More",
-      "selectOrCreate": "Select or Create"
+      "selectOrCreate": "Select or Create",
+      "actions": "Actions",
+      "goBack": "Go Back"
     },
     "labels": {
       "name": "Name",
@@ -109,7 +111,14 @@
       "lastLogin": "Last Login",
       "scopes": "Scopes",
       "predefined": "Predefined",
-      "by": "by"
+      "by": "by",
+      "createdBy": "Created By",
+      "logs": "Logs",
+      "notApplicable": "N/A",
+      "rows": "rows",
+      "updatedBy": "Updated By",
+      "and": "and",
+      "more": "more"
     },
     "messages": {
       "success": "Operation completed successfully",
@@ -231,7 +240,8 @@
       "past6Hours": "Past 6 hours",
       "past6Days": "Past 6 days",
       "past60Days": "Past 60 days"
-    }
+    },
+    "error": "Error"
   },
   "auth": {
     "login": {
@@ -338,7 +348,8 @@
       "suppressed": "Suppressed",
       "dismissed": "Dismissed",
       "pending": "Pending",
-      "maintenance": "Maintenance"
+      "maintenance": "Maintenance",
+      "title": "Status"
     },
     "severity": {
       "title": "Severity",
@@ -715,7 +726,15 @@
       "updateStatus": "Update Status",
       "assignUser": "Assign User",
       "addAlerts": "Add Alerts",
-      "removeAlerts": "Remove Alerts"
+      "removeAlerts": "Remove Alerts",
+      "addAlertsManually": "Add alerts manually",
+      "confirm": "Confirm",
+      "createTicket": "Create Ticket",
+      "discard": "Discard",
+      "linkTicket": "Link Ticket",
+      "runAWorkflow": "Run a workflow",
+      "runWorkflow": "Run workflow",
+      "tryAiCorrelation": "Try AI Correlation"
     },
     "labels": {
       "incidentId": "Incident ID",
@@ -729,7 +748,32 @@
       "affectedServices": "Affected Services",
       "startTime": "Start Time",
       "endTime": "End Time",
-      "duration": "Duration"
+      "duration": "Duration",
+      "action": "Action",
+      "alertSources": "Alert Sources",
+      "correlation": "Correlation",
+      "date": "Date",
+      "enterTicketDescription": "Enter ticket description",
+      "enterTicketTitle": "Enter ticket title",
+      "fingerprint": "Fingerprint",
+      "groupedBy": "Grouped by",
+      "incidentDetails": "Incident Details",
+      "involvedServices": "Involved Services",
+      "lastSeenAt": "Last seen at",
+      "name": "Name",
+      "numberOfAlerts": "Number of Alerts",
+      "selectProvider": "Select provider",
+      "selectTicketingProvider": "Select ticketing provider",
+      "selectedProvider": "Selected provider",
+      "severity": "Severity",
+      "source": "Source",
+      "startedAt": "Started at",
+      "ticketDescription": "Ticket Description",
+      "ticketIdOptional": "Ticket ID (optional)",
+      "ticketTitle": "Ticket Title",
+      "ticketUrl": "Ticket URL",
+      "ticketing": "Ticketing",
+      "linkedIncident": "Linked Incident"
     },
     "table": {
       "status": "Status",
@@ -749,7 +793,25 @@
       "addCommentPlaceholder": "Add a comment...",
       "confirmBulkDelete": "Are you sure you want to delete {count} incidents? This action cannot be undone.",
       "noIncidentsMatchingFilters": "No Incidents Matching Filters",
-      "tryChangingFilters": "Try changing the filters"
+      "tryChangingFilters": "Try changing the filters",
+      "alertsWillShowUpHere": "Alerts will show up here",
+      "commentAdded": "Comment added",
+      "confirmIncident": "Confirm incident",
+      "enterTicketUrlPlaceholder": "Enter ticket URL",
+      "failedToAddComment": "Failed to add comment",
+      "linkFailed": "Failed to link ticket",
+      "linkedSuccess": "Ticket linked successfully",
+      "linking": "Linking...",
+      "loadingProviders": "Loading providers...",
+      "noAlertsYet": "No alerts yet",
+      "noProvidersConfigured": "No providers configured",
+      "noTicketingProvidersConfigured": "No ticketing providers configured",
+      "orphaned": "Orphaned",
+      "pleaseEnterTicketUrl": "Please enter a ticket URL",
+      "pleaseSelectProvider": "Please select a provider",
+      "ticketNote": "You will be redirected to the provider's website to complete the ticket creation.",
+      "topology": "Topology",
+      "topologyTooltip": "This incident was created from topology correlation"
     },
     "tabs": {
       "overview": "Overview",
@@ -767,7 +829,8 @@
       "initialMessage": "Hi! Lets work together to resolve this incident! Ask me anything",
       "placeholder": "For example: Find the root cause of this incident",
       "addToRCA": "Add to RCA",
-      "addedToRCA": "Added to RCA"
+      "addedToRCA": "Added to RCA",
+      "traceNotFound": "Trace not found"
     },
     "overview": {
       "summary": "Summary",
@@ -847,7 +910,13 @@
       "unlinkFromIncident": "Unlink from incident",
       "split": "Split",
       "unlink": "Unlink",
-      "viewInFeed": "View in feed"
+      "viewInFeed": "View in feed",
+      "ai": "AI",
+      "correlatedAI": "Correlated by AI",
+      "correlatedManually": "Correlated manually",
+      "correlatedTopology": "Correlated by topology",
+      "manually": "Manual",
+      "topology": "Topology"
     },
     "timeline": {
       "noTimelineYet": "No Timeline Yet",
@@ -897,8 +966,28 @@
       "trigger": "Trigger",
       "triggerDetails": "Trigger Details",
       "noWorkflows": "No Workflows",
-      "noWorkflowsDescription": "No workflows have been executed for this incident yet."
-    }
+      "noWorkflowsDescription": "No workflows have been executed for this incident yet.",
+      "executionLogs": "Execution Logs",
+      "noLogs": "No logs"
+    },
+    "enrichments": {
+      "addName": "Add name",
+      "addValue": "Add value",
+      "noDataFor": "No data for",
+      "unenrich": "Unenrich",
+      "addNewField": "Add new field"
+    },
+    "notFound": {
+      "noIncidentsFound": "No incidents found",
+      "noActiveIncidents": "No active incidents",
+      "noIncidentsMatchingFilter": "No incidents matching your filter",
+      "clearFiltersToSeeAll": "Clear filters to see all incidents",
+      "correlateManually": "Correlate Manually",
+      "tryAICorrelation": "Try AI Correlation"
+    },
+    "notFoundPage": "Incident Not Found",
+    "notFoundHelp": "The incident you are looking for does not exist or has been deleted.",
+    "goAllIncidents": "Go to All Incidents"
   },
   "workflows": {
     "title": "Workflows",
@@ -934,7 +1023,10 @@
       "viewExecutions": "View Executions",
       "viewLogs": "View Logs",
       "downloadYAML": "Download YAML",
-      "importYAML": "Import YAML"
+      "importYAML": "Import YAML",
+      "download": "Download",
+      "lastExecutions": "Last Executions",
+      "openInBuilder": "Open in Builder"
     },
     "builder": {
       "title": "Workflow Builder",
@@ -1038,7 +1130,17 @@
       "nextExecution": "Next Execution",
       "executionCount": "Execution Count",
       "successRate": "Success Rate",
-      "averageDuration": "Average Duration"
+      "averageDuration": "Average Duration",
+      "alertRule": "Alert Rule",
+      "disabled": "Disabled",
+      "issue": "issue",
+      "issues": "issues",
+      "noDescription": "No description",
+      "provisioned": "Provisioned",
+      "seconds": "seconds",
+      "triggers": "Triggers",
+      "unknown": "Unknown",
+      "validYAML": "Valid YAML"
     },
     "messages": {
       "notFound": "Workflow not found",
@@ -1049,7 +1151,16 @@
       "confirmRun": "Are you sure you want to run this workflow now?",
       "executionStarted": "Workflow execution started",
       "executionCompleted": "Workflow execution completed",
-      "executionFailed": "Workflow execution failed"
+      "executionFailed": "Workflow execution failed",
+      "cannotDeleteProvisioned": "Cannot delete provisioned workflow",
+      "cannotModifyProvisioned": "Cannot modify provisioned workflow",
+      "noTriggers": "No triggers",
+      "chooseTemplateDescription": "Choose a workflow template to start building your automation.",
+      "createFirstWorkflow": "Create your first workflow",
+      "youCanAlso": "You can also",
+      "uploadWorkflows": "Upload Workflows",
+      "or": "or",
+      "startFromScratch": "Start from scratch"
     },
     "tabs": {
       "overview": "Overview",
@@ -1058,7 +1169,8 @@
       "versions": "Versions",
       "secrets": "Secrets",
       "tutorials": "Tutorials",
-      "documentation": "Documentation"
+      "documentation": "Documentation",
+      "yamlDefinition": "YAML Definition"
     },
     "errorLoading": "Error loading workflow",
     "running": "Running...",
@@ -1068,7 +1180,8 @@
       "workflowDetails": "Workflow Details",
       "executionDetails": "Execution Details",
       "workflowRevision": "Workflow Revision {revision}",
-      "builder": "Workflow Builder"
+      "builder": "Workflow Builder",
+      "workflowExecutionDetails": "Workflow Execution Details"
     },
     "preview": {
       "title": "Workflow Preview",
@@ -1090,7 +1203,11 @@
       "manuallyBy": "Manually by {user}",
       "interval": "Interval",
       "manuallyTriggered": "Manually",
-      "alert": "Alert"
+      "alert": "Alert",
+      "copyExecutionIdFailed": "Failed to copy execution id. Please check your browser permissions.",
+      "executionIdCopied": "Execution ID copied to clipboard",
+      "status": "Status",
+      "workflow": "Workflow"
     },
     "filters": {
       "filterWorkflows": "Filter Workflows...",
@@ -1109,7 +1226,12 @@
         "scheduler": "Scheduler",
         "manual": "Manual",
         "alert": "Alert"
-      }
+      },
+      "createdBy": "Created By",
+      "enablingStatus": "Enabling Status",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "notAssigned": "Not Assigned"
     },
     "emptyStates": {
       "noMatchingFilter": "No workflows to display matching your filter",
@@ -1203,6 +1325,71 @@
       "hideAIAssistant": "Hide AI Assistant",
       "loadingProviders": "Loading providers...",
       "failedToLoadProviders": "Failed to load providers"
+    },
+    "createModal": {
+      "title": "Create Workflow",
+      "chooseTemplate": "Choose a Template",
+      "orSkip": "or skip",
+      "startFromScratch": "Start from Scratch"
+    },
+    "emptyState": {
+      "title": "No Workflows Yet",
+      "description": "Create your first workflow to automate alert handling.",
+      "createWorkflow": "Create Workflow",
+      "learnMore": "Learn More",
+      "howToCreate": "How to Create a Workflow",
+      "getSupport": "Get Support"
+    },
+    "overview": {
+      "errorLoading": "Error loading workflow overview",
+      "totalExecutions": "Total Executions",
+      "passFailRatio": "Pass/Fail Ratio",
+      "successPercent": "Success %",
+      "avgDuration": "Avg Duration",
+      "steps": "Steps",
+      "executionsGraph": "Executions Graph",
+      "providers": "Providers",
+      "executionHistory": "Execution History"
+    },
+    "secrets": {
+      "confirmDelete": "Are you sure you want to delete this secret?",
+      "name": "Name",
+      "value": "Value",
+      "actions": "Actions",
+      "secretNamePlaceholder": "Enter secret name",
+      "secretValuePlaceholder": "Enter secret value",
+      "addSecret": "Add Secret"
+    },
+    "syncStatus": {
+      "justNow": "Just now",
+      "savedToKeep": "Saved to Keep",
+      "notSaved": "Not saved",
+      "revision": "Revision",
+      "saved": "Saved",
+      "toKeep": "to Keep",
+      "changesNotSaved": "Changes not saved"
+    },
+    "templates": {
+      "preview": "Preview"
+    },
+    "uploadModal": {
+      "title": "Upload Workflow",
+      "supportedFormats": "Supported formats: .yaml, .yml",
+      "orPasteYaml": "or paste YAML",
+      "load": "Load",
+      "orTryExamples": "or try examples",
+      "slackExample": "Slack Example",
+      "sqlExample": "SQL Example",
+      "moreExamplesAt": "More examples at",
+      "githubRepo": "GitHub Repository"
+    },
+    "versions": {
+      "errorLoading": "Error loading versions",
+      "noRevisions": "No revisions",
+      "loading": "Loading...",
+      "revision": "Revision",
+      "current": "Current",
+      "showDiff": "Show Diff"
     }
   },
   "dashboard": {
@@ -1273,7 +1460,31 @@
       "thresholds": "Thresholds",
       "thresholdValue": "Threshold value",
       "valueRequired": "Preset selection is required"
-    }
+    },
+    "genericMetrics": "Generic Metrics",
+    "lastReceived": "Last Received",
+    "presetRequired": "Preset is required",
+    "selectAlertColumns": "Select Alert Columns",
+    "selectGenericMetrics": "Select Generic Metrics",
+    "selectMetricWidget": "Select Metric Widget",
+    "timestamp": "Timestamp",
+    "widget": {
+      "editWidget": "Edit Widget",
+      "addWidget": "Add Widget",
+      "updateWidget": "Update Widget",
+      "widgetName": "Widget Name",
+      "namePlaceholder": "Enter widget name",
+      "nameRequired": "Widget name is required",
+      "widgetType": "Widget Type",
+      "selectType": "Select widget type",
+      "typeRequired": "Widget type is required",
+      "types": {
+        "PRESET": "Preset",
+        "GENERICS_METRICS": "Generic Metrics",
+        "METRIC": "Metric"
+      }
+    },
+    "alert_quality": "Alert Quality"
   },
   "settings": {
     "title": "Settings",
@@ -1322,8 +1533,21 @@
       "deleteGroup": "Delete Group",
       "searchPlaceholder": "Search by group name",
       "messages": {
-        "confirmDelete": "Are you sure you want to delete this group?"
-      }
+        "confirmDelete": "Are you sure you want to delete this group?",
+        "failedToSave": "Failed to save group",
+        "managementDisabledWith": "Groups management is disabled. For more information, see the documentation.",
+        "savingError": "Error while saving group",
+        "unexpectedError": "An unexpected error occurred"
+      },
+      "cancel": "Cancel",
+      "createGroup": "Create Group",
+      "groupDetails": "Group Details",
+      "groupName": "Group Name",
+      "groupNameRequired": "Group name is required",
+      "members": "Members",
+      "roles": "Roles",
+      "save": "Save",
+      "saving": "Saving..."
     },
     "roles": {
       "title": "Roles Management",
@@ -1332,7 +1556,8 @@
       "deleteRole": "Delete Role",
       "searchPlaceholder": "Search by role name",
       "messages": {
-        "confirmDelete": "Are you sure you want to delete this role?"
+        "confirmDelete": "Are you sure you want to delete this role?",
+        "managementDisabledWith": "Roles management is disabled. For more information, see the documentation."
       }
     },
     "apiKeys": {
@@ -1348,7 +1573,9 @@
       "messages": {
         "regenerateConfirm": "This action cannot be undone. This will revoke the key and generate a new one. Any further requests made with this key will fail. Make sure to update any applications that use this key.",
         "deleteConfirm": "This action cannot be undone. This will permanently delete the API key and any future requests using this key will fail.",
-        "creationDisabled": "API Key creation is disabled because Keep is running in NO_AUTH mode."
+        "creationDisabled": "API Key creation is disabled because Keep is running in NO_AUTH mode.",
+        "createFailed": "Failed to create API key",
+        "managementDisabledWith": "API Key management is disabled. For more information, see the documentation."
       }
     },
     "sso": {
@@ -1359,10 +1586,18 @@
         "clientId": "Client ID",
         "clientSecret": "Client Secret",
         "tenantId": "Tenant ID"
+      },
+      "messages": {
+        "managementDisabledWith": "SSO management is disabled. For more information, see the documentation."
       }
     },
     "permissions": {
-      "title": "Permissions"
+      "title": "Permissions",
+      "messages": {
+        "managementDisabledWith": "Permissions management is disabled. For more information, see the documentation."
+      },
+      "subtitle": "Manage permissions for your workspace",
+      "searchPlaceholder": "Search permissions..."
     },
     "providerImages": {
       "title": "Upload Provider Icons",
@@ -1394,7 +1629,8 @@
     },
     "tenant": {
       "title": "Tenant Settings"
-    }
+    },
+    "subtitle": "Manage your workspace settings"
   },
   "providers": {
     "layout": {
@@ -1471,7 +1707,11 @@
       "id": "Id: ",
       "slackCommunity": "Slack Community",
       "checkHealth": "Check health",
-      "providerNameDisabled": "This field is disabled because it is pre-filled from the workflow."
+      "providerNameDisabled": "This field is disabled because it is pre-filled from the workflow.",
+      "enterField": "Enter {id}",
+      "selectField": "Select {id}",
+      "fileChosen": "File chosen: {name}",
+      "uploadFile": "Upload {id}"
     },
     "formFields": {
       "addEntry": "Add Entry"
@@ -1488,6 +1728,75 @@
       "data": "Data",
       "queue": "Queue",
       "incident": "Incident"
+    },
+    "messages": {
+      "installSuccess": "Provider installed successfully",
+      "noProviders": "No providers found",
+      "found": "found"
+    },
+    "notConnected": "Not Connected",
+    "installed": "Installed",
+    "available": "Available",
+    "linked": "Linked",
+    "title": "Providers",
+    "optionalSettings": "Optional Settings",
+    "configuration": "Configuration",
+    "connected": "Connected",
+    "version": "Version",
+    "deleteConfirm": "Are you sure you want to delete this provider?",
+    "webhookDisabled": "Webhook is disabled",
+    "webhookDisabledReadDocs": "Read the docs",
+    "webhookDisabledLearnMore": "Learn more",
+    "installFailed": "Failed to install provider",
+    "deleteFailed": "Failed to delete provider",
+    "readOnlyMode": "Read-only mode",
+    "providerAlreadyExists": "Provider already exists",
+    "scopesInvalid": "Invalid scopes",
+    "webhookTooltip": "Webhook URL",
+    "error": "Error",
+    "categories": {
+      "AI": "AI",
+      "Monitoring": "Monitoring",
+      "IncidentManagement": "Incident Management",
+      "CloudInfrastructure": "Cloud Infrastructure",
+      "Ticketing": "Ticketing",
+      "DeveloperTools": "Developer Tools",
+      "Database": "Database",
+      "IdentityandAccessManagement": "Identity & Access Management",
+      "Security": "Security",
+      "Collaboration": "Collaboration",
+      "CRM": "CRM",
+      "Queues": "Queues",
+      "Orchestration": "Orchestration",
+      "ComingSoon": "Coming Soon",
+      "Others": "Others"
+    },
+    "validation": {
+      "invalidPort": "Invalid port",
+      "required": "This field is required",
+      "atLeastOneEntry": "At least one entry is required",
+      "uploadFile": "Please upload a file",
+      "validTLD": "Please enter a valid TLD",
+      "validUrl": "Please enter a valid URL",
+      "validUrlProtocol": "URL must start with http:// or https://",
+      "relativeUrlNotAllowed": "Relative URLs are not allowed",
+      "multiProtocolNotAllowed": "Multiple protocols are not allowed",
+      "portRequired": "Port is required",
+      "invalidPortNumber": "Invalid port number",
+      "invalidHost": "Invalid host",
+      "wildcardHostNotAllowed": "Wildcard hosts are not allowed",
+      "multiHostNotAllowed": "Multiple hosts are not allowed",
+      "invalidMultiHostProtocol": "Invalid protocol for multi-host URL",
+      "validTldRequired": "A valid TLD is required",
+      "protocolRequired": "Protocol is required",
+      "protocolOrRequired": "Protocol or host is required",
+      "oneOfProtocolsRequired": "One of the allowed protocols is required",
+      "urlMaxLength": "URL length is invalid, max length is {max}.",
+      "fileTypeOneOf": "File type should be one of {types}.",
+      "fileType": "File type should be {type}."
+    },
+    "labels": {
+      "provider": "provider"
     }
   },
   "rules": {
@@ -1504,6 +1813,13 @@
         "noAlertsFoundRuleCondition": "No alerts were found with this condition. Please try something else.",
         "noAlertsFoundCorrelationConditions": "No alerts were found with these correlation rule conditions. Please try something else.",
         "gettingYourAlerts": "Getting your alerts..."
+      },
+      "subtitle": "Create correlation rules to group alerts into incidents",
+      "sidebar": {
+        "description": "Correlation rules group alerts into incidents based on conditions.",
+        "description1": "Use CEL expressions to define when alerts should be grouped together.",
+        "groupDescription": "Group Description",
+        "errorWhileSaving": "Error while saving correlation rule"
       }
     },
     "mapping": {
@@ -1645,8 +1961,14 @@
         "status": "Status:",
         "logs": "Logs",
         "alertId": "Alert ID:",
-        "extractedFields": "Extracted Fields"
-      }
+        "extractedFields": "Extracted Fields",
+        "title": "Executions"
+      },
+      "selectAlertTitle": "Select alert to run extraction rule against",
+      "selectAlertPlaceholder": "Select an alert...",
+      "fingerprint": "Fingerprint",
+      "noAlerts": "No alerts found",
+      "runFailed": "Failed to run extraction"
     },
     "deduplication": {
       "title": "Deduplication Rules",
@@ -1669,7 +1991,9 @@
         "tooltips": {
           "distribution": "Displays the number of alerts processed hourly over the last 24 hours. A consistent or high distribution indicates steady activity for this deduplication rule.",
           "dedupRatio": "Represents the percentage of alerts successfully deduplicated. Higher values indicate better deduplication efficiency, meaning fewer redundant alerts."
-        }
+        },
+        "saveFailed": "Failed to save rule",
+        "unexpectedError": "An unexpected error occurred"
       },
       "table": {
         "description": "Description",
@@ -1677,7 +2001,22 @@
         "dedupRatio": "Dedup Ratio",
         "distribution": "Distribution",
         "fields": "Fields",
-        "actions": "Disable Rule"
+        "actions": {
+          "delete": "Delete"
+        },
+        "unknown": "Unknown",
+        "defaultRuleName": "{provider} Deduplication Rule",
+        "tooltips": {
+          "distribution": "Shows the number of alerts processed per hour over the last 24 hours. A consistent or high distribution indicates this deduplication rule is actively processing.",
+          "dedupRatio": "Represents the percentage of alerts successfully deduplicated. A higher value indicates better deduplication efficiency with fewer redundant alerts.",
+          "cannotDeleteDefault": "Cannot delete default rule",
+          "cannotDeleteProvisioned": "Cannot delete provisioned rule"
+        },
+        "badges": {
+          "default": "Default",
+          "custom": "Custom",
+          "fullDeduplication": "Full Deduplication"
+        }
       },
       "sidebar": {
         "addRule": "Add deduplication rule",
@@ -1708,7 +2047,8 @@
         "selectIgnoreFields": "Select ignore fields",
         "errorWhileSaving": "Error while saving rule",
         "saving": "Saving...",
-        "save": "Save"
+        "save": "Save",
+        "activeHint": "This page will become active once the first alerts are registered."
       },
       "form": {
         "keepProvider": "Keep",
@@ -1748,6 +2088,11 @@
           "selectFingerprintFields": "Select fingerprint fields",
           "selectIgnoreFields": "Select ignore fields"
         }
+      },
+      "page": {
+        "title": "Deduplication Rules",
+        "subtitle": "Manage deduplication rules to reduce alert noise",
+        "createRuleButton": "Create Deduplication Rule"
       }
     },
     "labels": {
@@ -1802,7 +2147,14 @@
         "createApplication": "Create Application",
         "editDependency": "Edit Dependency",
         "enterProtocol": "Please enter the protocol:"
-      }
+      },
+      "applicationName": "Application Name",
+      "nameRequired": "Application name is required",
+      "repositoryUrl": "Repository URL",
+      "selectAtLeastOne": "Please select at least one service",
+      "selectedServices": "Selected Services",
+      "validUrl": "Please enter a valid URL",
+      "description": "Applications group services together for better organization and management."
     },
     "infrastructure": "Infrastructure",
     "dependencies": "Dependencies",
@@ -1840,7 +2192,8 @@
       "errorDeletingConnection": "Failed to delete connection from {source} to {target}",
       "failedToUpdateProtocol": "Failed to update protocol",
       "selectServiceOrApplication": "Select a service or application",
-      "serviceOrApplication": "service or application"
+      "serviceOrApplication": "service or application",
+      "errorDeletingService": "Error deleting service"
     },
     "labels": {
       "service": "Service",
@@ -1888,7 +2241,14 @@
     "map": {
       "errorLoadingTopology": "Error Loading Topology Data",
       "errorLoadingDescription": "We encountered some problem while trying to load your topology data, please contact us if this issue continues"
-    }
+    },
+    "addNode": {
+      "failed": "Failed to add node",
+      "success": "Node added successfully",
+      "updateFailed": "Failed to update node",
+      "updateSuccess": "Node updated successfully"
+    },
+    "description": "Manage your services and applications topology"
   },
   "maintenance": {
     "title": "Maintenance Windows",
@@ -1966,8 +2326,12 @@
       "title": "403 Not Authorized",
       "defaultMessage": "You do not have permission to access this page.",
       "contactSupport": "If you need help, please contact us on",
-      "goBack": "Go back"
-    }
+      "goBack": "Go back",
+      "message": "You do not have permission to access this page.",
+      "contactUs": "Contact us for help",
+      "slack": "Slack"
+    },
+    "message": "Error"
   },
   "notAuthorized": {
     "title": "403 Not Authorized",
@@ -1992,7 +2356,18 @@
       "notCoveredMessage": "Not of your services are covered. Alerts are missing for:",
       "wantToImprove": "Want to improve your observability?",
       "signUpToKeep": "Sign up to Keep"
-    }
+    },
+    "resultsTitle": "Health Check Results",
+    "spammyAlerts": "Spammy Alerts",
+    "spammyAlertsDescription": "Alerts that fire frequently without actionable insights.",
+    "everythingOk": "Everything looks good!",
+    "rulesQuality": "Rules Quality",
+    "actionable": "Actionable",
+    "topologyCoverage": "Topology Coverage",
+    "notCovered": "Not Covered",
+    "improveObservability": "Improve Observability",
+    "signUpToKeep": "Sign up for Keep",
+    "unusedRules": "Unused Rules"
   },
   "notFound": {
     "title": "404 Page not found",
@@ -2144,6 +2519,13 @@
       "multiLevelPropertyName": "Multi-level property name",
       "multiLevelPropertyNameTooltip": "The property name to use for the multi-level correlation. For example, if the property name is 'host', the correlation will be 'host1, host2'.",
       "multiLevelPropertyNameRequired": "Multi-level property name is required"
+    },
+    "table": {
+      "correlationName": "Correlation Name",
+      "incidentNameTemplate": "Incident Name Template",
+      "incidentPrefix": "Incident Prefix",
+      "groupedBy": "Grouped By",
+      "incidents": "Incidents"
     }
   },
   "userSidebar": {
@@ -2168,7 +2550,9 @@
     "unexpectedError": "An unexpected error occurred",
     "close": "Close",
     "saving": "Saving...",
-    "save": "Save"
+    "save": "Save",
+    "errorWhileAdding": "Error while adding user",
+    "errorWhileSaving": "Error while saving user"
   },
   "groupSidebar": {
     "createGroup": "Create Group",
@@ -2279,5 +2663,55 @@
     "noColumnsFound": "No columns found matching \"{search}\"",
     "savingChanges": "Saving...",
     "saveChanges": "Save changes"
+  },
+  "extraction": {
+    "fingerprint": "Fingerprint",
+    "noAlerts": "No alerts found",
+    "runFailed": "Failed to run extraction",
+    "selectAlertPlaceholder": "Select an alert...",
+    "selectAlertTitle": "Select alert to run extraction rule against"
+  },
+  "rolesSidebar": {
+    "addRole": "Add Role",
+    "atLeastOneScope": "Please select at least one scope",
+    "delete": "Delete",
+    "description": "Description",
+    "descriptionRequired": "Description is required",
+    "editRole": "Edit Role",
+    "predefinedRole": "Predefined",
+    "read": "Read",
+    "roleName": "Role Name",
+    "roleNameRequired": "Role name is required",
+    "saveRole": "Save Role",
+    "scopes": "Scopes",
+    "update": "Update",
+    "write": "Write",
+    "errorWhileAdding": "Error while adding role"
+  },
+  "mapping": {
+    "allRules": "All Rules",
+    "rule": "Mapping Rule",
+    "executions": "Executions",
+    "executionDetails": "Execution Details",
+    "logs": "Logs",
+    "alertId": "Alert ID",
+    "enrichedFields": "Enriched Fields"
+  },
+  "notificationsHub": {
+    "title": "Notifications Hub",
+    "description": "Manage your notification preferences",
+    "comingSoon": "Coming Soon"
+  },
+  "alertQuality": {
+    "tabs": {
+      "all": "All",
+      "installed": "Installed",
+      "linked": "Linked"
+    },
+    "error": "Error",
+    "loadFailed": "Failed to load alert quality data",
+    "providerName": "Provider",
+    "alertsReceived": "Alerts Received",
+    "correlatedPercent": "Correlated %"
   }
 }
