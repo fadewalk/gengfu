@@ -7,6 +7,28 @@ import { startCase } from "lodash";
 // Type definition for column rename mapping
 export type ColumnRenameMapping = Record<string, string>;
 
+// Column IDs that have translations under alerts.table.*
+const TRANSLATABLE_COLUMN_IDS = new Set<string>([
+  "fingerprint",
+  "source",
+  "service",
+  "lastReceived",
+  "count",
+  "duration",
+  "assignee",
+  "ticket",
+  "ticketUrl",
+  "status",
+  "severity",
+  "name",
+  "description",
+  "message",
+  "url",
+  "startedAt",
+  "endedAt",
+  "isDuplicate",
+]);
+
 /**
  * Column rename submenu component for dropdown menu
  */
@@ -172,10 +194,9 @@ export const getColumnDisplayName = (
   if (columnRenameMapping[columnId]) {
     return columnRenameMapping[columnId];
   }
-  const translationKey = `alerts.table.${columnId}`;
-  if (t) {
-    const translated = t(translationKey);
-    if (translated !== translationKey) {
+  if (t && TRANSLATABLE_COLUMN_IDS.has(columnId)) {
+    const translated = t(`alerts.table.${columnId}`);
+    if (translated !== `alerts.table.${columnId}`) {
       return translated;
     }
   }
