@@ -74,6 +74,8 @@ export function TriggerEditor() {
     updateV2Properties({ alert: currentProperties });
   };
 
+  const { data: alertFields } = useFacetPotentialFields("alerts");
+
   const triggerKeys = ["alert", "incident", "interval", "manual"];
 
   if (!selectedNode || !triggerKeys.includes(selectedNode)) {
@@ -86,7 +88,6 @@ export function TriggerEditor() {
   const error = validationErrors?.[selectedTriggerKey];
 
   const renderTriggerContent = () => {
-    const { data: alertFields } = useFacetPotentialFields("alerts");
 
     switch (selectedTriggerKey) {
       case "manual":
@@ -103,6 +104,7 @@ export function TriggerEditor() {
                 )
               }
               disabled={true}
+              aria-label="Manual trigger"
             />
           </div>
         );
