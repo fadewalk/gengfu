@@ -11,8 +11,9 @@ interface MonacoCelProps extends EditorProps {
 // Monaco Editor - imported as an npm package instead of loading from the CDN to support air-gapped environments
 // https://github.com/suren-atoyan/monaco-react?tab=readme-ov-file#use-monaco-editor-as-an-npm-package
 // Dynamic import to avoid SSR "window is not defined" error
+// @ts-expect-error dynamic import returns Promise, but loader accepts it at runtime
 loader.config({
-  monaco: () => import("monaco-editor") as any,
+  monaco: () => import("monaco-editor"),
 });
 
 export function MonacoCelBase(props: MonacoCelProps) {
