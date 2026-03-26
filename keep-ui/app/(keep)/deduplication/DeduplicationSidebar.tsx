@@ -197,7 +197,7 @@ const DeduplicationSidebar: React.FC<DeduplicationSidebarProps> = ({
         <div>
           <Dialog.Title className="font-bold" as={Title}>
             {selectedDeduplicationRule
-              ? `${t("rules.deduplication.form.editRule")} ${selectedDeduplicationRule.name}`
+              ? t("rules.deduplication.form.editRule", { name: selectedDeduplicationRule.name })
               : t("rules.deduplication.form.addRule")}
             {selectedDeduplicationRule?.default && (
               <Badge className="ml-2" color="orange">
