@@ -191,7 +191,7 @@ export default function CreateOrUpdateExtractionRule({
         <Switch checked={isPreFormatting} onChange={setIsPreFormatting} />
       </div>
       <Divider />
-      <Subtitle className="mt-2.5 flex items-center">
+      <div className="mt-2.5 flex items-center text-tremor-content-emphasis dark:text-dark-tremor-content-emphasis font-medium text-sm">
         {t("rules.extraction.form.extractionDefinition")}{" "}
         <a
           href={`${
@@ -207,7 +207,7 @@ export default function CreateOrUpdateExtractionRule({
             tooltip={t("rules.extraction.form.docsTooltip")}
           />
         </a>
-      </Subtitle>
+      </div>
       <div className="mt-2.5">
         <Text>
           {t("rules.extraction.form.attribute")}<span className="text-red-500 text-xs">*</span>
