@@ -1,9 +1,6 @@
-import { getTranslations } from "next-intl";
 import AISettings from "./ai-settings";
 
 export default async function AISettingsPage() {
-  const t = await getTranslations();
-
   return (
     <div className="flex flex-col gap-4">
       <div className="bg-white rounded-lg border p-6">

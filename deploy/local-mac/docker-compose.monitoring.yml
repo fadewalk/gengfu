@@ -1,0 +1,28 @@
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.0
+    container_name: local-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../../state/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../../state/alert.rules:/etc/prometheus/alert.rules:ro
+      - ../../state/prometheus_data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: local-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ../../state/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

@@ -272,33 +272,53 @@
       "description": "描述"
     },
     "deduplication": {
+      "title": "去重规则",
+      "addRule": "添加去重规则",
+      "page": {
+        "title": "去重规则",
+        "subtitle": "告警去重是降噪的第一层。它将同一来源的相似告警进行分组。",
+        "createRuleButton": "添加去重规则"
+      },
       "messages": {
         "cannotDeleteProvisioned": "无法删除预配置规则。",
         "unknownYet": "未知",
-        "tooltips": {
-          "distribution": "显示过去 24 小时内每小时处理的告警数量。一致或较高的分布表示此去重规则活动稳定。",
-          "dedupRatio": "表示成功去重的告警百分比。值越高表示去重效率越好，冗余告警越少。"
-        },
-        "fullDeduplication": "完全去重",
-        "custom": "自定义",
         "cannotDeleteDefault": "无法删除默认规则",
+        "noRules": "暂无去重规则",
         "description1": "告警去重是降噪的第一层。它将同一来源的相似告警进行分组。",
-        "deleteRule": "删除规则",
+        "description2": "要将不同来源的告警关联为事件，请查看",
+        "activeHint": "当第一个告警注册后，此页面将变为可用。",
         "confirmDelete": "确定要删除此去重规则吗？",
         "deleteFailed": "删除去重规则出错：",
-        "activeHint": "当第一个告警注册后，此页面将变为可用。",
-        "noRules": "暂无去重规则",
+        "deleteRule": "删除规则",
+        "default": "默认",
+        "custom": "自定义",
+        "fullDeduplication": "完全去重",
         "defaultDeduplicationRule": "{provider} 去重规则",
-        "description2": "要将不同来源的告警关联为事件，请查看",
-        "default": "默认"
+        "saveFailed": "保存规则失败",
+        "unexpectedError": "发生意外错误"
       },
       "table": {
-        "distribution": "分布",
-        "dedupRatio": "去重率",
         "description": "描述",
         "ingested": "已接收",
+        "dedupRatio": "去重率",
+        "distribution": "分布",
         "fields": "字段",
-        "actions": "禁用规则"
+        "unknown": "未知",
+        "defaultRuleName": "去重规则",
+        "tooltips": {
+          "distribution": "显示过去 24 小时内每小时处理的告警数量。一致或较高的分布表示此去重规则活动稳定。",
+          "dedupRatio": "表示成功去重的告警百分比。值越高表示去重效率越好，冗余告警越少。",
+          "cannotDeleteDefault": "无法删除默认规则",
+          "cannotDeleteProvisioned": "无法删除预配置规则"
+        },
+        "badges": {
+          "default": "默认",
+          "custom": "自定义",
+          "fullDeduplication": "完全去重"
+        },
+        "actions": {
+          "delete": "禁用规则"
+        }
       },
       "sidebar": {
         "ruleName": "规则名称",
@@ -369,9 +389,7 @@
           "selectFingerprintFields": "选择指纹字段",
           "selectIgnoreFields": "选择忽略字段"
         }
-      },
-      "title": "去重规则",
-      "addRule": "添加去重规则"
+      }
     },
     "mapping": {
       "messages": {

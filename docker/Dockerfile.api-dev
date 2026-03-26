@@ -1,0 +1,16 @@
+# Development Dockerfile - extends pre-built base image
+# Build base first: docker build -f docker/Dockerfile.api-base -t keep-api-base:latest .
+#
+# This Dockerfile expects the base image to have:
+# - Python 3.13 with venv at /venv
+# - All pip dependencies installed
+# - The keep package installed in editable mode
+#
+# For development, use docker-compose.dev.yml which mounts source as volumes
+# so code changes are reflected immediately without rebuilding.
+
+FROM keep-api-base:latest
+
+# Override entrypoint to allow running without build for dev
+ENTRYPOINT ["/app/keep/entrypoint.sh"]
+CMD ["gunicorn", "keep.api.api:get_app", "--bind", "0.0.0.0:8080", "--workers", "4", "-k", "uvicorn.workers.UvicornWorker", "-c", "/app/keep/api/config.py", "--preload"]

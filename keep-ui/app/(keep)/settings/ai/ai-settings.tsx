@@ -13,12 +13,8 @@ import {
   Select,
   SelectItem,
   Badge,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
 } from "@tremor/react";
+import Modal from "@/components/ui/Modal";
 import { toast } from "react-toastify";
 import { TrashIcon, PlusIcon, PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -232,88 +228,83 @@ export default function AISettings() {
 
       {/* Add/Edit Modal */}
       <Modal
-        open={isModalOpen}
+        isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
           resetForm();
         }}
-        static
+        title={editingEndpoint ? "编辑 AI 端点" : "添加 AI 端点"}
       >
-        <ModalHeader>
-          {editingEndpoint ? "编辑 AI 端点" : "添加 AI 端点"}
-        </ModalHeader>
-        <ModalBody>
-          <div className="flex flex-col gap-4 py-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700">
-                端点名称 <span className="text-red-500">*</span>
-              </label>
-              <TextInput
-                value={formData.name}
-                onValueChange={(value) => setFormData({ ...formData, name: value })}
-                placeholder="例如: 智谱 GLM"
-                className="mt-1"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-700">
-                API 地址 <span className="text-red-500">*</span>
-              </label>
-              <TextInput
-                value={formData.baseUrl}
-                onValueChange={(value) => setFormData({ ...formData, baseUrl: value })}
-                placeholder="https://api.deepseek.com/v1"
-                className="mt-1"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                提供 OpenAI 兼容 API 的地址
-              </p>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-700">
-                API Key <span className="text-red-500">*</span>
-              </label>
-              <TextInput
-                value={formData.apiKey}
-                onValueChange={(value) => setFormData({ ...formData, apiKey: value })}
-                placeholder="sk-..."
-                className="mt-1"
-                type="password"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-700">模型列表</label>
-              <TextInput
-                value={formData.models}
-                onValueChange={(value) => setFormData({ ...formData, models: value })}
-                placeholder="glm-4, glm-3, qwen-2"
-                className="mt-1"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                多个模型用逗号分隔，第一个为默认模型。故障时会自动尝试后续模型。
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="isDefault"
-                checked={formData.isDefault}
-                onChange={(e) =>
-                  setFormData({ ...formData, isDefault: e.target.checked })
-                }
-                className="rounded border-gray-300"
-              />
-              <label htmlFor="isDefault" className="text-sm text-gray-700">
-                设为默认端点
-              </label>
-            </div>
+        <div className="flex flex-col gap-4 py-4">
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              端点名称 <span className="text-red-500">*</span>
+            </label>
+            <TextInput
+              value={formData.name}
+              onValueChange={(value) => setFormData({ ...formData, name: value })}
+              placeholder="例如: 智谱 GLM"
+              className="mt-1"
+            />
           </div>
-        </ModalBody>
-        <ModalFooter>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              API 地址 <span className="text-red-500">*</span>
+            </label>
+            <TextInput
+              value={formData.baseUrl}
+              onValueChange={(value) => setFormData({ ...formData, baseUrl: value })}
+              placeholder="https://api.deepseek.com/v1"
+              className="mt-1"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              提供 OpenAI 兼容 API 的地址
+            </p>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              API Key <span className="text-red-500">*</span>
+            </label>
+            <TextInput
+              value={formData.apiKey}
+              onValueChange={(value) => setFormData({ ...formData, apiKey: value })}
+              placeholder="sk-..."
+              className="mt-1"
+              type="password"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">模型列表</label>
+            <TextInput
+              value={formData.models}
+              onValueChange={(value) => setFormData({ ...formData, models: value })}
+              placeholder="glm-4, glm-3, qwen-2"
+              className="mt-1"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              多个模型用逗号分隔，第一个为默认模型。故障时会自动尝试后续模型。
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="isDefault"
+              checked={formData.isDefault}
+              onChange={(e) =>
+                setFormData({ ...formData, isDefault: e.target.checked })
+              }
+              className="rounded border-gray-300"
+            />
+            <label htmlFor="isDefault" className="text-sm text-gray-700">
+              设为默认端点
+            </label>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
           <Button
             size="xs"
             variant="secondary"
@@ -332,7 +323,7 @@ export default function AISettings() {
           >
             保存
           </Button>
-        </ModalFooter>
+        </div>
       </Modal>
     </div>
   );

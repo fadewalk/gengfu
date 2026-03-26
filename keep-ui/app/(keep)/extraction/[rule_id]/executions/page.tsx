@@ -47,7 +47,7 @@ export default function ExtractionExecutionsPage(props: {
           {rule?.name || `Rule ${params.rule_id}`}
           <Icon icon={ArrowRightIcon} color="gray" size="xs" /> {t("rules.extraction.executions.title")}
         </Subtitle>
-        <Title>{t("rules.extraction.executions.ruleExecutions")}</Title>
+        <Title>{t("rules.extraction.executions.extractionRuleExecutions")}</Title>
       </div>
 
       <Card>

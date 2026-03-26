@@ -139,7 +139,7 @@ export default function CreateOrUpdateExtractionRule({
       className="py-2 h-full overflow-y-auto"
       onSubmit={editMode ? updateExtraction : addExtraction}
     >
-      <Subtitle>{t("rules.extraction.form.metadata")}</Subtitle>
+      <Subtitle>{t("rules.extraction.form.extractionMetadata")}</Subtitle>
       <div className="mt-2.5">
         <Text>
           {t("rules.extraction.form.name")}<span className="text-red-500 text-xs">*</span>
@@ -204,7 +204,7 @@ export default function CreateOrUpdateExtractionRule({
             variant="simple"
             color="gray"
             size="sm"
-            tooltip={t("rules.extraction.form.extractionDefinitionTooltip")}
+            tooltip={t("rules.extraction.form.docsTooltip")}
           />
         </a>
       </Subtitle>
@@ -213,7 +213,7 @@ export default function CreateOrUpdateExtractionRule({
           {t("rules.extraction.form.attribute")}<span className="text-red-500 text-xs">*</span>
         </Text>
         <TextInput
-          placeholder={t("rules.extraction.form.placeholders.attribute")}
+          placeholder={t("rules.extraction.form.attributePlaceholder")}
           required={true}
           value={attribute}
           onValueChange={setAttribute}
@@ -235,11 +235,11 @@ export default function CreateOrUpdateExtractionRule({
           </a>
         </Text>
         <TextInput
-          placeholder={t("rules.extraction.form.placeholders.regex")}
+          placeholder={t("rules.extraction.form.regexPlaceholder")}
           required={true}
           value={regex}
           error={extractedAttributes.length === 0 && regex !== ""}
-          errorMessage={t("rules.extraction.form.regexError")}
+          errorMessage={t("rules.extraction.form.invalidRegex")}
           onValueChange={setRegex}
         />
       </div>

@@ -1,0 +1,73 @@
+# Development docker-compose - uses pre-built base image with volume mounts
+# for instant code changes without rebuilding.
+#
+# Usage:
+#   1. Build base image (once): docker build -f docker/Dockerfile.api-base -t keep-api-base:latest .
+#   2. Start backend + monitoring: docker compose -f deploy/local-mac/docker-compose.dev.yml up -d
+#   3. Code changes are reflected immediately (volume mounted)
+#   4. Frontend: run locally with `cd keep-ui && npx next dev -p 3000`
+#
+include:
+  - docker-compose.monitoring.yml
+
+services:
+  keep-backend:
+    image: keep-api-base:latest
+    extends:
+      file: ../../docker-compose.common.yml
+      service: keep-backend-common
+    environment:
+      - AUTH_TYPE=NO_AUTH
+      - KEEP_ALLOW_MESH_ALERT_INGESTION=true
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME}
+    volumes:
+      # Mount source code for instant code changes (no rebuild needed)
+      - ../../keep:/app/keep:rw
+      - ../../ee:/app/keep/ee:rw
+      - ../../examples:/examples:rw
+      - ../../state:/state:rw
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    depends_on:
+      - keep-websocket-server
+
+  # Frontend is intended to run locally (not in Docker) for faster dev experience.
+  # To start: cd keep-ui && NEXT_PUBLIC_API_URL=http://localhost:8080 npx next dev -p 3000
+  # To use Docker instead: uncomment below and run `docker compose ... up -d --build keep-frontend`
+  # keep-frontend:
+  #   build:
+  #     context: ../..
+  #     dockerfile: deploy/local-mac/Dockerfile.ui.dev
+  #   extends:
+  #     file: ../../docker-compose.common.yml
+  #     service: keep-frontend-common
+  #   environment:
+  #     - AUTH_TYPE=NO_AUTH
+  #     - API_URL=http://keep-backend:8080
+  #     - NEXT_PUBLIC_API_URL=http://keep-backend:8080
+  #     - SENTRY_DISABLED=true
+  #     - OPENAI_API_KEY=${OPENAI_API_KEY}
+  #     - OPEN_AI_API_KEY=${OPENAI_API_KEY}
+  #     - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+  #     - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME}
+  #   volumes:
+  #     - ../../keep-ui:/app/keep-ui:rw
+  #     - keep-ui-node-modules:/app/keep-ui/node_modules
+  #     - ../../state:/state:rw
+  #   ports:
+  #     - "4000:3000"
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - keep-backend
+
+  keep-websocket-server:
+    extends:
+      file: ../../docker-compose.common.yml
+      service: keep-websocket-server-common

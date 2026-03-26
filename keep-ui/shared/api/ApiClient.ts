@@ -18,13 +18,19 @@ const READ_ONLY_ALWAYS_ALLOWED_URLS = [
   "/workflows/facets/options",
 ];
 
+// Prevent multiple concurrent 401 responses from triggering redundant signouts
+let signOutInProgress = false;
+
 interface ApiClientOptions {
   headers?: Record<string, string>;
+  /** If true, 401 responses will not trigger automatic signout */
+  suppressSignOut?: boolean;
 }
 
 export class ApiClient {
   private readonly isServer: boolean;
   private readonly additionalHeaders: Record<string, string>;
+  private readonly suppressSignOut: boolean;
 
   constructor(
     private readonly session: Session | GuestSession | null,
@@ -33,6 +39,7 @@ export class ApiClient {
   ) {
     this.isServer = typeof window === "undefined";
     this.additionalHeaders = options.headers || {};
+    this.suppressSignOut = options.suppressSignOut || false;
   }
 
   isReady() {
@@ -77,12 +84,15 @@ export class ApiClient {
         const data = await response.json();
         if (response.status === 401) {
           // on server, middleware will handle the sign out
-          if (!this.isServer) {
+          if (!this.isServer && !signOutInProgress && !this.suppressSignOut) {
+            signOutInProgress = true;
             // For OAUTH2PROXY auth, redirect to oauth2-proxy's sign_out endpoint
             if (this.config?.AUTH_TYPE === AuthType.OAUTH2PROXY) {
               window.location.href = "/oauth2/sign_out";
             } else {
-              await signOutClient();
+              signOutClient().finally(() => {
+                signOutInProgress = false;
+              });
             }
           }
           throw new KeepApiError(

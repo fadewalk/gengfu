@@ -1,0 +1,76 @@
+# Stage 1: Build dependencies
+FROM python:3.13-slim-bookworm AS deps
+
+# Use Aliyun mirror for faster downloads in China
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    libffi-dev \
+    libssl-dev \
+    libpq-dev \
+    default-libmysqlclient-dev \
+    build-essential \
+    git && \
+    rm -rf /var/lib/apt/lists/*
+
+# Stage 2: Install Python dependencies
+FROM deps AS venv
+
+RUN python -m venv /venv
+ENV PATH="/venv/bin:${PATH}"
+
+COPY requirements.txt pyproject.toml poetry.lock ./
+RUN /venv/bin/pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple -r requirements.txt
+
+# Stage 3: Base image - install app in editable mode
+FROM venv AS base-install
+
+# Create non-root user
+RUN groupadd -g 1000 keep && \
+    adduser --disabled-password --gecos "" --uid 1000 --gid 1000 --shell /bin/sh keep
+
+WORKDIR /app
+
+COPY keep keep
+COPY ee keep/ee
+COPY examples examples
+COPY keep-ui/public/icons/unknown-icon.png unknown-icon.png
+
+# Install local package in editable mode to include custom providers
+RUN /venv/bin/pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple --use-deprecated=legacy-resolver -e . && \
+    find /venv -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true && \
+    find /venv -type f -name "*.pyc" -delete 2>/dev/null || true
+
+# Final base image
+FROM python:3.13-slim-bookworm
+
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    PYTHONUNBUFFERED=1 \
+    PATH="/venv/bin:${PATH}" \
+    VIRTUAL_ENV="/venv" \
+    EE_PATH="ee"
+
+RUN groupadd -g 1000 keep && \
+    adduser --disabled-password --gecos "" --uid 1000 --gid 1000 --shell /bin/sh keep
+
+WORKDIR /app
+
+COPY --from=base-install /venv /venv
+COPY --from=base-install /app/keep /app/keep
+COPY --from=base-install /app/examples /examples
+COPY --from=base-install /app/unknown-icon.png unknown-icon.png
+
+RUN chgrp -R 0 /app /examples && chmod -R g=u /app /examples && \
+    chown -R keep:keep /app /examples && \
+    chown -R keep:keep /venv
+
+USER keep
+
+ENTRYPOINT ["/app/keep/entrypoint.sh"]
+CMD ["gunicorn", "keep.api.api:get_app", "--bind", "0.0.0.0:8080", "--workers", "4", "-k", "uvicorn.workers.UvicornWorker", "-c", "/app/keep/api/config.py", "--preload"]
+
+# This base image is ready. Tag it: docker build -f Dockerfile.api-base -t keep-api-base:latest .
+# Then use it for development with volume mounts.

@@ -117,7 +117,7 @@ export default function ExtractionsTable({ extractions, editCallback }: Props) {
               variant="simple"
               color="gray"
               size="sm"
-              tooltip={t("rules.extraction.form.extractionDefinitionTooltip")}
+              tooltip={t("rules.extraction.form.docsTooltip")}
             />
           </a>
         </div>

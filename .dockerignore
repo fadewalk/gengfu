@@ -2,7 +2,13 @@ docs/*
 keep-ui/node_modules
 keep-ui/.next/*
 keep-ui/.env.local
+keep/
+ee/
+examples/
+tests/
+scripts/
 .venv/
 .vercel/
 .vscode/
 .github/
+.pytest_cache
