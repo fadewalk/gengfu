@@ -94,6 +94,7 @@ const DrawerContent = React.forwardRef<
             <DrawerPrimitives.Title />
           </VisuallyHidden>
         </DrawerPrimitives.Content>
+      </DrawerOverlay>
     </DrawerPortal>
   );
 });
