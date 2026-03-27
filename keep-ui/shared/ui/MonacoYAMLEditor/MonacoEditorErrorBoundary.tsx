@@ -27,11 +27,11 @@ export class MonacoEditorErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // getModel() errors from @monaco-editor/react are non-fatal;
+    // getModel() and create() errors from @monaco-editor/react are non-fatal;
     // re-mounting the editor recovers.
-    if (error.message.includes("getModel")) {
+    if (error.message.includes("getModel") || error.message.includes("create")) {
       console.warn(
-        "[MonacoEditorErrorBoundary] Caught getModel() error, re-mounting editor:",
+        "[MonacoEditorErrorBoundary] Caught editor error, re-mounting:",
         error.message
       );
     } else {
