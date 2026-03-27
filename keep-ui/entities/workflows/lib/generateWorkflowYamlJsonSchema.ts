@@ -38,9 +38,14 @@ const makeRequiredEitherStepsOrActions: PostProcessCallback = (
 };
 
 export function generateWorkflowYamlJsonSchema(zodSchema: ZodSchema) {
-  return zodToJsonSchema(zodSchema, {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const options: any = {
     name: schemaName,
     // Make workflow valid if it has either actions or steps
     postProcess: makeRequiredEitherStepsOrActions,
-  });
+  };
+  // Break generic instantiation by using a typed function reference
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const convertFn: (s: any, o?: any) => any = zodToJsonSchema;
+  return convertFn(zodSchema, options);
 }

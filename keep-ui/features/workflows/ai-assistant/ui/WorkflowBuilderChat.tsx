@@ -26,7 +26,7 @@ import {
 import { useWorkflowStore } from "@/entities/workflows";
 import {
   useCopilotAction,
-  useCopilotChat,
+  useCopilotMessagesContext,
   useCopilotReadable,
 } from "@copilotkit/react-core";
 import { Button } from "@/components/ui";
@@ -160,7 +160,7 @@ export function WorkflowBuilderChat({
     [nodes, steps, selectedNode]
   );
 
-  const { setMessages } = useCopilotChat();
+  const { setMessages } = useCopilotMessagesContext();
 
   useCopilotAction({
     name: "changeWorkflowName",
