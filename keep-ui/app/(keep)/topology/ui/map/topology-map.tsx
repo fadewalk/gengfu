@@ -273,7 +273,7 @@ export function TopologyMap({
         sourceService?.is_manual === true &&
         targetService?.is_manual === true
       ) {
-        setEdges((eds) => addEdge(params, eds));
+        setEdges((eds) => addEdge(params, eds as any));
         try {
           const response = await api.post("/topology/dependency", {
             service_id: sourceService.id,
