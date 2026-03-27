@@ -121,9 +121,9 @@ state/
 ## 架构说明
 
 ```
-docker-compose.yml          ← 本地部署定义（AUTH_TYPE=NO_AUTH）
+deploy/docker/docker-compose.yml          ← 本地部署定义（AUTH_TYPE=NO_AUTH）
     │
-    ├── extends ──→ docker-compose.common.yml  ← 公共配置（端口、环境变量）
+    ├── extends ──→ deploy/docker/docker-compose.common.yml  ← 公共配置（端口、环境变量）
     │
     ├── keep-backend  ──→ docker/Dockerfile.api   ← Python 后端镜像
     ├── keep-frontend ──→ deploy/local-mac/Dockerfile.ui ← 前端镜像
