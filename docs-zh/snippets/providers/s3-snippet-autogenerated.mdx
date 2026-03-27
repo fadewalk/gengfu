@@ -1,31 +1,31 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **access_key**: S3 Access Token (Leave empty if using IAM role at EC2) (required: False, sensitive: True)
-- **secret_access_key**: S3 Secret Access Token (Leave empty if using IAM role at EC2) (required: False, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **access_key**: S3 访问令牌（如果在 EC2 上使用 IAM 角色则留空）（必需：False，敏感：True）
+- **secret_access_key**: S3 秘密访问令牌（如果在 EC2 上使用 IAM 角色则留空）（必需：False，敏感：True）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query s3
       provider: s3
       config: "{{ provider.my_provider_name }}"
       with:
-        bucket: {value}  
+        bucket: {value}
 ```
 
 
 
 
 
-Check the following workflow examples:
+请查看以下工作流示例：
 - [consts_and_dict.yml](https://github.com/keephq/keep/blob/main/examples/workflows/consts_and_dict.yml)
 - [update_workflows_from_s3.yml](https://github.com/keephq/keep/blob/main/examples/workflows/update_workflows_from_s3.yml)

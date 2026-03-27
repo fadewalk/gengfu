@@ -1,27 +1,27 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query python
       provider: python
       config: "{{ provider.my_provider_name }}"
       with:
-        code: {value}  
-        imports: {value}  
+        code: {value}
+        imports: {value}
 ```
 
 
 
 
 
-Check the following workflow examples:
+请查看以下工作流示例：
 - [bash_example.yml](https://github.com/keephq/keep/blob/main/examples/workflows/bash_example.yml)
 - [mustache-paths-example.yml](https://github.com/keephq/keep/blob/main/examples/workflows/mustache-paths-example.yml)

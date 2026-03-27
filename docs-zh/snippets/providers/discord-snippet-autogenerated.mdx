@@ -1,30 +1,31 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **webhook_url**: Discord Webhook Url (required: True, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **webhook_url**: Discord Webhook Url（必需：True，敏感：True）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query discord
       provider: discord
       config: "{{ provider.my_provider_name }}"
       with:
-        content: {value}  # The content of the message.
-        components: {value}  # The components of the message.
+        content: {value}  # 消息的内容。
+        components: {value}  # 消息的组件。
 ```
 
 
 
 
-Check the following workflow example:
+
+请查看以下工作流示例：
 - [discord_basic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/discord_basic.yml)

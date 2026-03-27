@@ -1,52 +1,53 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **username**: Clickhouse username (required: True, sensitive: False)
-- **password**: Clickhouse password (required: True, sensitive: True)
-- **host**: Clickhouse hostname (required: True, sensitive: False)
-- **port**: Clickhouse port (required: True, sensitive: False)
-- **database**: Clickhouse database name (required: False, sensitive: False)
-- **protocol**: Protocol ('clickhouses' for SSL, 'clickhouse' for no SSL, 'http' or 'https') (required: True, sensitive: False)
-- **verify**: Enable SSL verification (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **username**: Clickhouse 用户名（必需：True，敏感：False）
+- **password**: Clickhouse 密码（必需：True，敏感：True）
+- **host**: Clickhouse 主机名（必需：True，敏感：False）
+- **port**: Clickhouse 端口（必需：True，敏感：False）
+- **database**: Clickhouse 数据库名称（必需：False，敏感：False）
+- **protocol**: 协议（'clickhouses' 用于 SSL，'clickhouse' 用于无 SSL，'http' 或 'https'）（必需：True，敏感：False）
+- **verify**: 启用 SSL 验证（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **connect_to_server**: The user can connect to the server (mandatory) 
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **connect_to_server**: 用户可以连接到服务器（强制）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query clickhouse
       provider: clickhouse
       config: "{{ provider.my_provider_name }}"
       with:
-        query: {value}  
-        single_row: {value}  
+        query: {value}
+        single_row: {value}
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query clickhouse
       provider: clickhouse
       config: "{{ provider.my_provider_name }}"
       with:
-        query: {value}  
-        single_row: {value}  
+        query: {value}
+        single_row: {value}
 ```
 
 
 
 
-Check the following workflow examples:
+
+请查看以下工作流示例：
 - [clickhouse_multiquery.yml](https://github.com/keephq/keep/blob/main/examples/workflows/clickhouse_multiquery.yml)
 - [query_clickhouse.yml](https://github.com/keephq/keep/blob/main/examples/workflows/query_clickhouse.yml)

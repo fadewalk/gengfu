@@ -1,34 +1,36 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **account_sid**: Twilio Account SID (required: True, sensitive: False)
-- **api_token**: Twilio API Token (required: True, sensitive: True)
-- **from_phone_number**: Twilio Phone Number (required: True, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **account_sid**: Twilio 账户 SID（必需：True，敏感：False）
+- **api_token**: Twilio API 令牌（必需：True，敏感：True）
+- **from_phone_number**: Twilio 电话号码（必需：True，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **send_sms**: The API token has permission to send the SMS (mandatory) 
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **send_sms**: API 令牌有权限发送 SMS（强制）
 
 
 
-As "action" to make changes or update data, example:
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query twilio
       provider: twilio
       config: "{{ provider.my_provider_name }}"
       with:
-        message_body: {value}  # The content of the SMS message to be sent. Defaults to "".
-        to_phone_number: {value}  # The recipient's phone number. Defaults to "".
+        message_body: {value}  # 要发送的 SMS 消息内容。默认为""。
+        to_phone_number: {value}  # 收件人的电话号码。默认为""。
 ```
 
 
 
-If you need workflow examples with this provider, please raise a [GitHub issue](https://github.com/keephq/keep/issues).
+
+
+如果您需要此提供商的工作流示例，请提交 [GitHub 问题](https://github.com/keephq/keep/issues)。

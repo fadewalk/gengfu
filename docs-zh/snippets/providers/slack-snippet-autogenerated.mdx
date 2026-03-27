@@ -1,39 +1,40 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **webhook_url**: Slack Webhook Url (required: True, sensitive: True)
-- **access_token**: For access token installation flow, use Keep UI (required: False, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **webhook_url**: Slack Webhook Url（必需：True，敏感：True）
+- **access_token**: 对于访问令牌安装流程，请使用 Keep UI（必需：False，敏感：True）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query slack
       provider: slack
       config: "{{ provider.my_provider_name }}"
       with:
-        message: {value}  # The content of the message.
-        blocks: {value}  # The blocks of the message.
-        channel: {value}  # The channel to send the message
-        slack_timestamp: {value}  # The timestamp of the message to update
-        thread_timestamp: {value}  # The timestamp of the thread to send the message
-        attachments: {value}  # The attachments of the message.
-        username: {value}  # The username of the message.
-        notification_type: {value}  # The type of notification.
+        message: {value}  # 消息的内容。
+        blocks: {value}  # 消息的块。
+        channel: {value}  # 发送消息的频道
+        slack_timestamp: {value}  # 要更新的消息的时间戳
+        thread_timestamp: {value}  # 发送消息的线程的时间戳
+        attachments: {value}  # 消息的附件。
+        username: {value}  # 消息的用户名。
+        notification_type: {value}  # 通知的类型。
 ```
 
 
 
 
-Check the following workflow examples:
+
+请查看以下工作流示例：
 - [consts_and_vars.yml](https://github.com/keephq/keep/blob/main/examples/workflows/consts_and_vars.yml)
 - [create_jira_ticket_upon_alerts.yml](https://github.com/keephq/keep/blob/main/examples/workflows/create_jira_ticket_upon_alerts.yml)
 - [datadog-log-monitor.yml](https://github.com/keephq/keep/blob/main/examples/workflows/datadog-log-monitor.yml)

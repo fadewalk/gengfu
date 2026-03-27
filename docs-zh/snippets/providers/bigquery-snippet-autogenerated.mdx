@@ -1,31 +1,30 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **service_account_json**: The service account JSON with container.viewer role (required: True, sensitive: True)
-- **project_id**: Google Cloud project ID. If not provided, it will try to fetch it from the environment variable 'GOOGLE_CLOUD_PROJECT' (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **service_account_json**: 具有 container.viewer 角色的服务账户 JSON（必需：True，敏感：True）
+- **project_id**: Google Cloud 项目 ID。如果未提供，将尝试从环境变量 'GOOGLE_CLOUD_PROJECT' 获取（必需：False，敏感：False）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query bigquery
       provider: bigquery
       config: "{{ provider.my_provider_name }}"
       with:
-        query: {value}  
+        query: {value}
 ```
 
 
 
 
-
-Check the following workflow examples:
+请查看以下工作流示例：
 - [bigquery.yml](https://github.com/keephq/keep/blob/main/examples/workflows/bigquery.yml)
 - [failed-to-login-workflow.yml](https://github.com/keephq/keep/blob/main/examples/workflows/failed-to-login-workflow.yml)

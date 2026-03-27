@@ -1,38 +1,39 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **region_name**: Region name (required: True, sensitive: False)
-- **sqs_queue_url**: SQS Queue URL (required: True, sensitive: False)
-- **access_key_id**: Access Key Id (Leave empty if using IAM role at EC2) (required: False, sensitive: False)
-- **secret_access_key**: Secret access key (Leave empty if using IAM role at EC2) (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **region_name**: 区域名称（必需：True，敏感：False）
+- **sqs_queue_url**: SQS 队列 URL（必需：True，敏感：False）
+- **access_key_id**: 访问密钥 ID（如果在 EC2 上使用 IAM 角色则留空）（必需：False，敏感：False）
+- **secret_access_key**: 秘密访问密钥（如果在 EC2 上使用 IAM 角色则留空）（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **authenticated**: Key-Id pair is valid and working (mandatory) 
-- **sqs::read**: Required privileges to receive alert from SQS. If you only want to give read scope to your key-secret pair the permission policy: AmazonSQSReadOnlyAccess. (mandatory) 
-- **sqs::write**: Required privileges to push messages to SQS. If you only want to give read & write scope to your key-secret pair the permission policy: AmazonSQSFullAccess.  
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **authenticated**: 密钥 ID 对有效且可工作（强制）
+- **sqs::read**: 从 SQS 接收警报所需的权限。如果您只想给密钥-密钥对只读 scope，权限策略：AmazonSQSReadOnlyAccess。（强制）
+- **sqs::write**: 向 SQS 推送消息所需的权限。如果您只想给密钥-密钥对读写 scope，权限策略：AmazonSQSFullAccess。
 
 
+## 在工作流中
 
-As "action" to make changes or update data, example:
+此提供商可用于工作流。
+
+
+
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query amazonsqs
       provider: amazonsqs
       config: "{{ provider.my_provider_name }}"
       with:
-        message: {value}  
-        group_id: {value}  
-        dedup_id: {value}  
+        message: {value}
+        group_id: {value}
+        dedup_id: {value}
 ```
 
 
 
-If you need workflow examples with this provider, please raise a [GitHub issue](https://github.com/keephq/keep/issues).
+
+
+如果您需要此提供商的工作流示例，请提交 [GitHub 问题](https://github.com/keephq/keep/issues)。

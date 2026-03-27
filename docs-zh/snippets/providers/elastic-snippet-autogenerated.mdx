@@ -1,41 +1,41 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **host**: Elasticsearch host (required: False, sensitive: False)
-- **cloud_id**: Elasticsearch cloud id (required: False, sensitive: False)
-- **verify**: Enable SSL verification (required: False, sensitive: False)
-- **api_key**: Elasticsearch API Key (required: False, sensitive: True)
-- **username**: Elasticsearch username (required: False, sensitive: False)
-- **password**: Elasticsearch password (required: False, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **host**: Elasticsearch 主机（必需：False，敏感：False）
+- **cloud_id**: Elasticsearch 云 ID（必需：False，敏感：False）
+- **verify**: 启用 SSL 验证（必需：False，敏感：False）
+- **api_key**: Elasticsearch API 密钥（必需：False，敏感：True）
+- **username**: Elasticsearch 用户名（必需：False，敏感：False）
+- **password**: Elasticsearch 密码（必需：False，敏感：True）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **connect_to_server**: The user can connect to the server (mandatory) 
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **connect_to_server**: 用户可以连接到服务器（强制）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query elastic
       provider: elastic
       config: "{{ provider.my_provider_name }}"
       with:
-        query: {value}  # The body of the query
-        index: {value}  # The index to search in
+        query: {value}  # 查询的主体
+        index: {value}  # 要搜索的索引
 ```
 
 
 
 
 
-Check the following workflow examples:
+请查看以下工作流示例：
 - [create_alerts_from_elastic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/create_alerts_from_elastic.yml)
 - [elastic_basic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/elastic_basic.yml)
 - [elastic_enrich_example.yml](https://github.com/keephq/keep/blob/main/examples/workflows/elastic_enrich_example.yml)

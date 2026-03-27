@@ -1,62 +1,61 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **service_account_json**: The service account JSON with container.viewer role (required: True, sensitive: True)
-- **cluster_name**: The name of the cluster (required: True, sensitive: False)
-- **region**: The GKE cluster region (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **service_account_json**: 具有 container.viewer 角色的服务账户 JSON（必需：True，敏感：True）
+- **cluster_name**: 集群名称（必需：True，敏感：False）
+- **region**: GKE 集群区域（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **roles/container.viewer**: Read access to GKE resources (mandatory) 
-- **pods:delete**: Required to delete/restart pods  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-- **deployments:scale**: Required to scale deployments  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-- **pods:list**: Required to list pods  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-- **pods:get**: Required to get pod details  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-- **pods:logs**: Required to get pod logs  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **roles/container.viewer**: 对 GKE 资源的读取访问权限（强制）
+- **pods:delete**: 删除/重启 pod 所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
+- **deployments:scale**: 扩展 deployments 所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
+- **pods:list**: 列出 pod 所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
+- **pods:get**: 获取 pod 详情所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
+- **pods:logs**: 获取 pod 日志所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query gke
       provider: gke
       config: "{{ provider.my_provider_name }}"
       with:
-        command_type: {value}  # Type of query to execute
-        # Additional arguments will be passed to the query method
+        command_type: {value}  # 要执行的查询类型
+        # 附加参数将传递给查询方法
 ```
 
 
 
 
 
-Check the following workflow example:
+请查看以下工作流示例：
 - [gke.yml](https://github.com/keephq/keep/blob/main/examples/workflows/gke.yml)
 
 
-## Provider Methods
-The provider exposes the following [Provider Methods](/providers/provider-methods#via-ai-assistant). They are available in the [AI Assistant](/overview/ai-incident-assistant).
+## 提供商方法
+此提供商暴露以下[提供商方法](/providers/provider-methods#via-ai-assistant)。它们在 [AI 助手](/overview/ai-incident-assistant)中可用。
 
-- **get_pods** List all pods in a namespace or across all namespaces (view, scopes: pods:list, pods:get)
+- **get_pods** 列出命名空间中的所有 pod 或所有命名空间中的 pod（视图，范围：pods:list, pods:get）
 
-- **get_pvc** List all PVCs in a namespace or across all namespaces (view, scopes: pods:list)
+- **get_pvc** 列出命名空间中的所有 PVC 或所有命名空间中的 PVC（视图，范围：pods:list）
 
-- **get_node_pressure** Get pressure metrics for all nodes (view, scopes: pods:list)
+- **get_node_pressure** 获取所有节点的压差指标（视图，范围：pods:list）
 
-- **exec_command** Execute a command in a pod (action, scopes: pods:exec)
+- **exec_command** 在 pod 中执行命令（操作，范围：pods:exec）
 
-- **restart_pod** Restart a pod by deleting it (action, scopes: pods:delete)
+- **restart_pod** 通过删除来重启 pod（操作，范围：pods:delete）
 
-- **get_deployment** Get deployment information (view, scopes: pods:list)
+- **get_deployment** 获取 deployment 信息（视图，范围：pods:list）
 
-- **scale_deployment** Scale a deployment to specified replicas (action, scopes: deployments:scale)
+- **scale_deployment** 将 deployment 扩展到指定副本数（操作，范围：deployments:scale）
 
-- **get_pod_logs** Get logs from a pod (view, scopes: pods:logs)
-
+- **get_pod_logs** 从 pod 获取日志（视图，范围：pods:logs）

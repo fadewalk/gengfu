@@ -1,20 +1,20 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **host**: Kafka host (required: True, sensitive: False)
-- **topic**: The topic to subscribe to (required: True, sensitive: False)
-- **username**: Username (required: False, sensitive: True)
-- **password**: Password (required: False, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **host**: Kafka 主机（必需：True，敏感：False）
+- **topic**: 要订阅的主题（必需：True，敏感：False）
+- **username**: 用户名（必需：False，敏感：True）
+- **password**: 密码（必需：False，敏感：True）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **topic_read**: The kafka user that have permissions to read the topic. (mandatory) 
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **topic_read**: 有权限读取主题的 kafka 用户。（强制）
 
 
 
-## In workflows
+## 在工作流中
 
-This provider can't be used as a "step" or "action" in workflows. If you want to use it, please let us know by creating an issue in the [GitHub repository](https://github.com/keephq/keep/issues).
+此提供商不能用作工作流中的"步骤"或"操作"。如果您想使用它，请通过在 [GitHub 仓库](https://github.com/keephq/keep/issues) 创建问题告诉我们。
 
 

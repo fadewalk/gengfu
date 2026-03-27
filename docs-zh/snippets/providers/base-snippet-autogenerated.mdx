@@ -2,36 +2,37 @@
 Do not edit it manually, as it will be overwritten */}
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query base
       provider: base
       config: "{{ provider.my_provider_name }}"
       with:
-        kwargs: {value}  # The provider context (with statement)
+        kwargs: {value}  # 提供商上下文（with 语句）
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query base
       provider: base
       config: "{{ provider.my_provider_name }}"
       with:
-        # The provider context (with statement)
+        # 提供商上下文（with 语句）
 ```
 
 
 
 
-Check the following workflow examples:
+
+请查看以下工作流示例：
 - [change.yml](https://github.com/keephq/keep/blob/main/examples/workflows/change.yml)
 - [conditionally_run_if_ai_says_so.yaml](https://github.com/keephq/keep/blob/main/examples/workflows/conditionally_run_if_ai_says_so.yaml)
 - [consts_and_vars.yml](https://github.com/keephq/keep/blob/main/examples/workflows/consts_and_vars.yml)
@@ -50,7 +51,5 @@ Check the following workflow examples:
 - [workflow_start_example.yml](https://github.com/keephq/keep/blob/main/examples/workflows/workflow_start_example.yml)
 
 
-## Topology
-This provider pulls [topology](/overview/servicetopology) to Keep. It could be used in [correlations](/overview/correlation-topology)
-and [mapping](/overview/enrichment/mapping#mapping-with-topology-data), and as a context
-for [alerts](/alerts/sidebar#7-alert-topology-view) and [incidents](/overview#17-incident-topology).
+## 拓扑
+此提供商向 Keep 拉取[拓扑](/overview/servicetopology)。可用于[关联](/overview/correlation-topology)和[映射](/overview/enrichment/mapping#mapping-with-topology-data)，并作为[警报](/alerts/sidebar#7-alert-topology-view)和[事件](/overview#17-incident-topology)的上下文。

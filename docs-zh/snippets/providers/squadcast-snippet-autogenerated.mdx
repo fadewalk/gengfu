@@ -1,44 +1,45 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **service_region**: Service region: EU/US (required: True, sensitive: False)
-- **refresh_token**: Squadcast Refresh Token (required: False, sensitive: True)
-- **webhook_url**: Incident webhook url (required: False, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **service_region**: 服务区域：EU/US（必需：True，敏感：False）
+- **refresh_token**: Squadcast 刷新令牌（必需：False，敏感：True）
+- **webhook_url**: 事件 webhook URL（必需：False，敏感：True）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **authenticated**: The user can connect to the client  
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **authenticated**: 用户可以连接到客户端
 
 
 
-As "action" to make changes or update data, example:
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query squadcast
       provider: squadcast
       config: "{{ provider.my_provider_name }}"
       with:
-        notify_type: {value}  
-        message: {value}  
-        description: {value}  
-        incident_id: {value}  
-        priority: {value}  
-        tags: {value}  
-        status: {value}  
-        event_id: {value}  
-        attachments: {value}  
-        additional_json: {value}  
+        notify_type: {value}
+        message: {value}
+        description: {value}
+        incident_id: {value}
+        priority: {value}
+        tags: {value}
+        status: {value}
+        event_id: {value}
+        attachments: {value}
+        additional_json: {value}
 ```
 
 
 
 
-Check the following workflow example:
+
+请查看以下工作流示例：
 - [squadcast_example.yml](https://github.com/keephq/keep/blob/main/examples/workflows/squadcast_example.yml)

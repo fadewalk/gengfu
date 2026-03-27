@@ -1,30 +1,30 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **domain_endpoint**: Domain endpoint (required: True, sensitive: False)
-- **region**: AWS region (required: True, sensitive: False)
-- **access_key**: AWS access key (required: False, sensitive: True)
-- **access_key_secret**: AWS access key secret (required: False, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **domain_endpoint**: 域端点（必需：True，敏感：False）
+- **region**: AWS 区域（必需：True，敏感：False）
+- **access_key**: AWS 访问密钥（必需：False，敏感：True）
+- **access_key_secret**: AWS 访问密钥密钥（必需：False，敏感：True）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **iam:SimulatePrincipalPolicy**: Required to check if we have access to AOSS API. (mandatory)
-- **aoss:APIAccessAll**: Required to make API calls to OpenSearch Serverless. (Add from IAM console) (mandatory)
-- **aoss:ListAccessPolicies**: Required to access all Data Access Policies. (Add from IAM console) (mandatory)
-- **aoss:GetAccessPolicy**: Required to check each policy for read and write scope. (Add from IAM console) (mandatory)
-- **aoss:CreateIndex**: Required to create indexes while saving a doc. (mandatory) ([Documentation](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations))
-- **aoss:ReadDocument**: Required to query. (mandatory) ([Documentation](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations))
-- **aoss:WriteDocument**: Required to save documents. (mandatory) ([Documentation](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations))
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **iam:SimulatePrincipalPolicy**: 需要检查我们是否有权访问 AOSS API。（强制）
+- **aoss:APIAccessAll**: 需要调用 OpenSearch Serverless API。（从 IAM 控制台添加）（强制）
+- **aoss:ListAccessPolicies**: 需要访问所有数据访问策略。（从 IAM 控制台添加）（强制）
+- **aoss:GetAccessPolicy**: 需要检查每个策略的读写范围。（从 IAM 控制台添加）（强制）
+- **aoss:CreateIndex**: 在保存文档时需要创建索引。（强制）（[文档](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations)）
+- **aoss:ReadDocument**: 需要查询。（强制）（[文档](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations)）
+- **aoss:WriteDocument**: 需要保存文档。（强制）（[文档](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-genref.html#serverless-operations)）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query opensearchserverless
@@ -36,7 +36,7 @@ steps:
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query opensearchserverless
@@ -51,5 +51,6 @@ actions:
 
 
 
-Check the following workflow example:
+
+请查看以下工作流示例：
 - [opensearchserverless_basic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/opensearchserverless_basic.yml)

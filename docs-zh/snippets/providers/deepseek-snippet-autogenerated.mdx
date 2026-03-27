@@ -1,33 +1,33 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **api_key**: DeepSeek API Key (required: True, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **api_key**: DeepSeek API 密钥（必需：True，敏感：True）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query deepseek
       provider: deepseek
       config: "{{ provider.my_provider_name }}"
       with:
-        prompt: {value}  # The user query.
-        model: {value}  # The model to use for the query.
-        max_tokens: {value}  # The maximum number of tokens to generate.
-        system_prompt: {value}  # The system prompt to use.
-        structured_output_format: {value}  # The structured output format.
+        prompt: {value}  # 用户查询。
+        model: {value}  # 用于查询的模型。
+        max_tokens: {value}  # 要生成的最大令牌数。
+        system_prompt: {value}  # 要使用的系统提示。
+        structured_output_format: {value}  # 结构化输出格式。
 ```
 
 
 
 
 
-Check the following workflow example:
+请查看以下工作流示例：
 - [enrich_using_structured_output_from_deepseek.yaml](https://github.com/keephq/keep/blob/main/examples/workflows/enrich_using_structured_output_from_deepseek.yaml)

@@ -1,32 +1,32 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **region**: AWS region (required: True, sensitive: False)
-- **access_key**: AWS access key (Leave empty if using IAM role at EC2) (required: False, sensitive: True)
-- **access_key_secret**: AWS access key secret (Leave empty if using IAM role at EC2) (required: False, sensitive: True)
-- **session_token**: AWS Session Token (required: False, sensitive: True)
-- **cloudwatch_sns_topic**: AWS Cloudwatch SNS Topic [ARN or name] (required: False, sensitive: False)
-- **protocol**: Protocol to use for the webhook (required: True, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **region**: AWS 区域（必需：True，敏感：False）
+- **access_key**: AWS 访问密钥（如果在 EC2 上使用 IAM 角色则留空）（必需：False，敏感：True）
+- **access_key_secret**: AWS 访问密钥密钥（如果在 EC2 上使用 IAM 角色则留空）（必需：False，敏感：True）
+- **session_token**: AWS 会话令牌（必需：False，敏感：True）
+- **cloudwatch_sns_topic**: AWS Cloudwatch SNS 主题 [ARN 或名称]（必需：False，敏感：False）
+- **protocol**: 用于 webhook 的协议（必需：True，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **cloudwatch:DescribeAlarms**: Required to retrieve information about alarms. (mandatory) ([Documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_DescribeAlarms.html))
-- **cloudwatch:PutMetricAlarm**: Required to update information about alarms. This mainly use to add Keep as an SNS action to the alarm.  ([Documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricAlarm.html))
-- **sns:ListSubscriptionsByTopic**: Required to list all subscriptions of a topic, so Keep will be able to add itself as a subscription.  ([Documentation](https://docs.aws.amazon.com/sns/latest/dg/sns-access-policy-language-api-permissions-reference.html))
-- **logs:GetQueryResults**: Part of CloudWatchLogsReadOnlyAccess role. Required to retrieve the results of CloudWatch Logs Insights queries.  ([Documentation](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_GetQueryResults.html))
-- **logs:DescribeQueries**: Part of CloudWatchLogsReadOnlyAccess role. Required to describe the results of CloudWatch Logs Insights queries.  ([Documentation](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_DescribeQueries.html))
-- **logs:StartQuery**: Part of CloudWatchLogsReadOnlyAccess role. Required to start CloudWatch Logs Insights queries.  ([Documentation](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_StartQuery.html))
-- **iam:SimulatePrincipalPolicy**: Allow Keep to test the scopes of the current user/role without modifying any resource.  ([Documentation](https://docs.aws.amazon.com/IAM/latest/APIReference/API_SimulatePrincipalPolicy.html))
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **cloudwatch:DescribeAlarms**: 需要检索警报信息。（强制）（[文档](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_DescribeAlarms.html)）
+- **cloudwatch:PutMetricAlarm**: 需要更新警报信息。这主要用于将 Keep 添加为警报的 SNS 操作。（[文档](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricAlarm.html)）
+- **sns:ListSubscriptionsByTopic**: 需要列出主题的所有订阅，这样 Keep 才能将自己添加为订阅。（[文档](https://docs.aws.amazon.com/sns/latest/dg/sns-access-policy-language-api-permissions-reference.html)）
+- **logs:GetQueryResults**: CloudWatchLogsReadOnlyAccess 角色的一部分。需要检索 CloudWatch Logs Insights 查询的结果。（[文档](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_GetQueryResults.html)）
+- **logs:DescribeQueries**: CloudWatchLogsReadOnlyAccess 角色的一部分。需要描述 CloudWatch Logs Insights 查询的结果。（[文档](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_DescribeQueries.html)）
+- **logs:StartQuery**: CloudWatchLogsReadOnlyAccess 角色的一部分。需要启动 CloudWatch Logs Insights 查询。（[文档](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_StartQuery.html)）
+- **iam:SimulatePrincipalPolicy**: 允许 Keep 测试当前用户/角色的范围而不修改任何资源。（[文档](https://docs.aws.amazon.com/IAM/latest/APIReference/API_SimulatePrincipalPolicy.html)）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query cloudwatch
@@ -44,7 +44,7 @@ steps:
 
 
 
-Check the following workflow examples:
+请查看以下工作流示例：
 - [retrieve_cloudwatch_logs.yaml](https://github.com/keephq/keep/blob/main/examples/workflows/retrieve_cloudwatch_logs.yaml)
 - [slack_basic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/slack_basic.yml)
 - [slack_basic_cel.yml](https://github.com/keephq/keep/blob/main/examples/workflows/slack_basic_cel.yml)

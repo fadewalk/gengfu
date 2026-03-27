@@ -1,52 +1,52 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **api_key**: PostHog API key (required: True, sensitive: True)
-- **project_id**: PostHog project ID (required: True, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **api_key**: PostHog API 密钥（必需：True，敏感：True）
+- **project_id**: PostHog 项目 ID（必需：True，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **session_recording:read**: Read PostHog session recordings (mandatory)
-- **session_recording_playlist:read**: Read PostHog session recording playlists
-- **project:read**: Read PostHog project data (mandatory)
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **session_recording:read**: 读取 PostHog 会话录制（强制）
+- **session_recording_playlist:read**: 读取 PostHog 会话录制播放列表
+- **project:read**: 读取 PostHog 项目数据（强制）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query posthog
       provider: posthog
       config: "{{ provider.my_provider_name }}"
       with:
-        query_type: {value}  # Type of query (e.g., "session_recording_domains", "session_recordings")
-        hours: {value}  # Number of hours to look back
-        limit: {value}  # Maximum number of items to fetch
-        # Additional arguments
+        query_type: {value}  # 查询类型（例如 "session_recording_domains"、"session_recordings"）
+        hours: {value}  # 回溯的小时数
+        limit: {value}  # 要获取的最大项目数
+        # 附加参数
 ```
 
 
 
 
 
-Check the following workflow example:
+请查看以下工作流示例：
 - [posthog_example.yml](https://github.com/keephq/keep/blob/main/examples/workflows/posthog_example.yml)
 
 
-## Provider Methods
-The provider exposes the following [Provider Methods](/providers/provider-methods#via-ai-assistant). They are available in the [AI Assistant](/overview/ai-incident-assistant).
+## 提供商方法
+此提供商暴露以下[提供商方法](/providers/provider-methods#via-ai-assistant)。它们在 [AI 助手](/overview/ai-incident-assistant)中可用。
 
-- **get_session_recording_domains** Get a list of domains from session recordings within a time period (action, scopes: session_recording:read, project:read)
+- **get_session_recording_domains** 获取时间段内会话录制中的域名列表（操作，范围：session_recording:read, project:read）
 
-    - `hours`: Number of hours to look back (default: 24)
-    - `limit`: Maximum number of recordings to fetch (default: 100)
-- **get_session_recordings** Get session recordings within a time period (action, scopes: session_recording:read, project:read)
+    - `hours`: 回溯的小时数（默认：24）
+    - `limit`: 要获取的最大录制数（默认：100）
+- **get_session_recordings** 获取时间段内的会话录制（操作，范围：session_recording:read, project:read）
 
-    - `hours`: Number of hours to look back (default: 24)
-    - `limit`: Maximum number of recordings to fetch (default: 100)
+    - `hours`: 回溯的小时数（默认：24）
+    - `limit`: 要获取的最大录制数（默认：100）

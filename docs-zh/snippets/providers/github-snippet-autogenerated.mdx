@@ -1,48 +1,49 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **access_token**: GitHub Access Token (required: True, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **access_token**: GitHub 访问令牌（必需：True，敏感：True）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query github
       provider: github
       config: "{{ provider.my_provider_name }}"
       with:
-        repository: {value}  
-        previous_stars_count: {value}  
-        last_stargazer: {value}  
+        repository: {value}
+        previous_stars_count: {value}
+        last_stargazer: {value}
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query github
       provider: github
       config: "{{ provider.my_provider_name }}"
       with:
-        run_action: {value}  # The action to run.
-        workflow: {value}  # The workflow to run.
-        repo_name: {value}  # The repository name.
-        repo_owner: {value}  # The repository owner.
-        ref: {value}  # The ref to use.
-        inputs: {value}  # The inputs to use.
+        run_action: {value}  # 要运行的操作。
+        workflow: {value}  # 要运行的工作流。
+        repo_name: {value}  # 仓库名称。
+        repo_owner: {value}  # 仓库所有者。
+        ref: {value}  # 要使用的 ref。
+        inputs: {value}  # 要使用的输入。
 ```
 
 
 
 
-Check the following workflow examples:
+
+请查看以下工作流示例：
 - [datadog-log-monitor.yml](https://github.com/keephq/keep/blob/main/examples/workflows/datadog-log-monitor.yml)
 - [db_disk_space_monitor.yml](https://github.com/keephq/keep/blob/main/examples/workflows/db_disk_space_monitor.yml)
 - [new_github_stars.yml](https://github.com/keephq/keep/blob/main/examples/workflows/new_github_stars.yml)
@@ -52,14 +53,14 @@ Check the following workflow examples:
 - [zoom_chat_example.yml](https://github.com/keephq/keep/blob/main/examples/workflows/zoom_chat_example.yml)
 
 
-## Provider Methods
-The provider exposes the following [Provider Methods](/providers/provider-methods#via-ai-assistant). They are available in the [AI Assistant](/overview/ai-incident-assistant).
+## 提供商方法
+此提供商暴露以下[提供商方法](/providers/provider-methods#via-ai-assistant)。它们在 [AI 助手](/overview/ai-incident-assistant)中可用。
 
-- **get_last_commits** Get the N last commits from a GitHub repository (view, scopes: no additional scopes)
+- **get_last_commits** 获取 GitHub 仓库中最近 N 次提交（视图，范围：无附加范围）
 
-    - `repository`: The GitHub repository to get the commits from.
-    - `n`: The number of commits to get.
-- **get_last_releases** Get the N last releases and their changelog from a GitHub repository (view, scopes: no additional scopes)
+    - `repository`: 要获取提交的 GitHub 仓库。
+    - `n`: 要获取的提交数量。
+- **get_last_releases** 获取 GitHub 仓库中最近 N 个版本及其变更日志（视图，范围：无附加范围）
 
-    - `repository`: The GitHub repository to get the releases from.
-    - `n`: The number of releases to get.
+    - `repository`: 要获取版本的 GitHub 仓库。
+    - `n`: 要获取的版本数量。

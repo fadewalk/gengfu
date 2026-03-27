@@ -29,22 +29,22 @@
     {
       "group": "概述",
       "pages": [
-        "zh-Hans/overview/introduction",
-        "zh-Hans/overview/playground",
-        "zh-Hans/overview/usecases",
+        "overview/introduction",
+        "overview/playground",
+        "overview/usecases",
         {
           "group": "关键概念",
           "pages": [
-            "zh-Hans/overview/glossary",
-            "zh-Hans/overview/cel",
-            "zh-Hans/overview/fingerprints",
-            "zh-Hans/overview/alertseverityandstatus",
-            "zh-Hans/overview/howdoeskeepgetmyalerts",
-            "zh-Hans/overview/comparisons"
+            "overview/glossary",
+            "overview/cel",
+            "overview/fingerprints",
+            "overview/alertseverityandstatus",
+            "overview/howdoeskeepgetmyalerts",
+            "overview/comparisons"
           ]
         },
-        "zh-Hans/overview/support",
-        "zh-Hans/overview/faq"
+        "overview/support",
+        "overview/faq"
       ]
     },
     {
@@ -53,72 +53,72 @@
         {
           "group": "AI",
           "pages": [
-            "zh-Hans/overview/ai-incident-assistant",
-            "zh-Hans/overview/ai-workflow-assistant",
-            "zh-Hans/overview/ai-semi-automatic-correlation",
-            "zh-Hans/overview/ai-in-workflows",
-            "zh-Hans/overview/ai-correlation"
+            "overview/ai-incident-assistant",
+            "overview/ai-workflow-assistant",
+            "overview/ai-semi-automatic-correlation",
+            "overview/ai-in-workflows",
+            "overview/ai-correlation"
           ]
         },
         {
           "group": "非AI关联",
           "pages": [
-            "zh-Hans/overview/correlation-rules",
-            "zh-Hans/overview/correlation-topology"
+            "overview/correlation-rules",
+            "overview/correlation-topology"
           ]
         },
-        "zh-Hans/overview/deduplication",
-        "zh-Hans/overview/enrichment/extraction",
-        "zh-Hans/overview/enrichment/mapping",
-        "zh-Hans/overview/maintenance-windows",
-        "zh-Hans/overview/servicetopology",
-        "zh-Hans/overview/workflow-automation"
+        "overview/deduplication",
+        "overview/enrichment/extraction",
+        "overview/enrichment/mapping",
+        "overview/maintenance-windows",
+        "overview/servicetopology",
+        "overview/workflow-automation"
       ]
     },
     {
       "group": "告警",
       "pages": [
-        "zh-Hans/alerts/overview",
-        "zh-Hans/alerts/table",
-        "zh-Hans/alerts/actionmenu",
-        "zh-Hans/alerts/sidebar",
-        "zh-Hans/alerts/presets",
-        "zh-Hans/alerts/sound"
+        "alerts/overview",
+        "alerts/table",
+        "alerts/actionmenu",
+        "alerts/sidebar",
+        "alerts/presets",
+        "alerts/sound"
       ]
     },
     {
       "group": "事件",
       "pages": [
-        "zh-Hans/incidents/overview",
-        "zh-Hans/incidents/facets"
+        "incidents/overview",
+        "incidents/facets"
       ]
     },
     {
       "group": "工作流自动化",
       "pages": [
-        "zh-Hans/workflows/overview",
+        "workflows/overview",
         {
           "group": "语法",
           "pages": [
-            "zh-Hans/workflows/syntax/triggers",
-            "zh-Hans/workflows/syntax/permissions",
-            "zh-Hans/workflows/syntax/steps-and-actions",
-            "zh-Hans/workflows/syntax/conditions",
-            "zh-Hans/workflows/syntax/functions",
-            "zh-Hans/workflows/syntax/context",
-            "zh-Hans/workflows/syntax/providers",
-            "zh-Hans/workflows/syntax/foreach",
-            "zh-Hans/workflows/syntax/enrichment"
+            "workflows/syntax/triggers",
+            "workflows/syntax/permissions",
+            "workflows/syntax/steps-and-actions",
+            "workflows/syntax/conditions",
+            "workflows/syntax/functions",
+            "workflows/syntax/context",
+            "workflows/syntax/providers",
+            "workflows/syntax/foreach",
+            "workflows/syntax/enrichment"
           ]
         },
         {
           "group": "示例",
           "pages": [
-            "zh-Hans/workflows/examples/autosupress",
-            "zh-Hans/workflows/examples/buisnesshours",
-            "zh-Hans/workflows/examples/create-servicenow-tickets",
-            "zh-Hans/workflows/examples/highsev",
-            "zh-Hans/workflows/examples/update-servicenow-tickets"
+            "workflows/examples/autosupress",
+            "workflows/examples/buisnesshours",
+            "workflows/examples/create-servicenow-tickets",
+            "workflows/examples/highsev",
+            "workflows/examples/update-servicenow-tickets"
           ]
         }
       ]
@@ -126,12 +126,12 @@
     {
       "group": "告警评估引擎",
       "pages": [
-        "zh-Hans/alertevaluation/overview",
+        "alertevaluation/overview",
         {
           "group": "示例",
           "pages": [
-            "zh-Hans/alertevaluation/examples/victoriametricssingle",
-            "zh-Hans/alertevaluation/examples/victoriametricsmulti"
+            "alertevaluation/examples/victoriametricssingle",
+            "alertevaluation/examples/victoriametricsmulti"
           ]
         }
       ]
@@ -139,244 +139,244 @@
     {
       "group": "Providers",
       "pages": [
-        "zh-Hans/providers/overview",
-        "zh-Hans/providers/linked-providers",
-        "zh-Hans/providers/provider-methods",
+        "providers/overview",
+        "providers/linked-providers",
+        "providers/provider-methods",
         {
           "group": "支持的 Providers",
           "pages": [
-            "zh-Hans/providers/documentation/airflow-provider",
-            "zh-Hans/providers/documentation/aks-provider",
-            "zh-Hans/providers/documentation/amazonsqs-provider",
-            "zh-Hans/providers/documentation/anthropic-provider",
-            "zh-Hans/providers/documentation/appdynamics-provider",
-            "zh-Hans/providers/documentation/asana-provider",
-            "zh-Hans/providers/documentation/s3-provider",
-            "zh-Hans/providers/documentation/argocd-provider",
-            "zh-Hans/providers/documentation/auth0-provider",
-            "zh-Hans/providers/documentation/axiom-provider",
-            "zh-Hans/providers/documentation/azuremonitoring-provider",
-            "zh-Hans/providers/documentation/bash-provider",
-            "zh-Hans/providers/documentation/bigquery-provider",
-            "zh-Hans/providers/documentation/centreon-provider",
-            "zh-Hans/providers/documentation/checkmk-provider",
-            "zh-Hans/providers/documentation/checkly-provider",
-            "zh-Hans/providers/documentation/cilium-provider",
-            "zh-Hans/providers/documentation/clickhouse-provider",
-            "zh-Hans/providers/documentation/cloudwatch-provider",
-            "zh-Hans/providers/documentation/console-provider",
-            "zh-Hans/providers/documentation/coralogix-provider",
-            "zh-Hans/providers/documentation/dash0-provider",
-            "zh-Hans/providers/documentation/databend-provider",
-            "zh-Hans/providers/documentation/datadog-provider",
-            "zh-Hans/providers/documentation/deepseek-provider",
-            "zh-Hans/providers/documentation/discord-provider",
-            "zh-Hans/providers/documentation/dynatrace-provider",
-            "zh-Hans/providers/documentation/eks-provider",
-            "zh-Hans/providers/documentation/elastic-provider",
-            "zh-Hans/providers/documentation/flashduty-provider",
-            "zh-Hans/providers/documentation/fluxcd-provider",
-            "zh-Hans/providers/documentation/gcpmonitoring-provider",
-            "zh-Hans/providers/documentation/gemini-provider",
-            "zh-Hans/providers/documentation/github-provider",
-            "zh-Hans/providers/documentation/github_workflows_provider",
-            "zh-Hans/providers/documentation/gitlab-provider",
-            "zh-Hans/providers/documentation/gitlabpipelines-provider",
-            "zh-Hans/providers/documentation/gke-provider",
-            "zh-Hans/providers/documentation/google_chat-provider",
-            "zh-Hans/providers/documentation/grafana-provider",
-            "zh-Hans/providers/documentation/grafana_incident-provider",
-            "zh-Hans/providers/documentation/grafana_loki-provider",
-            "zh-Hans/providers/documentation/grafana_oncall-provider",
-            "zh-Hans/providers/documentation/graylog-provider",
-            "zh-Hans/providers/documentation/grok-provider",
-            "zh-Hans/providers/documentation/http-provider",
-            "zh-Hans/providers/documentation/icinga2-provider",
-            "zh-Hans/providers/documentation/ilert-provider",
-            "zh-Hans/providers/documentation/incidentio-provider",
-            "zh-Hans/providers/documentation/incidentmanager-provider",
-            "zh-Hans/providers/documentation/jira-on-prem-provider",
-            "zh-Hans/providers/documentation/jira-provider",
-            "zh-Hans/providers/documentation/kafka-provider",
-            "zh-Hans/providers/documentation/keep-provider",
-            "zh-Hans/providers/documentation/kibana-provider",
-            "zh-Hans/providers/documentation/kubernetes-provider",
-            "zh-Hans/providers/documentation/libre_nms-provider",
-            "zh-Hans/providers/documentation/linear_provider",
-            "zh-Hans/providers/documentation/linearb-provider",
-            "zh-Hans/providers/documentation/litellm-provider",
-            "zh-Hans/providers/documentation/llamacpp-provider",
-            "zh-Hans/providers/documentation/mailgun-provider",
-            "zh-Hans/providers/documentation/mattermost-provider",
-            "zh-Hans/providers/documentation/microsoft-planner-provider",
-            "zh-Hans/providers/documentation/mock-provider",
-            "zh-Hans/providers/documentation/monday-provider",
-            "zh-Hans/providers/documentation/mongodb-provider",
-            "zh-Hans/providers/documentation/mysql-provider",
-            "zh-Hans/providers/documentation/netbox-provider",
-            "zh-Hans/providers/documentation/netdata-provider",
-            "zh-Hans/providers/documentation/new-relic-provider",
-            "zh-Hans/providers/documentation/ntfy-provider",
-            "zh-Hans/providers/documentation/ollama-provider",
-            "zh-Hans/providers/documentation/openai-provider",
-            "zh-Hans/providers/documentation/openobserve-provider",
-            "zh-Hans/providers/documentation/opensearchserverless-provider",
-            "zh-Hans/providers/documentation/openshift-provider",
-            "zh-Hans/providers/documentation/opsgenie-provider",
-            "zh-Hans/providers/documentation/pagerduty-provider",
-            "zh-Hans/providers/documentation/pagertree-provider",
-            "zh-Hans/providers/documentation/parseable-provider",
-            "zh-Hans/providers/documentation/pingdom-provider",
-            "zh-Hans/providers/documentation/posthog-provider",
-            "zh-Hans/providers/documentation/planner-provider",
-            "zh-Hans/providers/documentation/postgresql-provider",
-            "zh-Hans/providers/documentation/prometheus-provider",
-            "zh-Hans/providers/documentation/pushover-provider",
-            "zh-Hans/providers/documentation/python-provider",
-            "zh-Hans/providers/documentation/quickchart-provider",
-            "zh-Hans/providers/documentation/redmine-provider",
-            "zh-Hans/providers/documentation/resend-provider",
-            "zh-Hans/providers/documentation/rollbar-provider",
-            "zh-Hans/providers/documentation/sendgrid-provider",
-            "zh-Hans/providers/documentation/sentry-provider",
-            "zh-Hans/providers/documentation/service-now-provider",
-            "zh-Hans/providers/documentation/signalfx-provider",
-            "zh-Hans/providers/documentation/signl4-provider",
-            "zh-Hans/providers/documentation/site24x7-provider",
-            "zh-Hans/providers/documentation/slack-provider",
-            "zh-Hans/providers/documentation/smtp-provider",
-            "zh-Hans/providers/documentation/snowflake-provider",
-            "zh-Hans/providers/documentation/splunk-provider",
-            "zh-Hans/providers/documentation/squadcast-provider",
-            "zh-Hans/providers/documentation/ssh-provider",
-            "zh-Hans/providers/documentation/statuscake-provider",
-            "zh-Hans/providers/documentation/sumologic-provider",
-            "zh-Hans/providers/documentation/teams-provider",
-            "zh-Hans/providers/documentation/telegram-provider",
-            "zh-Hans/providers/documentation/template",
-            "zh-Hans/providers/documentation/thousandeyes-provider",
-            "zh-Hans/providers/documentation/trello-provider",
-            "zh-Hans/providers/documentation/twilio-provider",
-            "zh-Hans/providers/documentation/uptimekuma-provider",
-            "zh-Hans/providers/documentation/victorialogs-provider",
-            "zh-Hans/providers/documentation/victoriametrics-provider",
-            "zh-Hans/providers/documentation/vllm-provider",
-            "zh-Hans/providers/documentation/wazuh-provider",
-            "zh-Hans/providers/documentation/webhook-provider",
-            "zh-Hans/providers/documentation/websocket-provider",
-            "zh-Hans/providers/documentation/youtrack-provider",
-            "zh-Hans/providers/documentation/zabbix-provider",
-            "zh-Hans/providers/documentation/zenduty-provider",
-            "zh-Hans/providers/documentation/zoom-provider",
-            "zh-Hans/providers/documentation/zoom_chat-provider"
+            "providers/documentation/airflow-provider",
+            "providers/documentation/aks-provider",
+            "providers/documentation/amazonsqs-provider",
+            "providers/documentation/anthropic-provider",
+            "providers/documentation/appdynamics-provider",
+            "providers/documentation/asana-provider",
+            "providers/documentation/s3-provider",
+            "providers/documentation/argocd-provider",
+            "providers/documentation/auth0-provider",
+            "providers/documentation/axiom-provider",
+            "providers/documentation/azuremonitoring-provider",
+            "providers/documentation/bash-provider",
+            "providers/documentation/bigquery-provider",
+            "providers/documentation/centreon-provider",
+            "providers/documentation/checkmk-provider",
+            "providers/documentation/checkly-provider",
+            "providers/documentation/cilium-provider",
+            "providers/documentation/clickhouse-provider",
+            "providers/documentation/cloudwatch-provider",
+            "providers/documentation/console-provider",
+            "providers/documentation/coralogix-provider",
+            "providers/documentation/dash0-provider",
+            "providers/documentation/databend-provider",
+            "providers/documentation/datadog-provider",
+            "providers/documentation/deepseek-provider",
+            "providers/documentation/discord-provider",
+            "providers/documentation/dynatrace-provider",
+            "providers/documentation/eks-provider",
+            "providers/documentation/elastic-provider",
+            "providers/documentation/flashduty-provider",
+            "providers/documentation/fluxcd-provider",
+            "providers/documentation/gcpmonitoring-provider",
+            "providers/documentation/gemini-provider",
+            "providers/documentation/github-provider",
+            "providers/documentation/github_workflows_provider",
+            "providers/documentation/gitlab-provider",
+            "providers/documentation/gitlabpipelines-provider",
+            "providers/documentation/gke-provider",
+            "providers/documentation/google_chat-provider",
+            "providers/documentation/grafana-provider",
+            "providers/documentation/grafana_incident-provider",
+            "providers/documentation/grafana_loki-provider",
+            "providers/documentation/grafana_oncall-provider",
+            "providers/documentation/graylog-provider",
+            "providers/documentation/grok-provider",
+            "providers/documentation/http-provider",
+            "providers/documentation/icinga2-provider",
+            "providers/documentation/ilert-provider",
+            "providers/documentation/incidentio-provider",
+            "providers/documentation/incidentmanager-provider",
+            "providers/documentation/jira-on-prem-provider",
+            "providers/documentation/jira-provider",
+            "providers/documentation/kafka-provider",
+            "providers/documentation/keep-provider",
+            "providers/documentation/kibana-provider",
+            "providers/documentation/kubernetes-provider",
+            "providers/documentation/libre_nms-provider",
+            "providers/documentation/linear_provider",
+            "providers/documentation/linearb-provider",
+            "providers/documentation/litellm-provider",
+            "providers/documentation/llamacpp-provider",
+            "providers/documentation/mailgun-provider",
+            "providers/documentation/mattermost-provider",
+            "providers/documentation/microsoft-planner-provider",
+            "providers/documentation/mock-provider",
+            "providers/documentation/monday-provider",
+            "providers/documentation/mongodb-provider",
+            "providers/documentation/mysql-provider",
+            "providers/documentation/netbox-provider",
+            "providers/documentation/netdata-provider",
+            "providers/documentation/new-relic-provider",
+            "providers/documentation/ntfy-provider",
+            "providers/documentation/ollama-provider",
+            "providers/documentation/openai-provider",
+            "providers/documentation/openobserve-provider",
+            "providers/documentation/opensearchserverless-provider",
+            "providers/documentation/openshift-provider",
+            "providers/documentation/opsgenie-provider",
+            "providers/documentation/pagerduty-provider",
+            "providers/documentation/pagertree-provider",
+            "providers/documentation/parseable-provider",
+            "providers/documentation/pingdom-provider",
+            "providers/documentation/posthog-provider",
+            "providers/documentation/planner-provider",
+            "providers/documentation/postgresql-provider",
+            "providers/documentation/prometheus-provider",
+            "providers/documentation/pushover-provider",
+            "providers/documentation/python-provider",
+            "providers/documentation/quickchart-provider",
+            "providers/documentation/redmine-provider",
+            "providers/documentation/resend-provider",
+            "providers/documentation/rollbar-provider",
+            "providers/documentation/sendgrid-provider",
+            "providers/documentation/sentry-provider",
+            "providers/documentation/service-now-provider",
+            "providers/documentation/signalfx-provider",
+            "providers/documentation/signl4-provider",
+            "providers/documentation/site24x7-provider",
+            "providers/documentation/slack-provider",
+            "providers/documentation/smtp-provider",
+            "providers/documentation/snowflake-provider",
+            "providers/documentation/splunk-provider",
+            "providers/documentation/squadcast-provider",
+            "providers/documentation/ssh-provider",
+            "providers/documentation/statuscake-provider",
+            "providers/documentation/sumologic-provider",
+            "providers/documentation/teams-provider",
+            "providers/documentation/telegram-provider",
+            "providers/documentation/template",
+            "providers/documentation/thousandeyes-provider",
+            "providers/documentation/trello-provider",
+            "providers/documentation/twilio-provider",
+            "providers/documentation/uptimekuma-provider",
+            "providers/documentation/victorialogs-provider",
+            "providers/documentation/victoriametrics-provider",
+            "providers/documentation/vllm-provider",
+            "providers/documentation/wazuh-provider",
+            "providers/documentation/webhook-provider",
+            "providers/documentation/websocket-provider",
+            "providers/documentation/youtrack-provider",
+            "providers/documentation/zabbix-provider",
+            "providers/documentation/zenduty-provider",
+            "providers/documentation/zoom-provider",
+            "providers/documentation/zoom_chat-provider"
           ]
         },
-        "zh-Hans/providers/adding-a-new-provider"
+        "providers/adding-a-new-provider"
       ]
     },
     {
       "group": "部署",
       "pages": [
-        "zh-Hans/deployment/configuration",
-        "zh-Hans/deployment/monitoring",
+        "deployment/configuration",
+        "deployment/monitoring",
         {
           "group": "认证",
           "pages": [
-            "zh-Hans/deployment/authentication/overview",
-            "zh-Hans/deployment/authentication/no-auth",
-            "zh-Hans/deployment/authentication/db-auth",
-            "zh-Hans/deployment/authentication/auth0-auth",
-            "zh-Hans/deployment/authentication/azuread-auth",
-            "zh-Hans/deployment/authentication/keycloak-auth",
-            "zh-Hans/deployment/authentication/oauth2proxy-auth",
-            "zh-Hans/deployment/authentication/oauth2-proxy-gitlab",
-            "zh-Hans/deployment/authentication/okta-auth",
-            "zh-Hans/deployment/authentication/onelogin-auth"
+            "deployment/authentication/overview",
+            "deployment/authentication/no-auth",
+            "deployment/authentication/db-auth",
+            "deployment/authentication/auth0-auth",
+            "deployment/authentication/azuread-auth",
+            "deployment/authentication/keycloak-auth",
+            "deployment/authentication/oauth2proxy-auth",
+            "deployment/authentication/oauth2-proxy-gitlab",
+            "deployment/authentication/okta-auth",
+            "deployment/authentication/onelogin-auth"
           ]
         },
         {
           "group": "Provision",
           "pages": [
-            "zh-Hans/deployment/provision/overview",
-            "zh-Hans/deployment/provision/provider",
-            "zh-Hans/deployment/provision/workflow",
-            "zh-Hans/deployment/provision/dashboard"
+            "deployment/provision/overview",
+            "deployment/provision/provider",
+            "deployment/provision/workflow",
+            "deployment/provision/dashboard"
           ]
         },
-        "zh-Hans/deployment/secret-store",
+        "deployment/secret-store",
         {
           "group": "部署平台",
           "pages": [
-            "zh-Hans/deployment/docker",
+            "deployment/docker",
             {
               "group": "Kubernetes",
               "pages": [
-                "zh-Hans/deployment/kubernetes/overview",
-                "zh-Hans/deployment/kubernetes/installation",
-                "zh-Hans/deployment/kubernetes/architecture",
-                "zh-Hans/deployment/kubernetes/openshift"
+                "deployment/kubernetes/overview",
+                "deployment/kubernetes/installation",
+                "deployment/kubernetes/architecture",
+                "deployment/kubernetes/openshift"
               ]
             },
-            "zh-Hans/deployment/openshift",
-            "zh-Hans/deployment/ecs"
+            "deployment/openshift",
+            "deployment/ecs"
           ]
         },
         {
           "group": "本地 LLM",
           "pages": [
-            "zh-Hans/deployment/local-llm/keep-with-litellm"
+            "deployment/local-llm/keep-with-litellm"
           ]
         },
-        "zh-Hans/deployment/stress-testing"
+        "deployment/stress-testing"
       ]
     },
     {
       "group": "开发",
       "pages": [
-        "zh-Hans/development/getting-started",
-        "zh-Hans/development/external-url"
+        "development/getting-started",
+        "development/external-url"
       ]
     },
     {
       "group": "Keep CLI",
       "pages": [
-        "zh-Hans/cli/overview",
-        "zh-Hans/cli/installation",
-        "zh-Hans/cli/github-actions",
+        "cli/overview",
+        "cli/installation",
+        "cli/github-actions",
         {
           "group": "命令",
           "pages": [
             {
               "group": "keep alert",
               "pages": [
-                "zh-Hans/cli/commands/cli-alert",
-                "zh-Hans/cli/commands/alert-enrich",
-                "zh-Hans/cli/commands/alert-get",
-                "zh-Hans/cli/commands/alert-list"
+                "cli/commands/cli-alert",
+                "cli/commands/alert-enrich",
+                "cli/commands/alert-get",
+                "cli/commands/alert-list"
               ]
             },
             {
               "group": "keep provider",
               "pages": [
-                "zh-Hans/cli/commands/cli-provider",
-                "zh-Hans/cli/commands/provider-connect",
-                "zh-Hans/cli/commands/provider-delete",
-                "zh-Hans/cli/commands/provider-list"
+                "cli/commands/cli-provider",
+                "cli/commands/provider-connect",
+                "cli/commands/provider-delete",
+                "cli/commands/provider-list"
               ]
             },
             {
               "group": "keep workflow",
               "pages": [
-                "zh-Hans/cli/commands/cli-workflow",
-                "zh-Hans/cli/commands/workflow-apply",
-                "zh-Hans/cli/commands/workflow-list",
-                "zh-Hans/cli/commands/workflow-run",
-                "zh-Hans/cli/commands/workflow-runs",
+                "cli/commands/cli-workflow",
+                "cli/commands/workflow-apply",
+                "cli/commands/workflow-list",
+                "cli/commands/workflow-run",
+                "cli/commands/workflow-runs",
                 {
                   "group": "keep workflow runs",
                   "pages": [
-                    "zh-Hans/cli/commands/runs-logs",
-                    "zh-Hans/cli/commands/runs-list"
+                    "cli/commands/runs-logs",
+                    "cli/commands/runs-list"
                   ]
                 }
               ]
@@ -384,27 +384,27 @@
             {
               "group": "keep mappings",
               "pages": [
-                "zh-Hans/cli/commands/mappings-list",
-                "zh-Hans/cli/commands/mappings-create",
-                "zh-Hans/cli/commands/mappings-delete"
+                "cli/commands/mappings-list",
+                "cli/commands/mappings-create",
+                "cli/commands/mappings-delete"
               ]
             },
             {
               "group": "keep extractions",
               "pages": [
-                "zh-Hans/cli/commands/extraction-create",
-                "zh-Hans/cli/commands/extraction-delete",
-                "zh-Hans/cli/commands/extractions-list"
+                "cli/commands/extraction-create",
+                "cli/commands/extraction-delete",
+                "cli/commands/extractions-list"
               ]
             },
-            "zh-Hans/cli/commands/cli",
-            "zh-Hans/cli/commands/cli-api",
-            "zh-Hans/cli/commands/cli-config-new",
-            "zh-Hans/cli/commands/cli-config-show",
-            "zh-Hans/cli/commands/cli-run",
-            "zh-Hans/cli/commands/cli-config",
-            "zh-Hans/cli/commands/cli-version",
-            "zh-Hans/cli/commands/cli-whoami"
+            "cli/commands/cli",
+            "cli/commands/cli-api",
+            "cli/commands/cli-config-new",
+            "cli/commands/cli-config-show",
+            "cli/commands/cli-run",
+            "cli/commands/cli-config",
+            "cli/commands/cli-version",
+            "cli/commands/cli-whoami"
           ]
         }
       ]

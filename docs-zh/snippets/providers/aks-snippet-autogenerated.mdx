@@ -1,34 +1,33 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **subscription_id**: The azure subscription id (required: True, sensitive: True)
-- **client_id**: The azure client id (required: True, sensitive: True)
-- **client_secret**: The azure client secret (required: True, sensitive: True)
-- **tenant_id**: The azure tenant id (required: True, sensitive: True)
-- **resource_group_name**: The azure aks resource group name (required: True, sensitive: True)
-- **resource_name**: The azure aks cluster name (required: True, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **subscription_id**: Azure 订阅 ID（必需：True，敏感：True）
+- **client_id**: Azure 客户端 ID（必需：True，敏感：True）
+- **client_secret**: Azure 客户端密钥（必需：True，敏感：True）
+- **tenant_id**: Azure 租户 ID（必需：True，敏感：True）
+- **resource_group_name**: Azure AKS 资源组名称（必需：True，敏感：True）
+- **resource_name**: Azure AKS 集群名称（必需：True，敏感：True）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query aks
       provider: aks
       config: "{{ provider.my_provider_name }}"
       with:
-        command_type: {value}  # The command type to operate on the k8s cluster (`get_pods`, `get_pvc`, `get_node_pressure`).
+        command_type: {value}  # 在 k8s 集群上操作的命令类型（`get_pods`、`get_pvc`、`get_node_pressure`）。
 ```
 
 
 
 
-
-Check the following workflow example:
+请查看以下工作流示例：
 - [aks_basic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/aks_basic.yml)

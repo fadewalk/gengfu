@@ -1,24 +1,24 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **url**: Prometheus server URL (required: True, sensitive: False)
-- **username**: Prometheus username (required: False, sensitive: False)
-- **password**: Prometheus password (required: False, sensitive: True)
-- **verify**: Verify SSL certificates (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **url**: Prometheus 服务器 URL（必需：True，敏感：False）
+- **username**: Prometheus 用户名（必需：False，敏感：False）
+- **password**: Prometheus 密码（必需：False，敏感：True）
+- **verify**: 验证 SSL 证书（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **connectivity**: Connectivity Test (mandatory)
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **connectivity**: 连接测试（强制）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query prometheus
@@ -32,7 +32,7 @@ steps:
 
 
 
-Check the following workflow examples:
+请查看以下工作流示例：
 - [create_service_now_ticket_upon_alerts.yml](https://github.com/keephq/keep/blob/main/examples/workflows/create_service_now_ticket_upon_alerts.yml)
 - [enrich_using_structured_output_from_deepseek.yaml](https://github.com/keephq/keep/blob/main/examples/workflows/enrich_using_structured_output_from_deepseek.yaml)
 - [enrich_using_structured_output_from_openai.yaml](https://github.com/keephq/keep/blob/main/examples/workflows/enrich_using_structured_output_from_openai.yaml)
@@ -40,9 +40,9 @@ Check the following workflow examples:
 - [http_enrich.yml](https://github.com/keephq/keep/blob/main/examples/workflows/http_enrich.yml)
 - [multi-condition-cel.yml](https://github.com/keephq/keep/blob/main/examples/workflows/multi-condition-cel.yml)
 
-## Connecting via Webhook (omnidirectional)
+## 通过 Webhook 连接（双向）
 
-This provider takes advantage of configurable webhooks available with Prometheus Alertmanager. Use the following template to configure AlertManager:
+此提供商利用 Prometheus Alertmanager 的可配置 webhook。使用以下模板配置 AlertManager：
 
 ```
 route:

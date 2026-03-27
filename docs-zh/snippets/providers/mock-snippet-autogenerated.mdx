@@ -1,37 +1,38 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query mock
       provider: mock
       config: "{{ provider.my_provider_name }}"
       with:
-        # Just will return all parameters passed to it.
+        # 只会返回传递给它的所有参数。
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query mock
       provider: mock
       config: "{{ provider.my_provider_name }}"
       with:
-        # Just will return all parameters passed to it.
+        # 只会返回传递给它的所有参数。
 ```
 
 
 
 
-Check the following workflow examples:
+
+请查看以下工作流示例：
 - [autosupress.yml](https://github.com/keephq/keep/blob/main/examples/workflows/autosupress.yml)
 - [businesshours.yml](https://github.com/keephq/keep/blob/main/examples/workflows/businesshours.yml)
 - [datadog-log-monitor.yml](https://github.com/keephq/keep/blob/main/examples/workflows/datadog-log-monitor.yml)

@@ -1,54 +1,54 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **username**: Postgres username (required: True, sensitive: False)
-- **password**: Postgres password (required: True, sensitive: True)
-- **host**: Postgres hostname (required: True, sensitive: False)
-- **database**: Postgres database name (required: False, sensitive: False)
-- **port**: Postgres port (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **username**: Postgres 用户名（必需：True，敏感：False）
+- **password**: Postgres 密码（必需：True，敏感：True）
+- **host**: Postgres 主机名（必需：True，敏感：False）
+- **database**: Postgres 数据库名称（必需：False，敏感：False）
+- **port**: Postgres 端口（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **connect_to_server**: The user can connect to the server (mandatory) 
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **connect_to_server**: 用户可以连接到服务器（强制）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query postgres
       provider: postgres
       config: "{{ provider.my_provider_name }}"
       with:
-        query: {value}  
+        query: {value}
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query postgres
       provider: postgres
       config: "{{ provider.my_provider_name }}"
       with:
-        query: {value}  
+        query: {value}
 ```
 
 
 
 
-Check the following workflow example:
+
+请查看以下工作流示例：
 - [disk_grown_defects_rule.yml](https://github.com/keephq/keep/blob/main/examples/workflows/disk_grown_defects_rule.yml)
 
 
-## Provider Methods
-The provider exposes the following [Provider Methods](/providers/provider-methods#via-ai-assistant). They are available in the [AI Assistant](/overview/ai-incident-assistant).
+## 提供商方法
+此提供商暴露以下[提供商方法](/providers/provider-methods#via-ai-assistant)。它们在 [AI 助手](/overview/ai-incident-assistant)中可用。
 
-- **execute_query** Query the Postgres database (view, scopes: no additional scopes)
-
+- **execute_query** 查询 Postgres 数据库（视图，范围：无附加范围）

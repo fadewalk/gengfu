@@ -1,39 +1,40 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **access_token**: Ntfy Access Token (required: False, sensitive: True)
-- **host**: Ntfy Host URL (For self-hosted Ntfy only) (required: False, sensitive: False)
-- **username**: Ntfy Username (For self-hosted Ntfy only) (required: False, sensitive: False)
-- **password**: Ntfy Password (For self-hosted Ntfy only) (required: False, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **access_token**: Ntfy 访问令牌（必需：False，敏感：True）
+- **host**: Ntfy 主机 URL（仅适用于自托管 Ntfy）（必需：False，敏感：False）
+- **username**: Ntfy 用户名（仅适用于自托管 Ntfy）（必需：False，敏感：False）
+- **password**: Ntfy 密码（仅适用于自托管 Ntfy）（必需：False，敏感：True）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **send_alert**:  (mandatory) 
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **send_alert**: （强制）
 
 
 
-As "action" to make changes or update data, example:
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query ntfy
       provider: ntfy
       config: "{{ provider.my_provider_name }}"
       with:
-        message: {value}  
-        topic: {value}  
+        message: {value}
+        topic: {value}
 ```
 
 
 
 
-Check the following workflow examples:
+
+请查看以下工作流示例：
 - [ntfy_basic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/ntfy_basic.yml)
 - [query_clickhouse.yml](https://github.com/keephq/keep/blob/main/examples/workflows/query_clickhouse.yml)
 - [query_victoriametrics.yml](https://github.com/keephq/keep/blob/main/examples/workflows/query_victoriametrics.yml)

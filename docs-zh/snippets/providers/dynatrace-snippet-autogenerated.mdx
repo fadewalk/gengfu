@@ -1,21 +1,21 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **environment_id**: Dynatrace's environment ID (required: True, sensitive: False)
-- **api_token**: Dynatrace's API token (required: True, sensitive: True)
-- **alerting_profile**: Dynatrace's alerting profile for the webhook integration. Defaults to 'Default' (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **environment_id**: Dynatrace 的环境 ID（必需：True，敏感：False）
+- **api_token**: Dynatrace 的 API 令牌（必需：True，敏感：True）
+- **alerting_profile**: 用于 webhook 集成的 Dynatrace 警报配置文件。默认为 'Default'（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **problems.read**: Read access to Dynatrace problems (mandatory) 
-- **settings.read**: Read access to Dynatrace settings [for webhook installation]  
-- **settings.write**: Write access to Dynatrace settings [for webhook installation]  
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **problems.read**: 对 Dynatrace 问题的读取权限（强制）
+- **settings.read**: 对 Dynatrace 设置的读取权限[用于 webhook 安装]
+- **settings.write**: 对 Dynatrace 设置的写入权限[用于 webhook 安装]
 
 
 
-## In workflows
+## 在工作流中
 
-This provider can't be used as a "step" or "action" in workflows. If you want to use it, please let us know by creating an issue in the [GitHub repository](https://github.com/keephq/keep/issues).
+此提供商不能用作工作流中的"步骤"或"操作"。如果您想使用它，请通过在 [GitHub 仓库](https://github.com/keephq/keep/issues) 创建问题告诉我们。
 
 

@@ -1,82 +1,82 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **region**: AWS region where the EKS cluster is located (required: True, sensitive: False)
-- **cluster_name**: Name of the EKS cluster (required: True, sensitive: False)
-- **access_key**: AWS access key (Leave empty if using IAM role at EC2) (required: False, sensitive: True)
-- **secret_access_key**: AWS secret access key (Leave empty if using IAM role at EC2) (required: False, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **region**: EKS 集群所在的 AWS 区域（必需：True，敏感：False）
+- **cluster_name**: EKS 集群名称（必需：True，敏感：False）
+- **access_key**: AWS 访问密钥（如果在 EC2 上使用 IAM 角色则留空）（必需：False，敏感：True）
+- **secret_access_key**: AWS 秘密访问密钥（如果在 EC2 上使用 IAM 角色则留空）（必需：False，敏感：True）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **eks:DescribeCluster**: Required to get cluster information (mandatory) ([Documentation](https://docs.aws.amazon.com/eks/latest/APIReference/API_DescribeCluster.html))
-- **eks:ListClusters**: Required to list available clusters (mandatory) ([Documentation](https://docs.aws.amazon.com/eks/latest/APIReference/API_ListClusters.html))
-- **pods:delete**: Required to delete/restart pods  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-- **deployments:scale**: Required to scale deployments  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-- **pods:list**: Required to list pods  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-- **pods:get**: Required to get pod details  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-- **pods:logs**: Required to get pod logs  ([Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/))
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **eks:DescribeCluster**: 需要获取集群信息（强制）（[文档](https://docs.aws.amazon.com/eks/latest/APIReference/API_DescribeCluster.html)）
+- **eks:ListClusters**: 需要列出可用集群（强制）（[文档](https://docs.aws.amazon.com/eks/latest/APIReference/API_ListClusters.html)）
+- **pods:delete**: 删除/重启 pod 所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
+- **deployments:scale**: 扩展 deployments 所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
+- **pods:list**: 列出 pod 所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
+- **pods:get**: 获取 pod 详情所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
+- **pods:logs**: 获取 pod 日志所需（[文档](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query eks
       provider: eks
       config: "{{ provider.my_provider_name }}"
       with:
-        command_type: {value}  # Type of query to execute
-        # Additional arguments for the query
+        command_type: {value}  # 要执行的查询类型
+        # 查询的附加参数
 ```
 
 
 
 
 
-Check the following workflow examples:
+请查看以下工作流示例：
 - [eks_advanced.yml](https://github.com/keephq/keep/blob/main/examples/workflows/eks_advanced.yml)
 - [eks_basic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/eks_basic.yml)
 
 
-## Provider Methods
-The provider exposes the following [Provider Methods](/providers/provider-methods#via-ai-assistant). They are available in the [AI Assistant](/overview/ai-incident-assistant).
+## 提供商方法
+此提供商暴露以下[提供商方法](/providers/provider-methods#via-ai-assistant)。它们在 [AI 助手](/overview/ai-incident-assistant)中可用。
 
-- **get_pods** List all pods in a namespace or across all namespaces (view, scopes: pods:list, pods:get)
+- **get_pods** 列出命名空间中的所有 pod 或所有命名空间中的 pod（视图，范围：pods:list, pods:get）
 
-    - `namespace`: The namespace to list pods from. If None, lists pods from all namespaces.
-- **get_pvc** List all PVCs in a namespace or across all namespaces (view, scopes: pods:list)
+    - `namespace`: 要列出 pod 的命名空间。如果为 None，列出所有命名空间中的 pod。
+- **get_pvc** 列出命名空间中的所有 PVC 或所有命名空间中的 PVC（视图，范围：pods:list）
 
-    - `namespace`: The namespace to list pods from. If None, lists pods from all namespaces.
-- **get_node_pressure** Get pressure metrics for all nodes (view, scopes: pods:list)
+    - `namespace`: 要列出 pod 的命名空间。如果为 None，列出所有命名空间中的 pod。
+- **get_node_pressure** 获取所有节点的压差指标（视图，范围：pods:list）
 
-- **exec_command** Execute a command in a pod (action, scopes: pods:exec)
+- **exec_command** 在 pod 中执行命令（操作，范围：pods:exec）
 
-    - `namespace`: Namespace of the pod
-    - `pod_name`: Name of the pod
-    - `command`: Command to execute (string or array)
-    - `container`: Name of the container (optional, defaults to first container)
-- **restart_pod** Restart a pod by deleting it (action, scopes: pods:delete)
+    - `namespace`: pod 的命名空间
+    - `pod_name`: pod 的名称
+    - `command`: 要执行的命令（字符串或数组）
+    - `container`: 容器名称（可选，默认为第一个容器）
+- **restart_pod** 通过删除来重启 pod（操作，范围：pods:delete）
 
-    - `namespace`: Namespace of the pod
-    - `pod_name`: Name of the pod
-- **get_deployment** Get deployment information (view, scopes: pods:list)
+    - `namespace`: pod 的命名空间
+    - `pod_name`: pod 的名称
+- **get_deployment** 获取 deployment 信息（视图，范围：pods:list）
 
-    - `deployment_name`: Name of the deployment to get
-    - `namespace`: Target namespace (defaults to “default”)
-- **scale_deployment** Scale a deployment to specified replicas (action, scopes: deployments:scale)
+    - `deployment_name`: 要获取的 deployment 名称
+    - `namespace`: 目标命名空间（默认为"default"）
+- **scale_deployment** 将 deployment 扩展到指定副本数（操作，范围：deployments:scale）
 
-    - `deployment_name`: Name of the deployment to get
-    - `namespace`: Target namespace (defaults to “default”)
-    - `replicas`: Number of replicas to scale to
-- **get_pod_logs** Get logs from a pod (view, scopes: pods:logs)
+    - `deployment_name`: 要获取的 deployment 名称
+    - `namespace`: 目标命名空间（默认为"default"）
+    - `replicas`: 要扩展到的副本数
+- **get_pod_logs** 从 pod 获取日志（视图，范围：pods:logs）
 
-    - `namespace`: Namespace of the pod
-    - `pod_name`: Name of the pod
-    - `container`: Name of the container (optional)
-    - `tail_lines`: Number of lines to fetch from the end of logs (default: 100)
+    - `namespace`: pod 的命名空间
+    - `pod_name`: pod 的名称
+    - `container`: 容器名称（可选）
+    - `tail_lines`: 从日志末尾获取的行数（默认：100）

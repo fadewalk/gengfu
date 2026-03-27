@@ -1,31 +1,31 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **api_key**: Trello API Key (required: True, sensitive: True)
-- **api_token**: Trello API Token (required: True, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **api_key**: Trello API 密钥（必需：True，敏感：True）
+- **api_token**: Trello API 令牌（必需：True，敏感：True）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query trello
       provider: trello
       config: "{{ provider.my_provider_name }}"
       with:
-        board_id: {value}  # Trello board ID
-        filter: {value}  # Trello action filter
+        board_id: {value}  # Trello 看板 ID
+        filter: {value}  # Trello 操作过滤器
 ```
 
 
 
 
 
-Check the following workflow example:
+请查看以下工作流示例：
 - [notify-new-trello-card.yml](https://github.com/keephq/keep/blob/main/examples/workflows/notify-new-trello-card.yml)

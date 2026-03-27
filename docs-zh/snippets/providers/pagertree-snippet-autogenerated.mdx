@@ -1,41 +1,43 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **api_token**: Your pagertree APIToken (required: True, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **api_token**: 您的 PagerTree API 令牌（必需：True，敏感：True）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **authenticated**: The user can connect to the server and is authenticated using their API_Key (mandatory) 
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **authenticated**: 用户可以连接到服务器并使用其 API 密钥进行身份验证（强制）
 
 
 
-As "action" to make changes or update data, example:
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+
+
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query pagertree
       provider: pagertree
       config: "{{ provider.my_provider_name }}"
       with:
-        title: {value}  # Title of the alert.
+        title: {value}  # 警报的标题。
         urgency: {value}  # low|medium|high|critical
-        incident: {value}  # True if the alert is an incident
+        incident: {value}  # 如果警报是事件，则为 True
         severities: {value}  # SEV-1|SEV-2|SEV-3|SEV-4|SEV-5|SEV_UNKNOWN
-        incident_message: {value}  # Message to be displayed in the incident
-        description: {value}  # UTF-8 string of custom message for alert. Shown in incident description
-        status: {value}  # alert status to send
-        destination_team_ids: {value}  # destination team_ids to send alert to
-        destination_router_ids: {value}  # destination router_ids to send alert to
-        destination_account_user_ids: {value}  # destination account_users_ids to send alert to
-        # Additional parameters to be passed
+        incident_message: {value}  # 要在事件中显示的消息
+        description: {value}  # 警报的自定义消息的 UTF-8 字符串。显示在事件描述中
+        status: {value}  # 要发送的警报状态
+        destination_team_ids: {value}  # 发送警报的目标团队 ID
+        destination_router_ids: {value}  # 发送警报的目标路由器 ID
+        destination_account_user_ids: {value}  # 发送警报的目标账户用户 ID
+        # 要传递的其他参数
 ```
 
 
 
-If you need workflow examples with this provider, please raise a [GitHub issue](https://github.com/keephq/keep/issues).
+
+如果您需要此提供商的工作流示例，请提交 [GitHub 问题](https://github.com/keephq/keep/issues)。

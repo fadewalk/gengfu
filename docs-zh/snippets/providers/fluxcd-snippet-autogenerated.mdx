@@ -1,62 +1,60 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **kubeconfig**: Kubeconfig file content (required: False, sensitive: True)
-- **context**: Kubernetes context to use (required: False, sensitive: False)
-- **namespace**: Namespace where Flux CD is installed (required: False, sensitive: False)
-- **api_server**: Kubernetes API server URL (required: False, sensitive: False)
-- **token**: Kubernetes API token (required: False, sensitive: True)
-- **insecure**: Skip TLS verification (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **kubeconfig**: Kubeconfig 文件内容（必需：False，敏感：True）
+- **context**: 要使用的 Kubernetes 上下文（必需：False，敏感：False）
+- **namespace**: Flux CD 安装的命名空间（必需：False，敏感：False）
+- **api_server**: Kubernetes API 服务器 URL（必需：False，敏感：False）
+- **token**: Kubernetes API 令牌（必需：False，敏感：True）
+- **insecure**: 跳过 TLS 验证（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **authenticated**: User is Authorized (mandatory) 
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **authenticated**: 用户已授权（强制）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query fluxcd
       provider: fluxcd
       config: "{{ provider.my_provider_name }}"
       with:
-        **_: {value}  # Additional arguments (ignored)
+        **_: {value}  # 附加参数（忽略）
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query fluxcd
       provider: fluxcd
       config: "{{ provider.my_provider_name }}"
       with:
-        action: {value}  # The action to perform. Supported actions are:
-- reconcile: Trigger a reconciliation for a FluxCD resource.
-        # Additional arguments for the action.
+        action: {value}  # 要执行的操作。支持的操作有：
+- reconcile: 触发 FluxCD 资源的协调。
+        # 操作的附加参数。
 ```
 
 
 
 
-Check the following workflow example:
+
+请查看以下工作流示例：
 - [fluxcd_example.yml](https://github.com/keephq/keep/blob/main/examples/workflows/fluxcd_example.yml)
 
 
-## Topology
-This provider pulls [topology](/overview/servicetopology) to Keep. It could be used in [correlations](/overview/correlation-topology)
-and [mapping](/overview/enrichment/mapping#mapping-with-topology-data), and as a context
-for [alerts](/alerts/sidebar#7-alert-topology-view) and [incidents](/overview#17-incident-topology).
+## 拓扑
+此提供商向 Keep 拉取[拓扑](/overview/servicetopology)。可用于[关联](/overview/correlation-topology)和[映射](/overview/enrichment/mapping#mapping-with-topology-data)，并作为[警报](/alerts/sidebar#7-alert-topology-view)和[事件](/overview#17-incident-topology)的上下文。
 
-## Provider Methods
-The provider exposes the following [Provider Methods](/providers/provider-methods#via-ai-assistant). They are available in the [AI Assistant](/overview/ai-incident-assistant).
+## 提供商方法
+此提供商暴露以下[提供商方法](/providers/provider-methods#via-ai-assistant)。它们在 [AI 助手](/overview/ai-incident-assistant)中可用。
 
-- **get_fluxcd_resources** Get resources from Flux CD (, scopes: no additional scopes)
-
+- **get_fluxcd_resources** 从 Flux CD 获取资源（，范围：无附加范围）

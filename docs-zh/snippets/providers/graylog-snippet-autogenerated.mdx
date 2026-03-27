@@ -1,74 +1,74 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **graylog_user_name**: Username (required: True, sensitive: False)
-- **graylog_access_token**: Graylog Access Token (required: True, sensitive: True)
-- **deployment_url**: Deployment Url (required: True, sensitive: False)
-- **verify**: Verify SSL certificates (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **graylog_user_name**: 用户名（必需：True，敏感：False）
+- **graylog_access_token**: Graylog 访问令牌（必需：True，敏感：True）
+- **deployment_url**: 部署 URL（必需：True，敏感：False）
+- **verify**: 验证 SSL 证书（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **authenticated**: Mandatory for all operations, ensures the user is authenticated. (mandatory) 
-- **authorized**: Mandatory for querying incidents and managing resources, ensures the user has `Admin` privileges. (mandatory) 
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **authenticated**: 所有操作的必需项，确保用户已身份验证。（强制）
+- **authorized**: 查询事件和管理资源的必需项，确保用户具有 `Admin` 权限。（强制）
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query graylog
       provider: graylog
       config: "{{ provider.my_provider_name }}"
       with:
-        events_search_parameters: {value}  
+        events_search_parameters: {value}
 ```
 
 
 
 
-If you need workflow examples with this provider, please raise a [GitHub issue](https://github.com/keephq/keep/issues).
+如果您需要此提供商的工作流示例，请提交 [GitHub 问题](https://github.com/keephq/keep/issues)。
 
 
-## Provider Methods
-The provider exposes the following [Provider Methods](/providers/provider-methods#via-ai-assistant). They are available in the [AI Assistant](/overview/ai-incident-assistant).
+## 提供商方法
+此提供商暴露以下[提供商方法](/providers/provider-methods#via-ai-assistant)。它们在 [AI 助手](/overview/ai-incident-assistant)中可用。
 
-- **search** Search using elastic query language in Graylog (action, scopes: authorized)
+- **search** 使用 Graylog 中的弹性查询语言搜索（操作，范围：authorized）
 
-    - `query`: The query string to search for.
-    - `query_type`: The type of query to use. Default is "elastic".
-    - `timerange_seconds`: The time range in seconds. Default is 300 seconds.
-    - `timerange_type`: The type of time range. Default is "relative".
-    - `page`: Page number, starting from 0.
-    - `per_page`: Number of results per page.
+    - `query`: 要搜索的查询字符串。
+    - `query_type`: 要使用的查询类型。默认为"elastic"。
+    - `timerange_seconds`: 时间范围（秒）。默认为 300 秒。
+    - `timerange_type`: 时间范围类型。默认为"relative"。
+    - `page`: 页码，从 0 开始。
+    - `per_page`: 每页结果数。
 
-## Connecting via Webhook (omnidirectional)
-This provider supports webhooks.
+## 通过 Webhook 连接（双向）
+此提供商支持 webhook。
 
 
-To send alerts from Graylog to Keep, Use the following webhook url to configure Graylog send alerts to Keep:
+要将警报从 Graylog 发送到 Keep，请使用以下 webhook URL 配置 Graylog 将警报发送到 Keep：
 
-1. In Graylog, from the Topbar, go to `Alerts` > `Notifications`.
-2. Click "Create Notification".
-3. In the New Notification form, configure:
+1. 在 Graylog 中，从顶部栏转到 `警报` > `通知`。
+2. 点击"创建通知"。
+3. 在新通知表单中，配置：
 
-**Note**: For Graylog v4.x please set the **URL** to `KEEP_BACKEND_URL/alerts/event/graylog?api_key={api_key}`.
+**注意**：对于 Graylog v4.x，请将 **URL** 设置为 `KEEP_BACKEND_URL/alerts/event/graylog?api_key={api_key}`。
 
-- **Display Name**: keep-graylog-webhook-integration
-- **Title**: keep-graylog-webhook-integration
-- **Notification Type**: Custom HTTP Notification
-- **URL**: KEEP_BACKEND_URL/alerts/event/graylog  # Whitelist this URL
-- **Headers**: X-API-KEY:{api_key}
-4. Erase the Body Template.
-5. Click on "Create Notification".
-6. Go the the `Event Definitions` tab, and select the Event Definition that will trigger the alert you want to send to Keep and click on More > Edit.
-7. Go to "Notifications" tab.
-8. Click on "Add Notification" and select the "keep-graylog-webhook-integration" that you created in step 3.
-9. Click on "Add Notification".
-10. Click `Next` > `Update` event definition
+- **显示名称**: keep-graylog-webhook-integration
+- **标题**: keep-graylog-webhook-integration
+- **通知类型**: 自定义 HTTP 通知
+- **URL**: KEEP_BACKEND_URL/alerts/event/graylog  # 将此 URL 加入白名单
+- **头**: X-API-KEY:{api_key}
+4. 擦除正文模板。
+5. 点击"创建通知"。
+6. 转到`事件定义`选项卡，选择将触发您要发送到 Keep 的警报的事件定义，然后点击更多 > 编辑。
+7. 转到"通知"选项卡。
+8. 点击"添加通知"并选择您在步骤 3 中创建的"keep-graylog-webhook-integration"。
+9. 点击"添加通知"。
+10. 点击`下一步` > `更新`事件定义
 

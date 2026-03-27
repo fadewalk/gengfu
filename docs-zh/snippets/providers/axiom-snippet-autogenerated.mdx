@@ -1,33 +1,33 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **api_token**: Axiom API Token (required: True, sensitive: True)
-- **organization_id**: Axiom Organization ID (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **api_token**: Axiom API 令牌（必需：True，敏感：True）
+- **organization_id**: Axiom 组织 ID（必需：False，敏感：False）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query axiom
       provider: axiom
       config: "{{ provider.my_provider_name }}"
       with:
-        dataset: {value}  
-        datasets_api_url: {value}  
-        organization_id: {value}  
-        startTime: {value}  
-        endTime: {value}  
-        query: {value}  # command to execute
+        dataset: {value}
+        datasets_api_url: {value}
+        organization_id: {value}
+        startTime: {value}
+        endTime: {value}
+        query: {value}  # 要执行的命令
 ```
 
 
 
 
-If you need workflow examples with this provider, please raise a [GitHub issue](https://github.com/keephq/keep/issues).
+如果您需要此提供商的工作流示例，请提交 [GitHub 问题](https://github.com/keephq/keep/issues)。

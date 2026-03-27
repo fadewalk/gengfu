@@ -2,40 +2,41 @@
 Do not edit it manually, as it will be overwritten */}
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query console
       provider: console
       config: "{{ provider.my_provider_name }}"
       with:
-        message: {value}  
-        logger: {value}  
-        severity: {value}  
+        message: {value}
+        logger: {value}
+        severity: {value}
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query console
       provider: console
       config: "{{ provider.my_provider_name }}"
       with:
-        message: {value}  # The message to be printed in to the console
-        logger: {value}  # Whether to use the logger or not
-        severity: {value}  # The severity of the message if logger is True
+        message: {value}  # 要打印到控制台的消息
+        logger: {value}  # 是否使用记录器
+        severity: {value}  # 如果 logger 为 True，则为消息的严重程度
 ```
 
 
 
 
-Check the following workflow examples:
+
+请查看以下工作流示例：
 - [aks_basic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/aks_basic.yml)
 - [change.yml](https://github.com/keephq/keep/blob/main/examples/workflows/change.yml)
 - [complex-conditions-cel.yml](https://github.com/keephq/keep/blob/main/examples/workflows/complex-conditions-cel.yml)

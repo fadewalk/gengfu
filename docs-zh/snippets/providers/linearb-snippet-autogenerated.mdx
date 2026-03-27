@@ -1,41 +1,43 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **api_token**: LinearB API Token (required: True, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **api_token**: LinearB API 令牌（必需：True，敏感：True）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **any**: A way to validate the provider (mandatory) 
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **any**: 验证提供商的方法（强制）
 
 
 
-As "action" to make changes or update data, example:
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+
+
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query linearb
       provider: linearb
       config: "{{ provider.my_provider_name }}"
       with:
-        incident_id: {value}  
-        http_url: {value}  
-        title: {value}  
-        teams: {value}  
-        repository_urls: {value}  
-        services: {value}  
-        started_at: {value}  
-        ended_at: {value}  
-        git_ref: {value}  
-        should_delete: {value}  
-        issued_at: {value}  
+        incident_id: {value}
+        http_url: {value}
+        title: {value}
+        teams: {value}
+        repository_urls: {value}
+        services: {value}
+        started_at: {value}
+        ended_at: {value}
+        git_ref: {value}
+        should_delete: {value}
+        issued_at: {value}
 ```
 
 
 
-If you need workflow examples with this provider, please raise a [GitHub issue](https://github.com/keephq/keep/issues).
+
+如果您需要此提供商的工作流示例，请提交 [GitHub 问题](https://github.com/keephq/keep/issues)。

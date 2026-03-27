@@ -1,57 +1,58 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **ilert_token**: ILert API token (required: True, sensitive: True)
-- **ilert_host**: ILert API host (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **ilert_token**: ILert API 令牌（必需：True，敏感：True）
+- **ilert_host**: ILert API 主机（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **read_permission**: Read permission (mandatory) 
-- **write_permission**: Write permission  
-
-
-
-## In workflows
-
-This provider can be used in workflows.
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **read_permission**: 读取权限（强制）
+- **write_permission**: 写入权限
 
 
-As "step" to query data, example:
+
+## 在工作流中
+
+此提供商可用于工作流。
+
+
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query ilert
       provider: ilert
       config: "{{ provider.my_provider_name }}"
       with:
-        incident_id: {value}  
+        incident_id: {value}
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query ilert
       provider: ilert
       config: "{{ provider.my_provider_name }}"
       with:
-        _type: {value}  # Type of notification ('incident' or 'event') - determines which endpoint is used
-        summary: {value}  # A brief summary of the incident (required for new incidents)
-        status: {value}  # Current status of the incident (INVESTIGATING, RESOLVED, MONITORING, IDENTIFIED)
-        message: {value}  # Detailed message describing the incident (default: empty string)
-        affectedServices: {value}  # JSON string of affected services and their statuses (default: "[]")
-        id: {value}  # ID of incident to update (use "0" to create a new incident)
-        event_type: {value}  # Type of event to post (ALERT, ACCEPT, RESOLVE)
-        details: {value}  # Detailed information about the event
-        alert_key: {value}  # Unique key for event deduplication
-        priority: {value}  # Priority level of the event (HIGH, LOW)
-        images: {value}  # List of image URLs to include with the event
-        links: {value}  # List of related links to include with the event
-        custom_details: {value}  # Custom key-value pairs for additional context
+        _type: {value}  # 通知的类型（'incident' 或 'event'）- 决定使用哪个端点
+        summary: {value}  # 事件的简要摘要（新建事件必需）
+        status: {value}  # 事件的当前状态（INVESTIGATING, RESOLVED, MONITORING, IDENTIFIED）
+        message: {value}  # 描述事件的详细消息（默认：空字符串）
+        affectedServices: {value}  # 受影响服务及其状态的 JSON 字符串（默认："[]"）
+        id: {value}  # 要更新的事件 ID（使用"0"创建新事件）
+        event_type: {value}  # 要发布的事件类型（ALERT, ACCEPT, RESOLVE）
+        details: {value}  # 事件的详细信息
+        alert_key: {value}  # 事件去重的唯一密钥
+        priority: {value}  # 事件的优先级（HIGH, LOW）
+        images: {value}  # 要包含在事件中的图片 URL 列表
+        links: {value}  # 要包含在事件中的相关链接列表
+        custom_details: {value}  # 用于附加上下文的自定义键值对
 ```
 
 
 
 
-Check the following workflow example:
+
+请查看以下工作流示例：
 - [ilert-incident-upon-alert.yaml](https://github.com/keephq/keep/blob/main/examples/workflows/ilert-incident-upon-alert.yaml)

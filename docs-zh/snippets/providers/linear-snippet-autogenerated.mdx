@@ -1,42 +1,44 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **api_token**: Linear API Token (required: True, sensitive: True)
-- **ticket_creation_url**: URL for creating new tickets (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **api_token**: Linear API 令牌（必需：True，敏感：True）
+- **ticket_creation_url**: 创建新工单的 URL（必需：False，敏感：False）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query linear
       provider: linear
       config: "{{ provider.my_provider_name }}"
       with:
-        team_name: {value}  
+        team_name: {value}
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query linear
       provider: linear
       config: "{{ provider.my_provider_name }}"
       with:
-        team_name: {value}  
-        project_name: {value}  
-        title: {value}  
-        description: {value}  
-        priority: {value}  
+        team_name: {value}
+        project_name: {value}
+        title: {value}
+        description: {value}
+        priority: {value}
 ```
 
 
 
-If you need workflow examples with this provider, please raise a [GitHub issue](https://github.com/keephq/keep/issues).
+
+
+如果您需要此提供商的工作流示例，请提交 [GitHub 问题](https://github.com/keephq/keep/issues)。

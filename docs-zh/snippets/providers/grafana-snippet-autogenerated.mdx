@@ -1,42 +1,40 @@
-{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py 
+{/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **token**: Token (required: True, sensitive: True)
-- **host**: Grafana host (required: True, sensitive: False)
-- **datasource_uid**: Datasource UID (required: False, sensitive: False)
+## 认证
+此提供商需要身份验证。
+- **token**: Token（必需：True，敏感：True）
+- **host**: Grafana 主机（必需：True，敏感：False）
+- **datasource_uid**: 数据源 UID（必需：False，敏感：False）
 
-Certain scopes may be required to perform specific actions or queries via the provider. Below is a summary of relevant scopes and their use cases:
-- **alert.rules:read**: Read Grafana alert rules in a folder and its subfolders. (mandatory) ([Documentation](https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/custom-role-actions-scopes/))
-- **alert.provisioning:read**: Read all Grafana alert rules, notification policies, etc via provisioning API.  ([Documentation](https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/custom-role-actions-scopes/))
-- **alert.provisioning:write**: Update all Grafana alert rules, notification policies, etc via provisioning API.  ([Documentation](https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/custom-role-actions-scopes/))
-
-
-
-## In workflows
-
-This provider can't be used as a "step" or "action" in workflows. If you want to use it, please let us know by creating an issue in the [GitHub repository](https://github.com/keephq/keep/issues).
+某些范围可能需要才能通过提供商执行特定操作或查询。以下是相关范围及其用例的摘要：
+- **alert.rules:read**: 在文件夹及其子文件夹中读取 Grafana 警报规则。（强制）（[文档](https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/custom-role-actions-scopes/)）
+- **alert.provisioning:read**: 通过配置 API 读取所有 Grafana 警报规则、通知策略等。([文档](https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/custom-role-actions-scopes/)）
+- **alert.provisioning:write**: 通过配置 API 更新所有 Grafana 警报规则、通知策略等。([文档](https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/access-control/custom-role-actions-scopes/)）
 
 
 
+## 在工作流中
 
-## Topology
-This provider pulls [topology](/overview/servicetopology) to Keep. It could be used in [correlations](/overview/correlation-topology) 
-and [mapping](/overview/enrichment/mapping#mapping-with-topology-data), and as a context 
-for [alerts](/alerts/sidebar#7-alert-topology-view) and [incidents](/overview#17-incident-topology).
-## Connecting via Webhook (omnidirectional)
-This provider supports webhooks.
+此提供商不能用作工作流中的"步骤"或"操作"。如果您想使用它，请通过在 [GitHub 仓库](https://github.com/keephq/keep/issues) 创建问题告诉我们。
 
-If your Grafana is unreachable from Keep, you can use the following webhook url to configure Grafana to send alerts to Keep:
-    
-    1. In Grafana, go to the Alerting tab in the Grafana dashboard.
-    2. Click on Contact points in the left sidebar and create a new one.
-    3. Give it a name and select Webhook as kind of contact point with webhook url as KEEP_BACKEND_URL/alerts/event/grafana.
-    4. Add 'X-API-KEY' as the request header {api_key}.
-    5. Save the webhook.
-    6. Click on Notification policies in the left sidebar
-    7. Click on "New child policy" under the "Default policy"
-    8. Remove all matchers until you see the following: "If no matchers are specified, this notification policy will handle all alert instances."
-    9. Chose the webhook contact point you have just created under Contact point and click "Save Policy"
-    
+
+
+
+## 拓扑
+此提供商向 Keep 拉取[拓扑](/overview/servicetopology)。可用于[关联](/overview/correlation-topology)和[映射](/overview/enrichment/mapping#mapping-with-topology-data)，并作为[警报](/alerts/sidebar#7-alert-topology-view)和[事件](/overview#17-incident-topology)的上下文。
+## 通过 Webhook 连接（双向）
+此提供商支持 webhook。
+
+如果您的 Grafana 无法从 Keep 访问，您可以使用以下 webhook URL 配置 Grafana 将警报发送到 Keep：
+
+    1. 在 Grafana 中，转到 Grafana 仪表板中的"警报"选项卡。
+    2. 点击左侧边栏中的"联系人"并创建一个新的。
+    3. 为其命名并选择 Webhook 作为联系人类型，webhook URL 为 KEEP_BACKEND_URL/alerts/event/grafana。
+    4. 添加 'X-API-KEY' 作为请求头 {api_key}。
+    5. 保存 webhook。
+    6. 点击左侧边栏中的"通知策略"
+    7. 在"默认策略"下点击"新建子策略"
+    8. 删除所有匹配器，直到看到以下内容："如果未指定匹配器，此通知策略将处理所有警报实例。"
+    9. 选择您刚在联系人下创建的 webhook 联系人，然后点击"保存策略"
+

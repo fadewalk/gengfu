@@ -2,51 +2,52 @@
 Do not edit it manually, as it will be overwritten */}
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
-As "step" to query data, example:
+作为"步骤"来查询数据，示例：
 ```yaml
 steps:
     - name: Query keep
       provider: keep
       config: "{{ provider.my_provider_name }}"
       with:
-        filters: {value}  # filters to query Keep (only for version 1)
-        version: {value}  # version of Keep API
-        distinct: {value}  # if True, return only distinct alerts
-        time_delta: {value}  # time delta in days to query Keep
-        timerange: {value}  # timerange dict to calculate time delta
-        filter: {value}  # filter to query Keep (only for version 2)
-        limit: {value}  # limit number of results (only for version 2)
+        filters: {value}  # 过滤查询 Keep（仅适用于版本 1）
+        version: {value}  # Keep API 版本
+        distinct: {value}  # 如果为 True，仅返回不同的警报
+        time_delta: {value}  # 查询 Keep 的时间增量（天）
+        timerange: {value}  # 计算时间增量的时间范围字典
+        filter: {value}  # 过滤查询 Keep（仅适用于版本 2）
+        limit: {value}  # 限制结果数量（仅适用于版本 2）
 ```
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query keep
       provider: keep
       config: "{{ provider.my_provider_name }}"
       with:
-        delete_all_other_workflows: {value}  # if True, delete all other workflows
-        workflow_full_sync: {value}  # if True, sync all workflows
-        workflow_to_update_yaml: {value}  # workflow yaml to update
-        alert: {value}  # alert data to create
-        fingerprint_fields: {value}  # fields to use for alert fingerprinting
-        override_source_with: {value}  # override alert source
-        read_only: {value}  # if True, don't modify existing alerts
-        fingerprint: {value}  # alert fingerprint
-        if: {value}  # condition to evaluate for alert creation
-        for: {value}  # duration for state alerts
+        delete_all_other_workflows: {value}  # 如果为 True，删除所有其他工作流
+        workflow_full_sync: {value}  # 如果为 True，同步所有工作流
+        workflow_to_update_yaml: {value}  # 要更新的工作流 yaml
+        alert: {value}  # 要创建的警报数据
+        fingerprint_fields: {value}  # 用于警报指纹的字段
+        override_source_with: {value}  # 覆盖警报来源
+        read_only: {value}  # 如果为 True，不修改现有警报
+        fingerprint: {value}  # 警报指纹
+        if: {value}  # 评估警报创建的条件
+        for: {value}  # 状态警报的持续时间
 ```
 
 
 
 
-Check the following workflow examples:
+
+请查看以下工作流示例：
 - [create_alert_from_vm_metric.yml](https://github.com/keephq/keep/blob/main/examples/workflows/create_alert_from_vm_metric.yml)
 - [create_alert_in_keep.yml](https://github.com/keephq/keep/blob/main/examples/workflows/create_alert_in_keep.yml)
 - [create_alerts_from_elastic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/create_alerts_from_elastic.yml)

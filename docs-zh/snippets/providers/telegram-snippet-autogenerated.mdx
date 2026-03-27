@@ -1,38 +1,39 @@
 {/* This snippet is automatically generated using scripts/docs_render_provider_snippets.py
 Do not edit it manually, as it will be overwritten */}
 
-## Authentication
-This provider requires authentication.
-- **bot_token**: Telegram Bot Token (required: True, sensitive: True)
+## 认证
+此提供商需要身份验证。
+- **bot_token**: Telegram Bot 令牌（必需：True，敏感：True）
 
 
-## In workflows
+## 在工作流中
 
-This provider can be used in workflows.
+此提供商可用于工作流。
 
 
 
-As "action" to make changes or update data, example:
+作为"操作"来进行更改或更新数据，示例：
 ```yaml
 actions:
     - name: Query telegram
       provider: telegram
       config: "{{ provider.my_provider_name }}"
       with:
-        chat_id: {value}  # Unique identifier for the target chat or username of the target channel
-        topic_id: {value}  # Unique identifier for the target message thread (topic)
-        message: {value}  # Message to be sent
-        reply_markup: {value}  # Inline keyboard markup to be attached to the message
-        reply_markup_layout: {value}  # Direction of the reply markup, could be "horizontal" or "vertical"
-        parse_mode: {value}  # Mode for parsing entities in the message text, could be "markdown" or "html"
-        image_url: {value}  # URL of the image to be attached to the message
-        caption_on_image: {value}  # Whether to use the message as a caption for the image
+        chat_id: {value}  # 目标聊天的唯一标识符或目标频道的用户名
+        topic_id: {value}  # 目标消息线程（主题）的唯一标识符
+        message: {value}  # 要发送的消息
+        reply_markup: {value}  # 要附加到消息的内联键盘标记
+        reply_markup_layout: {value}  # 回复标记的方向，可以是"horizontal"或"vertical"
+        parse_mode: {value}  # 解析消息文本中实体的模式，可以是"markdown"或"html"
+        image_url: {value}  # 要附加到消息的图片 URL
+        caption_on_image: {value}  # 是否将消息用作图片的标题
 ```
 
 
 
 
-Check the following workflow examples:
+
+请查看以下工作流示例：
 - [send-message-telegram-with-htmlmd.yaml](https://github.com/keephq/keep/blob/main/examples/workflows/send-message-telegram-with-htmlmd.yaml)
 - [telegram_advanced.yml](https://github.com/keephq/keep/blob/main/examples/workflows/telegram_advanced.yml)
 - [telegram_basic.yml](https://github.com/keephq/keep/blob/main/examples/workflows/telegram_basic.yml)
