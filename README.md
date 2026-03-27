@@ -2,11 +2,11 @@
     <img src="/assets/keep.png?raw=true" width="86">
 </div>
 
-<h1 align="center">The open-source AIOps and alert management platform</h1>
+<h1 align="center">开源的 AIOps 与告警管理平台</h1>
 
 </br>
 
-<div align="center">Single pane of glass, alert deduplication, enrichment, filtering and correlation, bi-directional integrations, workflows, dashboards.
+<div align="center">统一监控中控、告警去重、丰富、过滤与关联、双向集成、工作流、仪表盘。
 </br>
 </div>
 
@@ -44,25 +44,25 @@
 
 <h1 align="center"></h1>
 
-- 🔍 **Single pane of glass** - Best-in-class customizable UI for all your alerts and incidents
-- 🛠️ **Swiss Army Knife for alerts** - Deduplication, correlation, filtering and enrichment
-- 🔄 **Deep integrations** - Bi-directional syncs with monitoring tools, customizable workflows
-- ⚡ **[Automation](#workflows)** - GitHub Actions for your monitoring tools
-- 🤖 **AIOps 2.0** - AI-powered correlation and summarization
+- 🔍 **统一视图** - 用于所有告警和事件的最佳可定制界面
+- 🛠️ **告警多功能助手** - 去重、关联、过滤与丰富
+- 🔄 **深度集成** - 与监控工具双向同步，并支持自定义工作流
+- ⚡ **[自动化](#工作流)** - 为你的监控工具提供 GitHub Actions
+- 🤖 **AIOps 2.0** - AI 驱动的关联与摘要
 
 </br>
 
-> See full [platform documentation](https://docs.keephq.dev).
+> 查看完整的 [平台文档](https://docs.keephq.dev)。
 
 </br>
 
-## Supported Integrations
+## 支持的集成
 
-> View the full list in our [documentation](https://docs.keephq.dev/providers/documentation)
+> 在我们的 [文档](https://docs.keephq.dev/providers/documentation) 中查看完整列表
 
-> Missing a provider? [Submit a new provider request](https://github.com/keephq/keep/issues/new?assignees=&labels=provider&projects=&template=new_provider_request.md&title=) and we'll add it quickly!
+> 缺少某个集成？[提交新的集成申请](https://github.com/keephq/keep/issues/new?assignees=&labels=provider&projects=&template=new_provider_request.md&title=)，我们会尽快添加！
 
-### AI Backends for Enrichments, Correlations and Incident Context Gathering
+### 用于丰富、关联与事件上下文的 AI 后端
 
 <table>
 <tr>
@@ -113,7 +113,7 @@
 </tr>
 </table>
 
-### Observability Tools
+### 可观测性工具
 
 <table>
 <tr>
@@ -382,7 +382,7 @@
 </tr>
 </table>
 
-### Databases & Data Warehouses
+### 数据库与数据仓库
 
 <table>
 <tr>
@@ -433,7 +433,7 @@
 </tr>
 </table>
 
-### Communication Platforms
+### 通信平台
 
 <table>
 <tr>
@@ -534,7 +534,7 @@
 </tr>
 </table>
 
-### Incident Management
+### 事件管理
 
 <table>
   <tr>
@@ -615,7 +615,7 @@
   </tr>
 </table>
 
-### Ticketing Tools
+### 工单工具
 
 <table>
 <tr>
@@ -696,7 +696,7 @@
 </tr>
 </table>
 
-### Container Orchestration Platforms
+### 容器编排平台
 
 <table>
 <tr>
@@ -739,7 +739,7 @@
 </tr>
 </table>
 
-### Data Enrichment
+### 数据丰富
 
 <table>
 <tr>
@@ -782,7 +782,7 @@
 </tr>
 </table>
 
-### Workflow Orchestration
+### 工作流编排
 
 <table>
 <tr>
@@ -795,7 +795,7 @@
 </tr>
 </table>
 
-### Queues
+### 队列
 
 <table>
 <tr>
@@ -814,19 +814,19 @@
 </tr>
 </table>
 
-## Workflows
+## 工作流
 
-Keep is GitHub Actions for your monitoring tools.
+Keep 是为你的监控工具提供的 GitHub Actions。
 
-A Keep Workflow is a declarative YAML file that automates your alert and incident management. Each workflow consists of:
+Keep 工作流是一个声明式的 YAML 文件，自动化你的告警与事件管理。每个工作流包含：
 
-- **Triggers** - What starts the workflow (alerts, incidents, schedule or manual)
-- **Steps** - Read or fetch data (enrichment, context)
-- **Actions** - Execute operations (update tickets, send notifications, restart servers)
+- **触发器** - 启动工作流的事件（告警、事件、计划或手动）
+- **步骤** - 读取或拉取数据（丰富、上下文）
+- **操作** - 执行动作（更新工单、发送通知、重启服务器）
 
-Here's a simple workflow that creates a Jira ticket for every `critical` alert from `sentry` for `payments` and `api` services.
+下面是一个简单的工作流，在 `payments` 与 `api` 服务中为每个来自 `sentry` 的 `critical` 告警创建 Jira 工单。
 
-For more workflows, see [here](https://github.com/keephq/keep/tree/main/examples/workflows).
+更多工作流请见 [此处](https://github.com/keephq/keep/tree/main/examples/workflows)。
 
 ```yaml
 workflow:
@@ -883,39 +883,39 @@ workflow:
               value: results.ticket_url
 ```
 
-## Enterprise Ready
+## 企业就绪
 
-- **Developer First** - Modern REST APIs, native SDKs, and comprehensive documentation for seamless integration
-- **[Enterprise Security](https://docs.keephq.dev/deployment/authentication/overview)** - Full authentication support (SSO, SAML, OIDC, LDAP) with granular access control (RBAC, ABAC) and team management
-- **Flexible Deployment** - Deploy on-premises or in air-gapped environments with cloud-agnostic architecture
-- **[Production Scale](https://docs.keephq.dev/deployment/stress-testing)** - High availability, performance-tested infrastructure supporting horizontal scaling for enterprise workloads
+- **以开发者为先** - 现代 REST API、原生 SDK 与全面的文档，实现无缝集成
+- **[企业安全](https://docs.keephq.dev/deployment/authentication/overview)** - 完整认证支持（SSO、SAML、OIDC、LDAP），配合细粒度访问控制（RBAC、ABAC）与团队管理
+- **灵活部署** - 可在本地或隔离环境中部署，架构与云无关
+- **[生产级规模](https://docs.keephq.dev/deployment/stress-testing)** - 支持横向扩展的高可用、性能验证基础设施
 
-## Getting Started
+## 入门指南
 
-> Need help? Can't find your environment listed? Reach out on Slack and we'll help you quickly.
+> 需要帮助？找不到你的环境配置？在 Slack 上联系我们，我们会及时协助。
 
-Keep can run in various environments and configurations. The easiest way to start is with Keep's Docker Compose.
+Keep 可在多种环境与配置中运行。最简单的启动方式是使用 Keep 的 Docker Compose。
 
-- Running Keep [locally](https://docs.keephq.dev/development/getting-started).
-- Running Keep on [Kubernetes](https://docs.keephq.dev/deployment/kubernetes/installation).
-- Running Keep with [Docker](https://docs.keephq.dev/deployment/docker).
-- Running Keep on [AWS ECS](https://docs.keephq.dev/deployment/ecs).
-- Running Keep on [OpenShift](https://docs.keephq.dev/deployment/kubernetes/openshift).
+- 在 [本地](https://docs.keephq.dev/development/getting-started) 运行 Keep。
+- 在 [Kubernetes](https://docs.keephq.dev/deployment/kubernetes/installation) 上运行 Keep。
+- 使用 [Docker](https://docs.keephq.dev/deployment/docker) 运行 Keep。
+- 在 [AWS ECS](https://docs.keephq.dev/deployment/ecs) 上运行 Keep。
+- 在 [OpenShift](https://docs.keephq.dev/deployment/kubernetes/openshift) 上运行 Keep。
 
 ## 🫵 Keepers
 
-### Top Contributors
+### 主要贡献者
 
-A special thanks to our top contributors who help us make Keep great. You are more than awesome!
+特别感谢那些帮助 Keep 变得更优秀的核心贡献者，你们远不止“很棒”这几个字。
 
 - [Furkan](https://github.com/pehlicd)
 - [Asharon](https://github.com/asharonbaltazar)
 
-Want to become a top contributor? Join our Slack and DM Tal, Shahar, or Furkan.
+想成为顶级贡献者？加入我们的 Slack，私信 Tal、Shahar 或 Furkan。
 
-### Contributors
+### 贡献者
 
-Thank you for contributing and continuously making <b>Keep</b> better, <b>you're awesome</b> 🫶
+感谢你的贡献与坚持，让 <b>Keep</b> 持续进化，<b>你真的很强</b> 🫶
 
 <a href="https://github.com/keephq/keep/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=keephq/keep" />

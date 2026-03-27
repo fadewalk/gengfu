@@ -6,6 +6,7 @@ import { KeepLoader } from "../KeepLoader/KeepLoader";
 import { useConfig } from "@/utils/hooks/useConfig";
 import { useEffect, useState } from "react";
 import { ErrorComponent } from "../ErrorComponent/ErrorComponent";
+import { MonacoEditorErrorBoundary } from "../MonacoYAMLEditor/MonacoEditorErrorBoundary";
 
 // Monaco Editor - imported as an npm package instead of loading from the CDN to support air-gapped environments
 // https://github.com/suren-atoyan/monaco-react?tab=readme-ov-file#use-monaco-editor-as-an-npm-package
@@ -44,5 +45,9 @@ export function MonacoEditorNPM(props: EditorProps) {
     );
   }
 
-  return <Editor {...props} loading={Loader} />;
+  return (
+    <MonacoEditorErrorBoundary>
+      <Editor {...props} loading={Loader} />
+    </MonacoEditorErrorBoundary>
+  );
 }

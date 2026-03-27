@@ -10,38 +10,56 @@ interface Props {
 
 interface State {
   hasError: boolean;
+  retryKey: number;
 }
+
+const MAX_RETRIES = 5;
 
 /**
  * Error boundary to catch getModel() errors from @monaco-editor/react's
  * internal DiffEditor/Editor effects and recover by re-mounting the editor.
  */
 export class MonacoEditorErrorBoundary extends Component<Props, State> {
+  private retryTimer: ReturnType<typeof setTimeout> | null = null;
+  private retryCount = 0;
+
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, retryKey: 0 };
   }
 
   static getDerivedStateFromError(): State {
-    return { hasError: true };
+    return { hasError: true, retryKey: 0 };
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // getModel() and create() errors from @monaco-editor/react are non-fatal;
-    // re-mounting the editor recovers.
-    if (error.message.includes("getModel") || error.message.includes("create")) {
+    const isRecoverable =
+      error.message.includes("getModel") ||
+      error.message.includes("create") ||
+      error.message.includes("Cannot read properties of undefined");
+
+    if (isRecoverable && this.retryCount < MAX_RETRIES) {
+      this.retryCount++;
       console.warn(
-        "[MonacoEditorErrorBoundary] Caught editor error, re-mounting:",
+        `[MonacoEditorErrorBoundary] Recoverable editor error (attempt ${this.retryCount}/${MAX_RETRIES}):`,
         error.message
       );
+      this.scheduleRetry();
     } else {
-      console.error("[MonacoEditorErrorBoundary]", error, info);
+      console.error("[MonacoEditorErrorBoundary] Unrecoverable error:", error, info);
     }
   }
 
-  handleRetry = () => {
-    this.setState({ hasError: false });
+  private scheduleRetry = () => {
+    if (this.retryTimer) clearTimeout(this.retryTimer);
+    this.retryTimer = setTimeout(() => {
+      this.setState((prev) => ({ hasError: false, retryKey: prev.retryKey + 1 }));
+    }, 300);
   };
+
+  componentWillUnmount() {
+    if (this.retryTimer) clearTimeout(this.retryTimer);
+  }
 
   render() {
     if (this.state.hasError) {
@@ -50,6 +68,7 @@ export class MonacoEditorErrorBoundary extends Component<Props, State> {
       }
       return <KeepLoader loadingText="Recovering editor..." />;
     }
-    return this.props.children;
+    // key forces full remount on retry
+    return <div key={this.state.retryKey}>{this.props.children}</div>;
   }
 }

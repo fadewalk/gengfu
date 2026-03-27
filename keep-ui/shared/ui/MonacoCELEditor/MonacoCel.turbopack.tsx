@@ -2,6 +2,7 @@
 
 import { Editor, EditorProps, loader } from "@monaco-editor/react";
 import { useEffect, useRef, useState } from "react";
+import { MonacoEditorErrorBoundary } from "../MonacoYAMLEditor/MonacoEditorErrorBoundary";
 
 interface MonacoCelProps extends EditorProps {
   onMonacoLoaded?: (monacoInstance: typeof import("monaco-editor")) => void;
@@ -35,5 +36,9 @@ export function MonacoCelBase(props: MonacoCelProps) {
     return null;
   }
 
-  return <Editor {...props} />;
+  return (
+    <MonacoEditorErrorBoundary>
+      <Editor {...props} />
+    </MonacoEditorErrorBoundary>
+  );
 }

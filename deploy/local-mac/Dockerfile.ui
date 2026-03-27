@@ -7,14 +7,14 @@ WORKDIR /app
 COPY keep-ui/package.json keep-ui/pnpm-lock.yaml ./
 COPY keep-ui/scripts ./scripts
 RUN npm config set registry https://registry.npmmirror.com && \
-    corepack enable && \
+    npm install -g pnpm && \
     pnpm install --frozen-lockfile
 
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY keep-ui/ .
-RUN corepack enable
+RUN npm install -g pnpm
 
 ARG OPENAI_API_KEY
 ENV OPENAI_API_KEY=$OPENAI_API_KEY

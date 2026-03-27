@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getApiURL } from "@/utils/apiUrl";
 import { config as authConfig } from "@/auth.config";
 import NextAuth from "next-auth";
+import { AuthType } from "@/utils/authenticationType";
 
 const { auth } = NextAuth(authConfig);
 
@@ -14,6 +15,12 @@ function isMobileDevice(userAgent: string): boolean {
 
 export const middleware = auth(async (request) => {
   const { pathname, searchParams } = request.nextUrl;
+
+  const authType = process.env.AUTH_TYPE || AuthType.NOAUTH;
+
+  if (authType === AuthType.NOAUTH) {
+    return NextResponse.next();
+  }
 
   // go to temporary placeholder for mobile devices
   const userAgent = request.headers.get("user-agent") || "";

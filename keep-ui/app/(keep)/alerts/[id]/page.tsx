@@ -12,7 +12,7 @@ export default async function Page(props: PageProps) {
   const params = await props.params;
   const api = await createServerApiClient();
   const initialFacets = await getInitialFacets(api, "alerts");
-  return <AlertsPage presetName={params.id} initialFacets={initialFacets} />;
+  return <AlertsPage presetName={params.id || "feed"} initialFacets={initialFacets} />;
 }
 
 // Metadata is defined statically for SEO purposes

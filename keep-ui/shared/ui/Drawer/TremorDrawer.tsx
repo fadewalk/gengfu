@@ -90,6 +90,7 @@ const DrawerContent = React.forwardRef<
           )}
           {...props}
         >
+          {props.children}
           <VisuallyHidden>
             <DrawerPrimitives.Title />
           </VisuallyHidden>

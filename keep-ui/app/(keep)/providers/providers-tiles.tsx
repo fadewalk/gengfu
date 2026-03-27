@@ -87,11 +87,6 @@ const ProvidersTiles = ({
   };
 
   const sortedProviders = providers
-    .filter(
-      (provider) =>
-        Object.keys(provider.config || {}).length > 0 ||
-        (provider.tags && provider.tags.includes("alert"))
-    )
     .sort(
       (a, b) =>
         // Put coming_soon providers at the end

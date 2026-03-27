@@ -86,7 +86,7 @@ export default function Alerts({ presetName, initialFacets }: AlertsProps) {
   const presets = [...defaultPresets, ...savedPresets] as const;
 
   const selectedPreset = presets.find(
-    (preset) => preset.name.toLowerCase() === decodeURIComponent(presetName)
+    (preset) => preset.name.toLowerCase() === decodeURIComponent(presetName || "")
   );
 
   const {
