@@ -34,7 +34,6 @@ RUN groupadd -g 1000 keep && \
 WORKDIR /app
 
 COPY keep keep
-COPY ee keep/ee
 COPY examples examples
 COPY keep-ui/public/icons/unknown-icon.png unknown-icon.png
 

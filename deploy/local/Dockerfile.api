@@ -31,7 +31,6 @@ COPY requirements.txt pyproject.toml poetry.lock ./
 RUN pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple -r requirements.txt
 
 COPY keep keep
-COPY ee keep/ee
 COPY examples examples
 COPY keep-ui/public/icons/unknown-icon.png unknown-icon.png
 RUN pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple --use-deprecated=legacy-resolver -e . && \

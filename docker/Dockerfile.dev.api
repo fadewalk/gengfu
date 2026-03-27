@@ -18,7 +18,6 @@ COPY pyproject.toml ./
 RUN . /venv/bin/activate && poetry install --no-root
 
 COPY keep keep
-COPY ee keep/ee
 
 # Setting the virtual environment path
 ENV PYTHONPATH="/app:${PYTHONPATH}"
