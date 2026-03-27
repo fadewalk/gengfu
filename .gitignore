@@ -189,6 +189,7 @@ e1faa321-35df-486b-8fa8-3601ee714011*
 state/*
 .terraform*
 examples/alerts/dd.yml
+node_modules/
 keep-ui/node_modules
 keep-ui/node_modules/*
 

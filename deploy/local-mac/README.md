@@ -22,6 +22,11 @@
 ```bash
 cd /Users/fadewalk/Documents/mycode/keep/deploy/local-mac
 docker compose up --build -d
+
+
+需要重新构建镜像才能生效：
+
+docker compose -f docker-compose.yml up -d --build keep-frontend
 ```
 
 ### 分步 build + 启动（推荐）

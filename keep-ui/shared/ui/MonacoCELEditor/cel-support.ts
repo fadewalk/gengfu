@@ -2,6 +2,7 @@ import { handleCompletions } from "./handle-completions";
 
 // Call this once before rendering
 export const setupCustomCellanguage = (monaco: any) => {
+  if (!monaco?.languages?.getLanguages) return;
   if (monaco.languages.getLanguages().some((lang: any) => lang.id === "cel"))
     return;
   monaco.languages.register({ id: "cel" });

@@ -5,9 +5,11 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache libc6-compat bash
 WORKDIR /app
 COPY keep-ui/package.json keep-ui/package-lock.json ./
+COPY keep-ui/patches ./patches
 COPY keep-ui/scripts ./scripts
 RUN npm config set registry https://registry.npmmirror.com && \
-    npm ci
+    npm ci && \
+    npx patch-package
 
 FROM base AS builder
 WORKDIR /app
@@ -20,7 +22,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 ENV API_URL http://localhost:8080
 ENV NEXT_LINT_IGNORE=1
 ENV SENTRY_DISABLED=true
-RUN NODE_OPTIONS=--max-old-space-size=8192 npx next build --no-lint
+RUN NODE_OPTIONS=--max-old-space-size=16384 npx next build --no-lint
 
 FROM base AS runner
 WORKDIR /app
@@ -35,7 +37,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-RUN chgrp -R 0 /app && chmod -R g=u /app && chmod -R a+r /app/public
+RUN chgrp -R 0 /app && chmod -R g=u /app && chmod -R a+rX /app/public
 USER nextjs
 
 EXPOSE 3000

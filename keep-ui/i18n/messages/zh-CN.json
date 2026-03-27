@@ -1427,6 +1427,7 @@
       "status": "状态",
       "severity": "严重程度",
       "dismissed": "已忽略",
+      "notDismissed": "未忽略",
       "incident": "事件"
     },
     "all": "全部告警",
@@ -1487,7 +1488,11 @@
       "name": "名称",
       "description": "描述",
       "lastReceived": "最后接收时间",
-      "assignee": "处理人"
+      "assignee": "处理人",
+      "service": "服务",
+      "message": "消息",
+      "fingerprint": "指纹",
+      "startedAt": "开始时间"
     },
     "tabs": {
       "alerts": "告警",

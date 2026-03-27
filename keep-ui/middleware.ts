@@ -109,6 +109,6 @@ export const config = {
      * - icons (providers' logos)
      * - api/provider-images (provider icons)
      */
-    "/((?!keep_big\\.svg$|gnip\\.webp|api/aws-marketplace$|api/auth|monitoring|_next/static|_next/image|favicon\\.ico|icons|keep\\.svg|api/provider-images).*)",
+    "/((?!keep_big\\.svg$|gnip\\.webp|api/aws-marketplace$|api/auth|monitoring|_next/static|_next/image|favicon\\.ico|icons|music|keep\\.svg|api/provider-images).*)",
   ],
 };

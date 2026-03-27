@@ -7,6 +7,7 @@ import { useConfig } from "@/utils/hooks/useConfig";
 import { KeepLoader, ErrorComponent } from "@/shared/ui";
 import * as monaco from "monaco-editor";
 import { MonacoYamlEditorProps } from "./MonacoYAMLEditor.types";
+import { MonacoEditorErrorBoundary } from "./MonacoEditorErrorBoundary";
 
 // Loading these workers from NPM only works with webpack. For turbopack, we use 'editor.client.turbopack.tsx'
 self.MonacoEnvironment = {
@@ -107,16 +108,29 @@ export function MonacoYAMLEditor({
   }
 
   if (original && modified) {
+    // DiffEditor's onMount/onChange signatures differ from Editor's.
+    // Passing them through causes getModel() errors because the diff editor
+    // instance isn't ready when the callback fires.
+    const {
+      onMount: _onMount,
+      onChange: _onChange,
+      ...diffProps
+    } = props as MonacoYamlEditorProps & Record<string, unknown>;
     return (
-      // @ts-expect-error - DiffEditorProps is not typed correctly yet
-      <DiffEditor
-        original={original}
-        modified={modified}
-        language="yaml"
-        loading={Loader}
-        {...props}
-      />
+      <MonacoEditorErrorBoundary>
+        <DiffEditor
+          original={original}
+          modified={modified}
+          language="yaml"
+          loading={Loader}
+          {...diffProps}
+        />
+      </MonacoEditorErrorBoundary>
     );
   }
-  return <Editor language="yaml" loading={Loader} {...props} />;
+  return (
+    <MonacoEditorErrorBoundary>
+      <Editor language="yaml" loading={Loader} {...props} />
+    </MonacoEditorErrorBoundary>
+  );
 }

@@ -120,9 +120,12 @@ export const WorkflowYAMLEditor = ({
   );
 
   const handleEditorDidMount = (
-    editor: editor.IStandaloneCodeEditor,
+    editor: editor.IStandaloneCodeEditor | undefined,
     monacoInstance: typeof import("monaco-editor")
   ) => {
+    if (!editor) {
+      return;
+    }
     editorRef.current = editor;
     monacoRef.current = monacoInstance;
 

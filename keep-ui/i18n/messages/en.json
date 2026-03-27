@@ -412,6 +412,7 @@
       "source": "Source",
       "assignee": "Assignee",
       "dismissed": "Dismissed",
+      "notDismissed": "Not Dismissed",
       "incident": "Incident"
     },
     "messages": {
@@ -519,7 +520,11 @@
       "name": "Name",
       "description": "Description",
       "lastReceived": "Last Received",
-      "assignee": "Assignee"
+      "assignee": "Assignee",
+      "service": "Service",
+      "message": "Message",
+      "fingerprint": "Fingerprint",
+      "startedAt": "Started At"
     },
     "tabs": {
       "alerts": "Alerts",
