@@ -4,12 +4,11 @@ FROM base AS deps
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache libc6-compat bash
 WORKDIR /app
-COPY keep-ui/package.json keep-ui/package-lock.json ./
-COPY keep-ui/patches ./patches
+COPY keep-ui/package.json keep-ui/pnpm-lock.yaml ./
 COPY keep-ui/scripts ./scripts
 RUN npm config set registry https://registry.npmmirror.com && \
-    npm ci && \
-    npx patch-package
+    corepack enable && \
+    pnpm install --frozen-lockfile
 
 FROM base AS builder
 WORKDIR /app
@@ -22,7 +21,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 ENV API_URL http://localhost:8080
 ENV NEXT_LINT_IGNORE=1
 ENV SENTRY_DISABLED=true
-RUN NODE_OPTIONS=--max-old-space-size=16384 npx next build --no-lint
+RUN NODE_OPTIONS=--max-old-space-size=16384 pnpm exec next build --no-lint
 
 FROM base AS runner
 WORKDIR /app
