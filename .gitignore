@@ -3,8 +3,8 @@
 **/.DS_Store
 
 # LDAP test data
-ldap/ldap-data/
-ldap/slapd.d/
+deploy/ldap/ldap-data/
+deploy/ldap/slapd.d/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -227,9 +227,9 @@ workflow-yaml-json-schema.json
 
 tests/provision/*
 !tests/provision/workflows*
-grafana/*
-!grafana/provisioning/
-!grafana/dashboards/
+deploy/grafana/*
+!deploy/grafana/provisioning/
+!deploy/grafana/dashboards/
 keep/providers/grafana_provider/grafana/png/*
 topology.sh
 posthog.py
