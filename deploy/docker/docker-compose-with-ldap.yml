@@ -29,7 +29,7 @@ services:
     volumes:
       - ldap-data:/var/lib/ldap
       - slapd.d:/etc/ldap/slapd.d
-      - ./ldap/ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif
+      - ../ldap/ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif
     command: --copy-service
     healthcheck:
       test: ["CMD", "ldapsearch", "-x", "-H", "ldap://localhost", "-b", "dc=ubiq2,dc=com", "-D", "cn=admin,dc=ubiq2,dc=com", "-w", "rLhQq572Kq"]
