@@ -14,7 +14,7 @@ services:
       - otel
     command: ["-config.file=/etc/tempo.yaml"]
     volumes:
-      - ./otel-shared/tempo.yaml:/etc/tempo.yaml
+      - ../otel-shared/tempo.yaml:/etc/tempo.yaml
       - ./tempo-data:/tmp/tempo
     ports:
       - "14268:14268" # jaeger ingest
@@ -34,7 +34,7 @@ services:
       - --web.enable-remote-write-receiver
       - --enable-feature=exemplar-storage
     volumes:
-      - ./otel-shared/prometheus.yaml:/etc/prometheus.yaml
+      - ../otel-shared/prometheus.yaml:/etc/prometheus.yaml
     ports:
       - "9090:9090"
 
@@ -45,7 +45,7 @@ services:
 
     container_name: alertmanager
     volumes:
-      - ./otel-shared/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ../otel-shared/alertmanager.yml:/etc/alertmanager/alertmanager.yml
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
 
@@ -59,7 +59,7 @@ services:
       - tempo
       - prometheus
     volumes:
-      - ./otel-shared/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ../otel-shared/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -81,7 +81,7 @@ services:
       - tempo
       - loki
     volumes:
-      - ./otel-shared/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+      - ../otel-shared/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
 
   keep-frontend-dev:
     extends:
@@ -122,7 +122,7 @@ services:
     profiles:
       - otel
     volumes:
-      - ./otel-shared/vector.toml:/etc/vector/vector.toml
+      - ../otel-shared/vector.toml:/etc/vector/vector.toml
       - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
