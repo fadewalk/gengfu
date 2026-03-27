@@ -50,3 +50,6 @@ This project uses a pipeline-driven development model.
 - DOC_CONFIRM_GATE: required
 - PREVIEW_CONFIRM_GATE: required
 - HOST_PARITY: required
+
+## Version Lock Notes
+- **@monaco-editor/react**: Locked to `4.7.0-rc.0` (NOT upgraded to `4.8.x`). The `4.8.x` version has breaking changes in worker initialization that causes hydration errors in Docker environments. Do NOT upgrade this package without testing in a full Docker environment.
