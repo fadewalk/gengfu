@@ -60,7 +60,7 @@ import { areSetsEqual } from "@/utils/helpers";
 import { getLayoutedElements } from "@/app/(keep)/topology/ui/map/getLayoutedElements";
 import { getNodesAndEdgesFromTopologyData } from "@/app/(keep)/topology/ui/map/getNodesAndEdgesFromTopologyData";
 import { useIncidents } from "@/utils/hooks/useIncidents";
-import { EdgeBase, Connection } from "@xyflow/system";
+import { EdgeBase, Connection } from "@xyflow/react";
 import { AddEditNodeSidePanel } from "./AddEditNodeSidePanel";
 import { useApi } from "@/shared/lib/hooks/useApi";
 import {
