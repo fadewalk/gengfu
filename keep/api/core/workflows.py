@@ -159,6 +159,7 @@ def __build_base_query(
     fetch_last_executions: int = 1,
     select_statements=None,
     latest_executions_subquery_cte=None,
+    authenticated_entity=None,
 ):
     if latest_executions_subquery_cte is None:
         latest_executions_subquery_cte = __build_workflow_executions_query(
@@ -194,12 +195,20 @@ def __build_base_query(
         .where(Workflow.is_test == False)
     )
 
+    # Apply group-level data isolation
+    if authenticated_entity is not None:
+        from keep.api.core.group_filter import apply_group_filter
+        workflows_with_last_executions_query = apply_group_filter(
+            workflows_with_last_executions_query, Workflow, authenticated_entity
+        )
+
     return workflows_with_last_executions_query
 
 
-def build_workflows_total_count_query(tenant_id: str, cel: str):
+def build_workflows_total_count_query(tenant_id: str, cel: str, authenticated_entity=None):
     query = __build_base_query(
-        tenant_id=tenant_id, select_statements=[func.count(func.distinct(Workflow.id))]
+        tenant_id=tenant_id, select_statements=[func.count(func.distinct(Workflow.id))],
+        authenticated_entity=authenticated_entity,
     )
 
     if cel:
@@ -220,6 +229,7 @@ def build_workflows_query(
     sort_by: str,
     sort_dir: str,
     fetch_last_executions: int = 15,
+    authenticated_entity=None,
 ):
     limit = limit if limit is not None else 20
     offset = offset if offset is not None else 0
@@ -227,6 +237,7 @@ def build_workflows_query(
     query = __build_base_query(
         tenant_id=tenant_id,
         fetch_last_executions=fetch_last_executions,
+        authenticated_entity=authenticated_entity,
         select_statements=[
             Workflow,
             literal_column("started").label("started"),
@@ -267,10 +278,12 @@ def get_workflows_with_last_executions_v2(
     sort_dir: str,
     fetch_last_executions: int = 15,
     session: Session = None,
+    authenticated_entity=None,
 ) -> Tuple[list[WorkflowWithLastExecutions], int]:
     with existed_or_new_session(session) as session:
         total_count_query = build_workflows_total_count_query(
-            tenant_id=tenant_id, cel=cel
+            tenant_id=tenant_id, cel=cel,
+            authenticated_entity=authenticated_entity,
         )
 
         count = session.exec(total_count_query).one()[0]
@@ -286,6 +299,7 @@ def get_workflows_with_last_executions_v2(
             sort_by=sort_by,
             sort_dir=sort_dir,
             fetch_last_executions=1,
+            authenticated_entity=authenticated_entity,
         )
 
         query_result = session.exec(workflows_query).all()
@@ -361,6 +375,7 @@ def get_workflow_facets(
 def get_workflow_facets_data(
     tenant_id: str,
     facet_options_query: FacetOptionsQueryDto,
+    authenticated_entity=None,
 ) -> dict[str, list[FacetOptionDto]]:
     if facet_options_query and facet_options_query.facet_queries:
         facets = get_workflow_facets(
@@ -382,6 +397,7 @@ def get_workflow_facets_data(
             tenant_id=tenant_id,
             select_statements=select_statement,
             latest_executions_subquery_cte=latest_executions_subquery_cte,
+            authenticated_entity=authenticated_entity,
         )
 
     return get_facet_options(

@@ -8,6 +8,7 @@ from fastapi import (
     BackgroundTasks,
     Body,
     Depends,
+    Header,
     HTTPException,
     Query,
     Request,
@@ -102,10 +103,11 @@ def create_incident(
     ),
     pusher_client: Pusher | None = Depends(get_pusher_client),
     session: Session = Depends(get_session),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> IncidentDto:
     tenant_id = authenticated_entity.tenant_id
     incident_bl = IncidentBl(tenant_id, session, pusher_client)
-    return incident_bl.create_incident(incident_dto)
+    return incident_bl.create_incident(incident_dto, group_id=group_id)
 
 
 @router.get(
@@ -190,6 +192,7 @@ def get_all_incidents(
             sorting=sorting,
             cel=cel,
             allowed_incident_ids=allowed_incident_ids,
+            authenticated_entity=authenticated_entity,
         )
         logger.info(
             "Fetched incidents from DB",
@@ -242,6 +245,7 @@ def fetch_inicident_facet_options(
         tenant_id=tenant_id,
         allowed_incident_ids=allowed_incident_ids,
         facet_options_query=facet_options_query,
+        authenticated_entity=authenticated_entity,
     )
 
     logger.info(

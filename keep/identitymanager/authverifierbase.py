@@ -135,6 +135,9 @@ class AuthVerifierBase:
             f"Authentication successful for entity: {authenticated_entity}"
         )
 
+        # Populate group_ids for data isolation
+        self._populate_group_ids(authenticated_entity)
+
         self.logger.debug("Starting authorization process")
         self.authorize(authenticated_entity)
         self.logger.debug("Authorization successful")
@@ -436,6 +439,33 @@ class AuthVerifierBase:
             api_key_name=None,
             role=role,
         )
+
+    def _populate_group_ids(self, authenticated_entity: AuthenticatedEntity) -> None:
+        """
+        Populate group_ids on the authenticated entity for data isolation.
+
+        Loads the user's group memberships from the database so that
+        apply_group_filter() can use them later in query building.
+        Falls back to empty list on error (user sees only tenant-wide resources).
+        """
+        if authenticated_entity.group_ids is not None:
+            return
+
+        try:
+            from keep.api.core.group_filter import get_user_group_ids
+            from keep.api.core.db import engine
+            from sqlmodel import Session
+
+            with Session(engine) as session:
+                group_ids = get_user_group_ids(
+                    session,
+                    authenticated_entity.tenant_id,
+                    authenticated_entity.email,
+                )
+                authenticated_entity.group_ids = group_ids
+        except Exception:
+            self.logger.exception("Failed to populate group_ids, defaulting to empty")
+            authenticated_entity.group_ids = []
 
     def _provision_user(self, tenant_api_key, user_name, role):
         """

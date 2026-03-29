@@ -8,6 +8,7 @@ from fastapi import (
     APIRouter,
     Body,
     Depends,
+    Header,
     HTTPException,
     Query,
     Request,
@@ -96,7 +97,9 @@ def fetch_facet_options(
 
     try:
         facet_options = get_workflow_facets_data(
-            tenant_id=tenant_id, facet_options_query=facet_options_query
+            tenant_id=tenant_id,
+            facet_options_query=facet_options_query,
+            authenticated_entity=authenticated_entity,
         )
     except CelToSqlException as e:
         logger.exception(
@@ -227,6 +230,7 @@ def query_workflows(
             offset=query.offset,
             sort_by=query.sort_by,
             sort_dir=query.sort_dir,
+            authenticated_entity=authenticated_entity,
         )
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{query.cel}". {str(e)}')
@@ -618,6 +622,7 @@ async def create_workflow(
         IdentityManagerFactory.get_auth_verifier(["write:workflows"])
     ),
     lookup_by_name: bool = Query(False),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> WorkflowCreateOrUpdateDTO:
     tenant_id = authenticated_entity.tenant_id
     created_by = authenticated_entity.email
@@ -631,6 +636,7 @@ async def create_workflow(
             workflow=workflow_raw_data,
             force_update=False,
             lookup_by_name=lookup_by_name,
+            group_id=group_id,
         )
     except Exception:
         logger.exception(
@@ -688,6 +694,7 @@ async def create_workflow_from_body(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["write:workflows"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> WorkflowCreateOrUpdateDTO:
     tenant_id = authenticated_entity.tenant_id
     created_by = authenticated_entity.email
@@ -696,7 +703,10 @@ async def create_workflow_from_body(
     # Create the workflow
     try:
         workflow = workflowstore.create_workflow(
-            tenant_id=tenant_id, created_by=created_by, workflow=workflow_raw_data
+            tenant_id=tenant_id,
+            created_by=created_by,
+            workflow=workflow_raw_data,
+            group_id=group_id,
         )
     except Exception:
         logger.exception(

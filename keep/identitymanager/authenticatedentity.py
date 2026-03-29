@@ -18,6 +18,7 @@ class AuthenticatedEntity:
         email (str): The email address of the authenticated entity.
         api_key_name (Optional[str]): The name of the API key used for authentication, if applicable.
         role (Optional[str]): The role of the authenticated entity, if applicable.
+        group_ids (Optional[list[str]]): The IDs of the groups this entity belongs to.
 
     Note:
         The `config=ConfigDict(extra="allow")` parameter allows for additional
@@ -29,3 +30,4 @@ class AuthenticatedEntity:
     email: str
     api_key_name: Optional[str] = None
     role: Optional[str] = None
+    group_ids: Optional[list[str]] = None

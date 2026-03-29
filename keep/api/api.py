@@ -61,7 +61,7 @@ from keep.api.routes import (
     workflows,
 )
 from keep.api.routes.auth import groups as auth_groups
-from keep.api.routes.auth import permissions, roles, users
+from keep.api.routes.auth import permissions, roles, tenants, users
 from keep.event_subscriber.event_subscriber import EventSubscriber
 from keep.identitymanager.identitymanagerfactory import (
     IdentityManagerFactory,
@@ -309,6 +309,9 @@ def get_app(
     )
     app.include_router(
         auth_groups.router, prefix="/auth/groups", tags=["auth", "groups"]
+    )
+    app.include_router(
+        tenants.router, prefix="/auth/tenants", tags=["auth", "tenants"]
     )
     app.include_router(
         permissions.router, prefix="/auth/permissions", tags=["auth", "permissions"]

@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
 
 from keep.api.core.db import (
@@ -92,7 +92,7 @@ def read_dashboards(
         IdentityManagerFactory.get_auth_verifier(["read:dashboards"])
     ),
 ):
-    dashboards = get_dashboards_db(authenticated_entity.tenant_id)
+    dashboards = get_dashboards_db(authenticated_entity.tenant_id, authenticated_entity=authenticated_entity)
     return dashboards
 
 
@@ -102,6 +102,7 @@ def create_dashboard(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["write:dashboards"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
     email = authenticated_entity.email
     dashboard = create_dashboard_db(
@@ -109,6 +110,7 @@ def create_dashboard(
         dashboard_name=dashboard_dto.dashboard_name,
         dashboard_config=dashboard_dto.dashboard_config,
         created_by=email,
+        group_id=group_id,
     )
     return dashboard
 

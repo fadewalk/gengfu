@@ -113,7 +113,9 @@ def fetch_alert_facet_options(
 
     try:
         facet_options = get_alert_facets_data(
-            tenant_id=tenant_id, facet_options_query=facet_options_query
+            tenant_id=tenant_id,
+            facet_options_query=facet_options_query,
+            authenticated_entity=authenticated_entity,
         )
     except CelToSqlException as e:
         logger.exception(
@@ -223,7 +225,7 @@ def query_alerts(
     )
 
     try:
-        db_alerts, total_count = query_last_alerts(tenant_id=tenant_id, query=query)
+        db_alerts, total_count = query_last_alerts(tenant_id=tenant_id, query=query, authenticated_entity=authenticated_entity)
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{query.cel}". {str(e)}')
         raise HTTPException(

@@ -238,6 +238,7 @@ def __build_query_for_filtering(
     fetch_alerts_data=True,
     fetch_incidents=False,
     force_fetch=False,
+    authenticated_entity=None,
 ):
     fetch_incidents = fetch_incidents or (cel and "incident." in cel)
     cel_to_sql_instance = get_cel_to_sql_provider(properties_metadata)
@@ -307,6 +308,12 @@ def __build_query_for_filtering(
     sql_query = sql_query.filter(LastAlert.tenant_id == tenant_id).filter(
         LastAlert.timestamp >= get_threeshold_query(tenant_id)
     )
+
+    # Apply group-level data isolation
+    if authenticated_entity is not None:
+        from keep.api.core.group_filter import apply_group_filter
+        sql_query = apply_group_filter(sql_query, LastAlert, authenticated_entity)
+
     involved_fields = []
 
     if sql_filter:
@@ -318,7 +325,7 @@ def __build_query_for_filtering(
     }
 
 
-def build_total_alerts_query(tenant_id, query: QueryDto):
+def build_total_alerts_query(tenant_id, query: QueryDto, authenticated_entity=None):
     fetch_incidents = query.cel and "incident." in query.cel
     fetch_alerts_data = query.cel is not None or query.cel != ""
 
@@ -333,12 +340,13 @@ def build_total_alerts_query(tenant_id, query: QueryDto):
         select_args=[count_funct],
         limit=query.limit,
         fetch_alerts_data=fetch_alerts_data,
+        authenticated_entity=authenticated_entity,
     )
 
     return built_query_result["query"]
 
 
-def build_alerts_query(tenant_id, query: QueryDto):
+def build_alerts_query(tenant_id, query: QueryDto, authenticated_entity=None):
     cel_to_sql_instance = get_cel_to_sql_provider(properties_metadata)
     sort_by_exp = cel_to_sql_instance.get_order_by_expression(
         [
@@ -360,6 +368,7 @@ def build_alerts_query(tenant_id, query: QueryDto):
         ]
         + distinct_columns,
         cel=query.cel,
+        authenticated_entity=authenticated_entity,
     )
     sql_query = built_query_result["query"]
     fetch_incidents = built_query_result["fetch_incidents"]
@@ -377,7 +386,7 @@ def build_alerts_query(tenant_id, query: QueryDto):
     return sql_query
 
 
-def query_last_alerts(tenant_id, query: QueryDto) -> Tuple[list[Alert], int]:
+def query_last_alerts(tenant_id, query: QueryDto, authenticated_entity=None) -> Tuple[list[Alert], int]:
     query_with_defaults = query.copy()
 
     # Shahar: this happens when the frontend query builder fails to build a query
@@ -403,7 +412,7 @@ def query_last_alerts(tenant_id, query: QueryDto) -> Tuple[list[Alert], int]:
     with Session(engine) as session:
         try:
             total_count_query = build_total_alerts_query(
-                tenant_id=tenant_id, query=query_with_defaults
+                tenant_id=tenant_id, query=query_with_defaults, authenticated_entity=authenticated_entity
             )
             total_count = session.exec(total_count_query).one()[0]
 
@@ -421,7 +430,7 @@ def query_last_alerts(tenant_id, query: QueryDto) -> Tuple[list[Alert], int]:
                     alerts_hard_limit - query_with_defaults.offset
                 )
 
-            data_query = build_alerts_query(tenant_id, query_with_defaults)
+            data_query = build_alerts_query(tenant_id, query_with_defaults, authenticated_entity=authenticated_entity)
             alerts_with_start = session.execute(data_query).all()
         except OperationalError as e:
             logger.warning(
@@ -447,6 +456,7 @@ def query_last_alerts(tenant_id, query: QueryDto) -> Tuple[list[Alert], int]:
 def get_alert_facets_data(
     tenant_id: str,
     facet_options_query: FacetOptionsQueryDto,
+    authenticated_entity=None,
 ) -> dict[str, list[FacetOptionDto]]:
     if facet_options_query and facet_options_query.facet_queries:
         facets = get_alert_facets(tenant_id, facet_options_query.facet_queries.keys())
@@ -467,6 +477,7 @@ def get_alert_facets_data(
             select_args=select_statement,
             force_fetch=False,
             fetch_incidents=fetch_incidents,
+            authenticated_entity=authenticated_entity,
         )["query"]
 
     return get_facet_options(

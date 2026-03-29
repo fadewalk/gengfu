@@ -2,11 +2,13 @@ import logging
 import os
 import uuid
 from datetime import datetime
+from typing import Optional
 
 from fastapi import (
     APIRouter,
     BackgroundTasks,
     Depends,
+    Header,
     HTTPException,
     Request,
     Response,
@@ -227,6 +229,7 @@ def get_presets(
         tenant_id=tenant_id,
         email=authenticated_entity.email,
         preset_ids=allowed_preset_ids,
+        authenticated_entity=authenticated_entity,
     )
     presets_dto = [PresetDto(**preset.to_dict()) for preset in presets]
     # add static presets (unless allowed_preset_ids is set)
@@ -255,6 +258,7 @@ def create_preset(
         IdentityManagerFactory.get_auth_verifier(["write:presets"])
     ),
     session: Session = Depends(get_session),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> PresetDto:
     tenant_id = authenticated_entity.tenant_id
     if not body.options or not body.name:
@@ -273,6 +277,7 @@ def create_preset(
         is_private=body.is_private,
         is_noisy=body.is_noisy,
         counter_shows_firing_only=body.counter_shows_firing_only,
+        group_id=group_id,
     )
 
     # Handle tags

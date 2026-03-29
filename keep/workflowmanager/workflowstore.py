@@ -77,6 +77,7 @@ class WorkflowStore:
         workflow: dict,
         force_update: bool = True,
         lookup_by_name: bool = False,
+        group_id: str | None = None,
     ):
         workflow_id = workflow.get("id")
         self.logger.info(f"Creating workflow {workflow_id}")
@@ -99,6 +100,7 @@ class WorkflowStore:
             workflow_raw=cyaml.dump(workflow, width=99999),
             force_update=force_update,
             lookup_by_name=lookup_by_name,
+            group_id=group_id,
         )
         self.logger.info(
             f"Workflow {workflow_db.id}, {workflow_db.revision} created successfully"
@@ -206,6 +208,7 @@ class WorkflowStore:
         sort_by: str = None,
         sort_dir: str = None,
         session=None,
+        authenticated_entity=None,
     ):
         # list all tenant's workflows
         return get_workflows_with_last_executions_v2(
@@ -217,6 +220,7 @@ class WorkflowStore:
             sort_dir=sort_dir,
             fetch_last_executions=25,
             session=session,
+            authenticated_entity=authenticated_entity,
         )
 
     def get_all_workflows_yamls(self, tenant_id: str) -> list[str]:
