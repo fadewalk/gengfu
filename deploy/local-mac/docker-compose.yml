@@ -10,7 +10,8 @@ services:
       file: ../../deploy/docker/docker-compose.common.yml
       service: keep-backend-common
     environment:
-      - AUTH_TYPE=NO_AUTH
+      - AUTH_TYPE=DB
+      - KEEP_JWT_SECRET=keep-local-dev-secret-2026
       - KEEP_ALLOW_MESH_ALERT_INGESTION=true
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_BASE_URL=${OPENAI_BASE_URL}
@@ -30,7 +31,7 @@ services:
     ports:
       - "4000:3000"
     environment:
-      - AUTH_TYPE=NO_AUTH
+      - AUTH_TYPE=DB
       - API_URL=http://keep-backend:8080
       - SENTRY_DISABLED=true
     volumes:
