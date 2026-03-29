@@ -12,7 +12,7 @@ from typing import List, Optional
 
 import celpy
 from arq import ArqRedis
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Header, Query, Request
 from fastapi.responses import JSONResponse
 from pusher import Pusher
 from sqlalchemy_utils import UUIDType
@@ -206,6 +206,7 @@ def query_alerts(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:alert"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
     # Gathering alerts may take a while and we don't care if it will finish before we return the response.
     # In the worst case, gathered alerts will be pulled in the next request.
@@ -221,11 +222,12 @@ def query_alerts(
         "Fetching alerts from DB",
         extra={
             "tenant_id": tenant_id,
+            "group_id": group_id,
         },
     )
 
     try:
-        db_alerts, total_count = query_last_alerts(tenant_id=tenant_id, query=query, authenticated_entity=authenticated_entity)
+        db_alerts, total_count = query_last_alerts(tenant_id=tenant_id, query=query, authenticated_entity=authenticated_entity, selected_group_id=group_id)
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{query.cel}". {str(e)}')
         raise HTTPException(

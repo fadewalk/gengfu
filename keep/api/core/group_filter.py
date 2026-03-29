@@ -67,6 +67,31 @@ def apply_group_filter(query, model, authenticated_entity: AuthenticatedEntity):
     )
 
 
+def apply_selected_group_filter(query, model, selected_group_id: Optional[str]):
+    """
+    Apply group-level filtering based on a specific selected group ID.
+
+    When a group is selected, only show resources belonging to that group.
+    Resources with group_id IS NULL are "tenant-wide" and visible to all users.
+
+    Usage:
+        query = session.query(Alert).filter(Alert.tenant_id == tenant_id)
+        query = apply_selected_group_filter(query, Alert, "group-uuid")
+    """
+    if not hasattr(model, "group_id"):
+        return query
+
+    if selected_group_id is None:
+        return query
+
+    return query.filter(
+        or_(
+            model.group_id.is_(None),
+            model.group_id == selected_group_id,
+        )
+    )
+
+
 def populate_group_ids(
     session: Session,
     authenticated_entity: AuthenticatedEntity,

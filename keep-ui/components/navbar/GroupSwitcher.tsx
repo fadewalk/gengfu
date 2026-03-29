@@ -41,6 +41,8 @@ export function GroupSwitcher() {
     } catch {
       // localStorage unavailable
     }
+    // Reload page to apply group filter
+    window.location.reload();
   };
 
   const selectedGroup = selectedGroupId
