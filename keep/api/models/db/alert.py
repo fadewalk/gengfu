@@ -48,6 +48,7 @@ class LastAlert(SQLModel, table=True):
     timestamp: datetime = Field(nullable=False, index=True)
     first_timestamp: datetime = Field(nullable=False, index=True)
     alert_hash: str | None = Field(nullable=True, index=True)
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
 
     __table_args__ = (
         # Original indexes from MySQL

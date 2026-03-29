@@ -5736,6 +5736,7 @@ def set_last_alert(
                     last_alert.timestamp = alert.timestamp
                     last_alert.alert_id = alert.id
                     last_alert.alert_hash = alert.alert_hash
+                    last_alert.group_id = alert.group_id
                     session.add(last_alert)
 
                 elif not last_alert:
@@ -5747,6 +5748,7 @@ def set_last_alert(
                         first_timestamp=alert.timestamp,
                         alert_id=alert.id,
                         alert_hash=alert.alert_hash,
+                        group_id=alert.group_id,
                     )
 
                 session.add(last_alert)
