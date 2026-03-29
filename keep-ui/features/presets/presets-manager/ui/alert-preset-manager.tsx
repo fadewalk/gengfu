@@ -122,6 +122,7 @@ export function AlertPresetManager({
         isNoisy: selectedPreset.is_noisy,
         tags: selectedPreset.tags,
         groupColumn: selectedPreset.group_column,
+        groupId: selectedPreset.group_id ?? null,
         counterShowsFiringOnly: selectedPreset.counter_shows_firing_only,
       }
     : {
@@ -131,6 +132,7 @@ export function AlertPresetManager({
         isNoisy: undefined,
         tags: undefined,
         groupColumn: undefined,
+        groupId: null,
         counterShowsFiringOnly: true,
       };
 

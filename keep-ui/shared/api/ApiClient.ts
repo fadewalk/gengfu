@@ -172,10 +172,20 @@ export class ApiClient {
       : getApiUrlFromConfig(this.config);
     const fullUrl = apiUrl + url;
 
+    // Inject group context header when running in the browser
+    const groupHeaders: Record<string, string> = {};
+    if (!this.isServer) {
+      const groupId = localStorage.getItem("keep-current-group-id");
+      if (groupId && groupId !== "null") {
+        groupHeaders["X-Keep-Group-Id"] = groupId;
+      }
+    }
+
     const response = await fetch(fullUrl, {
       ...requestInit,
       headers: {
         ...(this.getHeaders() as HeadersInit),
+        ...groupHeaders,
         ...requestInit.headers,
       },
     });

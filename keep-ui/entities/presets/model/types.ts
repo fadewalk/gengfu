@@ -30,6 +30,7 @@ export interface Preset {
   created_by?: string;
   tags: Tag[];
   group_column?: string;
+  group_id?: string;
 }
 
 type TagPayload = {
@@ -44,4 +45,5 @@ export type PresetCreateUpdateDto = {
   isNoisy: boolean;
   counterShowsFiringOnly: boolean;
   tags: TagPayload[];
+  groupId?: string | null;
 };

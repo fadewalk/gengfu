@@ -332,6 +332,10 @@
       "keepTwitter": "Keep Twitter",
       "nothingFound": "Nothing found",
       "switchTenant": "Switch Tenant"
+    },
+    "groupSwitcher": {
+      "allGroups": "All Groups",
+      "switchGroup": "Switch Group"
     }
   },
   "alerts": {

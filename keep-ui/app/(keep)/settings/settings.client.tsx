@@ -67,7 +67,7 @@ export default function SettingsPage() {
   const rolesAllowed = authType !== AuthType.NOAUTH;
   const customRolesAllowed = authType === AuthType.KEYCLOAK;
   const ssoAllowed = authType === AuthType.KEYCLOAK;
-  const groupsAllowed = authType === AuthType.KEYCLOAK;
+  const groupsAllowed = true;
   const permissionsAllowed = authType === AuthType.KEYCLOAK;
   const apiKeysAllowed = true; // Assuming API keys are always allowed
 

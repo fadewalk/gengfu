@@ -5,7 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 
 export const metadata = {
-  title: "UbiKeep",
+  title: "Keep",
   description: "The open-source alert management and AIOps platform",
 };
 
@@ -24,7 +24,7 @@ export default async function RootLayout({
             <div className="flex flex-col items-center gap-6">
               <div className="flex items-center gap-3">
                 <Text className="text-3xl font-bold text-orange-500">
-                  UbiKeep
+                  Keep
                 </Text>
               </div>
               <Card
