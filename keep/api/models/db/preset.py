@@ -49,6 +49,7 @@ class Preset(SQLModel, table=True):
     counter_shows_firing_only: Optional[bool] = Field(default=False)
     name: str = Field(unique=True)
     options: list = Field(sa_column=Column(JSON))  # [{"label": "", "value": ""}]
+    group_id: Optional[str] = Field(default=None, foreign_key="tenant_group.id", index=True)
     tags: List[Tag] = Relationship(
         back_populates="presets",
         link_model=PresetTagLink,

@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from uuid import uuid4
 
 from sqlalchemy import UniqueConstraint
@@ -17,6 +18,7 @@ class Dashboard(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     is_active: bool = Field(default=True)
     is_private: bool = Field(default=False)
+    group_id: Optional[str] = Field(default=None, foreign_key="tenant_group.id", index=True)
 
     __table_args__ = (
         UniqueConstraint(
