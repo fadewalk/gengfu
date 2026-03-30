@@ -1,11 +1,7 @@
 ---
-description: 
-globs: 
-alwaysApply: true
----
----
 description: Rules and guidelines for writing and running React tests
-globs: *.spec.tsx, *.test.tsx, *.test.ts, *.spec.ts
+globs: keep-ui/**/*.spec.tsx, keep-ui/**/*.test.tsx, keep-ui/**/*.test.ts, keep-ui/**/*.spec.ts
+alwaysApply: false
 ---
 
 # Writing frontend tests

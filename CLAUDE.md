@@ -1,0 +1,57 @@
+# Keep 项目约定
+
+## 技术栈
+- 前端：Next.js + TypeScript（`keep-ui/`）
+- 后端：FastAPI + Python（`keep/api/`）
+- 数据库：MySQL（SQLAlchemy ORM）
+
+## 本地开发
+- 前后端分离开发：前端 `keep-ui/` 独立启动，后端通过 docker-compose 运行
+- 环境变量参考 `docker-compose.common.yml`
+
+## 分支策略
+- `main` — 上游主分支，只同步不推送
+- `develop` — 本地开发分支
+- 功能分支从 `develop` 创建，合并后可删除
+
+## 版本锁定
+- **@monaco-editor/react**: 锁定在 `4.7.0-rc.0`（不要升级到 `4.8.x`）。`4.8.x` 的 worker 初始化存在破坏性变更，会导致 Docker 环境中的 hydration 错误。未经完整 Docker 环境测试，不要升级此包。
+
+## UI 质量要求
+- 避免明显的 AI 模板风格（紫色渐变、emoji 图标、仅默认字体）
+- 优先使用真实截图、可信模块和任务流程，而非装饰性视觉元素
+- UI 实现前先定义排版系统、设计令牌、页面层级和组件状态
+
+## 本地启动
+
+### 后端（Docker）
+```bash
+docker compose up -d
+# 或独立容器模式参考 docker-compose.common.yml
+```
+
+### 前端（本地，保留汉化修改）
+```bash
+cd keep-ui && pnpm install && node scripts/build-monaco-workers-turbopack.js
+nohup npx next dev -p 3000 > /tmp/keep-frontend.log 2>&1 &
+```
+
+### 停止服务
+```bash
+docker compose down
+kill $(lsof -ti :3000)
+```
+
+## i18n 汉化
+- 前端使用 `next-intl`，翻译文件: `keep-ui/messages/zh-CN.json` 和 `en.json`
+- 后端使用 `keep/api/i18n/`（`translator.py` 提供 `t()` 和 `tr()` 函数）
+- 不要用 `--turbopack`：与 Next.js 内置 Google Fonts 不兼容
+- 不要用 docker-compose.dev.yml 启动前端：会覆盖本地汉化代码
+
+## 私有 LLM 支持
+支持通过环境变量配置 OpenAI 兼容的私有 LLM：
+```
+OPENAI_API_KEY=your-key
+OPENAI_BASE_URL=http://your-endpoint/v1
+OPENAI_MODEL_NAME=glm-5
+```
