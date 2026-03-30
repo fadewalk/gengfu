@@ -201,16 +201,16 @@ class WorkflowStore:
 
     def get_all_workflows_with_last_execution(
         self,
-        tenant_id=tenant_id,
-        cel=cel,
-        limit=limit,
-        offset=offset,
-        sort_by=sort_by,
-        sort_dir=sort_dir,
+        tenant_id: str,
+        cel: str = None,
+        limit: int = None,
+        offset: int = None,
+        sort_by: str = None,
+        sort_dir: str = None,
         fetch_last_executions: int = 25,
-        session=session,
-        authenticated_entity=authenticated_entity,
-        selected_group_id: selected_group_id,
+        session=None,
+        authenticated_entity=None,
+        selected_group_id: str | None = None,
     ):
         # list all tenant's workflows
         return get_workflows_with_last_executions_v2(
@@ -220,7 +220,7 @@ class WorkflowStore:
             offset=offset,
             sort_by=sort_by,
             sort_dir=sort_dir,
-            fetch_last_executions=25,
+            fetch_last_executions=fetch_last_executions,
             session=session,
             authenticated_entity=authenticated_entity,
             selected_group_id=selected_group_id,
