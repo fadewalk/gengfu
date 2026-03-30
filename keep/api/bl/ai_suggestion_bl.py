@@ -471,16 +471,28 @@ class AISuggestionBl:
         """Process incidents and create DTOs."""
         processed_incidents = []
         for incident in incidents:
+            # Skip incidents with no alerts or out-of-range indices
+            if not incident.alerts:
+                logger.warning(f"Skipping incident '{incident.incident_name}' with no alerts")
+                continue
+            valid_indices = [i for i in incident.alerts if 1 <= i <= len(alerts_dto)]
+            if not valid_indices:
+                logger.warning(
+                    f"Skipping incident '{incident.incident_name}': "
+                    f"all alert indices out of range (alerts count: {len(alerts_dto)}, indices: {incident.alerts})"
+                )
+                continue
+
             alert_sources: Set[str] = set()
             alert_services: Set[str] = set()
-            for alert_index in incident.alerts:
+            for alert_index in valid_indices:
                 alert = alerts_dto[alert_index - 1]
-                if alert.source:
+                if alert.source and len(alert.source) > 0:
                     alert_sources.add(alert.source[0])
                 if alert.service:
                     alert_services.add(alert.service)
 
-            incident_alerts = [alerts_dto[i - 1] for i in incident.alerts]
+            incident_alerts = [alerts_dto[i - 1] for i in valid_indices]
             start_time = min(alert.lastReceived for alert in incident_alerts)
             last_seen_time = max(alert.lastReceived for alert in incident_alerts)
 
@@ -493,12 +505,12 @@ class AISuggestionBl:
                 confidence_score=incident.confidence_score,
                 confidence_explanation=incident.confidence_explanation,
                 severity=incident.severity,
-                alert_ids=[alerts_dto[i - 1].id for i in incident.alerts],
+                alert_ids=[alerts_dto[i - 1].id for i in valid_indices],
                 recommended_actions=incident.recommended_actions,
                 is_predicted=True,
                 is_candidate=True,
                 is_visible=True,
-                alerts_count=len(incident.alerts),
+                alerts_count=len(valid_indices),
                 alert_sources=list(alert_sources),
                 alerts=incident_alerts,
                 services=list(alert_services),

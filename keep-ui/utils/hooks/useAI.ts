@@ -40,7 +40,19 @@ type UseAIActionsValue = {
     algorithm_id: string,
     settings: AIConfig
   ) => Promise<AIStats>;
+  triggerCorrelation: () => Promise<CorrelationResult>;
 };
+
+export interface CorrelationResult {
+  status: string;
+  message?: string;
+  alerts_analyzed: number;
+  incidents_suggested: number;
+  incidents_above_threshold?: number;
+  incidents_created: number;
+  suggestion_id?: string;
+  correlated_count?: number;
+}
 
 export function useAIActions(): UseAIActionsValue {
   const api = useApi();
@@ -49,8 +61,6 @@ export function useAIActions(): UseAIActionsValue {
     algorithm_id: string,
     settings: AIConfig
   ): Promise<AIStats> => {
-    // TODO: FIX, it's a hack to avoid updating settings_proposed_by_algorithm
-    // DO NOT UPDATE settings_proposed_by_algorithm, it will be updated by the algorithm
     const settingsToUpdate = {
       ...settings,
       settings_proposed_by_algorithm: null,
@@ -67,7 +77,16 @@ export function useAIActions(): UseAIActionsValue {
     return response;
   };
 
+  const triggerCorrelation = async (): Promise<CorrelationResult> => {
+    const response = await api.post<CorrelationResult>("/ai/correlate");
+    if (!response) {
+      throw new Error("Failed to trigger AI correlation");
+    }
+    return response;
+  };
+
   return {
     updateAISettings,
+    triggerCorrelation,
   };
 }

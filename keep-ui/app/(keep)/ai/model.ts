@@ -28,15 +28,15 @@ export interface AIConfig {
   algorithm_id: string;
   tenant_id: string;
   settings: AlgorithmSetting[];
-  settings_proposed_by_algorithm: AlgorithmSetting[];
-  feedback_logs: string;
+  settings_proposed_by_algorithm: AlgorithmSetting[] | null;
+  feedback_logs: string | null;
   algorithm: Algorithm;
 }
 
 export interface AIStats {
   alerts_count: number;
   incidents_count: number;
-  first_alert_datetime?: Date;
+  first_alert_datetime?: string;
   algorithm_configs: AIConfig[];
 }
 

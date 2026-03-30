@@ -5520,14 +5520,29 @@ def get_or_create_external_ai_settings(
                 ExternalAIConfigAndMetadata.tenant_id == tenant_id
             )
         ).all()
-        if len(algorithm_configs) == 0:
-            if os.environ.get("KEEP_EXTERNAL_AI_TRANSFORMERS_URL") is not None:
-                algorithm_config = ExternalAIConfigAndMetadata.from_external_ai(
-                    tenant_id=tenant_id, algorithm=external_ai_transformers
-                )
-                session.add(algorithm_config)
-                session.commit()
-                algorithm_configs = [algorithm_config]
+
+        existing_ids = {ac.algorithm_id for ac in algorithm_configs}
+
+        # Always create internal LLM correlation config if missing
+        if internal_ai_correlation.unique_id not in existing_ids:
+            algorithm_config = ExternalAIConfigAndMetadata.from_external_ai(
+                tenant_id=tenant_id, algorithm=internal_ai_correlation
+            )
+            session.add(algorithm_config)
+            algorithm_configs = list(algorithm_configs) + [algorithm_config]
+
+        # Create external transformers config only if URL is configured
+        if (
+            external_ai_transformers.unique_id not in existing_ids
+            and os.environ.get("KEEP_EXTERNAL_AI_TRANSFORMERS_URL") is not None
+        ):
+            algorithm_config = ExternalAIConfigAndMetadata.from_external_ai(
+                tenant_id=tenant_id, algorithm=external_ai_transformers
+            )
+            session.add(algorithm_config)
+            algorithm_configs = list(algorithm_configs) + [algorithm_config]
+
+        session.commit()
         return [
             ExternalAIConfigAndMetadataDto.from_orm(algorithm_config)
             for algorithm_config in algorithm_configs
@@ -5546,11 +5561,18 @@ def update_extrnal_ai_settings(
             )
             .first()
         )
-        setting.settings = json.dumps(ai_settings.settings)
+        if setting is None:
+            raise ValueError(
+                f"No AI settings found for tenant {tenant_id} with id {ai_settings.id}"
+            )
+        # Avoid double-serialization: settings may already be a JSON string
+        raw_settings = ai_settings.settings
+        setting.settings = raw_settings if isinstance(raw_settings, str) else json.dumps(raw_settings)
         setting.feedback_logs = ai_settings.feedback_logs
         if ai_settings.settings_proposed_by_algorithm is not None:
-            setting.settings_proposed_by_algorithm = json.dumps(
-                ai_settings.settings_proposed_by_algorithm
+            raw_proposed = ai_settings.settings_proposed_by_algorithm
+            setting.settings_proposed_by_algorithm = (
+                raw_proposed if isinstance(raw_proposed, str) else json.dumps(raw_proposed)
             )
         else:
             setting.settings_proposed_by_algorithm = None

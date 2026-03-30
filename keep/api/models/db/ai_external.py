@@ -78,7 +78,58 @@ analyzing the alert feed and making decisions for each incoming alert.""",
     ),
 )
 
-EXTERNAL_AIS = [external_ai_transformers]
+# Internal LLM-based correlation algorithm — no external service required.
+# Uses OPENAI_API_KEY / OPENAI_BASE_URL to cluster alerts into incidents.
+internal_ai_correlation = ExternalAI(
+    name="LLM Alert Correlation",
+    description="""An LLM-powered alert-to-incident correlation engine.
+It analyzes unassigned alerts in batch, groups them into incidents based on
+description similarity, temporal proximity, affected systems, and service dependencies.
+Powered by your configured LLM (OpenAI-compatible API).""",
+    version=1,
+    api_url=None,
+    api_key=None,
+    config_default=json.dumps(
+        [
+            {
+                "value": True,
+                "type": "bool",
+                "name": "Enabled",
+                "description": "Enable or disable the LLM correlation engine.",
+            },
+            {
+                "min": 5,
+                "max": 50,
+                "value": 20,
+                "type": "int",
+                "name": "Max Alerts Per Batch",
+                "description": "Maximum number of unassigned alerts to process in a single correlation run.",
+            },
+            {
+                "min": 0.0,
+                "max": 1.0,
+                "value": 0.5,
+                "type": "float",
+                "name": "Confidence Threshold",
+                "description": "Minimum confidence score for AI-suggested incidents. Suggestions below this threshold are discarded.",
+            },
+            {
+                "value": True,
+                "type": "bool",
+                "name": "Auto Create Incidents",
+                "description": "Automatically create incidents from high-confidence correlations. When disabled, suggestions are stored for manual review.",
+            },
+            {
+                "value": False,
+                "type": "bool",
+                "name": "Include Topology Context",
+                "description": "Include service topology data when analyzing alerts for better correlation accuracy.",
+            },
+        ]
+    ),
+)
+
+EXTERNAL_AIS = [external_ai_transformers, internal_ai_correlation]
 
 
 class ExternalAIConfigAndMetadata(SQLModel, table=True):
@@ -105,9 +156,16 @@ class ExternalAIConfigAndMetadata(SQLModel, table=True):
         return matching_algos[0] if len(matching_algos) > 0 else None
 
     def from_external_ai(tenant_id: str, algorithm: ExternalAI):
+        # config_default may be a JSON string or already a Python object.
+        # The `settings` column is Column(JSON) — SQLAlchemy auto-serializes
+        # Python objects. We must pass a Python object (not a JSON string)
+        # to avoid double-serialization.
+        settings_value = algorithm.config_default
+        if isinstance(settings_value, str):
+            settings_value = json.loads(settings_value)
         external_ai = ExternalAIConfigAndMetadata(
             algorithm_id=algorithm.unique_id,
             tenant_id=tenant_id,
-            settings=json.dumps(algorithm.config_default),
+            settings=settings_value,
         )
         return external_ai

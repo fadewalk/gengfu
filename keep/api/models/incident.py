@@ -316,7 +316,7 @@ class IncidentCandidate(BaseModel):
     reasoning: str
     severity: str = Field(
         description="Assessed severity level",
-        enum=["Low", "Medium", "High", "Critical"],
+        enum=["critical", "high", "warning", "info", "low"],
     )
     recommended_actions: List[str]
     confidence_score: float = Field(
