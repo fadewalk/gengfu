@@ -48,6 +48,11 @@ kill $(lsof -ti :3000)
 - 不要用 `--turbopack`：与 Next.js 内置 Google Fonts 不兼容
 - 不要用 docker-compose.dev.yml 启动前端：会覆盖本地汉化代码
 
+## 设计文档
+- 完成需求设计后，写设计文档到项目 Wiki（不放 `docs/`，那是技术文档站）
+- 命名格式：`feat-xxx-design.md`，如 `group-isolation-design.md`
+- 内容至少包含：背景、方案选型、影响范围、验收标准
+
 ## 私有 LLM 支持
 支持通过环境变量配置 OpenAI 兼容的私有 LLM：
 ```
