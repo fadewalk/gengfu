@@ -3480,11 +3480,13 @@ def delete_dashboard(tenant_id, dashboard_id):
         return False
 
 
-def get_all_actions(tenant_id: str) -> List[Action]:
+def get_all_actions(tenant_id: str, selected_group_id: Optional[str] = None) -> List[Action]:
     with Session(engine) as session:
-        actions = session.exec(
-            select(Action).where(Action.tenant_id == tenant_id)
-        ).all()
+        query = select(Action).where(Action.tenant_id == tenant_id)
+        if selected_group_id is not None:
+            from keep.api.core.group_filter import apply_selected_group_filter
+            query = apply_selected_group_filter(query, Action, selected_group_id)
+        actions = session.exec(query).all()
     return actions
 
 

@@ -26,6 +26,7 @@ class Provider(SQLModel, table=True):
     provider_metadata: dict = Field(
         sa_column=Column(JSON)
     )  # metadata about the provider, e.g: {"version": "1.0.0"}
+    group_id: Optional[str] = Field(default=None, foreign_key="tenant_group.id")
 
     class Config:
         orm_mode = True

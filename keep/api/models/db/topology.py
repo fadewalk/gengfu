@@ -31,6 +31,7 @@ class TopologyApplication(SQLModel, table=True):
     name: str
     description: str = Field(default_factory=str)
     repository: str = Field(default_factory=str)
+    group_id: Optional[str] = Field(default=None, foreign_key="tenant_group.id")
     services: List["TopologyService"] = Relationship(
         back_populates="applications", link_model=TopologyServiceApplication
     )
@@ -55,6 +56,7 @@ class TopologyService(SQLModel, table=True):
     manufacturer: Optional[str] = None
     namespace: Optional[str] = None
     is_manual: Optional[bool] = False
+    group_id: Optional[str] = Field(default=None, foreign_key="tenant_group.id")
 
     updated_at: Optional[datetime] = Field(
         sa_column=Column(
@@ -175,6 +177,7 @@ class TopologyApplicationDtoIn(BaseModel, extra="ignore"):
     description: str = ""
     repository: str = ""
     services: List[TopologyServiceDtoIn] = []
+    group_id: Optional[str] = None
 
 
 class TopologyApplicationServiceDto(BaseModel, extra="ignore"):

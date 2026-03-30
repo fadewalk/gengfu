@@ -2,7 +2,7 @@ import logging
 from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Header, Response, UploadFile
 from fastapi.responses import JSONResponse
 from sqlmodel import Session
 
@@ -50,6 +50,9 @@ def get_topology_data(
     services: Optional[str] = None,
     environment: Optional[str] = None,
     include_empty_deps: Optional[bool] = True,
+    selected_group_id: Optional[str] = Header(
+        None, alias="X-Keep-Group-Id"
+    ),
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:topology"])
     ),
@@ -58,7 +61,13 @@ def get_topology_data(
     tenant_id = authenticated_entity.tenant_id
     logger.info("Getting topology data", extra={tenant_id: tenant_id})
     topology_data = TopologiesService.get_all_topology_data(
-        tenant_id, session, provider_ids, services, environment, include_empty_deps
+        tenant_id,
+        session,
+        provider_ids,
+        services,
+        environment,
+        include_empty_deps,
+        selected_group_id=selected_group_id,
     )
     return topology_data
 
@@ -69,6 +78,9 @@ def get_topology_data(
     response_model=List[TopologyApplicationDtoOut],
 )
 def get_applications(
+    selected_group_id: Optional[str] = Header(
+        None, alias="X-Keep-Group-Id"
+    ),
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:topology"])
     ),
@@ -77,7 +89,9 @@ def get_applications(
     tenant_id = authenticated_entity.tenant_id
     logger.info("Getting applications", extra={"tenant_id": tenant_id})
     try:
-        return TopologiesService.get_applications_by_tenant_id(tenant_id, session)
+        return TopologiesService.get_applications_by_tenant_id(
+            tenant_id, session, selected_group_id=selected_group_id
+        )
     except ApplicationParseException as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -460,6 +474,9 @@ def delete_dependency(
 )
 async def export_topology_yaml(
     services: Optional[str] = None,
+    selected_group_id: Optional[str] = Header(
+        None, alias="X-Keep-Group-Id"
+    ),
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:topology"])
     ),
@@ -468,7 +485,7 @@ async def export_topology_yaml(
     tenant_id = authenticated_entity.tenant_id
     logger.info("Getting topology data", extra={tenant_id: tenant_id})
     topology_data = TopologiesService.get_topology_services(
-        tenant_id, session, None, services, None
+        tenant_id, session, None, services, None, selected_group_id
     )
     full_data = {"applications": {}, "services": [], "dependencies": []}
 

@@ -4,6 +4,7 @@ import pytest
 from sqlmodel import select
 
 from keep.api.core.dependencies import SINGLE_TENANT_UUID
+from keep.api.i18n import t
 from keep.api.models.db.topology import (
     TopologyApplication,
     TopologyApplicationDtoIn,
@@ -281,12 +282,13 @@ def test_delete_application(db_session, client, test_app):
     )
     db_session.add(application)
     db_session.commit()
+    db_session.refresh(application)
 
     response = client.delete(
         f"/topology/applications/{application.id}", headers={"x-api-key": VALID_API_KEY}
     )
     assert response.status_code == 200
-    assert response.json()["message"] == "Application deleted successfully"
+    assert response.json()["message"] == t("Application deleted successfully")
 
 
 def test_clean_before_import(db_session):

@@ -1,9 +1,11 @@
 import logging
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, Header, Request, UploadFile, status
 from fastapi.responses import JSONResponse
 
 from keep.actions.actions_factory import ActionsCRUD
+from keep.api.core.group_filter import check_group_access
 from keep.api.i18n import t
 from keep.functions import cyaml
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
@@ -19,11 +21,12 @@ def get_actions(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:actions"])
     ),
+    selected_group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
     tenant_id = authenticated_entity.tenant_id
     logger.info("Getting installed actions", extra={"tenant_id": tenant_id})
 
-    actions = ActionsCRUD.get_all_actions(tenant_id)
+    actions = ActionsCRUD.get_all_actions(tenant_id, selected_group_id=selected_group_id)
     try:
         return actions
     except Exception:
@@ -59,11 +62,15 @@ async def create_actions(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["write:actions"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
     tenant_id = authenticated_entity.tenant_id
     installed_by = authenticated_entity.email
     actions_dict = await _get_action_info(request, file)
-    ActionsCRUD.add_actions(tenant_id, installed_by, actions_dict.get("actions", []))
+    ActionsCRUD.add_actions(
+        tenant_id, installed_by, actions_dict.get("actions", []),
+        group_id=group_id,
+    )
     return {"message": "success"}
 
 
@@ -76,7 +83,7 @@ def delete_action(
     ),
 ):
     tenant_id = authenticated_entity.tenant_id
-    return ActionsCRUD.remove_action(tenant_id, action_id)
+    return ActionsCRUD.remove_action(tenant_id, action_id, authenticated_entity)
 
 
 # UPDATE an action
