@@ -145,6 +145,7 @@ def get_all_incidents(
         IdentityManagerFactory.get_auth_verifier(["read:alert"])
     ),
     cel: str = Query(None),
+    selected_group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> IncidentsPaginatedResultsDto:
     tenant_id = authenticated_entity.tenant_id
 
@@ -194,6 +195,7 @@ def get_all_incidents(
             cel=cel,
             allowed_incident_ids=allowed_incident_ids,
             authenticated_entity=authenticated_entity,
+            selected_group_id=selected_group_id,
         )
         logger.info(
             "Fetched incidents from DB",

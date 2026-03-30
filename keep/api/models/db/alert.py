@@ -223,6 +223,7 @@ class AlertDeduplicationRule(SQLModel, table=True):
     ignore_fields: list[str] = Field(sa_column=Column(JSON), default=[])
     priority: int = Field(default=0)  # for future use
     is_provisioned: bool = Field(default=False)
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
 
     class Config:
         arbitrary_types_allowed = True

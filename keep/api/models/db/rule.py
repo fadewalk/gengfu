@@ -58,3 +58,4 @@ class Rule(SQLModel, table=True):
     multi_level_property_name: str | None = None
     threshold: int = Field(sa_column_args=(CheckConstraint("threshold>0"),), default=1)
     assignee: str | None = None
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)

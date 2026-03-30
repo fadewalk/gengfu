@@ -212,6 +212,7 @@ def get_presets(
     ),
     session: Session = Depends(get_session),
     time_stamp: TimeStampFilter = Depends(_get_time_stamp_filter),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> list[PresetDto]:
     tenant_id = authenticated_entity.tenant_id
     logger.info(f"Getting all presets {time_stamp}")
@@ -231,6 +232,7 @@ def get_presets(
         email=authenticated_entity.email,
         preset_ids=allowed_preset_ids,
         authenticated_entity=authenticated_entity,
+        selected_group_id=group_id,
     )
     presets_dto = [PresetDto(**preset.to_dict()) for preset in presets]
     # add static presets (unless allowed_preset_ids is set)

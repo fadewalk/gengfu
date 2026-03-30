@@ -2224,6 +2224,7 @@ def create_rule(
     multi_level_property_name=None,
     threshold=1,
     assignee=None,
+    group_id=None,
 ):
     grouping_criteria = grouping_criteria or []
     with Session(engine) as session:
@@ -2247,6 +2248,7 @@ def create_rule(
             multi_level_property_name=multi_level_property_name,
             threshold=threshold,
             assignee=assignee,
+            group_id=group_id,
         )
         session.add(rule)
         session.commit()
@@ -2587,6 +2589,7 @@ def create_deduplication_rule(
     ignore_fields: list[str] = [],
     priority: int = 0,
     is_provisioned: bool = False,
+    group_id: str | None = None,
 ):
     with Session(engine) as session:
         new_rule = AlertDeduplicationRule(
@@ -2603,6 +2606,7 @@ def create_deduplication_rule(
             ignore_fields=ignore_fields,
             priority=priority,
             is_provisioned=is_provisioned,
+            group_id=group_id,
         )
         session.add(new_rule)
         session.commit()
@@ -3329,7 +3333,7 @@ def calc_incidents_mttr(tenant_id: str, timestamp_filter: TimeStampFilter = None
 
 
 def get_presets(
-    tenant_id: str, email, preset_ids: list[str] = None, authenticated_entity=None
+    tenant_id: str, email, preset_ids: list[str] = None, authenticated_entity=None, selected_group_id: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     with Session(engine) as session:
         # v2 with RBAC and roles
@@ -3351,7 +3355,10 @@ def get_presets(
                     )
                 )
             )
-        if authenticated_entity is not None:
+        if selected_group_id:
+            from keep.api.core.group_filter import apply_selected_group_filter
+            statement = apply_selected_group_filter(statement, Preset, selected_group_id)
+        elif authenticated_entity is not None:
             from keep.api.core.group_filter import apply_group_filter
             statement = apply_group_filter(statement, Preset, authenticated_entity)
         result = session.exec(statement)
@@ -3386,7 +3393,7 @@ def get_all_presets_dtos(tenant_id: str) -> List[PresetDto]:
     return [PresetDto(**preset.to_dict()) for preset in presets] + static_presets_dtos
 
 
-def get_dashboards(tenant_id: str, email=None, authenticated_entity=None) -> List[Dict[str, Any]]:
+def get_dashboards(tenant_id: str, email=None, authenticated_entity=None, selected_group_id: Optional[str] = None) -> List[Dict[str, Any]]:
     with Session(engine) as session:
         statement = (
             select(Dashboard)
@@ -3398,7 +3405,10 @@ def get_dashboards(tenant_id: str, email=None, authenticated_entity=None) -> Lis
                 )
             )
         )
-        if authenticated_entity is not None:
+        if selected_group_id:
+            from keep.api.core.group_filter import apply_selected_group_filter
+            statement = apply_selected_group_filter(statement, Dashboard, selected_group_id)
+        elif authenticated_entity is not None:
             from keep.api.core.group_filter import apply_group_filter
             statement = apply_group_filter(statement, Dashboard, authenticated_entity)
         dashboards = session.exec(statement).all()

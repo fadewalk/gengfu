@@ -67,6 +67,27 @@ def apply_group_filter(query, model, authenticated_entity: AuthenticatedEntity):
     )
 
 
+def apply_group_filter_with_selected(
+    query,
+    model,
+    authenticated_entity: AuthenticatedEntity,
+    selected_group_id: Optional[str] = None,
+):
+    """
+    Combined group filter: uses selected_group_id when provided,
+    otherwise falls back to the user's full group membership.
+
+    This is the recommended entry point for route handlers that accept
+    X-Keep-Group-Id as an optional header.
+
+    - selected_group_id is set: show tenant-wide + that single group
+    - selected_group_id is None: show tenant-wide + all user's groups
+    """
+    if selected_group_id:
+        return apply_selected_group_filter(query, model, selected_group_id)
+    return apply_group_filter(query, model, authenticated_entity)
+
+
 def apply_selected_group_filter(query, model, selected_group_id: Optional[str]):
     """
     Apply group-level filtering based on a specific selected group ID.

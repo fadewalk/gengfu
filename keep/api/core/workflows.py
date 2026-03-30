@@ -5,7 +5,7 @@ This module contains the CRUD database functions for Keep.
 """
 
 from datetime import datetime, timedelta, timezone
-from typing import TypedDict, Tuple
+from typing import Optional, TypedDict, Tuple
 
 from sqlalchemy import and_, case, desc, func, literal_column, select, text
 from sqlmodel import Session
@@ -160,6 +160,7 @@ def __build_base_query(
     select_statements=None,
     latest_executions_subquery_cte=None,
     authenticated_entity=None,
+    selected_group_id: Optional[str] = None,
 ):
     if latest_executions_subquery_cte is None:
         latest_executions_subquery_cte = __build_workflow_executions_query(
@@ -196,7 +197,12 @@ def __build_base_query(
     )
 
     # Apply group-level data isolation
-    if authenticated_entity is not None:
+    if selected_group_id:
+        from keep.api.core.group_filter import apply_selected_group_filter
+        workflows_with_last_executions_query = apply_selected_group_filter(
+            workflows_with_last_executions_query, Workflow, selected_group_id
+        )
+    elif authenticated_entity is not None:
         from keep.api.core.group_filter import apply_group_filter
         workflows_with_last_executions_query = apply_group_filter(
             workflows_with_last_executions_query, Workflow, authenticated_entity
@@ -205,10 +211,11 @@ def __build_base_query(
     return workflows_with_last_executions_query
 
 
-def build_workflows_total_count_query(tenant_id: str, cel: str, authenticated_entity=None):
+def build_workflows_total_count_query(tenant_id: str, cel: str, authenticated_entity=None, selected_group_id: Optional[str] = None):
     query = __build_base_query(
         tenant_id=tenant_id, select_statements=[func.count(func.distinct(Workflow.id))],
         authenticated_entity=authenticated_entity,
+        selected_group_id=selected_group_id,
     )
 
     if cel:
@@ -230,6 +237,7 @@ def build_workflows_query(
     sort_dir: str,
     fetch_last_executions: int = 15,
     authenticated_entity=None,
+    selected_group_id: Optional[str] = None,
 ):
     limit = limit if limit is not None else 20
     offset = offset if offset is not None else 0
@@ -238,6 +246,7 @@ def build_workflows_query(
         tenant_id=tenant_id,
         fetch_last_executions=fetch_last_executions,
         authenticated_entity=authenticated_entity,
+        selected_group_id=selected_group_id,
         select_statements=[
             Workflow,
             literal_column("started").label("started"),
@@ -279,6 +288,7 @@ def get_workflows_with_last_executions_v2(
     fetch_last_executions: int = 15,
     session: Session = None,
     authenticated_entity=None,
+    selected_group_id: Optional[str] = None,
 ) -> Tuple[list[WorkflowWithLastExecutions], int]:
     with existed_or_new_session(session) as session:
         total_count_query = build_workflows_total_count_query(

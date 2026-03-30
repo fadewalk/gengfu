@@ -486,6 +486,7 @@ def get_last_incidents_by_cel(
     cel: str = None,
     allowed_incident_ids: Optional[List[str]] = None,
     authenticated_entity=None,
+    selected_group_id: Optional[str] = None,
 ) -> Tuple[list[Incident], int]:
     """
     Retrieve the last incidents for a given tenant based on various filters and criteria.

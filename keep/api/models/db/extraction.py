@@ -27,6 +27,7 @@ class ExtractionRule(SQLModel, table=True):
     condition: Optional[str] = Field(max_length=2000)  # cel
     attribute: str = Field(max_length=255)  # the attribute to extract
     regex: str = Field(max_length=1024)  # the regex to use for extraction
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
 
 
 class ExtractionRuleDtoBase(BaseModel):

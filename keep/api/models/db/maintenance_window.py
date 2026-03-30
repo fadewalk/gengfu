@@ -36,6 +36,7 @@ class MaintenanceWindowRule(SQLModel, table=True):
     suppress: bool = False
     enabled: bool = True
     ignore_statuses: list = Field(sa_column=Column(JSON), default_factory=list)
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
 
     __table_args__ = (
         Index("ix_maintenance_rule_tenant_id", "tenant_id"),
@@ -67,3 +68,4 @@ class MaintenanceRuleRead(BaseModel):
     suppress: bool = False
     enabled: bool = True
     ignore_statuses: list[str] = DEFAULT_ALERT_STATUSES_TO_IGNORE
+    group_id: Optional[str] = None

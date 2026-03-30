@@ -411,6 +411,7 @@ class IncidentBl:
         cel: str = None,
         allowed_incident_ids: Optional[List[str]] = None,
         authenticated_entity=None,
+        selected_group_id: Optional[str] = None,
     ):
         incidents, total_count = get_last_incidents_by_cel(
             tenant_id=tenant_id,
@@ -426,6 +427,7 @@ class IncidentBl:
             cel=cel,
             allowed_incident_ids=allowed_incident_ids,
             authenticated_entity=authenticated_entity,
+            selected_group_id=selected_group_id,
         )
         incidents_dto = []
         for incident in incidents:

@@ -95,8 +95,9 @@ def read_dashboards(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:dashboards"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
-    dashboards = get_dashboards_db(authenticated_entity.tenant_id, authenticated_entity=authenticated_entity)
+    dashboards = get_dashboards_db(authenticated_entity.tenant_id, authenticated_entity=authenticated_entity, selected_group_id=group_id)
     return dashboards
 
 

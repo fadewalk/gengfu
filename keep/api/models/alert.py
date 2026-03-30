@@ -399,6 +399,7 @@ class DeduplicationRuleDto(BaseModel):
     full_deduplication: bool
     ignore_fields: list[str]
     is_provisioned: bool
+    group_id: str | None = None
 
 
 class DeduplicationRuleRequestDto(BaseModel):
