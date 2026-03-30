@@ -186,12 +186,16 @@ def fetch_facet_fields(
 )
 # TODO: this should be deprecated and removed
 def get_workflows(
+    selected_group_id: Optional[str] = Header(
+        None, alias="X-Keep-Group-Id"
+    ),
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:workflows"])
     ),
 ) -> list[WorkflowDTO] | list[dict]:
     query_result = query_workflows(
         QueryDto(),
+        selected_group_id,
         authenticated_entity,
     )
     return query_result["results"]
@@ -203,6 +207,9 @@ def get_workflows(
 )
 def query_workflows(
     query: QueryDto,
+    selected_group_id: Optional[str] = Header(
+        None, alias="X-Keep-Group-Id"
+    ),
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:workflows"])
     ),
@@ -232,6 +239,7 @@ def query_workflows(
             sort_by=query.sort_by,
             sort_dir=query.sort_dir,
             authenticated_entity=authenticated_entity,
+            selected_group_id=selected_group_id,
         )
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{query.cel}". {str(e)}')

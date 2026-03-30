@@ -10,12 +10,20 @@ services:
       file: ../../deploy/docker/docker-compose.common.yml
       service: keep-backend-common
     environment:
-      - AUTH_TYPE=DB
+      - AUTH_TYPE=LDAP
       - KEEP_JWT_SECRET=keep-local-dev-secret-2026
       - KEEP_ALLOW_MESH_ALERT_INGESTION=true
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_BASE_URL=${OPENAI_BASE_URL}
       - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME}
+      - LDAP_URL=ldap://openldap:389
+      - LDAP_BIND_DN=cn=admin,dc=ubiq2,dc=com
+      - LDAP_BIND_PASSWORD=rLhQq572Kq
+      - LDAP_BASE_DN=dc=ubiq2,dc=com
+      - LDAP_USER_SEARCH_BASE=ou=坤九,dc=ubiq2,dc=com
+      - LDAP_DEFAULT_ROLE=Admin
+    networks:
+      - keep-shared
     volumes:
       - ../../state:/state
 
@@ -38,8 +46,16 @@ services:
       - ../../state:/state
     depends_on:
       - keep-backend
+    networks:
+      - keep-shared
 
   keep-websocket-server:
     extends:
       file: ../../deploy/docker/docker-compose.common.yml
       service: keep-websocket-server-common
+    networks:
+      - keep-shared
+
+networks:
+  keep-shared:
+    external: true
