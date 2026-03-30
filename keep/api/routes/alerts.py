@@ -28,6 +28,7 @@ from keep.api.core.alerts import (
     get_alert_potential_facet_fields,
     query_last_alerts,
 )
+from keep.api.core.group_filter import check_group_access
 from keep.api.core.cel_to_sql.sql_providers.base import CelToSqlException
 from keep.api.core.config import config
 from keep.api.core.db import dismiss_error_alerts as dismiss_error_alerts_db
@@ -272,7 +273,11 @@ def get_all_alerts(
             "tenant_id": tenant_id,
         },
     )
-    db_alerts = get_last_alerts(tenant_id=tenant_id, limit=limit)
+    db_alerts, _ = query_last_alerts(
+        tenant_id=tenant_id,
+        query=QueryDto(cel="", limit=limit, offset=0, sort_by=None, sort_dir=None, sort_options=None),
+        authenticated_entity=authenticated_entity,
+    )
     enriched_alerts_dto = convert_db_alerts_to_dto_alerts(db_alerts)
     logger.info(
         "Fetched alerts from DB",
@@ -304,6 +309,8 @@ def get_alert_history(
         limit=1000,
         with_alert_instance_enrichment=True,
     )
+    if db_alerts and not check_group_access(db_alerts[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     enriched_alerts_dto = convert_db_alerts_to_dto_alerts(
         db_alerts, with_alert_instance_enrichment=True
     )
@@ -337,6 +344,11 @@ def delete_alert(
             "tenant_id": tenant_id,
         },
     )
+
+    # Check group access for this alert
+    db_alerts = get_alerts_by_fingerprint(tenant_id=tenant_id, fingerprint=delete_alert.fingerprint, limit=1)
+    if db_alerts and not check_group_access(db_alerts[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     deleted_last_received = []  # the last received(s) that are deleted
     assignees_last_receievd = {}  # the last received(s) that are assigned to someone
@@ -410,6 +422,11 @@ def assign_alert(
             "tenant_id": tenant_id,
         },
     )
+
+    # Check group access for this alert
+    db_alerts = get_alerts_by_fingerprint(tenant_id=tenant_id, fingerprint=fingerprint, limit=1)
+    if db_alerts and not check_group_access(db_alerts[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     assignees_last_receievd = {}  # the last received(s) that are assigned to someone
     status = None
@@ -1050,6 +1067,11 @@ def _enrich_alert(
         },
     )
 
+    # Check group access for this alert
+    db_alerts_for_check = get_alerts_by_fingerprint(tenant_id=tenant_id, fingerprint=enrich_data.fingerprint, limit=1)
+    if db_alerts_for_check and not check_group_access(db_alerts_for_check[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     try:
         enrichement_bl = EnrichmentsBl(tenant_id, db=session)
         (
@@ -1164,6 +1186,9 @@ def unenrich_alert(
             "Alert not found", extra={"fingerprint": enrich_data.fingerprint}
         )
         return {"status": "failed"}
+
+    if not check_group_access(alert[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     try:
         enrichement_bl = EnrichmentsBl(tenant_id)

@@ -17,6 +17,7 @@ from pydantic import BaseModel
 from sqlmodel import Session, select
 
 from keep.api.consts import PROVIDER_PULL_INTERVAL_MINUTE, STATIC_PRESETS
+from keep.api.core.group_filter import check_group_access
 from keep.api.core.db import get_db_preset_by_name
 from keep.api.core.db import get_presets as get_presets_db
 from keep.api.core.db import (
@@ -344,6 +345,8 @@ def delete_preset(
     preset = session.exec(statement).first()
     if not preset:
         raise HTTPException(404, t("Preset not found"))
+    if not check_group_access(preset, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     session.delete(preset)
     session.commit()
     logger.info("Deleted preset", extra={"uuid": preset_id})
@@ -372,6 +375,8 @@ def update_preset(
     preset = session.exec(statement).first()
     if not preset:
         raise HTTPException(404, t("Preset not found"))
+    if not check_group_access(preset, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     if body.name:
         if body.name == "Feed" or body.name == "Deleted":
             raise HTTPException(400, t("Cannot create preset with this name"))
@@ -624,6 +629,8 @@ def update_preset_column_config(
     preset = session.exec(statement).first()
     if not preset:
         raise HTTPException(404, t("Preset not found"))
+    if not check_group_access(preset, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     # Get current options and remove any existing column config options
     current_options = [

@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
+from sqlmodel import Session, select
 
 from keep.api.core.db import (
     create_dashboard as create_dashboard_db,
@@ -13,11 +14,14 @@ from keep.api.core.db import (
     get_incidents_created_distribution,
     get_combined_workflow_execution_distribution,
     calc_incidents_mttr,
+    delete_dashboard as delete_dashboard_db,
+    get_dashboards as get_dashboards_db,
+    get_session,
+    update_dashboard as update_dashboard_db,
 )
+from keep.api.core.group_filter import check_group_access
 from keep.api.i18n import t
-from keep.api.core.db import delete_dashboard as delete_dashboard_db
-from keep.api.core.db import get_dashboards as get_dashboards_db
-from keep.api.core.db import update_dashboard as update_dashboard_db
+from keep.api.models.db.dashboard import Dashboard
 from keep.api.models.time_stamp import TimeStampFilter, _get_time_stamp_filter
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
 from keep.identitymanager.identitymanagerfactory import IdentityManagerFactory
@@ -120,10 +124,20 @@ def update_dashboard(
     dashboard_id: str,
     dashboard_dto: DashboardUpdateDTO,
     authenticated_entity: AuthenticatedEntity = Depends(
-        IdentityManagerFactory.get_auth_verifier(["write:dashboards"])
+        IdentityManagerFactory.get_auth_verifier(["write:dashboards"]),
     ),
+    session: Session = Depends(get_session),
 ):
-    # update the dashboard in the database
+    tenant_id = authenticated_entity.tenant_id
+    # Fetch dashboard to check group access
+    statement = select(Dashboard).where(
+        Dashboard.id == dashboard_id, Dashboard.tenant_id == tenant_id
+    )
+    dashboard = session.exec(statement).first()
+    if not dashboard:
+        raise HTTPException(status_code=404, detail=t("Dashboard not found"))
+    if not check_group_access(dashboard, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     dashboard = update_dashboard_db(
         tenant_id=authenticated_entity.tenant_id,
         dashboard_id=dashboard_id,
@@ -140,11 +154,20 @@ def delete_dashboard(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["write:dashboards"])
     ),
+    session: Session = Depends(get_session),
 ):
-    # delete the dashboard from the database
-    dashboard = delete_dashboard_db(authenticated_entity.tenant_id, dashboard_id)
+    tenant_id = authenticated_entity.tenant_id
+    # Check group access before deleting
+    statement = select(Dashboard).where(
+        Dashboard.id == dashboard_id, Dashboard.tenant_id == tenant_id
+    )
+    dashboard = session.exec(statement).first()
     if not dashboard:
         raise HTTPException(status_code=404, detail=t("Dashboard not found"))
+    if not check_group_access(dashboard, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+    # delete the dashboard from the database
+    delete_dashboard_db(tenant_id, dashboard_id)
     return {"ok": True}
 
 

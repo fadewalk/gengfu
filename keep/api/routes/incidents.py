@@ -41,6 +41,7 @@ from keep.api.core.db import (
     get_enrichment,
 )
 from keep.api.core.dependencies import extract_generic_body, get_pusher_client
+from keep.api.core.group_filter import check_group_access
 from keep.api.core.incidents import (
     get_incident_facets,
     get_incident_facets_data,
@@ -372,6 +373,8 @@ def get_incident(
     incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
     if not incident:
         raise HTTPException(status_code=404, detail=t("Incident not found"))
+    if not check_group_access(incident, authenticated_entity):
+        raise HTTPException(status_code=403, detail=t("No access to this resource"))
 
     rule = None
     if incident.rule_id:
@@ -406,6 +409,8 @@ def update_incident(
     current_incident = get_incident_by_id(tenant_id, incident_id)
     if not current_incident:
         raise HTTPException(status_code=404, detail=t("Incident not found"))
+    if not check_group_access(current_incident, authenticated_entity):
+        raise HTTPException(status_code=403, detail=t("No access to this resource"))
 
     if (
         updated_incident_dto.assignee
@@ -438,6 +443,10 @@ def bulk_delete_incidents(
     session: Session = Depends(get_session),
 ):
     tenant_id = authenticated_entity.tenant_id
+    for inc_id in incident_ids:
+        incident = get_incident_by_id(tenant_id=tenant_id, incident_id=inc_id)
+        if incident and not check_group_access(incident, authenticated_entity):
+            raise HTTPException(status_code=403, detail="No access to this resource")
     incident_bl = IncidentBl(tenant_id, session, pusher_client)
     incident_bl.bulk_delete_incidents(incident_ids)
     return Response(status_code=202)
@@ -456,6 +465,11 @@ def delete_incident(
     session: Session = Depends(get_session),
 ):
     tenant_id = authenticated_entity.tenant_id
+    incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
+    if not incident:
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
+    if not check_group_access(incident, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     incident_bl = IncidentBl(tenant_id, session, pusher_client)
     incident_bl.delete_incident(incident_id)
     return Response(status_code=202)
@@ -484,6 +498,11 @@ async def split_incident(
             "alert_fingerprints": command.alert_fingerprints,
         },
     )
+    incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
+    if not incident:
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
+    if not check_group_access(incident, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     incident_bl = IncidentBl(tenant_id, session, pusher_client)
     await incident_bl.add_alerts_to_incident(
         incident_id=command.destination_incident_id,
@@ -568,6 +587,8 @@ def get_incident_alerts(
     incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
     if not incident:
         raise HTTPException(status_code=404, detail=t("Incident not found"))
+    if not check_group_access(incident, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     logger.info(
         "Fetching incident's alert",
@@ -620,6 +641,8 @@ def get_future_incidents_for_an_incident(
     incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
     if not incident:
         raise HTTPException(status_code=404, detail=t("Incident not found"))
+    if not check_group_access(incident, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     logger.info(
         "Fetching future incidents from",
@@ -667,6 +690,12 @@ def get_incident_workflows(
 
     """
     tenant_id = authenticated_entity.tenant_id
+
+    incident = get_incident_by_id(tenant_id=tenant_id, incident_id=incident_id)
+    if not incident:
+        raise HTTPException(status_code=404, detail=t("Incident not found"))
+    if not check_group_access(incident, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     logger.info(
         "Fetching incident's workflows",

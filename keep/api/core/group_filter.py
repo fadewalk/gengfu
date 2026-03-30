@@ -92,6 +92,24 @@ def apply_selected_group_filter(query, model, selected_group_id: Optional[str]):
     )
 
 
+def check_group_access(resource, authenticated_entity: AuthenticatedEntity) -> bool:
+    """
+    Check whether an authenticated user has group-level access to a resource.
+
+    Returns True if:
+      - The resource has no group_id (tenant-wide, visible to all)
+      - The user's group_ids overlap with the resource's group_id
+
+    Returns False if the resource belongs to a group the user is not in.
+    """
+    resource_group_id = getattr(resource, "group_id", None)
+    if resource_group_id is None:
+        return True
+
+    user_group_ids = authenticated_entity.group_ids or []
+    return resource_group_id in user_group_ids
+
+
 def populate_group_ids(
     session: Session,
     authenticated_entity: AuthenticatedEntity,
