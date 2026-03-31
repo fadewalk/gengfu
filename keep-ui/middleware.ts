@@ -18,6 +18,18 @@ export const middleware = auth(async (request) => {
 
   const authType = process.env.AUTH_TYPE || AuthType.NOAUTH;
 
+  // Handle /backend/ proxy rewrites BEFORE auth checks so NOAUTH mode works.
+  // When AUTH_TYPE=NOAUTH, the early return below would skip this rewrite.
+  if (pathname.startsWith("/backend/")) {
+    const apiUrl = getApiURL();
+    const newURL = pathname.replace("/backend/", apiUrl + "/");
+    const queryString = searchParams.toString();
+    const urlWithQuery = queryString ? `${newURL}?${queryString}` : newURL;
+
+    console.log(`Redirecting ${pathname} to ${urlWithQuery}`);
+    return NextResponse.rewrite(urlWithQuery);
+  }
+
   if (authType === AuthType.NOAUTH) {
     return NextResponse.next();
   }
@@ -38,16 +50,6 @@ export const middleware = auth(async (request) => {
   // Keep it on header so it can be used in server components
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-url", request.url);
-  // Handle legacy /backend/ redirects (when API_URL is not set and frontend act as a proxy)
-  if (pathname.startsWith("/backend/")) {
-    const apiUrl = getApiURL();
-    const newURL = pathname.replace("/backend/", apiUrl + "/");
-    const queryString = searchParams.toString();
-    const urlWithQuery = queryString ? `${newURL}?${queryString}` : newURL;
-
-    console.log(`Redirecting ${pathname} to ${urlWithQuery}`);
-    return NextResponse.rewrite(urlWithQuery);
-  }
 
   // Allow mobile route to pass through
   if (pathname.startsWith("/mobile")) {

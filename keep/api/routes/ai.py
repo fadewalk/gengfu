@@ -84,7 +84,8 @@ def trigger_correlation(
     session = None
     try:
         from keep.api.bl.ai_suggestion_bl import AISuggestionBl
-        from keep.api.core.db import get_last_alerts, convert_db_alerts_to_dto_alerts
+        from keep.api.core.db import get_last_alerts
+        from keep.api.utils.enrichment_helpers import convert_db_alerts_to_dto_alerts
         from keep.topologies.topologies_service import TopologiesService
 
         session = get_session_sync()

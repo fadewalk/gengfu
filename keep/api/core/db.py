@@ -5565,15 +5565,18 @@ def update_extrnal_ai_settings(
             raise ValueError(
                 f"No AI settings found for tenant {tenant_id} with id {ai_settings.id}"
             )
-        # Avoid double-serialization: settings may already be a JSON string
+        # Column(JSON) expects a Python object, not a JSON string.
+        # The frontend may send either a parsed list or a raw JSON string.
         raw_settings = ai_settings.settings
-        setting.settings = raw_settings if isinstance(raw_settings, str) else json.dumps(raw_settings)
+        if isinstance(raw_settings, str):
+            raw_settings = json.loads(raw_settings)
+        setting.settings = raw_settings
         setting.feedback_logs = ai_settings.feedback_logs
         if ai_settings.settings_proposed_by_algorithm is not None:
             raw_proposed = ai_settings.settings_proposed_by_algorithm
-            setting.settings_proposed_by_algorithm = (
-                raw_proposed if isinstance(raw_proposed, str) else json.dumps(raw_proposed)
-            )
+            if isinstance(raw_proposed, str):
+                raw_proposed = json.loads(raw_proposed)
+            setting.settings_proposed_by_algorithm = raw_proposed
         else:
             setting.settings_proposed_by_algorithm = None
         session.add(setting)

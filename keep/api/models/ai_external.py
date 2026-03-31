@@ -1,3 +1,4 @@
+import json
 import os
 import logging
 import requests
@@ -90,12 +91,26 @@ class ExternalAIConfigAndMetadataDto(BaseModel):
 
     @classmethod
     def from_orm(cls, _object: ExternalAIConfigAndMetadata) -> "ExternalAIConfigAndMetadataDto":
+        # Column(JSON) may return str or list depending on driver / existing data.
+        # Normalize to always return a Python list for the DTO.
+        raw_settings = _object.settings
+        settings = (
+            json.loads(raw_settings) if isinstance(raw_settings, str) else raw_settings or []
+        )
+
+        raw_proposed = _object.settings_proposed_by_algorithm
+        proposed = None
+        if raw_proposed is not None:
+            proposed = (
+                json.loads(raw_proposed) if isinstance(raw_proposed, str) else raw_proposed
+            )
+
         return cls(
             id=str(_object.id),
             algorithm_id=_object.algorithm_id,
             tenant_id=_object.tenant_id,
-            settings=_object.settings,
-            settings_proposed_by_algorithm=_object.settings_proposed_by_algorithm,
+            settings=settings,
+            settings_proposed_by_algorithm=proposed,
             feedback_logs=_object.feedback_logs,
-            algorithm=ExternalAIDto.from_orm(_object.algorithm)
+            algorithm=ExternalAIDto.from_orm(_object.algorithm),
         )
