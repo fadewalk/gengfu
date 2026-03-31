@@ -154,11 +154,11 @@ def trigger_correlation(
         incidents_created = 0
         if auto_create and high_confidence_incidents:
             try:
-                from keep.api.bl.incident_bl import IncidentBl
+                from keep.api.bl.incidents_bl import IncidentBl
                 incident_bl = IncidentBl(tenant_id=tenant_id, session=session)
                 for incident in high_confidence_incidents:
                     incident_bl.create_incident(
-                        incident=incident,
+                        incident_dto=incident,
                         generated_from_ai=True,
                     )
                     incidents_created += 1
