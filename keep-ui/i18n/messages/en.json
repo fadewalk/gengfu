@@ -699,6 +699,8 @@
     "title": "Incidents",
     "subtitle": "Group alerts into incidents",
     "all": "All Incidents",
+    "allIncidents": "All Incidents",
+    "possible": "Possible",
     "predictions": {
       "title": "Incident Predictions",
       "description": "Possible problems predicted by Keep AI & Correlation Rules"

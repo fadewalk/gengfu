@@ -1939,6 +1939,8 @@
       "addNewField": "添加新字段"
     },
     "all": "全部事件",
+    "allIncidents": "全部事件",
+    "possible": "可能的",
     "title": "事件",
     "alerts": {
       "collapseRow": "收起行",
