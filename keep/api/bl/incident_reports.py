@@ -168,7 +168,14 @@ class IncidentReportsBl:
 
         model_response = response.choices[0].message.content
         try:
-            report = OpenAIReportPart(**json.loads(model_response))
+            # Strip markdown code fences that some LLMs (e.g. GLM) wrap around JSON
+            stripped = model_response.strip()
+            if stripped.startswith("```"):
+                stripped = stripped.split("\n", 1)[1] if "\n" in stripped else stripped[3:]
+            if stripped.endswith("```"):
+                stripped = stripped[:-3]
+            stripped = stripped.strip()
+            report = OpenAIReportPart(**json.loads(stripped))
             return report
         except Exception as e:
             logger.error(
