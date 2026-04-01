@@ -13,6 +13,7 @@ services:
       - AUTH_TYPE=LDAP
       - KEEP_JWT_SECRET=keep-local-dev-secret-2026
       - KEEP_ALLOW_MESH_ALERT_INGESTION=true
+      - KEEP_API_URL=http://localhost:8080
       - OPENAI_API_KEY=45f87d5d955a6e44fa94c5a5cacd96d1.nJZbr53s2hM0tSiJ
       - OPENAI_BASE_URL=https://open.bigmodel.cn/api/coding/paas/v4
       - OPENAI_MODEL_NAME=glm-5-turbo
