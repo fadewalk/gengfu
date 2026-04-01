@@ -103,8 +103,8 @@ export function WorkflowBuilderChat({
     {
       description: "Installed providers",
       value: installedProviders,
-      convert: (description, installedProviders: Provider[]) => {
-        return installedProviders
+      convert: (installedProviders: Provider[]) => {
+        return (installedProviders ?? [])
           .map((p) => `${p.type}, id: ${p.id}`)
           .join(", ");
       },
@@ -116,7 +116,7 @@ export function WorkflowBuilderChat({
     {
       description: "These are steps that you can add to the workflow",
       value: toolboxConfiguration,
-      convert: (description, toolboxConfiguration: ToolboxConfiguration) => {
+      convert: (toolboxConfiguration: ToolboxConfiguration) => {
         const result: string[] = [];
         toolboxConfiguration?.groups?.forEach((group) => {
           result.push(
