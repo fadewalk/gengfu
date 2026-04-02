@@ -398,6 +398,7 @@ export default function AISettings() {
   const [testResults, setTestResults] = useState<Record<string, TestResult | null>>({});
   const [assignmentChanges, setAssignmentChanges] = useState<Record<string, string>>({});
   const [savingAssignments, setSavingAssignments] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
   const [modalTestResult, setModalTestResult] = useState<TestResult | null>(null);
 
@@ -588,7 +589,7 @@ export default function AISettings() {
         <PageTitle>{t("aiSettings.title")}</PageTitle>
         <PageSubtitle>{t("aiSettings.subtitle")}</PageSubtitle>
       </header>
-      <TabGroup className="flex flex-col gap-4">
+      <TabGroup className="flex flex-col gap-4" index={activeTab} onIndexChange={setActiveTab}>
         <TabList>
           <Tab icon={CpuChipIcon}>{t("aiSettings.tabs.models")}</Tab>
           <Tab icon={ArrowPathIcon}>{t("aiSettings.tabs.assignments")}</Tab>
