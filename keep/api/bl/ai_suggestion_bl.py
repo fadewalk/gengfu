@@ -33,7 +33,7 @@ class AISuggestionBl:
 
         # Resolve AI client via the model configuration service (DB → env fallback)
         try:
-            self._client = get_client(tenant_id, "correlation")
+            self._client = get_client(tenant_id)
         except (OpenAIError, ValueError) as e:
             self.logger.error(f"Failed to initialize OpenAI client: {e}")
             raise HTTPException(
@@ -398,7 +398,7 @@ class AISuggestionBl:
                 suggestion_input=suggestion_input,
                 suggestion_type=AISuggestionType.INCIDENT_SUGGESTION,
                 suggestion_content=incident_clustering.dict(),
-                model=get_model_name(self.tenant_id, "correlation"),
+                model=get_model_name(self.tenant_id),
             )
 
             # Process incidents
@@ -525,7 +525,7 @@ class AISuggestionBl:
     def _get_ai_completion(self, system_prompt: str, user_prompt: str):
         """Get completion from OpenAI."""
         return self._client.chat.completions.create(
-            model=get_model_name(self.tenant_id, "correlation"),
+            model=get_model_name(self.tenant_id),
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},

@@ -2764,11 +2764,7 @@
   },
   "aiSettings": {
     "title": "AI Model Configuration",
-    "subtitle": "Configure AI model endpoints for scenario assignment, and supports all OpenAI-compatible APIs.",
-    "tabs": {
-      "models": "Models",
-      "assignments": "Assignments"
-    },
+    "subtitle": "Configure AI model endpoints. Supports all OpenAI-compatible APIs.",
     "presets": {
       "zhipu": "ZhiPu GLM",
       "deepseek": "DeepSeek",
@@ -2827,35 +2823,11 @@
         "invalidJson": "Invalid JSON format"
       }
     },
-    "assignments": {
-      "title": "Scenario Assignments",
-      "subtitle": "Assign AI models to different usage scenarios",
-      "scenario": {
-        "correlation": "Alert Correlation",
-        "correlationDesc": "AI-powered alert correlation and deduplication and grouping",
-        "report": "Incident Report",
-        "reportDesc": "AI-generated incident analysis reports",
-        "rag": "RAG Search",
-        "ragDesc": "AI-powered knowledge base search",
-        "chat": "AI Assistant",
-        "chatDesc": "AI chat assistant for workflows and queries",
-        "suggestion": "AI Suggestions",
-        "suggestionDesc": "AI-powered alert suggestions and recommendations"
-      },
-      "selectModel": "Select a model...",
-      "noModels": "No enabled models available. Please configure a model first.",
-      "save": "Save Assignments",
-      "saveSuccess": "Assignments saved",
-      "saveFailed": "Failed to save assignments",
-      "enabledOnly": "Only showing enabled models"
-    },
     "messages": {
       "addSuccess": "Model added successfully",
       "updateSuccess": "Model updated successfully",
       "deleteSuccess": "Model deleted successfully",
       "loadFailed": "Failed to load model configurations",
-      "assignmentLoadFailed": "Failed to load assignments",
-      "scenarioLoadFailed": "Failed to load scenarios",
       "saveFailed": "Failed to save model",
       "deleteFailed": "Failed to delete model"
     }

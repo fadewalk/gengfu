@@ -6,14 +6,7 @@ import {
   TextInput,
   Textarea,
   Button,
-  Select,
-  SelectItem,
   Badge,
-  TabGroup,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
   Switch,
 } from "@tremor/react";
 import {
@@ -70,20 +63,6 @@ interface AIModelConfigCreate {
   priority: number;
   enabled: boolean;
   extra_config: Record<string, unknown> | null;
-}
-interface AIModelAssignment {
-  id: string;
-  scenario: string;
-  model_config_id: string;
-  model_name: string;
-  model_provider: string;
-  priority: number;
-  enabled: boolean;
-}
-interface ScenarioInfo {
-  key: string;
-  label: string;
-  description: string;
 }
 
 // ── Presets ────────────────────────────────────────────────────────
@@ -218,18 +197,6 @@ function ModelFormModal({
             placeholder={t("aiSettings.form.namePlaceholder")}
           />
         </FieldGroup>
-        <div>
-          <label className="text-sm font-medium text-gray-700">
-            {t("aiSettings.form.provider")}
-          </label>
-          <Select
-            value={formData.provider}
-            onValueChange={(v) => onFieldChange("provider", v)}
-          >
-            <SelectItem value="openai_compatible">OpenAI Compatible</SelectItem>
-            <SelectItem value="custom">Custom</SelectItem>
-          </Select>
-        </div>
         <FieldGroup label={t("aiSettings.form.baseUrlLabel")} required>
           <TextInput
             value={formData.base_url}
@@ -269,6 +236,9 @@ function ModelFormModal({
             onValueChange={(v) => onFieldChange("fallback_models", v)}
             placeholder={t("aiSettings.form.fallbackModelsPlaceholder")}
           />
+          <p className="text-xs text-gray-400 mt-1">
+            {t("aiSettings.form.fallbackModelsHint")}
+          </p>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-700">
@@ -375,20 +345,8 @@ export default function AISettings() {
     (url: string) => api.get(url),
     { revalidateOnFocus: false }
   );
-  const { data: assignmentsData, mutate: mutateAssignments } = useSWR(
-    api.isReady() ? "/ai/assignments" : null,
-    (url: string) => api.get(url),
-    { revalidateOnFocus: false }
-  );
-  const { data: scenariosData } = useSWR(
-    api.isReady() ? "/ai/scenarios" : null,
-    (url: string) => api.get(url),
-    { revalidateOnFocus: false }
-  );
 
   const models: AIModelConfig[] = (modelsData as AIModelConfig[] | undefined) ?? [];
-  const assignments: AIModelAssignment[] = (assignmentsData as AIModelAssignment[] | undefined) ?? [];
-  const scenarios: ScenarioInfo[] = (scenariosData as ScenarioInfo[] | undefined) ?? [];
 
   // ── Local state ─────────────────────────────────────────────────
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -396,10 +354,6 @@ export default function AISettings() {
   const [formData, setFormData] = useState<ModelFormData>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [testResults, setTestResults] = useState<Record<string, TestResult | null>>({});
-  const [assignmentChanges, setAssignmentChanges] = useState<Record<string, string>>({});
-  const [savingAssignments, setSavingAssignments] = useState(false);
-  const [activeTab, setActiveTab] = useState(0);
-
   const [modalTestResult, setModalTestResult] = useState<TestResult | null>(null);
 
   // ── Form handlers ────────────────────────────────────────────────
@@ -506,7 +460,7 @@ export default function AISettings() {
           ...prev,
           [key]: { state: "success", message: t("aiSettings.form.testSuccess") },
         }));
-      mutateModels();
+        mutateModels();
       } catch (error) {
         const msg =
           error instanceof KeepApiError
@@ -545,41 +499,8 @@ export default function AISettings() {
     }
   }, [formData, api, t]);
 
-  // ── Assignment handlers ────────────────────────────────────────────────
-  const handleAssignmentChange = useCallback(
-    (scenario: string, modelConfigId: string) => {
-      setAssignmentChanges((prev) => ({ ...prev, [scenario]: modelConfigId }));
-    },
-    []
-  );
-  const handleSaveAssignments = useCallback(async () => {
-    setSavingAssignments(true);
-    try {
-      const updates = scenarios.map((s) => ({
-        scenario: s.key,
-        model_config_id: assignmentChanges[s.key] ?? "",
-      }));
-      await api.put("/ai/assignments", { assignments: updates });
-      mutateAssignments();
-      showSuccessToast(t("aiSettings.assignments.saveSuccess"));
-      setAssignmentChanges({});
-    } catch (error) {
-      showErrorToast(error);
-    } finally {
-      setSavingAssignments(false);
-    }
-  }, [scenarios, assignmentChanges, api, mutateAssignments, t]);
-
-  // ── Compute effective assignments ────────────────────────────────────────
-  const effectiveAssignments = assignments.map((a) => ({
-    ...a,
-    model_config_id: assignmentChanges[a.scenario] ?? a.model_config_id,
-  }));
-
-  const enabledModels = models.filter((m) => m.enabled);
-
   // ── Render ────────────────────────────────────────────────────────────
-  if (!modelsData && !assignmentsData) {
+  if (!modelsData) {
     return <Loading />;
   }
 
@@ -589,177 +510,101 @@ export default function AISettings() {
         <PageTitle>{t("aiSettings.title")}</PageTitle>
         <PageSubtitle>{t("aiSettings.subtitle")}</PageSubtitle>
       </header>
-      <TabGroup className="flex flex-col gap-4" index={activeTab} onIndexChange={setActiveTab}>
-        <TabList>
-          <Tab icon={CpuChipIcon}>{t("aiSettings.tabs.models")}</Tab>
-          <Tab icon={ArrowPathIcon}>{t("aiSettings.tabs.assignments")}</Tab>
-        </TabList>
-        <TabPanels className="flex-grow overflow-hidden px-0">
-          {/* ── Models Tab ── */}
-          <TabPanel className="flex flex-col gap-4">
-            <div className="flex justify-end">
-              <Button
-                size="xs"
-                color="orange"
-                icon={PlusIcon}
-                onClick={openAddModal}
-              >
-                {t("aiSettings.form.addTitle")}
-              </Button>
-            </div>
-            {models.length === 0 ? (
-              <div className="text-center py-12">
-                <CpuChipIcon className="w-12 h-12 mx-auto text-gray-300" />
-                <p className="mt-4 text-gray-500 font-medium">{t("aiSettings.modelList.emptyTitle")}</p>
-                <p className="mt-1 text-sm text-gray-400">{t("aiSettings.modelList.emptyDescription")}</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {models.map((model) => (
-                  <Card key={model.id} className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-medium text-gray-900">
-                            {model.name}
-                          </span>
-                          <Badge size="xs" color="blue">{model.provider}</Badge>
-                          {model.enabled ? (
-                            <Badge size="xs" color="green">{t("common.labels.enabled")}</Badge>
-                          ) : (
-                            <Badge size="xs" color="gray">{t("common.labels.disabled")}</Badge>
-                          )}
-                          {model.is_default && (
-                            <StarIcon className="w-4 h-4 text-yellow-500" />
-                          )}
-                        </div>
-                        <div className="text-sm text-gray-500 mt-1 space-x-4">
-                          <span
-                            className="inline-block truncate max-w-[300px]"
-                            title={model.base_url}
-                          >
-                            {model.base_url}
-                          </span>
-                          <span className="text-gray-300">|</span>
-                          <span>{model.model_name}</span>
-                        </div>
-                        {model.api_key_hint && (
-                          <div className="text-xs text-gray-400 mt-0.5">
-                            Key: {model.api_key_hint}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <Button
-                          size="xs"
-                          variant="light"
-                          icon={PencilIcon}
-                          onClick={() => openEditModal(model)}
-                        />
-                        <Button
-                          size="xs"
-                          variant="light"
-                          color="orange"
-                          onClick={() => handleTestConnection(model)}
-                          disabled={testResults[model.id]?.state === "testing"}
-                        >
-                          {testResults[model.id]?.state === "success" ? (
-                            <CheckCircleIcon className="w-4 h-4 text-green-500" />
-                          ) : testResults[model.id]?.state === "failed" ? (
-                            <ExclamationCircleIcon className="w-4 h-4 text-red-500" />
-                          ) : (
-                            <ArrowPathIcon className="w-4 h-4" />
-                          )}
-                        </Button>
-                        <Button
-                          size="xs"
-                          variant="light"
-                          color="red"
-                          icon={TrashIcon}
-                          onClick={() => handleDelete(model)}
-                        />
-                      </div>
+      <div className="flex justify-end">
+        <Button
+          size="xs"
+          color="orange"
+          icon={PlusIcon}
+          onClick={openAddModal}
+        >
+          {t("aiSettings.form.addTitle")}
+        </Button>
+      </div>
+      {models.length === 0 ? (
+        <div className="text-center py-12">
+          <CpuChipIcon className="w-12 h-12 mx-auto text-gray-300" />
+          <p className="mt-4 text-gray-500 font-medium">{t("aiSettings.modelList.emptyTitle")}</p>
+          <p className="mt-1 text-sm text-gray-400">{t("aiSettings.modelList.emptyDescription")}</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {models.map((model) => (
+            <Card key={model.id} className="p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-medium text-gray-900">
+                      {model.name}
+                    </span>
+                    <Badge size="xs" color="blue">{model.provider}</Badge>
+                    {model.enabled ? (
+                      <Badge size="xs" color="green">{t("common.labels.enabled")}</Badge>
+                    ) : (
+                      <Badge size="xs" color="gray">{t("common.labels.disabled")}</Badge>
+                    )}
+                    {model.is_default && (
+                      <StarIcon className="w-4 h-4 text-yellow-500" />
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-500 mt-1 space-x-4">
+                    <span
+                      className="inline-block truncate max-w-[300px]"
+                      title={model.base_url}
+                    >
+                      {model.base_url}
+                    </span>
+                    <span className="text-gray-300">|</span>
+                    <span>{model.model_name}</span>
+                    {model.fallback_models && model.fallback_models.length > 0 && (
+                      <>
+                        <span className="text-gray-300">|</span>
+                        <span className="text-gray-400" title={model.fallback_models.join(", ")}>
+                          fallback: {model.fallback_models.length}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  {model.api_key_hint && (
+                    <div className="text-xs text-gray-400 mt-0.5">
+                      Key: {model.api_key_hint}
                     </div>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabPanel>
-          {/* ── Assignments Tab ── */}
-          <TabPanel className="flex flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-sm text-gray-500">
-                  {t("aiSettings.assignments.subtitle")}
-                </p>
-              </div>
-            </div>
-            {enabledModels.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-500">
-                  {t("aiSettings.assignments.noModels")}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {scenarios.map((scenario) => {
-                  const currentAssignment = effectiveAssignments.find(
-                    (a) => a.scenario === scenario.key
-                  );
-                  return (
-                    <Card key={scenario.key} className="p-4">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <span className="font-medium text-gray-900">
-                            {t(`aiSettings.assignments.scenario.${scenario.key}`)}
-                          </span>
-                          <p className="text-sm text-gray-500 mt-0.5">
-                            {scenario.description}
-                          </p>
-                        </div>
-                        <div className="w-64 shrink-0">
-                          <Select
-                            value={
-                              assignmentChanges[scenario.key] ??
-                              currentAssignment?.model_config_id??
-                              ""
-                            }
-                            onValueChange={(v) =>
-                              handleAssignmentChange(scenario.key, v)
-                            }
-                            className="w-full"
-                            disabled={savingAssignments}
-                          >
-                            <SelectItem value="">
-                              -- {t("aiSettings.assignments.selectModel")} --
-                            </SelectItem>
-                            {enabledModels.map((m) => (
-                              <SelectItem key={m.id} value={m.id}>
-                                {m.name} ({m.model_name})
-                              </SelectItem>
-                            ))}
-                          </Select>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-                <div className="flex justify-end mt-4">
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
                   <Button
                     size="xs"
+                    variant="light"
+                    icon={PencilIcon}
+                    onClick={() => openEditModal(model)}
+                  />
+                  <Button
+                    size="xs"
+                    variant="light"
                     color="orange"
-                    onClick={handleSaveAssignments}
-                    loading={savingAssignments}
-                    disabled={enabledModels.length === 0}
+                    onClick={() => handleTestConnection(model)}
+                    disabled={testResults[model.id]?.state === "testing"}
                   >
-                    {t("aiSettings.assignments.save")}
+                    {testResults[model.id]?.state === "success" ? (
+                      <CheckCircleIcon className="w-4 h-4 text-green-500" />
+                    ) : testResults[model.id]?.state === "failed" ? (
+                      <ExclamationCircleIcon className="w-4 h-4 text-red-500" />
+                    ) : (
+                      <ArrowPathIcon className="w-4 h-4" />
+                    )}
                   </Button>
+                  <Button
+                    size="xs"
+                    variant="light"
+                    color="red"
+                    icon={TrashIcon}
+                    onClick={() => handleDelete(model)}
+                  />
                 </div>
               </div>
-            )}
-          </TabPanel>
-        </TabPanels>
-      </TabGroup>
+            </Card>
+          ))}
+        </div>
+      )}
       <ModelFormModal
         isOpen={isModalOpen}
         onClose={() => {

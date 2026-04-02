@@ -74,7 +74,8 @@ def trigger_correlation(
     tenant_id = authenticated_entity.tenant_id
 
     # Verify AI model is configured via Settings > AI Configuration
-    from keep.api.bl.ai_model_service import get_config, list_configs
+    from keep.api.bl.ai_model_service import list_configs
+    configs = list_configs(tenant_id)
     enabled_configs = [c for c in configs if c.enabled]
     if not enabled_configs:
         raise HTTPException(

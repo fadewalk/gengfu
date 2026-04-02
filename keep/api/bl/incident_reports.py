@@ -113,7 +113,7 @@ class IncidentReportsBl:
         self, incidents: list[IncidentDto]
     ) -> OpenAIReportPart:
         try:
-            open_ai_client = get_client(self.tenant_id, "report")
+            open_ai_client = get_client(self.tenant_id)
         except (ValueError, Exception) as e:
             logger.warning(f"AI service not configured for report scenario: {e}")
             return OpenAIReportPart()
@@ -143,7 +143,7 @@ class IncidentReportsBl:
         incidents_json = json.dumps(incidents_minified, default=str)
 
         response = open_ai_client.chat.completions.create(
-            model=get_model_name(self.tenant_id, "report"),
+            model=get_model_name(self.tenant_id),
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": incidents_json},

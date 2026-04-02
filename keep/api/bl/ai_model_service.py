@@ -10,14 +10,10 @@ from sqlmodel import Session, select
 
 from keep.api.core.db import get_session_sync
 from keep.api.models.db.ai_model_config import (
-    AIModelAssignment,
-    AIModelAssignmentRead,
-    AIModelAssignmentUpdate,
     AIModelConfig,
     AIModelConfigCreate,
     AIModelConfigRead,
     AIModelConfigUpdate,
-    AI_SCENARIOS,
 )
 from keep.contextmanager.contextmanager import ContextManager
 from keep.secretmanager.secretmanagerfactory import SecretManagerFactory
@@ -244,7 +240,7 @@ def update_config(
 
 
 def delete_config(tenant_id: str, config_id: str) -> bool:
-    """Delete an AI model configuration, its assignments, and stored secret."""
+    """Delete an AI model configuration and its stored secret."""
     # Delete the API key from SecretManager
     _delete_api_key(tenant_id, config_id)
 
@@ -258,172 +254,100 @@ def delete_config(tenant_id: str, config_id: str) -> bool:
         if not config:
             return False
 
-        # Delete associated assignments
-        assignments = session.exec(
-            select(AIModelAssignment).where(
-                AIModelAssignment.model_config_id == config_id
-            )
-        ).all()
-        for a in assignments:
-            session.delete(a)
-
         session.delete(config)
         session.commit()
         return True
 
 
 # ---------------------------------------------------------------------------
-# Scenario Assignments
+# Client Resolution (with fallback / round-robin)
 # ---------------------------------------------------------------------------
 
 
-def get_assignments(tenant_id: str) -> list[AIModelAssignmentRead]:
-    """Get all scenario-to-model assignments for a tenant."""
-    with get_session_sync() as session:
-        assignments = session.exec(
-            select(AIModelAssignment)
-            .where(AIModelAssignment.tenant_id == tenant_id)
-            .order_by(AIModelAssignment.scenario)
-        ).all()
-
-        result = []
-        for a in assignments:
-            config = session.exec(
-                select(AIModelConfig).where(AIModelConfig.id == a.model_config_id)
-            ).first()
-            result.append(
-                AIModelAssignmentRead(
-                    id=a.id,
-                    scenario=a.scenario,
-                    model_config_id=a.model_config_id,
-                    model_name=config.model_name if config else "",
-                    model_provider=config.provider if config else "",
-                    priority=a.priority,
-                    enabled=a.enabled,
-                )
-            )
-        return result
+def _try_create_client(tenant_id: str, config: AIModelConfig) -> tuple[OpenAI, str] | None:
+    """Try to create an OpenAI client from a config. Returns None if API key missing."""
+    api_key = _read_api_key(tenant_id, config.id)
+    if not api_key:
+        return None
+    return OpenAI(api_key=api_key, base_url=config.base_url or None), config.model_name
 
 
-def update_assignments(
-    tenant_id: str, assignments: list[AIModelAssignmentUpdate]
-) -> list[AIModelAssignmentRead]:
-    """Update scenario-to-model assignments. Replaces all assignments."""
-    with get_session_sync() as session:
-        # Delete existing assignments
-        existing = session.exec(
-            select(AIModelAssignment).where(
-                AIModelAssignment.tenant_id == tenant_id
-            )
-        ).all()
-        for e in existing:
-            session.delete(e)
-
-        # Create new assignments
-        results = []
-        for a in assignments:
-            if not a.model_config_id:
-                continue  # Skip empty assignments
-            assignment = AIModelAssignment(
-                id=str(uuid.uuid4()),
-                tenant_id=tenant_id,
-                scenario=a.scenario,
-                model_config_id=a.model_config_id,
-                priority=a.priority,
-                enabled=a.enabled,
-            )
-            session.add(assignment)
-
-            config = session.exec(
-                select(AIModelConfig).where(AIModelConfig.id == a.model_config_id)
-            ).first()
-            results.append(
-                AIModelAssignmentRead(
-                    id=assignment.id,
-                    scenario=a.scenario,
-                    model_config_id=a.model_config_id,
-                    model_name=config.model_name if config else "",
-                    model_provider=config.provider if config else "",
-                    priority=a.priority,
-                    enabled=a.enabled,
-                )
-            )
-
-        session.commit()
-        return results
-
-
-# ---------------------------------------------------------------------------
-# Client Resolution (with fallback chain)
-# ---------------------------------------------------------------------------
-
-
-def _resolve_model(tenant_id: str, scenario: str) -> tuple[OpenAI, str]:
+def _resolve_model(tenant_id: str) -> tuple[OpenAI, str]:
     """
-    Resolve the OpenAI client and model name for a given scenario.
-    Resolution chain: DB scenario assignment → DB default config → raise.
+    Resolve an OpenAI client and model name.
+
+    Strategy:
+    1. Try the default enabled model
+    2. If default has fallback_models defined, try them in order
+    3. Try other enabled models in priority order (round-robin)
+    4. Raise ValueError if nothing works
     """
     with get_session_sync() as session:
-        # 1. Try scenario assignment
-        assignment = session.exec(
-            select(AIModelAssignment)
+        # Get all enabled configs, ordered by priority
+        all_configs = session.exec(
+            select(AIModelConfig)
             .where(
-                AIModelAssignment.tenant_id == tenant_id,
-                AIModelAssignment.scenario == scenario,
-                AIModelAssignment.enabled == True,  # noqa: E712
-            )
-            .order_by(AIModelAssignment.priority.desc())
-        ).first()
-
-        if assignment:
-            config = session.exec(
-                select(AIModelConfig).where(
-                    AIModelConfig.id == assignment.model_config_id,
-                    AIModelConfig.enabled == True,  # noqa: E712
-                )
-            ).first()
-            if config:
-                api_key = _read_api_key(tenant_id, config.id)
-                if api_key:
-                    client = OpenAI(
-                        api_key=api_key,
-                        base_url=config.base_url or None,
-                    )
-                    return client, config.model_name
-
-        # 2. Try default config
-        default_config = session.exec(
-            select(AIModelConfig).where(
                 AIModelConfig.tenant_id == tenant_id,
-                AIModelConfig.is_default == True,  # noqa: E712
                 AIModelConfig.enabled == True,  # noqa: E712
             )
-        ).first()
+            .order_by(AIModelConfig.priority.desc())
+        ).all()
+
+        if not all_configs:
+            raise ValueError(
+                "AI service is not configured: no enabled models found. "
+                "Please configure AI models in Settings > AI Configuration."
+            )
+
+        # 1. Find the default config
+        default_config = next((c for c in all_configs if c.is_default), None)
 
         if default_config:
-            api_key = _read_api_key(tenant_id, default_config.id)
-            if api_key:
-                client = OpenAI(
-                    api_key=api_key,
-                    base_url=default_config.base_url or None,
-                )
-                return client, default_config.model_name
+            result = _try_create_client(tenant_id, default_config)
+            if result:
+                return result
+
+            # 2. Try fallback_models if defined
+            if default_config.fallback_models:
+                try:
+                    fallback_names = json.loads(default_config.fallback_models)
+                    for fb_model_name in fallback_names:
+                        if fb_model_name == default_config.model_name:
+                            continue
+                        # Re-use same API key/base_url, just swap model name
+                        api_key = _read_api_key(tenant_id, default_config.id)
+                        if api_key:
+                            client = OpenAI(
+                                api_key=api_key,
+                                base_url=default_config.base_url or None,
+                            )
+                            return client, fb_model_name
+                except (json.JSONDecodeError, TypeError):
+                    pass
+
+        # 3. Try other enabled models as fallback (round-robin by priority)
+        for config in all_configs:
+            if config.id == (default_config.id if default_config else None):
+                continue
+            result = _try_create_client(tenant_id, config)
+            if result:
+                return result
 
     raise ValueError(
-        f"AI service is not configured: no model found for scenario '{scenario}'. "
+        "AI service is not configured: no available model could be resolved. "
         "Please configure AI models in Settings > AI Configuration."
     )
 
 
-def get_client(tenant_id: str, scenario: str) -> OpenAI:
-    """Get an OpenAI client for a given scenario (with fallback chain)."""
-    client, _ = _resolve_model(tenant_id, scenario)
+def get_client(tenant_id: str) -> OpenAI:
+    """Get an OpenAI client (with fallback chain)."""
+    client, _ = _resolve_model(tenant_id)
     return client
 
 
-def get_model_name(tenant_id: str, scenario: str) -> str:
-    """Get the model name for a given scenario (with fallback chain)."""
-    _, model_name = _resolve_model(tenant_id, scenario)
+def get_model_name(tenant_id: str) -> str:
+    """Get the model name (with fallback chain)."""
+    _, model_name = _resolve_model(tenant_id)
     return model_name
 
 
