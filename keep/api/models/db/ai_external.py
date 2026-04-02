@@ -79,7 +79,8 @@ analyzing the alert feed and making decisions for each incoming alert.""",
 )
 
 # Internal LLM-based correlation algorithm — no external service required.
-# Uses OPENAI_API_KEY / OPENAI_BASE_URL to cluster alerts into incidents.
+# Internal LLM-based correlation algorithm — no external service required.
+# AI model config is managed via database (Settings > AI Configuration).
 internal_ai_correlation = ExternalAI(
     name="LLM Alert Correlation",
     description="""An LLM-powered alert-to-incident correlation engine.

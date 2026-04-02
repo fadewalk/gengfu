@@ -2,14 +2,12 @@
 
 import json
 import logging
-import os
 import uuid
 from typing import Optional
 
 from openai import OpenAI
 from sqlmodel import Session, select
 
-from keep.api.consts import OPENAI_BASE_URL, OPENAI_MODEL_NAME
 from keep.api.core.db import get_session_sync
 from keep.api.models.db.ai_model_config import (
     AIModelAssignment,
@@ -363,7 +361,7 @@ def update_assignments(
 def _resolve_model(tenant_id: str, scenario: str) -> tuple[OpenAI, str]:
     """
     Resolve the OpenAI client and model name for a given scenario.
-    Fallback chain: DB assignment → DB default config → env vars → raise.
+    Resolution chain: DB scenario assignment → DB default config → raise.
     """
     with get_session_sync() as session:
         # 1. Try scenario assignment
@@ -411,18 +409,9 @@ def _resolve_model(tenant_id: str, scenario: str) -> tuple[OpenAI, str]:
                 )
                 return client, default_config.model_name
 
-    # 3. Fallback to environment variables
-    env_api_key = os.environ.get("OPENAI_API_KEY")
-    if env_api_key:
-        client = OpenAI(
-            api_key=env_api_key,
-            base_url=OPENAI_BASE_URL,
-        )
-        return client, OPENAI_MODEL_NAME
-
     raise ValueError(
-        f"AI service is not configured: no API key found for scenario '{scenario}'. "
-        "Configure AI models in Settings > AI, or set OPENAI_API_KEY environment variable."
+        f"AI service is not configured: no model found for scenario '{scenario}'. "
+        "Please configure AI models in Settings > AI Configuration."
     )
 
 

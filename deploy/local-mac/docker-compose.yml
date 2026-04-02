@@ -14,9 +14,6 @@ services:
       - KEEP_JWT_SECRET=keep-local-dev-secret-2026
       - KEEP_ALLOW_MESH_ALERT_INGESTION=true
       - KEEP_API_URL=http://localhost:8080
-      - OPENAI_API_KEY=45f87d5d955a6e44fa94c5a5cacd96d1.nJZbr53s2hM0tSiJ
-      - OPENAI_BASE_URL=https://open.bigmodel.cn/api/coding/paas/v4
-      - OPENAI_MODEL_NAME=glm-5.1
       - LDAP_URL=ldap://openldap:389
       - LDAP_BIND_DN=cn=admin,dc=ubiq2,dc=com
       - LDAP_BIND_PASSWORD=rLhQq572Kq
@@ -32,8 +29,6 @@ services:
     build:
       context: ../..
       dockerfile: deploy/local-mac/Dockerfile.ui
-      args:
-        - OPENAI_API_KEY=${OPENAI_API_KEY}
     extends:
       file: ../../deploy/docker/docker-compose.common.yml
       service: keep-frontend-common
@@ -43,10 +38,6 @@ services:
       - AUTH_TYPE=DB
       - API_URL=http://keep-backend:8080
       - SENTRY_DISABLED=true
-      - OPEN_AI_API_KEY=45f87d5d955a6e44fa94c5a5cacd96d1.nJZbr53s2hM0tSiJ
-      - OPENAI_API_KEY=45f87d5d955a6e44fa94c5a5cacd96d1.nJZbr53s2hM0tSiJ
-      - OPENAI_BASE_URL=https://open.bigmodel.cn/api/coding/paas/v4
-      - OPENAI_MODEL_NAME=glm-5.1
     volumes:
       - ../../state:/state
     depends_on:

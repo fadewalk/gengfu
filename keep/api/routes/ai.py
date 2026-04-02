@@ -73,12 +73,13 @@ def trigger_correlation(
     """Run LLM-based correlation on unassigned alerts."""
     tenant_id = authenticated_entity.tenant_id
 
-    # Check OPENAI_API_KEY is configured
-    import os
-    if not os.environ.get("OPENAI_API_KEY"):
+    # Verify AI model is configured via Settings > AI Configuration
+    from keep.api.bl.ai_model_service import get_config, list_configs
+    enabled_configs = [c for c in configs if c.enabled]
+    if not enabled_configs:
         raise HTTPException(
             status_code=400,
-            detail="OPENAI_API_KEY is not configured. Set it to enable AI correlation.",
+            detail="AI model is not configured. Please configure AI models in Settings > AI Configuration.",
         )
 
     session = None

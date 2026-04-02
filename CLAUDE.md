@@ -57,10 +57,8 @@ kill $(lsof -ti :3000)
 - 完成设计、需求实现或 bug 修复后，**主动提交 git** 并**更新 wiki 文档**
 - 不需要用户提醒提交，完成后自动执行 git add/commit
 
-## 私有 LLM 支持
-支持通过环境变量配置 OpenAI 兼容的私有 LLM：
-```
-OPENAI_API_KEY=your-key
-OPENAI_BASE_URL=http://your-endpoint/v1
-OPENAI_MODEL_NAME=glm-5
-```
+## AI 模型配置
+- 在设置页面「AI 配置」tab 中管理模型，支持多模型、多场景分配
+- 配置存储在数据库中，通过 SecretManager 管理 API Key
+- 不再使用环境变量配置模型（`OPENAI_API_KEY` 等已废弃）
+- 后端服务：`keep/api/bl/ai_model_service.py`，API 路由：`keep/api/routes/ai_settings.py`
