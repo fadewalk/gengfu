@@ -588,7 +588,7 @@ export default function AISettings() {
         <PageTitle>{t("aiSettings.title")}</PageTitle>
         <PageSubtitle>{t("aiSettings.subtitle")}</PageSubtitle>
       </header>
-      <TabGroup index={0} className="flex flex-col gap-4">
+      <TabGroup className="flex flex-col gap-4">
         <TabList>
           <Tab icon={CpuChipIcon}>{t("aiSettings.tabs.models")}</Tab>
           <Tab icon={ArrowPathIcon}>{t("aiSettings.tabs.assignments")}</Tab>
