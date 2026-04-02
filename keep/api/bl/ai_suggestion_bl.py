@@ -10,9 +10,9 @@ from fastapi import HTTPException
 from openai import OpenAI, OpenAIError
 from sqlmodel import Session
 
+from keep.api.bl.ai_model_service import get_client, get_model_name
 from keep.api.bl.incidents_bl import IncidentBl
 from keep.api.i18n import t
-from keep.api.consts import OPENAI_BASE_URL, OPENAI_MODEL_NAME
 from keep.api.core.db import get_session_sync
 from keep.api.models.alert import AlertDto
 from keep.api.models.db.ai_suggestion import AIFeedback, AISuggestion, AISuggestionType
@@ -31,16 +31,10 @@ class AISuggestionBl:
         self.tenant_id = tenant_id
         self.session = session if session else get_session_sync()
 
-        # Todo: interface it with any model
-        #       https://github.com/keephq/keep/issues/2373
-        # Todo: per-tenant keys
-        #       https://github.com/keephq/keep/issues/2365
-        # Todo: also goes with settings page
-        #       https://github.com/keephq/keep/issues/2365
+        # Resolve AI client via the model configuration service (DB → env fallback)
         try:
-            self._client = OpenAI(base_url=OPENAI_BASE_URL) if OPENAI_BASE_URL else OpenAI()
-        except OpenAIError as e:
-            # if its api key error, we should raise 400
+            self._client = get_client(tenant_id, "correlation")
+        except (OpenAIError, ValueError) as e:
             self.logger.error(f"Failed to initialize OpenAI client: {e}")
             raise HTTPException(
                 status_code=400, detail=t("AI service is not enabled for the client.")
@@ -404,7 +398,7 @@ class AISuggestionBl:
                 suggestion_input=suggestion_input,
                 suggestion_type=AISuggestionType.INCIDENT_SUGGESTION,
                 suggestion_content=incident_clustering.dict(),
-                model=OPENAI_MODEL_NAME,
+                model=get_model_name(self.tenant_id, "correlation"),
             )
 
             # Process incidents
@@ -531,7 +525,7 @@ class AISuggestionBl:
     def _get_ai_completion(self, system_prompt: str, user_prompt: str):
         """Get completion from OpenAI."""
         return self._client.chat.completions.create(
-            model=OPENAI_MODEL_NAME,
+            model=get_model_name(self.tenant_id, "correlation"),
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},

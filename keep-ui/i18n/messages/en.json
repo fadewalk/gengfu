@@ -2760,5 +2760,103 @@
     "providerName": "Provider",
     "alertsReceived": "Alerts Received",
     "correlatedPercent": "Correlated %"
+  },
+  "aiSettings": {
+    "title": "AI Model Configuration",
+    "subtitle": "Configure AI model endpoints for scenario assignment, and supports all OpenAI-compatible APIs.",
+    "tabs": {
+      "models": "Models",
+      "assignments": "Assignments"
+    },
+    "presets": {
+      "zhipu": "ZhiPu GLM",
+      "deepseek": "DeepSeek",
+      "qwen": "Qwen",
+      "moonshot": "Kimi",
+      "minimax": "MiniMax",
+      "openai": "OpenAI",
+      "custom": "Custom"
+    },
+    "modelList": {
+      "emptyTitle": "No models configured",
+      "emptyDescription": "Click \"Add Model\" to configure your first AI model endpoint",
+      "columns": {
+        "name": "Name",
+        "provider": "Provider",
+        "baseUrl": "Base URL",
+        "model": "Model",
+        "status": "Status",
+        "default": "Default",
+        "actions": "Actions"
+      }
+    },
+    "form": {
+      "addTitle": "Add Model",
+      "editTitle": "Edit Model",
+      "name": "Model Name",
+      "namePlaceholder": "e.g. ZhiPu GLM Production",
+      "provider": "Provider",
+      "baseUrlLabel": "API Base URL",
+      "baseUrlPlaceholder": "https://api.openai.com/v1",
+      "apiKeyLabel": "API Key",
+      "apiKeyPlaceholder": "sk-...",
+      "apiKeyHint": "Current: {hint}",
+      "modelNameLabel": "Default Model",
+      "modelNamePlaceholder": "e.g. gpt-4o-mini",
+      "fallbackModelsLabel": "Fallback Models",
+      "fallbackModelsPlaceholder": "Comma-separated, e.g. gpt-4o-mini, gpt-3.5-turbo",
+      "extraConfigLabel": "Extra Configuration (JSON)",
+      "extraConfigPlaceholder": "{}",
+      "isDefault": "Set as default model",
+      "enabled": "Enabled",
+      "priority": "Priority",
+      "testConnection": "Test Connection",
+      "testing": "Testing...",
+      "testSuccess": "Connection successful",
+      "testFailed": "Connection failed",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete \"{name}\"?",
+      "validation": {
+        "nameRequired": "Model name is required",
+        "baseUrlRequired": "Base URL is required",
+        "apiKeyRequired": "API Key is required",
+        "modelNameRequired": "Model name is required",
+        "invalidJson": "Invalid JSON format"
+      }
+    },
+    "assignments": {
+      "title": "Scenario Assignments",
+      "subtitle": "Assign AI models to different usage scenarios",
+      "scenario": {
+        "correlation": "Alert Correlation",
+        "correlationDesc": "AI-powered alert correlation and deduplication and grouping",
+        "report": "Incident Report",
+        "reportDesc": "AI-generated incident analysis reports",
+        "rag": "RAG Search",
+        "ragDesc": "AI-powered knowledge base search",
+        "chat": "AI Assistant",
+        "chatDesc": "AI chat assistant for workflows and queries",
+        "suggestion": "AI Suggestions",
+        "suggestionDesc": "AI-powered alert suggestions and recommendations"
+      },
+      "selectModel": "Select a model...",
+      "noModels": "No enabled models available. Please configure a model first.",
+      "save": "Save Assignments",
+      "saveSuccess": "Assignments saved",
+      "saveFailed": "Failed to save assignments",
+      "enabledOnly": "Only showing enabled models"
+    },
+    "messages": {
+      "addSuccess": "Model added successfully",
+      "updateSuccess": "Model updated successfully",
+      "deleteSuccess": "Model deleted successfully",
+      "loadFailed": "Failed to load model configurations",
+      "assignmentLoadFailed": "Failed to load assignments",
+      "scenarioLoadFailed": "Failed to load scenarios",
+      "saveFailed": "Failed to save model",
+      "deleteFailed": "Failed to delete model"
+    }
   }
 }

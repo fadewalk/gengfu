@@ -2760,5 +2760,103 @@
     "runFailed": "提取规则运行失败",
     "selectAlertPlaceholder": "选择一个告警...",
     "selectAlertTitle": "选择一个告警来运行提取规则"
+  },
+  "aiSettings": {
+    "title": "AI 模型配置",
+    "subtitle": "配置 AI 模型端点，支持场景分配。支持所有 OpenAI 免容 API。",
+    "tabs": {
+      "models": "模型配置",
+      "assignments": "场景分配"
+    },
+    "presets": {
+      "zhipu": "智谱 GLM",
+      "deepseek": "DeepSeek",
+      "qwen": "通义千问",
+      "moonshot": "Kimi",
+      "minimax": "MiniMax",
+      "openai": "OpenAI",
+      "custom": "自定义"
+    },
+    "modelList": {
+      "emptyTitle": "尚未配置模型",
+      "emptyDescription": "点击「添加模型」配置您的第一个 AI 模型端点",
+      "columns": {
+        "name": "名称",
+        "provider": "提供商",
+        "baseUrl": "接口地址",
+        "model": "模型",
+        "status": "状态",
+        "default": "默认",
+        "actions": "操作"
+      }
+    },
+    "form": {
+      "addTitle": "添加模型",
+      "editTitle": "编辑模型",
+      "name": "模型名称",
+      "namePlaceholder": "例如：智谱 GLM 生产环境",
+      "provider": "提供商",
+      "baseUrlLabel": "API 地址",
+      "baseUrlPlaceholder": "https://api.openai.com/v1",
+      "apiKeyLabel": "API 密钥",
+      "apiKeyPlaceholder": "sk-...",
+      "apiKeyHint": "当前：{hint}",
+      "modelNameLabel": "默认模型",
+      "modelNamePlaceholder": "例如: gpt-4o-mini",
+      "fallbackModelsLabel": "备选模型",
+      "fallbackModelsPlaceholder": "逗号分隔， 例如: gpt-4o-mini, gpt-3.5-turbo",
+      "extraConfigLabel": "额外配置 (JSON)",
+      "extraConfigPlaceholder": "{}",
+      "isDefault": "设为默认模型",
+      "enabled": "启用",
+      "priority": "优先级",
+      "testConnection": "测试连接",
+      "testing": "测试中...",
+      "testSuccess": "连接成功",
+      "testFailed": "连接失败",
+      "save": "保存",
+      "cancel": "取消",
+      "delete": "删除",
+      "deleteConfirm": "确定要删除 \"{name}\" 吗？",
+      "validation": {
+        "nameRequired": "模型名称为必填",
+        "baseUrlRequired": "API 地址为必填",
+        "apiKeyRequired": "API Key 为必填",
+        "modelNameRequired": "模型名称为必填",
+        "invalidJson": "无效的 JSON 格式"
+      }
+    },
+    "assignments": {
+      "title": "场景分配",
+      "subtitle": "为不同场景分配 AI 模型",
+      "scenario": {
+        "correlation": "告警关联",
+        "correlationDesc": "AI 陊警关联、去重和分组",
+        "report": "事件报告",
+        "reportDesc": "AI 事件分析报告",
+        "rag": "RAG 搜索",
+        "ragDesc": "AI 知识库搜索",
+        "chat": "AI 助手",
+        "chatDesc": "工作流和查询的 AI 助手",
+        "suggestion": "AI 建议",
+        "suggestionDesc": "AI 告警建议和推荐"
+      },
+      "selectModel": "选择模型...",
+      "noModels": "没有可用的已启用模型，请先配置模型",
+      "save": "保存分配",
+      "saveSuccess": "分配已保存",
+      "saveFailed": "保存分配失败",
+      "enabledOnly": "仅显示已启用的模型"
+    },
+    "messages": {
+      "addSuccess": "模型添加成功",
+      "updateSuccess": "模型更新成功",
+      "deleteSuccess": "模型删除成功",
+      "loadFailed": "加载模型配置失败",
+      "assignmentLoadFailed": "加载分配失败",
+      "scenarioLoadFailed": "加载场景失败",
+      "saveFailed": "保存模型失败",
+      "deleteFailed": "删除模型失败"
+    }
   }
 }
