@@ -1504,7 +1504,8 @@
       "usersAndAccess": "Users & Access",
       "incomingWebhook": "Incoming Webhook",
       "smtp": "SMTP",
-      "providerImages": "Provider Icons"
+      "providerImages": "Provider Icons",
+      "ai": "AI Configuration"
     },
     "subTabs": {
       "users": "Users",

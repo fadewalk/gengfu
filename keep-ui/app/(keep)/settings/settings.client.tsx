@@ -10,6 +10,7 @@ import {
   ShieldCheckIcon,
   LockClosedIcon,
   PhotoIcon,
+  CpuChipIcon,
 } from "@heroicons/react/24/outline";
 import { MdOutlineSecurity } from "react-icons/md";
 import { useHydratedSession as useSession } from "@/shared/lib/hooks/useHydratedSession";
@@ -36,6 +37,7 @@ import { RolesTable } from "./auth/roles-table";
 import { APIKeysTable } from "./auth/api-key-table";
 import { User } from "@/app/(keep)/settings/models";
 import ProviderImagesSettings from "./provider-images/provider-images-settings";
+import AISettings from "./ai/ai-settings";
 import { useI18n } from "@/i18n/hooks/useI18n";
 
 export default function SettingsPage() {
@@ -83,6 +85,8 @@ export default function SettingsPage() {
         ? 2
         : newSelectedTab === "provider-images"
         ? 3
+        : newSelectedTab === "ai"
+        ? 4
         : 0;
     const userSubTabIndex =
       newUserSubTab === "users"
@@ -386,6 +390,12 @@ export default function SettingsPage() {
           >
             {t("settings.tabs.providerImages")}
           </Tab>
+          <Tab
+            icon={CpuChipIcon}
+            onClick={() => handleTabChange("ai")}
+          >
+            {t("settings.tabs.ai")}
+          </Tab>
         </TabList>
         <TabPanels className="flex-grow overflow-hidden p-px">
           <TabPanel className="h-full">
@@ -461,6 +471,9 @@ export default function SettingsPage() {
           </TabPanel>
           <TabPanel className="h-full pt-4">
             <ProviderImagesSettings />
+          </TabPanel>
+          <TabPanel className="h-full pt-4">
+            <AISettings />
           </TabPanel>
         </TabPanels>
       </TabGroup>

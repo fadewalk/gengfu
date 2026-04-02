@@ -4,7 +4,8 @@
       "usersAndAccess": "用户与访问",
       "incomingWebhook": "Webhook 接收",
       "smtp": "SMTP",
-      "providerImages": "集成图标"
+      "providerImages": "集成图标",
+      "ai": "AI 配置"
     },
     "subTabs": {
       "users": "用户",
