@@ -3,7 +3,7 @@
 ## 分支策略
 - `main` — 上游主分支（只同步，不推送）
 - `develop` / `feature/*` — 本地开发分支（不推送上游）
-- 不再使用 `feat/i18n-zh-CN` 分支，所有改动直接在 develop 或 feature 分支上做
+- 所有改动在 develop 或 feature 分支上做
 
 ## Remote 仓库
 - **origin** — GitHub 个人仓库 (https://github.com/fadewalk/keep)
