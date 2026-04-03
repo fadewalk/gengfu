@@ -40,6 +40,45 @@ export const AlertTimeline: React.FC<AlertTimelineProps> = ({
       ]
     : [];
 
+  // Direct mapping from backend ActionType values to i18n keys
+  const actionKeyMap: Record<string, string> = {
+    "alert was triggered": "alerts.timeline.actionTypes.triggered",
+    "alert acknowledged": "alerts.timeline.actionTypes.acknowledged",
+    "alert automatically resolved": "alerts.timeline.actionTypes.autoResolved",
+    "alert automatically resolved by api": "alerts.timeline.actionTypes.autoResolvedByApi",
+    "alert manually resolved": "alerts.timeline.actionTypes.manualResolved",
+    "alert status manually changed": "alerts.timeline.actionTypes.statusManualChanged",
+    "alert status changed by api": "alerts.timeline.actionTypes.statusChangedByApi",
+    "alert status undone": "alerts.timeline.actionTypes.statusUndone",
+    "alert enriched by workflow": "alerts.timeline.actionTypes.enrichedByWorkflow",
+    "alert enriched by mapping rule": "alerts.timeline.actionTypes.enrichedByMappingRule",
+    "alert enriched by extraction rule": "alerts.timeline.actionTypes.enrichedByExtractionRule",
+    "alert was deduplicated": "alerts.timeline.actionTypes.deduplicated",
+    "alert was assigned with ticket": "alerts.timeline.actionTypes.ticketAssigned",
+    "alert was unassigned from ticket": "alerts.timeline.actionTypes.ticketUnassigned",
+    "alert ticket was updated": "alerts.timeline.actionTypes.ticketUpdated",
+    "alert enrichments disposed": "alerts.timeline.actionTypes.enrichmentsDisposed",
+    "alert deleted": "alerts.timeline.actionTypes.deleted",
+    "alert enriched": "alerts.timeline.actionTypes.enriched",
+    "alert un-enriched": "alerts.timeline.actionTypes.unenriched",
+    "a comment was added to the alert": "alerts.timeline.actionTypes.commentAdded",
+    "a comment was removed from the alert": "alerts.timeline.actionTypes.commentRemoved",
+    "alert is in maintenance window": "alerts.timeline.actionTypes.maintenance",
+    "alert has been removed from maintenance window": "alerts.timeline.actionTypes.maintenanceExpired",
+    "alert dismissal expired": "alerts.timeline.actionTypes.dismissalExpired",
+    "a comment was added to the incident": "alerts.timeline.actionTypes.incidentComment",
+    "incident enriched": "alerts.timeline.actionTypes.incidentEnriched",
+    "incident status changed": "alerts.timeline.actionTypes.incidentStatusChanged",
+    "incident assigned": "alerts.timeline.actionTypes.incidentAssigned",
+  };
+
+  const translateAction = (action: string): string => {
+    const lowered = action.toLowerCase();
+    const key = actionKeyMap[lowered];
+    if (!key) return lowered;
+    return t(key);
+  };
+
   const auditContent = auditData?.length ? auditData : defaultAuditEvent;
   const content = auditContent.map((entry, index) => (
     <div
@@ -65,7 +104,7 @@ export const AlertTimeline: React.FC<AlertTimelineProps> = ({
       )}
       <div className="flex flex-col justify-center flex-grow overflow-hidden">
         <Subtitle className="text-sm text-orange-500 font-semibold whitespace-normal overflow-wrap-break-word">
-          {entry.action.toLowerCase()}
+          {translateAction(entry.action)}
         </Subtitle>
         <Subtitle className="text-xs whitespace-normal overflow-wrap-break-word">
           {entry.description.toLowerCase()}
