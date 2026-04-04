@@ -239,3 +239,4 @@ posthog.py
 .venv*
 .claude/settings.local.json
 .next/wiki/claude-code/sessions/
+.claude/hooks/.session/
