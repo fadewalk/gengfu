@@ -238,6 +238,13 @@ async def lifespan(app: FastAPI):
     # Startup
     await startup()
 
+    # Start auto-correlation background loop (works without Redis/ARQ)
+    from keep.api.tasks.process_correlation_task import auto_correlation_loop
+
+    _correlation_task = asyncio.create_task(auto_correlation_loop())
+    background_tasks.add(_correlation_task)
+    _correlation_task.add_done_callback(background_tasks.discard)
+
     # yield the background tasks, this is available for the app to use in request context
     yield {"background_tasks": background_tasks}
 
