@@ -2467,7 +2467,11 @@
     "settingMaxAlertsPerBatchDesc": "Maximum number of unassigned alerts to process in a single correlation run.",
     "settingConfidenceThresholdDesc": "Minimum confidence score for AI-suggested incidents. Suggestions below this threshold are discarded.",
     "settingAutoCreateIncidentsDesc": "Automatically create incidents from high-confidence correlations. When disabled, suggestions are stored for manual review.",
-    "settingIncludeTopologyContextDesc": "Include service topology data when analyzing alerts for better correlation accuracy."
+    "settingIncludeTopologyContextDesc": "Include service topology data when analyzing alerts for better correlation accuracy.",
+    "settingAutoCorrelation": "Auto Correlation",
+    "settingAutoCorrelationDesc": "Automatically run correlation on a schedule. When enabled, the system will periodically analyze unassigned alerts without manual trigger.",
+    "settingCorrelationInterval": "Correlation Interval (min)",
+    "settingCorrelationIntervalDesc": "Interval in minutes between automatic correlation runs. Minimum 5 minutes."
   },
   "providerImages": {
     "title": "Provider Icons",

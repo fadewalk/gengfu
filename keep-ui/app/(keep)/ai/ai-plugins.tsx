@@ -36,6 +36,8 @@ function useBackendTranslations(t: (key: string) => string) {
     "Confidence Threshold": t("aiPlugins.settingConfidenceThreshold"),
     "Auto Create Incidents": t("aiPlugins.settingAutoCreateIncidents"),
     "Include Topology Context": t("aiPlugins.settingIncludeTopologyContext"),
+    "Auto Correlation": t("aiPlugins.settingAutoCorrelation"),
+    "Correlation Interval (min)": t("aiPlugins.settingCorrelationInterval"),
   };
   const settingDescMap: Record<string, string> = {
     "Enable or disable the LLM correlation engine.": t("aiPlugins.settingEnabledDesc"),
@@ -43,6 +45,8 @@ function useBackendTranslations(t: (key: string) => string) {
     "Minimum confidence score for AI-suggested incidents. Suggestions below this threshold are discarded.": t("aiPlugins.settingConfidenceThresholdDesc"),
     "Automatically create incidents from high-confidence correlations. When disabled, suggestions are stored for manual review.": t("aiPlugins.settingAutoCreateIncidentsDesc"),
     "Include service topology data when analyzing alerts for better correlation accuracy.": t("aiPlugins.settingIncludeTopologyContextDesc"),
+    "Automatically run correlation on a schedule. When enabled, the system will periodically analyze unassigned alerts without manual trigger.": t("aiPlugins.settingAutoCorrelationDesc"),
+    "Interval in minutes between automatic correlation runs. Minimum 5 minutes.": t("aiPlugins.settingCorrelationIntervalDesc"),
   };
 
   return {

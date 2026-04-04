@@ -126,6 +126,20 @@ Powered by your configured LLM (OpenAI-compatible API).""",
                 "name": "Include Topology Context",
                 "description": "Include service topology data when analyzing alerts for better correlation accuracy.",
             },
+            {
+                "value": False,
+                "type": "bool",
+                "name": "Auto Correlation",
+                "description": "Automatically run correlation on a schedule. When enabled, the system will periodically analyze unassigned alerts without manual trigger.",
+            },
+            {
+                "min": 5,
+                "max": 120,
+                "value": 15,
+                "type": "int",
+                "name": "Correlation Interval (min)",
+                "description": "Interval in minutes between automatic correlation runs. Minimum 5 minutes.",
+            },
         ]
     ),
 )

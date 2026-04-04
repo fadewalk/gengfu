@@ -640,7 +640,11 @@
     "settingMaxAlertsPerBatchDesc": "单次关联运行中处理的最大未分配告警数量。",
     "settingConfidenceThresholdDesc": "AI 建议事件的最低置信度分数。低于此阈值的建议将被丢弃。",
     "settingAutoCreateIncidentsDesc": "自动从高置信度关联结果创建事件。禁用时，建议将存储供手动审核。",
-    "settingIncludeTopologyContextDesc": "分析告警时包含服务拓扑数据，以提升关联准确性。"
+    "settingIncludeTopologyContextDesc": "分析告警时包含服务拓扑数据，以提升关联准确性。",
+    "settingAutoCorrelation": "自动关联",
+    "settingAutoCorrelationDesc": "按计划自动运行关联分析。启用后，系统将定期分析未分配的告警，无需手动触发。",
+    "settingCorrelationInterval": "关联间隔（分钟）",
+    "settingCorrelationIntervalDesc": "自动关联运行之间的间隔（分钟）。最小 5 分钟。"
   },
   "correlation": {
     "form": {
