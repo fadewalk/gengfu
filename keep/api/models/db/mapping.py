@@ -41,6 +41,7 @@ class MappingRule(SQLModel, table=True):
     is_multi_level: bool = Field(default=False)
     new_property_name: Optional[str] = Field(max_length=255)
     prefix_to_remove: Optional[str] = Field(max_length=255)
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
 
 
 class MappRuleDtoBase(BaseModel):

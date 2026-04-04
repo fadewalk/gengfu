@@ -33,6 +33,7 @@ import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import KeepPng from "../../keep.png";
 import { useI18n } from "@/i18n/hooks/useI18n";
+import { GroupSwitcher } from "./GroupSwitcher";
 
 const NAVIGATION_OPTIONS = [
   {
@@ -402,6 +403,10 @@ export const Search = ({ session }: SearchProps) => {
             )}
           </Link>
         )}
+      </div>
+
+      <div className="flex items-center ml-4">
+        <GroupSwitcher />
       </div>
 
       <div className="flex-grow ml-4">

@@ -8,6 +8,7 @@ from fastapi import (
     APIRouter,
     Body,
     Depends,
+    Header,
     HTTPException,
     Query,
     Request,
@@ -20,6 +21,7 @@ from opentelemetry import trace
 from sqlmodel import Session
 
 from keep.api.core.cel_to_sql.sql_providers.base import CelToSqlException
+from keep.api.core.group_filter import check_group_access
 from keep.api.i18n import t
 from keep.api.core.config import config
 from keep.api.core.db import (
@@ -96,7 +98,9 @@ def fetch_facet_options(
 
     try:
         facet_options = get_workflow_facets_data(
-            tenant_id=tenant_id, facet_options_query=facet_options_query
+            tenant_id=tenant_id,
+            facet_options_query=facet_options_query,
+            authenticated_entity=authenticated_entity,
         )
     except CelToSqlException as e:
         logger.exception(
@@ -182,12 +186,16 @@ def fetch_facet_fields(
 )
 # TODO: this should be deprecated and removed
 def get_workflows(
+    selected_group_id: Optional[str] = Header(
+        None, alias="X-Keep-Group-Id"
+    ),
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:workflows"])
     ),
 ) -> list[WorkflowDTO] | list[dict]:
     query_result = query_workflows(
         QueryDto(),
+        selected_group_id,
         authenticated_entity,
     )
     return query_result["results"]
@@ -199,6 +207,9 @@ def get_workflows(
 )
 def query_workflows(
     query: QueryDto,
+    selected_group_id: Optional[str] = Header(
+        None, alias="X-Keep-Group-Id"
+    ),
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:workflows"])
     ),
@@ -227,6 +238,8 @@ def query_workflows(
             offset=query.offset,
             sort_by=query.sort_by,
             sort_dir=query.sort_dir,
+            authenticated_entity=authenticated_entity,
+            selected_group_id=selected_group_id,
         )
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{query.cel}". {str(e)}')
@@ -383,6 +396,11 @@ def run_workflow(
         raise HTTPException(
             status_code=400, detail=t("Invalid workflow configuration: {error}", error=e)
         ) from e
+
+    # Check group access
+    workflow_from_db = get_workflow_by_id_db(tenant_id=tenant_id, workflow_id=workflow_id)
+    if workflow_from_db and not check_group_access(workflow_from_db, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     # if there are workflow permissions, check if the user has access
     if not Workflow.check_run_permissions(
@@ -618,6 +636,7 @@ async def create_workflow(
         IdentityManagerFactory.get_auth_verifier(["write:workflows"])
     ),
     lookup_by_name: bool = Query(False),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> WorkflowCreateOrUpdateDTO:
     tenant_id = authenticated_entity.tenant_id
     created_by = authenticated_entity.email
@@ -631,6 +650,7 @@ async def create_workflow(
             workflow=workflow_raw_data,
             force_update=False,
             lookup_by_name=lookup_by_name,
+            group_id=group_id,
         )
     except Exception:
         logger.exception(
@@ -688,6 +708,7 @@ async def create_workflow_from_body(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["write:workflows"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> WorkflowCreateOrUpdateDTO:
     tenant_id = authenticated_entity.tenant_id
     created_by = authenticated_entity.email
@@ -696,7 +717,10 @@ async def create_workflow_from_body(
     # Create the workflow
     try:
         workflow = workflowstore.create_workflow(
-            tenant_id=tenant_id, created_by=created_by, workflow=workflow_raw_data
+            tenant_id=tenant_id,
+            created_by=created_by,
+            workflow=workflow_raw_data,
+            group_id=group_id,
         )
     except Exception:
         logger.exception(
@@ -834,6 +858,9 @@ async def update_workflow_by_id(
         )
         raise HTTPException(404, detail=t("Workflow not found"))
 
+    if not check_group_access(workflow_from_db, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     if workflow_from_db.provisioned:
         raise HTTPException(403, detail=t("Cannot update a provisioned workflow"))
 
@@ -864,6 +891,13 @@ def get_raw_workflow_by_id(
     ),
 ) -> WorkflowRawDto:
     tenant_id = authenticated_entity.tenant_id
+    workflow = get_workflow_by_id_db(tenant_id=tenant_id, workflow_id=workflow_id)
+    if not workflow:
+        raise HTTPException(404, detail=t("Workflow not found"))
+
+    if not check_group_access(workflow, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     workflowstore = WorkflowStore()
     return WorkflowRawDto(
         workflow_raw=workflowstore.get_raw_workflow(
@@ -892,6 +926,9 @@ def get_workflow_by_id(
             extra={"tenant_id": tenant_id},
         )
         raise HTTPException(404, detail=t("Workflow not found"))
+
+    if not check_group_access(workflow, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     updated_at = workflow.last_updated
     updated_by = workflow.updated_by or "unknown"
@@ -997,6 +1034,9 @@ def get_workflow_runs_by_id(
         )
         raise HTTPException(404, detail=t("Workflow not found"))
 
+    if not check_group_access(workflow, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     installed_providers = get_installed_providers(tenant_id)
     installed_providers_by_type = {}
     for installed_provider in installed_providers:
@@ -1082,6 +1122,11 @@ def delete_workflow_by_id(
     ),
 ):
     tenant_id = authenticated_entity.tenant_id
+    workflow = get_workflow_by_id_db(tenant_id=tenant_id, workflow_id=workflow_id)
+    if not workflow:
+        raise HTTPException(404, detail=t("Workflow not found"))
+    if not check_group_access(workflow, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     workflowstore = WorkflowStore()
     workflowstore.delete_workflow(workflow_id=workflow_id, tenant_id=tenant_id)
     return {"workflow_id": workflow_id, "status": "deleted"}
@@ -1182,6 +1227,9 @@ def toggle_workflow_state(
         )
         raise HTTPException(404, detail=t("Workflow not found"))
 
+    if not check_group_access(workflow, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     if workflow.provisioned:
         raise HTTPException(403, detail=t("Cannot modify a provisioned workflow"))
 
@@ -1268,6 +1316,9 @@ def read_workflow_secret(
     if not workflow:
         raise HTTPException(404, detail=t("Workflow not found"))
 
+    if not check_group_access(workflow, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     context_manager = ContextManager(tenant_id=tenant_id)
     secret_manager = SecretManagerFactory.get_secret_manager(context_manager)
     secret_key = f"{tenant_id}_{workflow_id}_secrets"
@@ -1297,6 +1348,9 @@ def delete_workflow_secret(
     workflow = get_workflow_by_id_db(tenant_id=tenant_id, workflow_id=workflow_id)
     if not workflow:
         raise HTTPException(404, detail=t("Workflow not found"))
+
+    if not check_group_access(workflow, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     context_manager = ContextManager(tenant_id=tenant_id)
     secret_manager = SecretManagerFactory.get_secret_manager(context_manager)

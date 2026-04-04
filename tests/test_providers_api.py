@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 from sqlmodel import Session
 
 from keep.api.core.dependencies import SINGLE_TENANT_UUID
+from keep.api.i18n import t
 from keep.api.models.db.provider import Provider
 from keep.providers.base.provider_exceptions import ProviderMethodException
 from keep.providers.providers_factory import ProviderConfigurationException
@@ -112,7 +113,7 @@ class TestInvokeProviderMethod:
 
         # Assertions
         assert response.status_code == 404
-        assert "Provider not found" in response.json()["detail"]
+        assert t("Provider not found") in response.json()["detail"]
 
     @patch("keep.api.routes.providers.IdentityManagerFactory.get_auth_verifier")
     @patch("keep.api.routes.providers.SecretManagerFactory.get_secret_manager")
@@ -158,7 +159,7 @@ class TestInvokeProviderMethod:
 
         # Assertions
         assert response.status_code == 400
-        assert "Method not found" in response.json()["detail"]
+        assert t("Method not found") in response.json()["detail"]
 
     @patch("keep.api.routes.providers.IdentityManagerFactory.get_auth_verifier")
     @patch("keep.api.routes.providers.SecretManagerFactory.get_secret_manager")

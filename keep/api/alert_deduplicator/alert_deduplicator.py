@@ -336,6 +336,7 @@ class AlertDeduplicator:
                 dedup_ratio=0.0,
                 enabled=rule.enabled,
                 is_provisioned=rule.is_provisioned,
+                group_id=getattr(rule, "group_id", None),
             )
             for rule in custom_deduplications
         ]
@@ -476,7 +477,7 @@ class AlertDeduplicator:
         return fields_per_provider
 
     def create_deduplication_rule(
-        self, rule: DeduplicationRuleRequestDto, created_by: str
+        self, rule: DeduplicationRuleRequestDto, created_by: str, group_id: str | None = None
     ) -> DeduplicationRuleDto:
         # check that provider installed (cannot create deduplication rule for uninstalled provider)
         provider = None
@@ -519,6 +520,7 @@ class AlertDeduplicator:
             full_deduplication=rule.full_deduplication,
             ignore_fields=rule.ignore_fields or [],
             priority=0,
+            group_id=group_id,
         )
 
         return new_rule

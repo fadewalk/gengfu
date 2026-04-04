@@ -1,15 +1,13 @@
 import json
 import logging
 import math
-import os
 from typing import Optional
 from uuid import UUID
 
-from openai import OpenAI
 from pydantic import BaseModel
 
+from keep.api.bl.ai_model_service import get_client, get_model_name
 from keep.api.bl.incidents_bl import IncidentBl
-from keep.api.consts import OPENAI_BASE_URL, OPENAI_MODEL_NAME
 from keep.api.models.db.incident import IncidentStatus
 from keep.api.models.incident import IncidentDto
 
@@ -77,14 +75,6 @@ logger = logging.getLogger(__name__)
 
 
 class IncidentReportsBl:
-    __open_ai_client = None
-
-    @property
-    def open_ai_client(self):
-        if not self.__open_ai_client and os.environ.get("OPENAI_API_KEY"):
-            self.__open_ai_client = OpenAI(base_url=OPENAI_BASE_URL) if OPENAI_BASE_URL else OpenAI()
-
-        return self.__open_ai_client
 
     def __init__(self, tenant_id: str):
         self.tenant_id = tenant_id
@@ -122,8 +112,11 @@ class IncidentReportsBl:
     def __calculate_report_in_openai(
         self, incidents: list[IncidentDto]
     ) -> OpenAIReportPart:
-        if self.open_ai_client is None:
-            return IncidentReport()
+        try:
+            open_ai_client = get_client(self.tenant_id)
+        except (ValueError, Exception) as e:
+            logger.warning(f"AI service not configured for report scenario: {e}")
+            return OpenAIReportPart()
 
         # Most recent incidents first
         incidents = sorted(incidents, key=lambda x: x.creation_time, reverse=True)
@@ -149,8 +142,8 @@ class IncidentReportsBl:
 
         incidents_json = json.dumps(incidents_minified, default=str)
 
-        response = self.open_ai_client.chat.completions.create(
-            model=OPENAI_MODEL_NAME,
+        response = open_ai_client.chat.completions.create(
+            model=get_model_name(self.tenant_id),
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": incidents_json},
@@ -168,7 +161,14 @@ class IncidentReportsBl:
 
         model_response = response.choices[0].message.content
         try:
-            report = OpenAIReportPart(**json.loads(model_response))
+            # Strip markdown code fences that some LLMs (e.g. GLM) wrap around JSON
+            stripped = model_response.strip()
+            if stripped.startswith("```"):
+                stripped = stripped.split("\n", 1)[1] if "\n" in stripped else stripped[3:]
+            if stripped.endswith("```"):
+                stripped = stripped[:-3]
+            stripped = stripped.strip()
+            report = OpenAIReportPart(**json.loads(stripped))
             return report
         except Exception as e:
             logger.error(

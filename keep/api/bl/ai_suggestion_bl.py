@@ -1,6 +1,7 @@
 import hashlib
 import json
 import logging
+import re
 import uuid
 from typing import Dict, List, Optional, Set, Tuple
 from uuid import UUID
@@ -9,9 +10,9 @@ from fastapi import HTTPException
 from openai import OpenAI, OpenAIError
 from sqlmodel import Session
 
+from keep.api.bl.ai_model_service import get_client, get_model_name
 from keep.api.bl.incidents_bl import IncidentBl
 from keep.api.i18n import t
-from keep.api.consts import OPENAI_BASE_URL, OPENAI_MODEL_NAME
 from keep.api.core.db import get_session_sync
 from keep.api.models.alert import AlertDto
 from keep.api.models.db.ai_suggestion import AIFeedback, AISuggestion, AISuggestionType
@@ -30,16 +31,10 @@ class AISuggestionBl:
         self.tenant_id = tenant_id
         self.session = session if session else get_session_sync()
 
-        # Todo: interface it with any model
-        #       https://github.com/keephq/keep/issues/2373
-        # Todo: per-tenant keys
-        #       https://github.com/keephq/keep/issues/2365
-        # Todo: also goes with settings page
-        #       https://github.com/keephq/keep/issues/2365
+        # Resolve AI client via the model configuration service (DB → env fallback)
         try:
-            self._client = OpenAI(base_url=OPENAI_BASE_URL) if OPENAI_BASE_URL else OpenAI()
-        except OpenAIError as e:
-            # if its api key error, we should raise 400
+            self._client = get_client(tenant_id)
+        except (OpenAIError, ValueError) as e:
             self.logger.error(f"Failed to initialize OpenAI client: {e}")
             raise HTTPException(
                 status_code=400, detail=t("AI service is not enabled for the client.")
@@ -268,9 +263,134 @@ class AISuggestionBl:
             completion = self._get_ai_completion(system_prompt, user_prompt)
 
             # Parse and process response
-            incident_clustering = IncidentClustering.parse_raw(
-                completion.choices[0].message.content
+            raw_content = completion.choices[0].message.content.strip()
+            # Strip markdown code fences that some LLMs wrap around JSON
+            if raw_content.startswith("```"):
+                raw_content = raw_content.split("\n", 1)[1] if "\n" in raw_content else raw_content[3:]
+            if raw_content.endswith("```"):
+                raw_content = raw_content[:-3].strip()
+
+            # Parse JSON and normalize LLM field name variations
+            raw_data = json.loads(raw_content)
+            incidents = raw_data.get("incidents", [])
+            self.logger.info(
+                "LLM raw response data",
+                extra={"raw_data": raw_data},
             )
+
+            # Comprehensive field name normalization for various LLMs
+            # Different LLMs return different field names despite json_schema instructions
+            FIELD_MAP = {
+                # incident_name variations
+                "title": "incident_name",
+                "name": "incident_name",
+                "incident_title": "incident_name",
+                "incident_id": "incident_name",
+                # alerts variations
+                "included_alerts": "alerts",
+                "alert_indices": "alerts",
+                "alert_ids": "alerts",
+                "affected_alerts": "alerts",
+                "grouped_alert_ids": "alerts",
+                "alert_names": "alerts",
+                "involved_alerts": "alerts",
+                "assigned_alerts": "alerts",
+                "related_alerts": "alerts",
+                "correlated_alerts": "alerts",
+                "alert_references": "alerts",
+                "alert_list": "alerts",
+                "grouped_alerts": "alerts",
+                # reasoning variations
+                "root_cause_hypothesis": "reasoning",
+                "root_cause": "reasoning",
+                "description": "reasoning",
+                "analysis": "reasoning",
+                "reason": "reasoning",
+                "summary": "reasoning",
+                "explanation": "reasoning",
+                "potential_root_cause": "reasoning",
+                "cause": "reasoning",
+                "issue": "reasoning",
+                "issue_type": "reasoning",
+                # confidence_explanation variations
+                "confidence_score_explanation": "confidence_explanation",
+                "confidence_explanation_text": "confidence_explanation",
+                "confidence_rationale": "confidence_explanation",
+                "confidence_calculation_explanation": "confidence_explanation",
+                # recommended_actions variations
+                "recommendations": "recommended_actions",
+                "actions": "recommended_actions",
+                "suggested_actions": "recommended_actions",
+                "remediation_steps": "recommended_actions",
+                "initial_actions": "recommended_actions",
+            }
+            for item in incidents:
+                for old_key, new_key in FIELD_MAP.items():
+                    if old_key in item:
+                        item[new_key] = item.pop(old_key)
+                # LLM may return confidence_explanation as dict instead of string
+                if "confidence_explanation" in item and isinstance(item["confidence_explanation"], dict):
+                    item["confidence_explanation"] = json.dumps(
+                        item["confidence_explanation"], ensure_ascii=False
+                    )
+                # LLM may return alert names as strings instead of ints
+                if "alerts" in item and isinstance(item["alerts"], list):
+                    coerced = []
+                    for x in item["alerts"]:
+                        if isinstance(x, int):
+                            coerced.append(x)
+                        elif isinstance(x, str):
+                            try:
+                                coerced.append(int(x))
+                            except ValueError:
+                                # Not a number — might be an alert name/fingerprint
+                                coerced.append(x)
+                        else:
+                            coerced.append(x)
+                    item["alerts"] = coerced
+
+            # Resolve alert name/fingerprint strings to 1-based indices
+            # Build lookup: alert name/fingerprint → 1-based index
+            alert_name_to_index: Dict[str, int] = {}
+            for idx, alert in enumerate(alerts_dto):
+                if alert.name:
+                    alert_name_to_index[alert.name] = idx + 1
+                if alert.fingerprint:
+                    alert_name_to_index[alert.fingerprint] = idx + 1
+
+            for item in incidents:
+                if "alerts" not in item or not isinstance(item["alerts"], list):
+                    continue
+                resolved = []
+                # Build a case-insensitive lookup once
+                lower_map = {k.lower(): v for k, v in alert_name_to_index.items()}
+                for x in item["alerts"]:
+                    if isinstance(x, int):
+                        resolved.append(x)
+                        continue
+                    if not isinstance(x, str):
+                        continue
+                    # Strip common LLM prefixes like "Alert 1: HighDiskUsage"
+                    cleaned = x
+                    m = re.match(r"^Alert\s+\d+\s*:\s*(.+)$", x, re.IGNORECASE)
+                    if m:
+                        cleaned = m.group(1).strip()
+                    # Try exact match first, then case-insensitive
+                    if cleaned in alert_name_to_index:
+                        resolved.append(alert_name_to_index[cleaned])
+                    elif cleaned.lower() in lower_map:
+                        resolved.append(lower_map[cleaned.lower()])
+                    elif x in alert_name_to_index:
+                        resolved.append(alert_name_to_index[x])
+                    elif x.lower() in lower_map:
+                        resolved.append(lower_map[x.lower()])
+                    else:
+                        self.logger.warning(
+                            f"Could not resolve alert name '{x}' to any known alert"
+                        )
+                item["alerts"] = resolved
+
+            incident_clustering = IncidentClustering.parse_obj({"incidents": incidents})
 
             # Save suggestion
             suggestion = self.add_suggestion(
@@ -278,7 +398,7 @@ class AISuggestionBl:
                 suggestion_input=suggestion_input,
                 suggestion_type=AISuggestionType.INCIDENT_SUGGESTION,
                 suggestion_content=incident_clustering.dict(),
-                model=OPENAI_MODEL_NAME,
+                model=get_model_name(self.tenant_id),
             )
 
             # Process incidents
@@ -405,7 +525,7 @@ class AISuggestionBl:
     def _get_ai_completion(self, system_prompt: str, user_prompt: str):
         """Get completion from OpenAI."""
         return self._client.chat.completions.create(
-            model=OPENAI_MODEL_NAME,
+            model=get_model_name(self.tenant_id),
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
@@ -471,16 +591,28 @@ class AISuggestionBl:
         """Process incidents and create DTOs."""
         processed_incidents = []
         for incident in incidents:
+            # Skip incidents with no alerts or out-of-range indices
+            if not incident.alerts:
+                self.logger.warning(f"Skipping incident '{incident.incident_name}' with no alerts")
+                continue
+            valid_indices = [i for i in incident.alerts if isinstance(i, int) and 1 <= i <= len(alerts_dto)]
+            if not valid_indices:
+                self.logger.warning(
+                    f"Skipping incident '{incident.incident_name}': "
+                    f"all alert indices out of range (alerts count: {len(alerts_dto)}, indices: {incident.alerts})"
+                )
+                continue
+
             alert_sources: Set[str] = set()
             alert_services: Set[str] = set()
-            for alert_index in incident.alerts:
+            for alert_index in valid_indices:
                 alert = alerts_dto[alert_index - 1]
-                if alert.source:
+                if alert.source and len(alert.source) > 0:
                     alert_sources.add(alert.source[0])
                 if alert.service:
                     alert_services.add(alert.service)
 
-            incident_alerts = [alerts_dto[i - 1] for i in incident.alerts]
+            incident_alerts = [alerts_dto[i - 1] for i in valid_indices]
             start_time = min(alert.lastReceived for alert in incident_alerts)
             last_seen_time = max(alert.lastReceived for alert in incident_alerts)
 
@@ -493,12 +625,12 @@ class AISuggestionBl:
                 confidence_score=incident.confidence_score,
                 confidence_explanation=incident.confidence_explanation,
                 severity=incident.severity,
-                alert_ids=[alerts_dto[i - 1].id for i in incident.alerts],
+                alert_ids=[alerts_dto[i - 1].id for i in valid_indices],
                 recommended_actions=incident.recommended_actions,
                 is_predicted=True,
                 is_candidate=True,
                 is_visible=True,
-                alerts_count=len(incident.alerts),
+                alerts_count=len(valid_indices),
                 alert_sources=list(alert_sources),
                 alerts=incident_alerts,
                 services=list(alert_services),

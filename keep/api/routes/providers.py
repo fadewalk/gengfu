@@ -6,7 +6,7 @@ import time
 import uuid
 from typing import Any, Callable, Dict, Optional
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, HTTPException, Request, Header
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlmodel import Session, select
@@ -35,6 +35,7 @@ from keep.providers.providers_factory import (
 )
 from keep.providers.providers_service import ProvidersService
 from keep.secretmanager.secretmanagerfactory import SecretManagerFactory
+from keep.api.core.group_filter import check_group_access
 from keep.api.i18n import t
 
 router = APIRouter()
@@ -376,6 +377,14 @@ def delete_provider(
 ):
     tenant_id = authenticated_entity.tenant_id
     try:
+        # Check group access
+        provider = session.exec(
+            select(Provider).where(
+                (Provider.tenant_id == tenant_id) & (Provider.id == provider_id)
+            )
+        ).one_or_none()
+        if provider and not check_group_access(provider, authenticated_entity):
+            raise HTTPException(status_code=403, detail="No access to this resource")
         ProvidersService.delete_provider(tenant_id, provider_id, session)
         return JSONResponse(status_code=200, content={"message": "deleted"})
     except HTTPException as e:
@@ -409,6 +418,9 @@ def validate_provider_scopes(
     if not provider:
         raise HTTPException(404, detail=t("Provider not found"))
 
+    if not check_group_access(provider, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     context_manager = ContextManager(tenant_id=tenant_id)
     secret_manager = SecretManagerFactory.get_secret_manager(context_manager)
     provider_config = secret_manager.read_secret(
@@ -436,6 +448,7 @@ async def update_provider(
         IdentityManagerFactory.get_auth_verifier(["update:providers"])
     ),
     session: Session = Depends(get_session),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
     tenant_id = authenticated_entity.tenant_id
     updated_by = authenticated_entity.email
@@ -458,7 +471,7 @@ async def update_provider(
 
     try:
         result = ProvidersService.update_provider(
-            tenant_id, provider_id, provider_info, updated_by, session
+            tenant_id, provider_id, provider_info, updated_by, session, group_id=group_id
         )
         return JSONResponse(status_code=200, content=result)
     except HTTPException as e:
@@ -474,6 +487,7 @@ async def install_provider(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["write:providers"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
     tenant_id = authenticated_entity.tenant_id
     installed_by = authenticated_entity.email
@@ -510,6 +524,7 @@ async def install_provider(
             provider_type,
             provider_info,
             pulling_enabled=pulling_enabled,
+            group_id=group_id,
         )
         return JSONResponse(status_code=200, content=result)
     except HTTPException as e:
@@ -691,6 +706,15 @@ def invoke_provider_method(
 
     try:
         provider_instance = _get_provider(tenant_id, provider_id, session)
+
+        # Check group access
+        provider_model = session.exec(
+            select(Provider).where(
+                (Provider.tenant_id == tenant_id) & (Provider.id == provider_id)
+            )
+        ).one_or_none()
+        if provider_model and not check_group_access(provider_model, authenticated_entity):
+            raise HTTPException(status_code=403, detail="No access to this resource")
 
         # Check if method exists
         func: Callable | None = getattr(provider_instance, method, None)

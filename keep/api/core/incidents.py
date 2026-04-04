@@ -195,6 +195,7 @@ def __build_base_incident_query(
     cel=None,
     force_fetch_alerts=False,
     force_fetch_has_linked_incident=False,
+    authenticated_entity=None,
 ):
     fetch_alerts = False
     fetch_has_linked_incident = False
@@ -292,6 +293,12 @@ def __build_base_incident_query(
         )
 
     sql_query = sql_query.filter(Incident.tenant_id == tenant_id)
+
+    # Apply group-level data isolation
+    if authenticated_entity is not None:
+        from keep.api.core.group_filter import apply_group_filter
+        sql_query = apply_group_filter(sql_query, Incident, authenticated_entity)
+
     if not is_visible_filter_present:
         sql_query = sql_query.filter(
             Incident.is_visible == True
@@ -315,6 +322,7 @@ def __build_last_incidents_total_count_query(
     is_predicted: bool = None,
     cel: str = None,
     allowed_incident_ids: Optional[List[str]] = None,
+    authenticated_entity=None,
 ):
     """
     Builds a SQL query to retrieve the last incidents based on various filters and sorting options.
@@ -346,6 +354,7 @@ def __build_last_incidents_total_count_query(
         tenant_id=tenant_id,
         cel=cel,
         select_args=[count_funct],
+        authenticated_entity=authenticated_entity,
     )["query"]
 
     query = query.filter(Incident.is_candidate == is_candidate)
@@ -386,6 +395,7 @@ def __build_last_incidents_query(
     is_predicted: bool = None,
     cel: str = None,
     allowed_incident_ids: Optional[List[str]] = None,
+    authenticated_entity=None,
 ):
     """
     Builds a SQL query to retrieve the last incidents based on various filters and sorting options.
@@ -425,6 +435,7 @@ def __build_last_incidents_query(
         tenant_id=tenant_id,
         cel=cel,
         select_args=[Incident, incident_enrichment],
+        authenticated_entity=authenticated_entity,
     )
     sql_query = built_query_result["query"]
     fetch_alerts = built_query_result["fetch_alerts"]
@@ -474,6 +485,8 @@ def get_last_incidents_by_cel(
     is_predicted: bool = None,
     cel: str = None,
     allowed_incident_ids: Optional[List[str]] = None,
+    authenticated_entity=None,
+    selected_group_id: Optional[str] = None,
 ) -> Tuple[list[Incident], int]:
     """
     Retrieve the last incidents for a given tenant based on various filters and criteria.
@@ -505,6 +518,7 @@ def get_last_incidents_by_cel(
                 is_predicted=is_predicted,
                 cel=cel,
                 allowed_incident_ids=allowed_incident_ids,
+                authenticated_entity=authenticated_entity,
             )
             sql_query = __build_last_incidents_query(
                 tenant_id=tenant_id,
@@ -518,6 +532,7 @@ def get_last_incidents_by_cel(
                 is_predicted=is_predicted,
                 cel=cel,
                 allowed_incident_ids=allowed_incident_ids,
+                authenticated_entity=authenticated_entity,
             )
         except CelToSqlException as e:
             if isinstance(e.__cause__, PropertiesMappingException):
@@ -550,6 +565,7 @@ def get_incident_facets_data(
     tenant_id: str,
     allowed_incident_ids: list[str],
     facet_options_query: FacetOptionsQueryDto,
+    authenticated_entity=None,
 ) -> dict[str, list[FacetOptionDto]]:
     """
     Retrieves incident facets data for a given tenant.
@@ -592,6 +608,7 @@ def get_incident_facets_data(
             select_statement,
             force_fetch_alerts=force_fetch_alerts,
             force_fetch_has_linked_incident=force_fetch_has_linked_incident,
+            authenticated_entity=authenticated_entity,
         )["query"]
         if allowed_incident_ids:
             base_query = base_query.filter(Incident.id.in_(allowed_incident_ids))

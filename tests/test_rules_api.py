@@ -2,6 +2,7 @@ import pytest
 
 from keep.api.core.db import create_rule as create_rule_db
 from keep.api.core.dependencies import SINGLE_TENANT_UUID
+from keep.api.i18n import t
 from tests.fixtures.client import client, setup_api_key, test_app  # noqa
 
 TEST_RULE_DATA = {
@@ -20,27 +21,27 @@ TEST_RULE_DATA = {
 INVALID_DATA_STEPS = [
     {
         "update": {"sqlQuery": {"sql": "", "params": []}},
-        "error": "SQL is required",
+        "error": t("SQL is required"),
     },
     {
         "update": {"sqlQuery": {"sql": "SELECT", "params": []}},
-        "error": "Params are required",
+        "error": t("Params are required"),
     },
     {
         "update": {"celQuery": ""},
-        "error": "CEL is required",
+        "error": t("CEL is required"),
     },
     {
         "update": {"ruleName": ""},
-        "error": "Rule name is required",
+        "error": t("Rule name is required"),
     },
     {
         "update": {"timeframeInSeconds": 0},
-        "error": "Timeframe is required",
+        "error": t("Timeframe is required"),
     },
     {
         "update": {"timeUnit": ""},
-        "error": "Timeunit is required",
+        "error": t("Timeunit is required"),
     },
 ]
 
@@ -134,7 +135,7 @@ def test_delete_rule_api(db_session, client, test_app):
     assert response.status_code == 200
     data = response.json()
     assert "message" in data
-    assert data["message"] == "Rule deleted"
+    assert data["message"] == t("Rule deleted")
 
     response = client.delete(
         "/rules/{}".format(rule.id),
@@ -144,7 +145,7 @@ def test_delete_rule_api(db_session, client, test_app):
     assert response.status_code == 404
     data = response.json()
     assert "detail" in data
-    assert data["detail"] == "Rule not found"
+    assert data["detail"] == t("Rule not found")
 
 
 @pytest.mark.parametrize("test_app", ["NO_AUTH"], indirect=True)

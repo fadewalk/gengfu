@@ -1,6 +1,7 @@
 import logging
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Header, Request
 from pydantic import BaseModel
 
 from keep.api.core.cel_to_sql.cel_ast_converter import CelToAstConverter
@@ -10,6 +11,7 @@ from keep.api.core.db import get_rule_distribution as get_rule_distribution_db
 from keep.api.core.db import get_rule_incidents_count_db
 from keep.api.core.db import get_rules as get_rules_db
 from keep.api.core.db import update_rule as update_rule_db
+from keep.api.core.group_filter import check_group_access
 from keep.api.models.db.rule import CreateIncidentOn, ResolveOn
 from keep.api.i18n import t
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
@@ -47,10 +49,18 @@ def get_rules(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:rules"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
     tenant_id = authenticated_entity.tenant_id
-    logger.info("Getting rules")
+    logger.info("Getting rules", extra={"tenant_id": tenant_id, "group_id": group_id})
     rules = get_rules_db(tenant_id=tenant_id)
+
+    if group_id:
+        # Selected group: show tenant-wide + selected group's resources only
+        rules = [rule for rule in rules if rule.group_id is None or rule.group_id == group_id]
+    else:
+        # No group selected: filter by all groups the user belongs to
+        rules = [rule for rule in rules if check_group_access(rule, authenticated_entity)]
     # now add this:
     rules_dist = get_rule_distribution_db(tenant_id=tenant_id, minute=True)
     rules_incidents = get_rule_incidents_count_db(tenant_id=tenant_id)
@@ -76,6 +86,7 @@ async def create_rule(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["write:rules"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
     tenant_id = authenticated_entity.tenant_id
     created_by = authenticated_entity.email
@@ -148,6 +159,7 @@ async def create_rule(
         multi_level_property_name=multi_level_property_name,
         threshold=threshold,
         assignee=assignee,
+        group_id=group_id,
     )
     logger.info("Rule created")
     return rule
@@ -166,6 +178,13 @@ async def delete_rule(
 ):
     tenant_id = authenticated_entity.tenant_id
     logger.info(f"Deleting rule {rule_id}")
+
+    # Check group access before deleting
+    rules = get_rules_db(tenant_id=tenant_id)
+    rule = next((r for r in rules if str(r.id) == rule_id), None)
+    if rule and not check_group_access(rule, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     if delete_rule_db(tenant_id=tenant_id, rule_id=rule_id):
         logger.info(f"Rule {rule_id} deleted")
         return {"message": t("Rule deleted")}
@@ -188,6 +207,13 @@ async def update_rule(
     tenant_id = authenticated_entity.tenant_id
     updated_by = authenticated_entity.email
     logger.info(f"Updating rule {rule_id}")
+
+    # Check group access before updating
+    rules = get_rules_db(tenant_id=tenant_id)
+    rule = next((r for r in rules if str(r.id) == rule_id), None)
+    if rule and not check_group_access(rule, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     try:
         body = await request.json()
         rule_name = body["ruleName"]

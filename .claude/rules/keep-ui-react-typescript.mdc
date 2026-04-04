@@ -1,16 +1,12 @@
 ---
-description: 
-globs: 
-alwaysApply: true
----
----
 description: Rules for writing frontend code at Keep (React + Typescript)
 globs: keep-ui/**/*.tsx, keep-ui/**/*.ts
+alwaysApply: false
 ---
 
 You are an expert in TypeScript, React, Next.js, SWR, Tailwind, and UX design.
 
-# Achitecture
+# Architecture
 Use Feature-Slice Design Convention with modification: instead of `pages` and `app` we use default Next.js route-based folder structure.
 
 Example:
@@ -21,7 +17,7 @@ Example:
     - model/
     - ui/
 
-Top-level folders, called Layers: 
+Top-level folders, called Layers:
 - widgets
 - features
 - entities
@@ -29,7 +25,7 @@ Top-level folders, called Layers:
 
 Each layer has segments, e.g. "entities/users".
 
-Each segment has slices 
+Each segment has slices:
 - ui — everything related to UI display: UI components, date formatters, styles, etc.
 - api — backend interactions: request functions, data types, mappers, etc.
 - model — the data model: schemas, interfaces, stores, and business logic.
@@ -50,7 +46,7 @@ Each segment has slices
 - Always look around the codebase for naming conventions, and follow the best practices of the environment (e.g. use `camelCase` variables in JS).
 - Use clear, yet functional names (`searchResults` vs `data`).
 - React components are PascalCase (`IncidentList`).
-- Props for components and hooks are PascalCase and end with `Props`, e.g. `WorkflowBuilderWidgetProps`, return value for hooks is PascalCase and end with `Value`, e.g. `UseIncidentActionsValue` 
+- Props for components and hooks are PascalCase and end with `Props`, e.g. `WorkflowBuilderWidgetProps`, return value for hooks is PascalCase and end with `Value`, e.g. `UseIncidentActionsValue`
 - Name the `.ts` file according to its main export: `IncidentList.ts` or `IncidentList.tsx` or `useIncidents.ts`. Pay attention to the case.
 - Avoid `index.ts`, `styles.css`, and other generic names, even if this is the only file in a directory.
 
@@ -85,4 +81,3 @@ Each segment has slices
   - Follow BEM for modals (.DropdownMenu__modal)
   - Import styles directly (import './DropdownMenu.css')
 - Replace custom CSS with Tailwind when possible
-

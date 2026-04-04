@@ -35,6 +35,9 @@ class Workflow(SQLModel, table=True):
     provisioned_file: Optional[str] = None
     is_test: bool = Field(default=False)
 
+    # Group-level data isolation (optional)
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
+
     executions: List["WorkflowExecution"] = Relationship(back_populates="workflow")
     versions: List["WorkflowVersion"] = Relationship(back_populates="workflow")
 

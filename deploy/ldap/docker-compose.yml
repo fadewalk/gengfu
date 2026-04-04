@@ -19,6 +19,8 @@ services:
       - ./slapd.d:/etc/ldap/slapd.d
       - ./ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif
     command: --copy-service
+    networks:
+      - keep-shared
 
   phpldapadmin:
     image: osixia/phpldapadmin:0.9.0
@@ -31,3 +33,9 @@ services:
       - "8088:80"
     depends_on:
       - openldap
+    networks:
+      - keep-shared
+
+networks:
+  keep-shared:
+    external: true

@@ -10,6 +10,7 @@ from sqlmodel import SQLModel
 import keep.api.logging
 from keep.api.core.db_utils import create_db_engine
 from keep.api.models.db.action import *
+from keep.api.models.db.ai_model_config import *
 from keep.api.models.db.ai_suggestion import *
 from keep.api.models.db.alert import *
 from keep.api.models.db.dashboard import *
@@ -22,6 +23,7 @@ from keep.api.models.db.provider import *
 from keep.api.models.db.secret import *
 from keep.api.models.db.rule import *
 from keep.api.models.db.statistics import *
+from keep.api.models.db.group import *
 from keep.api.models.db.tenant import *
 from keep.api.models.db.topology import *
 from keep.api.models.db.user import *

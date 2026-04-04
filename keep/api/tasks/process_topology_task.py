@@ -3,7 +3,7 @@ import logging
 
 from sqlalchemy import and_
 
-from keep.api.core.db import get_session_sync
+from keep.api.core.db import get_provider_by_type_and_id, get_session_sync
 from keep.api.core.dependencies import get_pusher_client
 from keep.api.models.db.topology import (
     TopologyApplicationDtoIn,
@@ -32,6 +32,15 @@ def process_topology(
             extra=extra,
         )
         return
+
+    # Look up provider's group_id for group isolation inheritance
+    provider_group_id = None
+    try:
+        provider_model = get_provider_by_type_and_id(tenant_id, provider_type, provider_id)
+        if provider_model:
+            provider_group_id = provider_model.group_id
+    except Exception:
+        logger.exception("Failed to get provider group_id", extra=extra)
 
     logger.info("Processing topology data", extra=extra)
     session = get_session_sync()
@@ -79,7 +88,7 @@ def process_topology(
     for service in topology_data:
         service_copy = copy.deepcopy(service.dict())
         service_copy.pop("dependencies")
-        db_service = TopologyService(**service_copy, tenant_id=tenant_id)
+        db_service = TopologyService(**service_copy, tenant_id=tenant_id, group_id=provider_group_id)
         session.add(db_service)
         session.flush()
         service_to_keep_service_id_map[service.service] = db_service.id
@@ -134,6 +143,7 @@ def process_topology(
                     TopologyServiceDtoIn(id=service_id)
                     for service_id in application_to_services[application_id]
                 ],
+                group_id=provider_group_id,
             ),
             session=session,
         )

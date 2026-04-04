@@ -1,14 +1,16 @@
 import datetime
 import logging
+from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from fastapi.responses import JSONResponse
 from sqlmodel import Session
 
 from keep.api.bl.enrichments_bl import EnrichmentsBl
-from keep.api.i18n import t
 from keep.api.core.db import get_session
+from keep.api.core.group_filter import check_group_access, apply_group_filter, apply_selected_group_filter
+from keep.api.i18n import t
 from keep.api.models.db.enrichment_event import EnrichmentEventWithLogs
 from keep.api.models.db.mapping import (
     MappingRule,
@@ -32,15 +34,21 @@ def get_rules(
         IdentityManagerFactory.get_auth_verifier(["read:rules"])
     ),
     session: Session = Depends(get_session),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> list[MappingRuleDtoOut]:
-    logger.info("Getting mapping rules")
+    logger.info("Getting mapping rules", extra={"tenant_id": authenticated_entity.tenant_id, "group_id": group_id})
 
     # @tb: get the model without all the rows becuase it might be heavy
-    rules: list[MappingRule] = (
+    rules_query = (
         session.query(MappingRule)
         .filter(MappingRule.tenant_id == authenticated_entity.tenant_id)
-        .all()
     )
+    # Apply group filter: use selected group or fall back to user's groups
+    if group_id:
+        rules_query = apply_selected_group_filter(rules_query, MappingRule, group_id)
+    else:
+        rules_query = apply_group_filter(rules_query, MappingRule, authenticated_entity)
+    rules: list[MappingRule] = rules_query.all()
     logger.info("Got mapping rules", extra={"rules_count": len(rules) if rules else 0})
 
     rules_dtos = []
@@ -90,6 +98,11 @@ def get_rule(
     )
     if rule is None:
         raise HTTPException(status_code=404, detail=t("Rule not found"))
+
+    # Check group access
+    if not check_group_access(rule, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     return MappingRuleDtoOut(**rule.model_dump())
 
 
@@ -104,12 +117,14 @@ def create_rule(
         IdentityManagerFactory.get_auth_verifier(["write:rules"])
     ),
     session: Session = Depends(get_session),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> MappingRule:
     logger.info("Creating a new mapping rule")
     new_rule = MappingRule(
         **rule.dict(),
         tenant_id=authenticated_entity.tenant_id,
         created_by=authenticated_entity.email,
+        group_id=group_id,
     )
 
     if not new_rule.name or not new_rule.matchers:
@@ -142,6 +157,10 @@ def delete_rule(
     if rule is None:
         raise HTTPException(status_code=404, detail=t("Rule not found"))
 
+    # Check group access
+    if not check_group_access(rule, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     session.delete(rule)
     session.commit()
     logger.info("Deleted a mapping rule", extra={"rule_id": rule_id})
@@ -168,6 +187,11 @@ def update_rule(
     )
     if existing_rule is None:
         raise HTTPException(status_code=404, detail=t("Rule not found"))
+
+    # Check group access
+    if not check_group_access(existing_rule, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     existing_rule.name = rule.name
     existing_rule.description = rule.description
     existing_rule.matchers = rule.matchers

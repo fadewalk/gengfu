@@ -310,21 +310,45 @@ class IncidentListFilterParamsDto(BaseModel):
 
 class IncidentCandidate(BaseModel):
     incident_name: str
-    alerts: List[int] = Field(
-        description="List of alert numbers (1-based index) included in this incident"
+    alerts: List[Any] = Field(
+        description="List of alert numbers (1-based index) included in this incident",
     )
-    reasoning: str
+    reasoning: str = ""
     severity: str = Field(
+        default="warning",
         description="Assessed severity level",
-        enum=["Low", "Medium", "High", "Critical"],
+        enum=["critical", "high", "warning", "info", "low"],
     )
-    recommended_actions: List[str]
+    recommended_actions: List[str] = Field(default_factory=list)
     confidence_score: float = Field(
+        default=0.5,
         description="Confidence score of the incident clustering (0.0 to 1.0)"
     )
     confidence_explanation: str = Field(
-        description="Explanation of how the confidence score was calculated"
+        default="",
+        description="Explanation of how the confidence score was calculated",
     )
+
+    class Config:
+        extra = Extra.allow  # Allow extra fields from LLM
+
+    @validator("alerts", pre=True)
+    def coerce_alerts(cls, v):
+        """Accept both int indices and string alert names from LLMs."""
+        if not isinstance(v, list):
+            return v
+        result = []
+        for item in v:
+            if isinstance(item, int):
+                result.append(item)
+            elif isinstance(item, str):
+                try:
+                    result.append(int(item))
+                except ValueError:
+                    result.append(item)
+            else:
+                result.append(item)
+        return result
 
 
 class IncidentClustering(BaseModel):

@@ -2,11 +2,13 @@ import logging
 import os
 import uuid
 from datetime import datetime
+from typing import Optional
 
 from fastapi import (
     APIRouter,
     BackgroundTasks,
     Depends,
+    Header,
     HTTPException,
     Request,
     Response,
@@ -15,6 +17,7 @@ from pydantic import BaseModel
 from sqlmodel import Session, select
 
 from keep.api.consts import PROVIDER_PULL_INTERVAL_MINUTE, STATIC_PRESETS
+from keep.api.core.group_filter import check_group_access
 from keep.api.core.db import get_db_preset_by_name
 from keep.api.core.db import get_presets as get_presets_db
 from keep.api.core.db import (
@@ -209,6 +212,7 @@ def get_presets(
     ),
     session: Session = Depends(get_session),
     time_stamp: TimeStampFilter = Depends(_get_time_stamp_filter),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> list[PresetDto]:
     tenant_id = authenticated_entity.tenant_id
     logger.info(f"Getting all presets {time_stamp}")
@@ -227,6 +231,8 @@ def get_presets(
         tenant_id=tenant_id,
         email=authenticated_entity.email,
         preset_ids=allowed_preset_ids,
+        authenticated_entity=authenticated_entity,
+        selected_group_id=group_id,
     )
     presets_dto = [PresetDto(**preset.to_dict()) for preset in presets]
     # add static presets (unless allowed_preset_ids is set)
@@ -255,6 +261,7 @@ def create_preset(
         IdentityManagerFactory.get_auth_verifier(["write:presets"])
     ),
     session: Session = Depends(get_session),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> PresetDto:
     tenant_id = authenticated_entity.tenant_id
     if not body.options or not body.name:
@@ -273,6 +280,7 @@ def create_preset(
         is_private=body.is_private,
         is_noisy=body.is_noisy,
         counter_shows_firing_only=body.counter_shows_firing_only,
+        group_id=group_id,
     )
 
     # Handle tags
@@ -339,6 +347,8 @@ def delete_preset(
     preset = session.exec(statement).first()
     if not preset:
         raise HTTPException(404, t("Preset not found"))
+    if not check_group_access(preset, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     session.delete(preset)
     session.commit()
     logger.info("Deleted preset", extra={"uuid": preset_id})
@@ -367,6 +377,8 @@ def update_preset(
     preset = session.exec(statement).first()
     if not preset:
         raise HTTPException(404, t("Preset not found"))
+    if not check_group_access(preset, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     if body.name:
         if body.name == "Feed" or body.name == "Deleted":
             raise HTTPException(400, t("Cannot create preset with this name"))
@@ -619,6 +631,8 @@ def update_preset_column_config(
     preset = session.exec(statement).first()
     if not preset:
         raise HTTPException(404, t("Preset not found"))
+    if not check_group_access(preset, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     # Get current options and remove any existing column config options
     current_options = [

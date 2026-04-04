@@ -1,4 +1,3 @@
-const { withSentryConfig } = require("@sentry/nextjs");
 const createNextIntlPlugin = require("next-intl/plugin");
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
@@ -220,8 +219,9 @@ let config = nextConfig;
 // Add next-intl
 config = withNextIntl(config);
 
-// Add Sentry if enabled
+// Add Sentry if enabled (lazy-load to avoid importing @sentry/nextjs when disabled)
 if (!isSentryDisabled) {
+  const { withSentryConfig } = require("@sentry/nextjs");
   config = withSentryConfig(config, sentryConfig);
 }
 

@@ -68,9 +68,6 @@ services:
       - LDAP_MAIL_ATTRIBUTE=mail
       - LDAP_NAME_ATTRIBUTE=displayName
       - LDAP_DEFAULT_ROLE=Admin
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
-      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
-      - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME:-}
     volumes:
       - ./state:/state
     depends_on:

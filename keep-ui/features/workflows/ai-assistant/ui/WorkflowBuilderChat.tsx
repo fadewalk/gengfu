@@ -103,8 +103,10 @@ export function WorkflowBuilderChat({
     {
       description: "Installed providers",
       value: installedProviders,
-      convert: (description, installedProviders: Provider[]) => {
-        return installedProviders
+      convert: (description: string, value: Provider[]) => {
+        // At runtime CopilotKit calls convert(value), so first arg is the array
+        const providers: Provider[] = Array.isArray(description as unknown) ? (description as unknown as Provider[]) : (value ?? []);
+        return providers
           .map((p) => `${p.type}, id: ${p.id}`)
           .join(", ");
       },
@@ -116,13 +118,18 @@ export function WorkflowBuilderChat({
     {
       description: "These are steps that you can add to the workflow",
       value: toolboxConfiguration,
-      convert: (description, toolboxConfiguration: ToolboxConfiguration) => {
+      convert: (description: string, value: ToolboxConfiguration) => {
+        // At runtime CopilotKit calls convert(value), so first arg is the data
+        const toolboxConfig =
+          (description as unknown) && typeof description === 'object' && 'groups' in (description as object)
+            ? (description as unknown as ToolboxConfiguration)
+            : value;
         const result: string[] = [];
-        toolboxConfiguration?.groups?.forEach((group) => {
+        toolboxConfig?.groups?.forEach((group: any) => {
           result.push(
             `==== ${group.name}, componentType: ${group.steps[0].componentType} ====`
           );
-          group.steps.forEach((step) => {
+          group.steps.forEach((step: any) => {
             result.push(
               `${step.type}, properties: ${JSON.stringify(step.properties)}`
             );

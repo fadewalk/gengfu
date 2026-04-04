@@ -19,9 +19,6 @@ services:
     environment:
       - AUTH_TYPE=NO_AUTH
       - KEEP_ALLOW_MESH_ALERT_INGESTION=true
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
-      - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME}
     volumes:
       # Mount source code for instant code changes (no rebuild needed)
       - ../../keep:/app/keep:rw
@@ -51,10 +48,6 @@ services:
   #     - API_URL=http://keep-backend:8080
   #     - NEXT_PUBLIC_API_URL=http://keep-backend:8080
   #     - SENTRY_DISABLED=true
-  #     - OPENAI_API_KEY=${OPENAI_API_KEY}
-  #     - OPEN_AI_API_KEY=${OPENAI_API_KEY}
-  #     - OPENAI_BASE_URL=${OPENAI_BASE_URL}
-  #     - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME}
   #   volumes:
   #     - ../../keep-ui:/app/keep-ui:rw
   #     - keep-ui-node-modules:/app/keep-ui/node_modules

@@ -12,7 +12,7 @@ from typing import List, Optional
 
 import celpy
 from arq import ArqRedis
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Header, Query, Request
 from fastapi.responses import JSONResponse
 from pusher import Pusher
 from sqlalchemy_utils import UUIDType
@@ -28,6 +28,7 @@ from keep.api.core.alerts import (
     get_alert_potential_facet_fields,
     query_last_alerts,
 )
+from keep.api.core.group_filter import check_group_access
 from keep.api.core.cel_to_sql.sql_providers.base import CelToSqlException
 from keep.api.core.config import config
 from keep.api.core.db import dismiss_error_alerts as dismiss_error_alerts_db
@@ -113,7 +114,9 @@ def fetch_alert_facet_options(
 
     try:
         facet_options = get_alert_facets_data(
-            tenant_id=tenant_id, facet_options_query=facet_options_query
+            tenant_id=tenant_id,
+            facet_options_query=facet_options_query,
+            authenticated_entity=authenticated_entity,
         )
     except CelToSqlException as e:
         logger.exception(
@@ -204,6 +207,7 @@ def query_alerts(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:alert"])
     ),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ):
     # Gathering alerts may take a while and we don't care if it will finish before we return the response.
     # In the worst case, gathered alerts will be pulled in the next request.
@@ -219,11 +223,12 @@ def query_alerts(
         "Fetching alerts from DB",
         extra={
             "tenant_id": tenant_id,
+            "group_id": group_id,
         },
     )
 
     try:
-        db_alerts, total_count = query_last_alerts(tenant_id=tenant_id, query=query)
+        db_alerts, total_count = query_last_alerts(tenant_id=tenant_id, query=query, authenticated_entity=authenticated_entity, selected_group_id=group_id)
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{query.cel}". {str(e)}')
         raise HTTPException(
@@ -268,7 +273,11 @@ def get_all_alerts(
             "tenant_id": tenant_id,
         },
     )
-    db_alerts = get_last_alerts(tenant_id=tenant_id, limit=limit)
+    db_alerts, _ = query_last_alerts(
+        tenant_id=tenant_id,
+        query=QueryDto(cel="", limit=limit, offset=0, sort_by=None, sort_dir=None, sort_options=None),
+        authenticated_entity=authenticated_entity,
+    )
     enriched_alerts_dto = convert_db_alerts_to_dto_alerts(db_alerts)
     logger.info(
         "Fetched alerts from DB",
@@ -300,6 +309,8 @@ def get_alert_history(
         limit=1000,
         with_alert_instance_enrichment=True,
     )
+    if db_alerts and not check_group_access(db_alerts[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
     enriched_alerts_dto = convert_db_alerts_to_dto_alerts(
         db_alerts, with_alert_instance_enrichment=True
     )
@@ -333,6 +344,11 @@ def delete_alert(
             "tenant_id": tenant_id,
         },
     )
+
+    # Check group access for this alert
+    db_alerts = get_alerts_by_fingerprint(tenant_id=tenant_id, fingerprint=delete_alert.fingerprint, limit=1)
+    if db_alerts and not check_group_access(db_alerts[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     deleted_last_received = []  # the last received(s) that are deleted
     assignees_last_receievd = {}  # the last received(s) that are assigned to someone
@@ -406,6 +422,11 @@ def assign_alert(
             "tenant_id": tenant_id,
         },
     )
+
+    # Check group access for this alert
+    db_alerts = get_alerts_by_fingerprint(tenant_id=tenant_id, fingerprint=fingerprint, limit=1)
+    if db_alerts and not check_group_access(db_alerts[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     assignees_last_receievd = {}  # the last received(s) that are assigned to someone
     status = None
@@ -839,6 +860,7 @@ def batch_enrich_alerts(
             db_alerts, total_count = query_last_alerts(
                 tenant_id=tenant_id,
                 query=QueryDto(cel=enrich_data.cel),
+                authenticated_entity=authenticated_entity,
             )
 
             if not db_alerts:
@@ -1045,6 +1067,11 @@ def _enrich_alert(
         },
     )
 
+    # Check group access for this alert
+    db_alerts_for_check = get_alerts_by_fingerprint(tenant_id=tenant_id, fingerprint=enrich_data.fingerprint, limit=1)
+    if db_alerts_for_check and not check_group_access(db_alerts_for_check[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     try:
         enrichement_bl = EnrichmentsBl(tenant_id, db=session)
         (
@@ -1159,6 +1186,9 @@ def unenrich_alert(
             "Alert not found", extra={"fingerprint": enrich_data.fingerprint}
         )
         return {"status": "failed"}
+
+    if not check_group_access(alert[0], authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
 
     try:
         enrichement_bl = EnrichmentsBl(tenant_id)

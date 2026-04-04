@@ -572,6 +572,7 @@ def add_or_update_workflow(
     force_update: bool = False,
     is_test: bool = False,
     lookup_by_name: bool = False,
+    group_id: str | None = None,
 ) -> Workflow:
     with Session(engine, expire_on_commit=False) as session:
         if provisioned or lookup_by_name:
@@ -634,6 +635,7 @@ def add_or_update_workflow(
                 provisioned=provisioned,
                 provisioned_file=provisioned_file,
                 is_test=is_test,
+                group_id=group_id,
             )
             version = WorkflowVersion(
                 workflow_id=workflow.id,
@@ -2222,6 +2224,7 @@ def create_rule(
     multi_level_property_name=None,
     threshold=1,
     assignee=None,
+    group_id=None,
 ):
     grouping_criteria = grouping_criteria or []
     with Session(engine) as session:
@@ -2245,6 +2248,7 @@ def create_rule(
             multi_level_property_name=multi_level_property_name,
             threshold=threshold,
             assignee=assignee,
+            group_id=group_id,
         )
         session.add(rule)
         session.commit()
@@ -2585,6 +2589,7 @@ def create_deduplication_rule(
     ignore_fields: list[str] = [],
     priority: int = 0,
     is_provisioned: bool = False,
+    group_id: str | None = None,
 ):
     with Session(engine) as session:
         new_rule = AlertDeduplicationRule(
@@ -2601,6 +2606,7 @@ def create_deduplication_rule(
             ignore_fields=ignore_fields,
             priority=priority,
             is_provisioned=is_provisioned,
+            group_id=group_id,
         )
         session.add(new_rule)
         session.commit()
@@ -3327,7 +3333,7 @@ def calc_incidents_mttr(tenant_id: str, timestamp_filter: TimeStampFilter = None
 
 
 def get_presets(
-    tenant_id: str, email, preset_ids: list[str] = None
+    tenant_id: str, email, preset_ids: list[str] = None, authenticated_entity=None, selected_group_id: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     with Session(engine) as session:
         # v2 with RBAC and roles
@@ -3349,6 +3355,12 @@ def get_presets(
                     )
                 )
             )
+        if selected_group_id:
+            from keep.api.core.group_filter import apply_selected_group_filter
+            statement = apply_selected_group_filter(statement, Preset, selected_group_id)
+        elif authenticated_entity is not None:
+            from keep.api.core.group_filter import apply_group_filter
+            statement = apply_group_filter(statement, Preset, authenticated_entity)
         result = session.exec(statement)
         presets = result.unique().all()
 
@@ -3381,7 +3393,7 @@ def get_all_presets_dtos(tenant_id: str) -> List[PresetDto]:
     return [PresetDto(**preset.to_dict()) for preset in presets] + static_presets_dtos
 
 
-def get_dashboards(tenant_id: str, email=None) -> List[Dict[str, Any]]:
+def get_dashboards(tenant_id: str, email=None, authenticated_entity=None, selected_group_id: Optional[str] = None) -> List[Dict[str, Any]]:
     with Session(engine) as session:
         statement = (
             select(Dashboard)
@@ -3393,6 +3405,12 @@ def get_dashboards(tenant_id: str, email=None) -> List[Dict[str, Any]]:
                 )
             )
         )
+        if selected_group_id:
+            from keep.api.core.group_filter import apply_selected_group_filter
+            statement = apply_selected_group_filter(statement, Dashboard, selected_group_id)
+        elif authenticated_entity is not None:
+            from keep.api.core.group_filter import apply_group_filter
+            statement = apply_group_filter(statement, Dashboard, authenticated_entity)
         dashboards = session.exec(statement).all()
 
     # for postgres, the jsonb column is returned as a string
@@ -3404,7 +3422,7 @@ def get_dashboards(tenant_id: str, email=None) -> List[Dict[str, Any]]:
 
 
 def create_dashboard(
-    tenant_id, dashboard_name, created_by, dashboard_config, is_private=False
+    tenant_id, dashboard_name, created_by, dashboard_config, is_private=False, group_id=None
 ):
     with Session(engine) as session:
         dashboard = Dashboard(
@@ -3413,6 +3431,7 @@ def create_dashboard(
             dashboard_config=dashboard_config,
             created_by=created_by,
             is_private=is_private,
+            group_id=group_id,
         )
         session.add(dashboard)
         session.commit()
@@ -3461,11 +3480,13 @@ def delete_dashboard(tenant_id, dashboard_id):
         return False
 
 
-def get_all_actions(tenant_id: str) -> List[Action]:
+def get_all_actions(tenant_id: str, selected_group_id: Optional[str] = None) -> List[Action]:
     with Session(engine) as session:
-        actions = session.exec(
-            select(Action).where(Action.tenant_id == tenant_id)
-        ).all()
+        query = select(Action).where(Action.tenant_id == tenant_id)
+        if selected_group_id is not None:
+            from keep.api.core.group_filter import apply_selected_group_filter
+            query = apply_selected_group_filter(query, Action, selected_group_id)
+        actions = session.exec(query).all()
     return actions
 
 
@@ -4030,6 +4051,7 @@ def create_incident_from_dto(
     incident_dto: IncidentDtoIn | IncidentDto,
     generated_from_ai: bool = False,
     session: Optional[Session] = None,
+    group_id: Optional[str] = None,
 ) -> Optional[Incident]:
     """
     Creates an incident for a specified tenant based on the provided incident data transfer object (DTO).
@@ -4075,16 +4097,21 @@ def create_incident_from_dto(
     if incident_dto.severity is not None:
         incident_dict["severity"] = incident_dto.severity.order
 
-    return create_incident_from_dict(tenant_id, incident_dict, session)
+    return create_incident_from_dict(tenant_id, incident_dict, session, group_id=group_id)
 
 
 @retry_on_db_error
 def create_incident_from_dict(
-    tenant_id: str, incident_data: dict, session: Optional[Session] = None
+    tenant_id: str,
+    incident_data: dict,
+    session: Optional[Session] = None,
+    group_id: Optional[str] = None,
 ) -> Optional[Incident]:
     is_predicted = incident_data.get("is_predicted", False)
     if "is_candidate" not in incident_data:
         incident_data["is_candidate"] = is_predicted
+    if group_id is not None:
+        incident_data["group_id"] = group_id
     with existed_or_new_session(session) as session:
         new_incident = Incident(**incident_data, tenant_id=tenant_id)
         session.add(new_incident)
@@ -5493,18 +5520,80 @@ def get_or_create_external_ai_settings(
                 ExternalAIConfigAndMetadata.tenant_id == tenant_id
             )
         ).all()
-        if len(algorithm_configs) == 0:
-            if os.environ.get("KEEP_EXTERNAL_AI_TRANSFORMERS_URL") is not None:
-                algorithm_config = ExternalAIConfigAndMetadata.from_external_ai(
-                    tenant_id=tenant_id, algorithm=external_ai_transformers
-                )
-                session.add(algorithm_config)
-                session.commit()
-                algorithm_configs = [algorithm_config]
+
+        existing_ids = {ac.algorithm_id for ac in algorithm_configs}
+
+        # Always create internal LLM correlation config if missing
+        if internal_ai_correlation.unique_id not in existing_ids:
+            algorithm_config = ExternalAIConfigAndMetadata.from_external_ai(
+                tenant_id=tenant_id, algorithm=internal_ai_correlation
+            )
+            session.add(algorithm_config)
+            algorithm_configs = list(algorithm_configs) + [algorithm_config]
+        else:
+            # Merge new default settings into existing LLM config
+            _merge_new_default_settings(
+                session, algorithm_configs, internal_ai_correlation
+            )
+
+        # Create external transformers config only if URL is configured
+        if (
+            external_ai_transformers.unique_id not in existing_ids
+            and os.environ.get("KEEP_EXTERNAL_AI_TRANSFORMERS_URL") is not None
+        ):
+            algorithm_config = ExternalAIConfigAndMetadata.from_external_ai(
+                tenant_id=tenant_id, algorithm=external_ai_transformers
+            )
+            session.add(algorithm_config)
+            algorithm_configs = list(algorithm_configs) + [algorithm_config]
+
+        session.commit()
         return [
             ExternalAIConfigAndMetadataDto.from_orm(algorithm_config)
             for algorithm_config in algorithm_configs
         ]
+
+
+def _merge_new_default_settings(
+    session: Session,
+    algorithm_configs: list,
+    algorithm_def: "ExternalAI",
+) -> None:
+    """Merge any new default settings from the algorithm definition into existing DB config.
+
+    This ensures that when new settings are added to config_default, existing tenants
+    automatically get them with the default value instead of having to re-create their config.
+    """
+    import json as _json
+
+    # Find the matching config in the list
+    matching = [
+        ac for ac in algorithm_configs if ac.algorithm_id == algorithm_def.unique_id
+    ]
+    if not matching:
+        return
+
+    config = matching[0]
+    current_settings = config.settings
+    if isinstance(current_settings, str):
+        current_settings = _json.loads(current_settings)
+
+    # Parse the defaults
+    defaults = algorithm_def.config_default
+    if isinstance(defaults, str):
+        defaults = _json.loads(defaults)
+
+    current_names = {s["name"] for s in current_settings}
+    changed = False
+
+    for default_setting in defaults:
+        if default_setting["name"] not in current_names:
+            current_settings = current_settings + [default_setting]
+            changed = True
+
+    if changed:
+        config.settings = current_settings
+        session.add(config)
 
 
 def update_extrnal_ai_settings(
@@ -5519,12 +5608,22 @@ def update_extrnal_ai_settings(
             )
             .first()
         )
-        setting.settings = json.dumps(ai_settings.settings)
+        if setting is None:
+            raise ValueError(
+                f"No AI settings found for tenant {tenant_id} with id {ai_settings.id}"
+            )
+        # Column(JSON) expects a Python object, not a JSON string.
+        # The frontend may send either a parsed list or a raw JSON string.
+        raw_settings = ai_settings.settings
+        if isinstance(raw_settings, str):
+            raw_settings = json.loads(raw_settings)
+        setting.settings = raw_settings
         setting.feedback_logs = ai_settings.feedback_logs
         if ai_settings.settings_proposed_by_algorithm is not None:
-            setting.settings_proposed_by_algorithm = json.dumps(
-                ai_settings.settings_proposed_by_algorithm
-            )
+            raw_proposed = ai_settings.settings_proposed_by_algorithm
+            if isinstance(raw_proposed, str):
+                raw_proposed = json.loads(raw_proposed)
+            setting.settings_proposed_by_algorithm = raw_proposed
         else:
             setting.settings_proposed_by_algorithm = None
         session.add(setting)
@@ -5721,6 +5820,7 @@ def set_last_alert(
                     last_alert.timestamp = alert.timestamp
                     last_alert.alert_id = alert.id
                     last_alert.alert_hash = alert.alert_hash
+                    last_alert.group_id = alert.group_id
                     session.add(last_alert)
 
                 elif not last_alert:
@@ -5732,6 +5832,7 @@ def set_last_alert(
                         first_timestamp=alert.timestamp,
                         alert_id=alert.id,
                         alert_hash=alert.alert_hash,
+                        group_id=alert.group_id,
                     )
 
                 session.add(last_alert)

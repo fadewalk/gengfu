@@ -29,6 +29,7 @@ from keep.api.core.db import (
     get_all_presets_dtos,
     get_enrichment_with_session,
     get_last_alert_hashes_by_fingerprints,
+    get_provider_by_type_and_id,
     get_session_sync,
     get_started_at_for_alerts,
     set_last_alert,
@@ -137,6 +138,16 @@ def __save_to_db(
     provider_id: str | None = None,
     timestamp_forced: datetime.datetime | None = None,
 ):
+    # Look up provider's group_id once for group isolation inheritance
+    provider_group_id = None
+    if provider_id and provider_type:
+        try:
+            provider_model = get_provider_by_type_and_id(tenant_id, provider_type, provider_id)
+            if provider_model:
+                provider_group_id = provider_model.group_id
+        except Exception:
+            logger.exception("Failed to get provider group_id", extra={"provider_id": provider_id})
+
     try:
         # keep raw events in the DB if the user wants to
         # this is mainly for debugging and research purposes
@@ -255,6 +266,7 @@ def __save_to_db(
                 "provider_id": provider_id,
                 "fingerprint": formatted_event.fingerprint,
                 "alert_hash": formatted_event.alert_hash,
+                "group_id": provider_group_id,
             }
             alert_args = sanitize_alert(alert_args)
             if timestamp_forced is not None:

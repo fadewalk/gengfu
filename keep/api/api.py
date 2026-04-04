@@ -37,6 +37,7 @@ from keep.api.middlewares import LoggingMiddleware
 from keep.api.routes import (
     actions,
     ai,
+    ai_settings,
     alerts,
     dashboard,
     deduplications,
@@ -61,7 +62,7 @@ from keep.api.routes import (
     workflows,
 )
 from keep.api.routes.auth import groups as auth_groups
-from keep.api.routes.auth import permissions, roles, users
+from keep.api.routes.auth import permissions, roles, tenants, users
 from keep.event_subscriber.event_subscriber import EventSubscriber
 from keep.identitymanager.identitymanagerfactory import (
     IdentityManagerFactory,
@@ -237,6 +238,13 @@ async def lifespan(app: FastAPI):
     # Startup
     await startup()
 
+    # Start auto-correlation background loop (works without Redis/ARQ)
+    from keep.api.tasks.process_correlation_task import auto_correlation_loop
+
+    _correlation_task = asyncio.create_task(auto_correlation_loop())
+    background_tasks.add(_correlation_task)
+    _correlation_task.add_done_callback(background_tasks.discard)
+
     # yield the background tasks, this is available for the app to use in request context
     yield {"background_tasks": background_tasks}
 
@@ -292,12 +300,13 @@ def get_app(
     app.include_router(providers.router, prefix="/providers", tags=["providers"])
     app.include_router(actions.router, prefix="/actions", tags=["actions"])
     app.include_router(ai.router, prefix="/ai", tags=["ai"])
+    app.include_router(ai_settings.router, prefix="/ai", tags=["settings", "ai"])
     app.include_router(healthcheck.router, prefix="/healthcheck", tags=["healthcheck"])
     app.include_router(alerts.router, prefix="/alerts", tags=["alerts"])
     app.include_router(incidents.router, prefix="/incidents", tags=["incidents"])
     app.include_router(settings.router, prefix="/settings", tags=["settings"])
     app.include_router(
-        workflows.router, prefix="/workflows", tags=["workflows", "alerts"]
+        workflows.router, prefix="/workflows", tags=["workflows", "alert"]
     )
     app.include_router(whoami.router, prefix="/whoami", tags=["whoami"])
     app.include_router(pusher.router, prefix="/pusher", tags=["pusher"])
@@ -309,6 +318,9 @@ def get_app(
     )
     app.include_router(
         auth_groups.router, prefix="/auth/groups", tags=["auth", "groups"]
+    )
+    app.include_router(
+        tenants.router, prefix="/auth/tenants", tags=["auth", "tenants"]
     )
     app.include_router(
         permissions.router, prefix="/auth/permissions", tags=["auth", "permissions"]

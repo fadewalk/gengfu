@@ -16,6 +16,7 @@ import { MultiValue } from "react-select";
 import { useTags } from "@/utils/hooks/useTags";
 import { Preset } from "@/entities/presets/model/types";
 import { usePresetActions } from "@/entities/presets/model/usePresetActions";
+import { GroupSelector } from "@/components/group/GroupSelector";
 
 interface TagOption {
   id?: string;
@@ -31,6 +32,7 @@ type CreateOrUpdatePresetFormProps = {
     isNoisy: boolean | undefined;
     counterShowsFiringOnly: boolean | undefined;
     tags: TagOption[] | undefined;
+    groupId: string | null | undefined;
     groupColumn: string | undefined;
   };
   groupableColumns: { id: string; header: string }[];
@@ -53,6 +55,9 @@ export function CreateOrUpdatePresetForm({
   );
 
   const [groupColumn, setGroupColumn] = useState(presetData.groupColumn ?? "");
+  const [groupId, setGroupId] = useState<string | null>(
+    presetData.groupId ?? null
+  );
 
   const [generatingName, setGeneratingName] = useState(false);
   const [selectedTags, setSelectedTags] = useState<TagOption[]>(
@@ -65,6 +70,7 @@ export function CreateOrUpdatePresetForm({
     setIsNoisy(false);
     setSelectedTags([]);
     setCounterShowsFiringOnly(true);
+    setGroupId(null);
   };
 
   const handleCancel = () => {
@@ -130,6 +136,7 @@ export function CreateOrUpdatePresetForm({
         isPrivate,
         isNoisy,
         counterShowsFiringOnly,
+        groupId,
         tags: selectedTags.map((tag) => ({
           id: tag.id,
           name: tag.name,
@@ -143,6 +150,7 @@ export function CreateOrUpdatePresetForm({
         isPrivate,
         isNoisy,
         counterShowsFiringOnly,
+        groupId,
         tags: selectedTags.map((tag) => ({
           id: tag.id,
           name: tag.name,
@@ -220,6 +228,15 @@ export function CreateOrUpdatePresetForm({
           </Select>
         </div>
       */}
+
+      {/* Group selector for group-level data isolation */}
+      <div className="flex flex-col gap-1">
+        <Subtitle>Group</Subtitle>
+        <GroupSelector
+          value={groupId}
+          onChange={setGroupId}
+        />
+      </div>
 
       <Subtitle>Tags</Subtitle>
       <CreatableMultiSelect

@@ -18,6 +18,65 @@ export const middleware = auth(async (request) => {
 
   const authType = process.env.AUTH_TYPE || AuthType.NOAUTH;
 
+  // Handle /backend/ proxy rewrites BEFORE auth checks so NOAUTH mode works.
+  // When AUTH_TYPE=NOAUTH, the early return below would skip this rewrite.
+  // Use manual fetch with extended timeout instead of NextResponse.rewrite()
+  // to avoid ECONNRESET on slow endpoints like /incidents/report (30-45s LLM calls).
+  if (pathname.startsWith("/backend/")) {
+    const apiUrl = getApiURL();
+    const newURL = pathname.replace("/backend/", apiUrl + "/");
+    const queryString = searchParams.toString();
+    const urlWithQuery = queryString ? `${newURL}?${queryString}` : newURL;
+
+    console.log(`Proxying ${pathname} to ${urlWithQuery}`);
+
+    const headers = new Headers(request.headers);
+    headers.delete("host");
+
+    const fetchOptions: RequestInit = {
+      method: request.method,
+      headers,
+    };
+
+    if (request.method !== "GET" && request.method !== "HEAD") {
+      fetchOptions.body = request.body;
+      // @ts-expect-error - duplex is needed for streaming request body
+      fetchOptions.duplex = "half";
+    }
+
+    try {
+      const backendResponse = await fetch(urlWithQuery, {
+        ...fetchOptions,
+        signal: AbortSignal.timeout(120000), // 2 minute timeout for slow LLM endpoints
+      });
+
+      const responseHeaders = new Headers();
+      backendResponse.headers.forEach((value, key) => {
+        const lower = key.toLowerCase();
+        if (lower !== "transfer-encoding" && lower !== "content-encoding") {
+          responseHeaders.set(key, value);
+        }
+      });
+
+      return new Response(backendResponse.body, {
+        status: backendResponse.status,
+        statusText: backendResponse.statusText,
+        headers: responseHeaders,
+      });
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Unknown proxy error";
+      console.error(`Proxy error for ${pathname}:`, message);
+      return new Response(
+        JSON.stringify({ error: "Proxy error", detail: message }),
+        {
+          status: 502,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+  }
+
   if (authType === AuthType.NOAUTH) {
     return NextResponse.next();
   }
@@ -38,16 +97,6 @@ export const middleware = auth(async (request) => {
   // Keep it on header so it can be used in server components
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-url", request.url);
-  // Handle legacy /backend/ redirects (when API_URL is not set and frontend act as a proxy)
-  if (pathname.startsWith("/backend/")) {
-    const apiUrl = getApiURL();
-    const newURL = pathname.replace("/backend/", apiUrl + "/");
-    const queryString = searchParams.toString();
-    const urlWithQuery = queryString ? `${newURL}?${queryString}` : newURL;
-
-    console.log(`Redirecting ${pathname} to ${urlWithQuery}`);
-    return NextResponse.rewrite(urlWithQuery);
-  }
 
   // Allow mobile route to pass through
   if (pathname.startsWith("/mobile")) {

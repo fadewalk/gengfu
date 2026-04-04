@@ -120,8 +120,13 @@ class TopologiesService:
         provider_ids: Optional[str] = None,
         services: Optional[str] = None,
         environment: Optional[str] = None,
+        selected_group_id: Optional[str] = None,
     ) -> list[TopologyService]:
         query = select(TopologyService).where(TopologyService.tenant_id == tenant_id)
+
+        if selected_group_id is not None:
+            from keep.api.core.group_filter import apply_selected_group_filter
+            query = apply_selected_group_filter(query, TopologyService, selected_group_id)
 
         # @tb: let's filter by service only for now and take care of it when we handle multiple
         # services and environments and cmdbs
@@ -161,9 +166,10 @@ class TopologiesService:
         services: Optional[str] = None,
         environment: Optional[str] = None,
         include_empty_deps: Optional[bool] = False,
+        selected_group_id: Optional[str] = None,
     ) -> List[TopologyServiceDtoOut]:
         services = TopologiesService.get_topology_services(
-            tenant_id, session, provider_ids, services, environment
+            tenant_id, session, provider_ids, services, environment, selected_group_id
         )
 
         # Fetch application IDs for all services in a single query
@@ -184,13 +190,15 @@ class TopologiesService:
 
     @staticmethod
     def get_applications_by_tenant_id(
-        tenant_id: str, session: Session
+        tenant_id: str, session: Session, selected_group_id: Optional[str] = None
     ) -> List[TopologyApplicationDtoOut]:
-        applications = session.exec(
-            select(TopologyApplication).where(
-                TopologyApplication.tenant_id == tenant_id
-            )
-        ).all()
+        query = select(TopologyApplication).where(
+            TopologyApplication.tenant_id == tenant_id
+        )
+        if selected_group_id is not None:
+            from keep.api.core.group_filter import apply_selected_group_filter
+            query = apply_selected_group_filter(query, TopologyApplication, selected_group_id)
+        applications = session.exec(query).all()
         result = []
         for application in applications:
             try:
@@ -228,6 +236,7 @@ class TopologiesService:
             tenant_id=tenant_id,
             name=application.name,
             description=application.description,
+            group_id=application.group_id,
         )
 
         # This will be true if we are pulling applications from a Provider
@@ -339,6 +348,8 @@ class TopologiesService:
         application_db.name = application.name
         application_db.description = application.description
         application_db.repository = application.repository
+        if application.group_id is not None:
+            application_db.group_id = application.group_id
 
         new_service_ids = set(service.id for service in application.services)
 

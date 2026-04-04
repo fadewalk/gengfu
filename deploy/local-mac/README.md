@@ -85,17 +85,11 @@ docker compose build keep-frontend && docker compose up -d keep-frontend
 | API_URL | http://keep-backend:8080 | 前端访问后端的内部地址 |
 | SENTRY_DISABLED | true | 禁用 Sentry 错误上报 |
 
-### AI 功能（继承自 docker-compose.common.yml）
+### AI 功能
 
-支持私有 LLM（GLM-5/Kimi/MiniMax 等 OpenAI 兼容接口），在宿主机设置环境变量即可透传：
-
-```bash
-export OPENAI_API_KEY=your-api-key
-export OPENAI_BASE_URL=http://your-llm-endpoint/v1
-export OPENAI_MODEL_NAME=glm-5
-```
-
-然后在 `deploy/local-mac` 目录下执行 `docker compose up -d`。
+在设置页面的「AI 配置」标签页中管理模型，支持多模型、多场景分配。
+支持私有 LLM（GLM-5/Kimi/MiniMax/OpenAI 等 OpenAI 兼容接口）。
+API Key 等敏感信息通过 Secret Manager 加密存储在数据库中，不再使用环境变量。
 
 ### 数据库
 

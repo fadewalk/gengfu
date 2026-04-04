@@ -4,7 +4,8 @@
       "usersAndAccess": "用户与访问",
       "incomingWebhook": "Webhook 接收",
       "smtp": "SMTP",
-      "providerImages": "集成图标"
+      "providerImages": "集成图标",
+      "ai": "AI 配置"
     },
     "subTabs": {
       "users": "用户",
@@ -590,20 +591,60 @@
     }
   },
   "aiPlugins": {
-    "newSettingsProposal": "新的设置建议",
-    "notExecutedYet": "算法尚未执行。",
-    "iterated": "AI 已迭代 🎉",
-    "subtitle": "用于关联、摘要和富化",
-    "proposalDescription": "模型上次训练和推理时建议了配置更新。但请注意，如果数据量或质量较低，配置更新可能效果不佳。详情请参阅以下日志。",
-    "title": "AI 插件",
+    "title": "AI 关联引擎",
+    "subtitle": "智能告警关联、摘要和富化",
     "loading": "正在加载算法及其设置...",
-    "value": "值",
-    "description1": "AI 插件可以利用 Keep 中的上下文来关联、富化或总结您的告警和事件，帮助您获得更深入的洞察并更有效地响应。",
+    "noAIEnabled": "此租户未启用 AI",
+    "description1": "AI 引擎可以自动分析告警之间的关联性，将相关告警智能分组为事件，帮助您更快地定位和响应问题。",
+    "description2": "支持使用私有部署的大语言模型，数据不会离开您的环境。所有分析均在本地完成，确保数据安全。",
     "contactUs": "联系我们获取访问权限！",
     "applyProposedSettings": "应用建议设置",
-    "description2": "此外，AI 插件设计为可在隔离环境中工作。您可以使用自己的数据训练模型，无需与 OpenAI 等第三方提供商共享信息。确保数据安全私密。",
-    "noAIEnabled": "此租户未启用 AI",
-    "executionLogs": "执行日志："
+    "newSettingsProposal": "新的设置建议",
+    "proposalDescription": "模型上次训练和推理时建议了配置更新。但请注意，如果数据量或质量较低，配置更新可能效果不佳。详情请参阅以下日志。",
+    "executionLogs": "执行日志：",
+    "notExecutedYet": "算法尚未执行。",
+    "iterated": "AI 已迭代 🎉",
+    "value": "值",
+    "statsOverview": "概览统计",
+    "totalAlerts": "告警总数",
+    "totalIncidents": "事件总数",
+    "firstAlertTime": "首条告警时间",
+    "triggerCorrelation": "立即关联",
+    "triggering": "正在执行 AI 关联...",
+    "correlationResult": "关联结果",
+    "alertsAnalyzed": "已分析告警",
+    "incidentsSuggested": "建议事件",
+    "incidentsCreated": "已创建事件",
+    "noAlertsToCorrelate": "没有待关联的告警",
+    "algorithmSettings": "算法配置",
+    "llmCorrelation": "LLM 告警关联",
+    "llmCorrelationDesc": "基于大语言模型的智能告警关联引擎。分析未分配告警，根据描述相似性、时间接近性、受影响系统和服务依赖关系将它们分组为事件。",
+    "lastRunTime": "上次运行时间",
+    "neverRun": "从未运行",
+    "configuration": "配置",
+    "enable": "启用",
+    "maxAlertsPerBatch": "每批最大告警数",
+    "confidenceThreshold": "置信度阈值",
+    "autoCreateIncidents": "自动创建事件",
+    "includeTopologyContext": "包含拓扑上下文",
+    "runHistory": "运行历史",
+    "incidentsCreatedFromAlerts": "从 {alerts} 条告警中创建了 {incidents} 个事件",
+    "correlationFailed": "关联执行失败",
+    "llmAlertCorrelation": "LLM 告警关联",
+    "settingEnabled": "启用",
+    "settingMaxAlertsPerBatch": "每批最大告警数",
+    "settingConfidenceThreshold": "置信度阈值",
+    "settingAutoCreateIncidents": "自动创建事件",
+    "settingIncludeTopologyContext": "包含拓扑上下文",
+    "settingEnabledDesc": "启用或禁用 LLM 关联引擎。",
+    "settingMaxAlertsPerBatchDesc": "单次关联运行中处理的最大未分配告警数量。",
+    "settingConfidenceThresholdDesc": "AI 建议事件的最低置信度分数。低于此阈值的建议将被丢弃。",
+    "settingAutoCreateIncidentsDesc": "自动从高置信度关联结果创建事件。禁用时，建议将存储供手动审核。",
+    "settingIncludeTopologyContextDesc": "分析告警时包含服务拓扑数据，以提升关联准确性。",
+    "settingAutoCorrelation": "自动关联",
+    "settingAutoCorrelationDesc": "按计划自动运行关联分析。启用后，系统将定期分析未分配的告警，无需手动触发。",
+    "settingCorrelationInterval": "关联间隔（分钟）",
+    "settingCorrelationIntervalDesc": "自动关联运行之间的间隔（分钟）。最小 5 分钟。"
   },
   "correlation": {
     "form": {
@@ -1588,9 +1629,39 @@
     "timeline": {
       "title": "时间线",
       "alertTriggered": "告警已触发",
-      "alertReceivedFromProvider": "从集成接收到告警，状态为告警中",
+      "alertReceivedFromProvider": "收到来自集成的告警，状态为 firing",
       "refresh": "刷新",
-      "loading": "加载中..."
+      "loading": "加载中...",
+      "actionTypes": {
+        "triggered": "告警已触发",
+        "acknowledged": "告警已确认",
+        "autoResolved": "告警已自动解决",
+        "autoResolvedByApi": "告警已被 API 自动解决",
+        "manualResolved": "告警已手动解决",
+        "statusManualChanged": "告警状态已手动变更",
+        "statusChangedByApi": "告警状态已被 API 变更",
+        "statusUndone": "告警状态已撤销",
+        "enrichedByWorkflow": "告警已通过工作流丰富",
+        "enrichedByMappingRule": "告警已通过映射规则丰富",
+        "enrichedByExtractionRule": "告警已通过提取规则丰富",
+        "deduplicated": "告警已去重",
+        "ticketAssigned": "告警已分配工单",
+        "ticketUnassigned": "告警已取消工单分配",
+        "ticketUpdated": "告警工单已更新",
+        "enrichmentsDisposed": "告警富集数据已清除",
+        "deleted": "告警已删除",
+        "enriched": "告警已丰富",
+        "unenriched": "告警已取消丰富",
+        "commentAdded": "告警已添加评论",
+        "commentRemoved": "告警评论已删除",
+        "maintenance": "告警处于维护窗口中",
+        "maintenanceExpired": "告警已从维护窗口移除",
+        "dismissalExpired": "告警忽略已过期",
+        "incidentComment": "事件已添加评论",
+        "incidentEnriched": "事件已丰富",
+        "incidentStatusChanged": "事件状态已变更",
+        "incidentAssigned": "事件已分配"
+      }
     },
     "incidentsList": {
       "moreCount": "...（还有 {count} 个）",
@@ -1903,6 +1974,8 @@
       "addNewField": "添加新字段"
     },
     "all": "全部事件",
+    "allIncidents": "全部事件",
+    "possible": "可能的",
     "title": "事件",
     "alerts": {
       "collapseRow": "收起行",
@@ -2084,6 +2157,10 @@
       "keepTwitter": "Keep Twitter",
       "nothingFound": "未找到结果",
       "switchTenant": "切换租户"
+    },
+    "groupSwitcher": {
+      "allGroups": "所有分组",
+      "switchGroup": "切换分组"
     }
   },
   "maintenance": {
@@ -2718,5 +2795,75 @@
     "runFailed": "提取规则运行失败",
     "selectAlertPlaceholder": "选择一个告警...",
     "selectAlertTitle": "选择一个告警来运行提取规则"
+  },
+  "aiSettings": {
+    "title": "AI 模型配置",
+    "subtitle": "配置 AI 模型端点，支持所有 OpenAI 兼容 API。",
+    "presets": {
+      "zhipu": "智谱 GLM",
+      "deepseek": "DeepSeek",
+      "qwen": "通义千问",
+      "moonshot": "Kimi",
+      "minimax": "MiniMax",
+      "openai": "OpenAI",
+      "custom": "自定义"
+    },
+    "modelList": {
+      "emptyTitle": "尚未配置模型",
+      "emptyDescription": "点击「添加模型」配置您的第一个 AI 模型端点",
+      "columns": {
+        "name": "名称",
+        "provider": "提供商",
+        "baseUrl": "接口地址",
+        "model": "模型",
+        "status": "状态",
+        "default": "默认",
+        "actions": "操作"
+      }
+    },
+    "form": {
+      "addTitle": "添加模型",
+      "editTitle": "编辑模型",
+      "name": "模型名称",
+      "namePlaceholder": "例如：智谱 GLM 生产环境",
+      "provider": "提供商",
+      "baseUrlLabel": "API 地址",
+      "baseUrlPlaceholder": "https://api.openai.com/v1",
+      "apiKeyLabel": "API 密钥",
+      "apiKeyPlaceholder": "sk-...",
+      "apiKeyHint": "当前：{hint}",
+      "modelNameLabel": "默认模型",
+      "modelNamePlaceholder": "例如: gpt-4o-mini",
+      "fallbackModelsLabel": "备选模型",
+      "fallbackModelsPlaceholder": "逗号分隔， 例如: gpt-4o-mini, gpt-3.5-turbo",
+      "extraConfigLabel": "额外配置 (JSON)",
+      "extraConfigPlaceholder": "{}",
+      "isDefault": "设为默认模型",
+      "enabled": "启用",
+      "priority": "优先级",
+      "testConnection": "测试连接",
+      "testing": "测试中...",
+      "testSuccess": "连接成功",
+      "testFailed": "连接失败",
+      "save": "保存",
+      "cancel": "取消",
+      "delete": "删除",
+      "deleteConfirm": "确定要删除 \"{name}\" 吗？",
+      "validation": {
+        "nameRequired": "模型名称为必填",
+        "baseUrlRequired": "API 地址为必填",
+        "apiKeyRequired": "API Key 为必填",
+        "modelNameRequired": "模型名称为必填",
+        "invalidJson": "无效的 JSON 格式"
+      }
+    },
+    "messages": {
+      "addSuccess": "模型添加成功",
+      "updateSuccess": "模型更新成功",
+      "deleteSuccess": "模型删除成功",
+      "loadFailed": "加载模型配置失败",
+      "saveFailed": "保存模型失败",
+      "deleteFailed": "删除模型失败"
+    }
   }
 }

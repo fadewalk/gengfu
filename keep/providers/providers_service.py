@@ -153,6 +153,7 @@ class ProvidersService:
         provisioned: bool = False,
         validate_scopes: bool = True,
         pulling_enabled: bool = True,
+        group_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         provider_unique_id = uuid.uuid4().hex
         logger.info(
@@ -209,6 +210,7 @@ class ProvidersService:
                 provisioned=provisioned,
                 pulling_enabled=pulling_enabled,
                 provider_metadata=provider_metadata,
+                group_id=group_id,
             )
             try:
                 session.add(provider_model)
@@ -255,6 +257,7 @@ class ProvidersService:
         updated_by: str,
         session: Optional[Session] = None,
         allow_provisioned=False,
+        group_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         with existed_or_new_session(session) as session:
             provider = session.exec(
@@ -299,6 +302,8 @@ class ProvidersService:
             provider.installed_by = updated_by
             provider.validatedScopes = validated_scopes
             provider.pulling_enabled = pulling_enabled
+            if group_id is not None:
+                provider.group_id = group_id
             session.commit()
 
             logger.info(

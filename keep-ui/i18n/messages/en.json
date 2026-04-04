@@ -332,6 +332,10 @@
       "keepTwitter": "Keep Twitter",
       "nothingFound": "Nothing found",
       "switchTenant": "Switch Tenant"
+    },
+    "groupSwitcher": {
+      "allGroups": "All Groups",
+      "switchGroup": "Switch Group"
     }
   },
   "alerts": {
@@ -510,7 +514,37 @@
       "alertTriggered": "Alert is triggered",
       "alertReceivedFromProvider": "alert received from provider with status firing",
       "refresh": "Refresh",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "actionTypes": {
+        "triggered": "Alert was triggered",
+        "acknowledged": "Alert acknowledged",
+        "autoResolved": "Alert automatically resolved",
+        "autoResolvedByApi": "Alert automatically resolved by API",
+        "manualResolved": "Alert manually resolved",
+        "statusManualChanged": "Alert status manually changed",
+        "statusChangedByApi": "Alert status changed by API",
+        "statusUndone": "Alert status undone",
+        "enrichedByWorkflow": "Alert enriched by workflow",
+        "enrichedByMappingRule": "Alert enriched by mapping rule",
+        "enrichedByExtractionRule": "Alert enriched by extraction rule",
+        "deduplicated": "Alert was deduplicated",
+        "ticketAssigned": "Alert was assigned with ticket",
+        "ticketUnassigned": "Alert was unassigned from ticket",
+        "ticketUpdated": "Alert ticket was updated",
+        "enrichmentsDisposed": "Alert enrichments disposed",
+        "deleted": "Alert deleted",
+        "enriched": "Alert enriched",
+        "unenriched": "Alert un-enriched",
+        "commentAdded": "A comment was added to the alert",
+        "commentRemoved": "A comment was removed from the alert",
+        "maintenance": "Alert is in maintenance window",
+        "maintenanceExpired": "Alert has been removed from maintenance window",
+        "dismissalExpired": "Alert dismissal expired",
+        "incidentComment": "A comment was added to the incident",
+        "incidentEnriched": "Incident enriched",
+        "incidentStatusChanged": "Incident status changed",
+        "incidentAssigned": "Incident assigned"
+      }
     },
     "incidentsList": {
       "moreCount": "... ({count} more)",
@@ -695,6 +729,8 @@
     "title": "Incidents",
     "subtitle": "Group alerts into incidents",
     "all": "All Incidents",
+    "allIncidents": "All Incidents",
+    "possible": "Possible",
     "predictions": {
       "title": "Incident Predictions",
       "description": "Possible problems predicted by Keep AI & Correlation Rules"
@@ -1498,7 +1534,8 @@
       "usersAndAccess": "Users & Access",
       "incomingWebhook": "Incoming Webhook",
       "smtp": "SMTP",
-      "providerImages": "Provider Icons"
+      "providerImages": "Provider Icons",
+      "ai": "AI Configuration"
     },
     "subTabs": {
       "users": "Users",
@@ -2381,8 +2418,8 @@
     "goBack": "Go back"
   },
   "aiPlugins": {
-    "title": "AI Plugins",
-    "subtitle": "For correlation, summarization, and enrichment",
+    "title": "AI Correlation Engine",
+    "subtitle": "Intelligent alert correlation, summarization, and enrichment",
     "loading": "Loading algorithms and their settings...",
     "noAIEnabled": "No AI enabled for this tenant",
     "description1": "AI plugins can correlate, enrich, or summarize your alerts and incidents by leveraging the the context within Keep allowing you to gain deeper insights and respond more effectively.",
@@ -2394,7 +2431,47 @@
     "executionLogs": "Execution logs:",
     "notExecutedYet": "Algorithm not executed yet.",
     "iterated": "AI iterated 🎉",
-    "value": "value"
+    "value": "value",
+    "statsOverview": "Stats Overview",
+    "totalAlerts": "Total Alerts",
+    "totalIncidents": "Total Incidents",
+    "firstAlertTime": "First Alert Time",
+    "triggerCorrelation": "Trigger Correlation",
+    "triggering": "Running AI correlation...",
+    "correlationResult": "Correlation Result",
+    "alertsAnalyzed": "Alerts Analyzed",
+    "incidentsSuggested": "Incidents Suggested",
+    "incidentsCreated": "Incidents Created",
+    "noAlertsToCorrelate": "No alerts to correlate",
+    "algorithmSettings": "Algorithm Settings",
+    "llmCorrelation": "LLM Correlation",
+    "llmCorrelationDesc": "An LLM-powered alert-to-incident correlation engine. Analyzes unassigned alerts and groups them into incidents based on description similarity, temporal proximity, affected systems, and service dependencies.",
+    "lastRunTime": "Last Run Time",
+    "neverRun": "Never run",
+    "configuration": "Configuration",
+    "enable": "Enable",
+    "maxAlertsPerBatch": "Max Alerts Per Batch",
+    "confidenceThreshold": "Confidence Threshold",
+    "autoCreateIncidents": "Auto Create Incidents",
+    "includeTopologyContext": "Include Topology Context",
+    "runHistory": "Run History",
+    "incidentsCreatedFromAlerts": "{incidents} incidents created from {alerts} alerts",
+    "correlationFailed": "Correlation failed",
+    "llmAlertCorrelation": "LLM Alert Correlation",
+    "settingEnabled": "Enabled",
+    "settingMaxAlertsPerBatch": "Max Alerts Per Batch",
+    "settingConfidenceThreshold": "Confidence Threshold",
+    "settingAutoCreateIncidents": "Auto Create Incidents",
+    "settingIncludeTopologyContext": "Include Topology Context",
+    "settingEnabledDesc": "Enable or disable the LLM correlation engine.",
+    "settingMaxAlertsPerBatchDesc": "Maximum number of unassigned alerts to process in a single correlation run.",
+    "settingConfidenceThresholdDesc": "Minimum confidence score for AI-suggested incidents. Suggestions below this threshold are discarded.",
+    "settingAutoCreateIncidentsDesc": "Automatically create incidents from high-confidence correlations. When disabled, suggestions are stored for manual review.",
+    "settingIncludeTopologyContextDesc": "Include service topology data when analyzing alerts for better correlation accuracy.",
+    "settingAutoCorrelation": "Auto Correlation",
+    "settingAutoCorrelationDesc": "Automatically run correlation on a schedule. When enabled, the system will periodically analyze unassigned alerts without manual trigger.",
+    "settingCorrelationInterval": "Correlation Interval (min)",
+    "settingCorrelationIntervalDesc": "Interval in minutes between automatic correlation runs. Minimum 5 minutes."
   },
   "providerImages": {
     "title": "Provider Icons",
@@ -2718,5 +2795,75 @@
     "providerName": "Provider",
     "alertsReceived": "Alerts Received",
     "correlatedPercent": "Correlated %"
+  },
+  "aiSettings": {
+    "title": "AI Model Configuration",
+    "subtitle": "Configure AI model endpoints. Supports all OpenAI-compatible APIs.",
+    "presets": {
+      "zhipu": "ZhiPu GLM",
+      "deepseek": "DeepSeek",
+      "qwen": "Qwen",
+      "moonshot": "Kimi",
+      "minimax": "MiniMax",
+      "openai": "OpenAI",
+      "custom": "Custom"
+    },
+    "modelList": {
+      "emptyTitle": "No models configured",
+      "emptyDescription": "Click \"Add Model\" to configure your first AI model endpoint",
+      "columns": {
+        "name": "Name",
+        "provider": "Provider",
+        "baseUrl": "Base URL",
+        "model": "Model",
+        "status": "Status",
+        "default": "Default",
+        "actions": "Actions"
+      }
+    },
+    "form": {
+      "addTitle": "Add Model",
+      "editTitle": "Edit Model",
+      "name": "Model Name",
+      "namePlaceholder": "e.g. ZhiPu GLM Production",
+      "provider": "Provider",
+      "baseUrlLabel": "API Base URL",
+      "baseUrlPlaceholder": "https://api.openai.com/v1",
+      "apiKeyLabel": "API Key",
+      "apiKeyPlaceholder": "sk-...",
+      "apiKeyHint": "Current: {hint}",
+      "modelNameLabel": "Default Model",
+      "modelNamePlaceholder": "e.g. gpt-4o-mini",
+      "fallbackModelsLabel": "Fallback Models",
+      "fallbackModelsPlaceholder": "Comma-separated, e.g. gpt-4o-mini, gpt-3.5-turbo",
+      "extraConfigLabel": "Extra Configuration (JSON)",
+      "extraConfigPlaceholder": "{}",
+      "isDefault": "Set as default model",
+      "enabled": "Enabled",
+      "priority": "Priority",
+      "testConnection": "Test Connection",
+      "testing": "Testing...",
+      "testSuccess": "Connection successful",
+      "testFailed": "Connection failed",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete \"{name}\"?",
+      "validation": {
+        "nameRequired": "Model name is required",
+        "baseUrlRequired": "Base URL is required",
+        "apiKeyRequired": "API Key is required",
+        "modelNameRequired": "Model name is required",
+        "invalidJson": "Invalid JSON format"
+      }
+    },
+    "messages": {
+      "addSuccess": "Model added successfully",
+      "updateSuccess": "Model updated successfully",
+      "deleteSuccess": "Model deleted successfully",
+      "loadFailed": "Failed to load model configurations",
+      "saveFailed": "Failed to save model",
+      "deleteFailed": "Failed to delete model"
+    }
   }
 }

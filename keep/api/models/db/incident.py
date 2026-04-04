@@ -107,6 +107,9 @@ class Incident(SQLModel, table=True):
     is_candidate: bool = Field(default=False)
     is_visible: bool = Field(default=True)
 
+    # Group-level data isolation (optional)
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
+
     alerts_count: int = Field(default=0)
     affected_services: list = Field(sa_column=Column(JSON), default_factory=list)
     sources: list = Field(sa_column=Column(JSON), default_factory=list)

@@ -1,12 +1,15 @@
+import datetime
 import logging
+from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from fastapi.responses import JSONResponse
 from sqlmodel import Session
 
 from keep.api.bl.enrichments_bl import EnrichmentsBl
-from keep.api.core.db import get_alert_by_event_id, get_session
+from keep.api.core.db import get_session
+from keep.api.core.group_filter import check_group_access, apply_group_filter, apply_selected_group_filter
 from keep.api.i18n import t
 from keep.api.models.db.enrichment_event import EnrichmentEventWithLogs, EnrichmentType
 from keep.api.models.db.extraction import (
@@ -29,13 +32,19 @@ def get_extraction_rules(
         IdentityManagerFactory.get_auth_verifier(["read:extraction"])
     ),
     session: Session = Depends(get_session),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> list[ExtractionRuleDtoOut]:
-    logger.info("Getting extraction rules")
+    logger.info("Getting extraction rules", extra={"tenant_id": authenticated_entity.tenant_id, "group_id": group_id})
     rules = (
         session.query(ExtractionRule)
         .filter(ExtractionRule.tenant_id == authenticated_entity.tenant_id)
-        .all()
     )
+    # Apply group filter: use selected group or fall back to user's groups
+    if group_id:
+        rules = apply_selected_group_filter(rules, ExtractionRule, group_id)
+    else:
+        rules = apply_group_filter(rules, ExtractionRule, authenticated_entity)
+    rules = rules.all()
     return [ExtractionRuleDtoOut(**rule.dict()) for rule in rules]
 
 
@@ -46,12 +55,14 @@ def create_extraction_rule(
         IdentityManagerFactory.get_auth_verifier(["write:extraction"])
     ),
     session: Session = Depends(get_session),
+    group_id: Optional[str] = Header(None, alias="X-Keep-Group-Id"),
 ) -> ExtractionRuleDtoOut:
     logger.info("Creating a new extraction rule")
     new_rule = ExtractionRule(
         **rule_dto.dict(),
         created_by=authenticated_entity.email,
-        tenant_id=authenticated_entity.tenant_id
+        tenant_id=authenticated_entity.tenant_id,
+        group_id=group_id,
     )
     session.add(new_rule)
     session.commit()
@@ -80,6 +91,10 @@ def update_extraction_rule(
     if rule is None:
         raise HTTPException(status_code=404, detail=t("Extraction rule not found"))
 
+    # Check group access
+    if not check_group_access(rule, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     for key, value in rule_dto.dict(exclude_unset=True).items():
         setattr(rule, key, value)
     rule.updated_by = authenticated_entity.email
@@ -107,6 +122,11 @@ def delete_extraction_rule(
     )
     if rule is None:
         raise HTTPException(status_code=404, detail=t("Extraction rule not found"))
+
+    # Check group access
+    if not check_group_access(rule, authenticated_entity):
+        raise HTTPException(status_code=403, detail="No access to this resource")
+
     session.delete(rule)
     session.commit()
     return {"message": t("Extraction rule deleted successfully")}

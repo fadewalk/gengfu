@@ -152,6 +152,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+.ruff_cache/
+.ruff_cache/
 .dmypy.json
 dmypy.json
 
@@ -236,4 +238,5 @@ posthog.py
 .playwright-mcp/
 .venv*
 .claude/settings.local.json
-.next/
+.next/wiki/claude-code/sessions/
+.claude/hooks/.session/

@@ -16,6 +16,7 @@ class Action(SQLModel, table=True):
     action_raw: str = Field(sa_column=Column(TEXT))
     installed_by: str
     installation_time: datetime
+    group_id: Optional[str] = Field(default=None, foreign_key="tenant_group.id")
    
     class Config:
         orm_mode = True

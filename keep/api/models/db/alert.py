@@ -48,6 +48,7 @@ class LastAlert(SQLModel, table=True):
     timestamp: datetime = Field(nullable=False, index=True)
     first_timestamp: datetime = Field(nullable=False, index=True)
     alert_hash: str | None = Field(nullable=True, index=True)
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
 
     __table_args__ = (
         # Original indexes from MySQL
@@ -127,6 +128,9 @@ class Alert(SQLModel, table=True):
     #            and it is used for deduplication.
     #            alert can be different but have the same fingerprint (e.g. different "firing" and "resolved" will have the same fingerprint but not the same alert_hash)
     alert_hash: str | None
+
+    # Group-level data isolation (optional)
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
 
     # Define a one-to-one relationship to AlertEnrichment using alert_fingerprint
     alert_enrichment: "AlertEnrichment" = Relationship(
@@ -219,6 +223,7 @@ class AlertDeduplicationRule(SQLModel, table=True):
     ignore_fields: list[str] = Field(sa_column=Column(JSON), default=[])
     priority: int = Field(default=0)  # for future use
     is_provisioned: bool = Field(default=False)
+    group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
 
     class Config:
         arbitrary_types_allowed = True
