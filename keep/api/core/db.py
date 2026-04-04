@@ -5530,6 +5530,11 @@ def get_or_create_external_ai_settings(
             )
             session.add(algorithm_config)
             algorithm_configs = list(algorithm_configs) + [algorithm_config]
+        else:
+            # Merge new default settings into existing LLM config
+            _merge_new_default_settings(
+                session, algorithm_configs, internal_ai_correlation
+            )
 
         # Create external transformers config only if URL is configured
         if (
@@ -5547,6 +5552,48 @@ def get_or_create_external_ai_settings(
             ExternalAIConfigAndMetadataDto.from_orm(algorithm_config)
             for algorithm_config in algorithm_configs
         ]
+
+
+def _merge_new_default_settings(
+    session: Session,
+    algorithm_configs: list,
+    algorithm_def: "ExternalAI",
+) -> None:
+    """Merge any new default settings from the algorithm definition into existing DB config.
+
+    This ensures that when new settings are added to config_default, existing tenants
+    automatically get them with the default value instead of having to re-create their config.
+    """
+    import json as _json
+
+    # Find the matching config in the list
+    matching = [
+        ac for ac in algorithm_configs if ac.algorithm_id == algorithm_def.unique_id
+    ]
+    if not matching:
+        return
+
+    config = matching[0]
+    current_settings = config.settings
+    if isinstance(current_settings, str):
+        current_settings = _json.loads(current_settings)
+
+    # Parse the defaults
+    defaults = algorithm_def.config_default
+    if isinstance(defaults, str):
+        defaults = _json.loads(defaults)
+
+    current_names = {s["name"] for s in current_settings}
+    changed = False
+
+    for default_setting in defaults:
+        if default_setting["name"] not in current_names:
+            current_settings = current_settings + [default_setting]
+            changed = True
+
+    if changed:
+        config.settings = current_settings
+        session.add(config)
 
 
 def update_extrnal_ai_settings(
