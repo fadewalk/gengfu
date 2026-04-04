@@ -9,6 +9,7 @@ from keep.api.core.db import (
     get_first_alert_datetime,
     get_incidents_count,
     get_or_create_external_ai_settings,
+    update_extrnal_ai_settings,
 )
 from keep.api.models.ai_external import ExternalAIConfigAndMetadataDto
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
