@@ -212,7 +212,7 @@ export function AlertPresetManager({
         onClose={handlePresetModalClose}
         className="w-[40%] max-w-screen-2xl max-h-[710px] transform overflow-auto ring-tremor bg-white p-6 text-left align-middle shadow-tremor transition-all rounded-xl"
       >
-        <CopilotKit runtimeUrl="/api/copilotkit">
+        <CopilotKit runtimeUrl="/api/copilotkit" showDevConsole={false}>
           <CreateOrUpdatePresetForm
             key={idToUpdate}
             presetId={idToUpdate}

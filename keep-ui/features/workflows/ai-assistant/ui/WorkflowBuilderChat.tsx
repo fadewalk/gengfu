@@ -105,10 +105,10 @@ export function WorkflowBuilderChat({
       value: installedProviders,
       convert: (description: string, value: Provider[]) => {
         // At runtime CopilotKit calls convert(value), so first arg is the array
-        const providers: Provider[] = Array.isArray(description as unknown) ? (description as unknown as Provider[]) : (value ?? []);
-        return providers
-          .map((p) => `${p.type}, id: ${p.id}`)
-          .join(", ");
+        const providers: Provider[] = Array.isArray(description as unknown)
+          ? (description as unknown as Provider[])
+          : (value ?? []);
+        return providers.map((p) => `${p.type}, id: ${p.id}`).join(", ");
       },
     },
     [installedProviders]
@@ -121,7 +121,9 @@ export function WorkflowBuilderChat({
       convert: (description: string, value: ToolboxConfiguration) => {
         // At runtime CopilotKit calls convert(value), so first arg is the data
         const toolboxConfig =
-          (description as unknown) && typeof description === 'object' && 'groups' in (description as object)
+          (description as unknown) &&
+          typeof description === "object" &&
+          "groups" in (description as object)
             ? (description as unknown as ToolboxConfiguration)
             : value;
         const result: string[] = [];
@@ -240,7 +242,10 @@ export function WorkflowBuilderChat({
         } catch (e) {
           respond?.({
             status: "error",
-            message: getErrorMessage(e, t("workflows.aiAssistant.stepRemovalFailed")),
+            message: getErrorMessage(
+              e,
+              t("workflows.aiAssistant.stepRemovalFailed")
+            ),
           });
           return <p>{t("workflows.aiAssistant.stepRemovalFailed")}</p>;
         }
@@ -271,7 +276,9 @@ export function WorkflowBuilderChat({
 
       // TODO: nice UI for this
       if (
-        confirm(t("workflows.aiAssistant.confirmRemoveTrigger", { triggerNodeId }))
+        confirm(
+          t("workflows.aiAssistant.confirmRemoveTrigger", { triggerNodeId })
+        )
       ) {
         try {
           const deletedNodeIds = deleteNodes(triggerNodeId);
@@ -285,7 +292,10 @@ export function WorkflowBuilderChat({
         } catch (e) {
           respond?.({
             status: "error",
-            message: getErrorMessage(e, t("workflows.aiAssistant.triggerRemovalFailed")),
+            message: getErrorMessage(
+              e,
+              t("workflows.aiAssistant.triggerRemovalFailed")
+            ),
           });
           return <p>{t("workflows.aiAssistant.triggerRemovalFailed")}</p>;
         }
@@ -880,7 +890,9 @@ Example: 'node_123__empty_true'`,
             status: "error",
             message: t("workflows.aiAssistant.conditionDefinitionInvalid"),
           });
-          return <div>{t("workflows.aiAssistant.conditionDefinitionInvalid")}</div>;
+          return (
+            <div>{t("workflows.aiAssistant.conditionDefinitionInvalid")}</div>
+          );
         }
         if (status === "complete") {
           return (
@@ -904,7 +916,13 @@ Example: 'node_123__empty_true'`,
         );
       } catch (e: any) {
         respond?.({ status: "error", message: getErrorMessage(e) });
-        return <div>{t("workflows.aiAssistant.failedToAddCondition", { message: e?.message || "" })}</div>;
+        return (
+          <div>
+            {t("workflows.aiAssistant.failedToAddCondition", {
+              message: e?.message || "",
+            })}
+          </div>
+        );
       }
     },
   });
@@ -1079,7 +1097,9 @@ Example: 'node_123__empty_true'`,
               size="xs"
               onClick={() => setDebugInfoVisible(!debugInfoVisible)}
             >
-              {debugInfoVisible ? t("workflows.aiAssistant.hideDefinition") : t("workflows.aiAssistant.showDefinition")}
+              {debugInfoVisible
+                ? t("workflows.aiAssistant.hideDefinition")
+                : t("workflows.aiAssistant.showDefinition")}
             </Button>
           </div>
           {debugInfoVisible && (
