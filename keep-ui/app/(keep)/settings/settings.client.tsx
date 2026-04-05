@@ -69,10 +69,10 @@ export default function SettingsPage() {
   const userCreationAllowed =
     authType !== AuthType.NOAUTH && authType !== AuthType.AZUREAD;
   const rolesAllowed = authType !== AuthType.NOAUTH;
-  const customRolesAllowed = authType === AuthType.KEYCLOAK;
+  const customRolesAllowed = authType !== AuthType.NOAUTH;
   const ssoAllowed = authType === AuthType.KEYCLOAK;
   const groupsAllowed = true;
-  const permissionsAllowed = authType === AuthType.KEYCLOAK;
+  const permissionsAllowed = authType !== AuthType.NOAUTH;
   const apiKeysAllowed = true; // Assuming API keys are always allowed
 
   useEffect(() => {
@@ -447,6 +447,7 @@ export default function SettingsPage() {
                 <Tab
                   icon={MdOutlineSecurity}
                   onClick={() => handleUserSubTabChange("sso")}
+                  className={ssoAllowed ? "" : "hidden"}
                 >
                   {t("settings.subTabs.sso")}
                 </Tab>
@@ -467,7 +468,7 @@ export default function SettingsPage() {
                 <TabPanel className="h-full">
                   {renderUserSubTabContent("api-keys")}
                 </TabPanel>
-                <TabPanel className="h-full">
+                <TabPanel className={`h-full ${ssoAllowed ? "" : "hidden"}`}>
                   {renderUserSubTabContent("sso")}
                 </TabPanel>
               </TabPanels>

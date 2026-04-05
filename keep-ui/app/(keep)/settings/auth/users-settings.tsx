@@ -125,20 +125,16 @@ export default function UsersSettings({
           <PageSubtitle>{t("settings.users.subtitle")}</PageSubtitle>
         </div>
         <div className="flex space-x-2 items-center">
-          <Button
-            color="orange"
-            size="md"
-            icon={TiUserAdd}
-            onClick={handleAddUserClick}
-            disabled={!userCreationAllowed}
-            title={
-              !userCreationAllowed
-                ? t("settings.users.messages.externallyManaged")
-                : undefined
-            }
-          >
-            {t("settings.users.addUser")}
-          </Button>
+          {userCreationAllowed && (
+            <Button
+              color="orange"
+              size="md"
+              icon={TiUserAdd}
+              onClick={handleAddUserClick}
+            >
+              {t("settings.users.addUser")}
+            </Button>
+          )}
         </div>
       </header>
       <TextInput
