@@ -3,36 +3,39 @@ import {
   OpenAIAdapter,
   copilotRuntimeNextJSAppRouterEndpoint,
 } from "@copilotkit/runtime";
-import OpenAI, { OpenAIError } from "openai";
+import OpenAI from "openai";
 import { NextRequest } from "next/server";
+import { createServerApiClient } from "@/shared/api/server";
+
+async function initializeCopilotRuntime() {
+  try {
+    const apiClient = await createServerApiClient();
+
+    // Fetch OpenAI-compatible config from backend AI model settings
+    const config = await apiClient.get<{
+      base_url: string | null;
+      api_key: string;
+      model_name: string;
+    }>("/ai/copilotkit/config");
+
+    const openai = new OpenAI({
+      apiKey: config.api_key,
+      ...(config.base_url ? { baseURL: config.base_url } : {}),
+    });
+    const serviceAdapter = new OpenAIAdapter({
+      openai,
+      ...(config.model_name ? { model: config.model_name } : {}),
+    });
+    const runtime = new CopilotRuntime();
+    return { runtime, serviceAdapter };
+  } catch (error) {
+    console.error("Error initializing Copilot Runtime:", error);
+    return null;
+  }
+}
 
 export const POST = async (req: NextRequest) => {
-  function initializeCopilotRuntime() {
-    try {
-      const openai = new OpenAI({
-        organization: process.env.OPEN_AI_ORGANIZATION_ID,
-        apiKey: process.env.OPEN_AI_API_KEY,
-        ...(process.env.OPENAI_BASE_URL ? { baseURL: process.env.OPENAI_BASE_URL } : {}),
-      });
-      const serviceAdapter = new OpenAIAdapter({
-        openai,
-        ...(process.env.OPENAI_MODEL_NAME
-          ? { model: process.env.OPENAI_MODEL_NAME }
-          : {}),
-      });
-      const runtime = new CopilotRuntime();
-      return { runtime, serviceAdapter };
-    } catch (error) {
-      if (error instanceof OpenAIError) {
-        console.log("Error connecting to OpenAI", error);
-      } else {
-        console.error("Error initializing Copilot Runtime", error);
-      }
-      return null;
-    }
-  }
-
-  const runtimeOptions = initializeCopilotRuntime();
+  const runtimeOptions = await initializeCopilotRuntime();
 
   if (!runtimeOptions) {
     return new Response("Error initializing Copilot Runtime", { status: 500 });

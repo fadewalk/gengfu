@@ -157,6 +157,32 @@ def test_model_connection_endpoint(
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.get("/copilotkit/config", description="Get OpenAI-compatible config for CopilotKit")
+def get_copilotkit_config(
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:settings"])
+    ),
+    session: Session = Depends(get_session),
+):
+    """Return the OpenAI-compatible config (base_url, api_key, model_name) for CopilotKit.
+
+    Uses the same resolution strategy as _resolve_model: default enabled model first,
+    then fallback chain.
+    """
+    from keep.api.bl.ai_model_service import _resolve_model
+
+    tenant_id: str = authenticated_entity.tenant_id
+    try:
+        client, model_name = _resolve_model(tenant_id)
+        return {
+            "base_url": client.base_url,
+            "api_key": client.api_key,
+            "model_name": model_name,
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+
+
 @router.post("/models/test", description="Test connection with provided credentials")
 def test_model_connection_with_credentials(
     body: dict,
