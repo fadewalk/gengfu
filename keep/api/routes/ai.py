@@ -30,10 +30,17 @@ def get_stats(
     ),
 ):
     tenant_id = authenticated_entity.tenant_id
-    external_ai_settings = get_or_create_external_ai_settings(tenant_id)
+    try:
+        external_ai_settings = get_or_create_external_ai_settings(tenant_id)
+    except Exception:
+        logger.exception("Failed to get external AI settings")
+        external_ai_settings = []
 
     for setting in external_ai_settings:
-        setting.algorithm.remind_about_the_client(tenant_id)
+        try:
+            setting.algorithm.remind_about_the_client(tenant_id)
+        except Exception:
+            logger.warning(f"Failed to remind algorithm {setting.algorithm_id} about client")
 
     return {
         "alerts_count": get_alerts_count(tenant_id),

@@ -14,7 +14,16 @@ export const useAIStats = (
   return useSWR<AIStats>(
     api.isReady() ? "/ai/stats" : null,
     (url) => api.get(url),
-    options
+    {
+      ...options,
+      onErrorRetry: (error, _key, _config, revalidate, { retryCount }) => {
+        // Stop retrying on 4xx errors (e.g. no model configured)
+        if (error?.status >= 400 && error?.status < 500) return;
+        // Limit retries for 5xx errors
+        if (retryCount >= 3) return;
+        revalidate({ retryCount });
+      },
+    }
   );
 };
 

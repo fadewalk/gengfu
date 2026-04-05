@@ -115,6 +115,7 @@ export function AIPlugins() {
   const {
     data: aistats,
     isLoading,
+    error,
     mutate: refetchAIStats,
   } = useAIStats({
     refreshInterval: 5000,
@@ -184,7 +185,7 @@ export function AIPlugins() {
           size="lg"
           icon={IoPlayOutline}
           onClick={handleTriggerCorrelation}
-          disabled={isCorrelating}
+          disabled={isCorrelating || error || !llmConfig}
           className="shrink-0"
         >
           {isCorrelating ? t("aiPlugins.triggering") : t("aiPlugins.triggerCorrelation")}
@@ -286,6 +287,42 @@ export function AIPlugins() {
         {isLoading ? (
           <div className="p-8">
             <KeepLoader loadingText={t("aiPlugins.loading")} />
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center p-8 gap-4 text-center">
+            <IoAlertCircleOutline className="h-12 w-12 text-orange-400" />
+            <div>
+              <p className="text-lg font-semibold text-gray-900">{t("aiPlugins.loadError")}</p>
+              <p className="text-sm text-gray-500 mt-1 max-w-md">{t("aiPlugins.loadErrorDescription")}</p>
+            </div>
+            <Button
+              color="orange"
+              size="sm"
+              icon={IoSparklesOutline}
+              onClick={() => refetchAIStats()}
+            >
+              {t("common.retry")}
+            </Button>
+          </div>
+        ) : aistats?.algorithm_configs?.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-8 gap-4 text-center">
+            <IoAlertCircleOutline className="h-12 w-12 text-gray-400" />
+            <div>
+              <p className="text-lg font-semibold text-gray-900">{t("aiPlugins.noModelConfigured")}</p>
+              <p className="text-sm text-gray-500 mt-1 max-w-md">{t("aiPlugins.noModelConfiguredDescription")}</p>
+            </div>
+            <Button
+              color="orange"
+              size="sm"
+              onClick={() => {
+                const url = new URL(window.location.origin);
+                url.pathname = "/settings";
+                url.searchParams.set("selectedTab", "ai");
+                window.location.href = url.toString();
+              }}
+            >
+              {t("aiPlugins.goToAISettings")}
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 p-4">

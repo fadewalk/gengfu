@@ -2472,7 +2472,12 @@
     "settingAutoCorrelation": "Auto Correlation",
     "settingAutoCorrelationDesc": "Automatically run correlation on a schedule. When enabled, the system will periodically analyze unassigned alerts without manual trigger.",
     "settingCorrelationInterval": "Correlation Interval (min)",
-    "settingCorrelationIntervalDesc": "Interval in minutes between automatic correlation runs. Minimum 5 minutes."
+    "settingCorrelationIntervalDesc": "Interval in minutes between automatic correlation runs. Minimum 5 minutes.",
+    "loadError": "Failed to load AI engine data",
+    "loadErrorDescription": "Unable to retrieve AI correlation engine status. Check if the backend service is running, or try again later.",
+    "noModelConfigured": "No AI model configured",
+    "noModelConfiguredDescription": "The AI correlation engine requires at least one LLM model to be configured. Go to Settings → AI Configuration to add a model.",
+    "goToAISettings": "Go to AI Configuration"
   },
   "providerImages": {
     "title": "Provider Icons",

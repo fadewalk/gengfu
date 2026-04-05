@@ -5575,7 +5575,9 @@ def _merge_new_default_settings(
 
     config = matching[0]
     current_settings = config.settings
-    if isinstance(current_settings, str):
+    if current_settings is None:
+        current_settings = []
+    elif isinstance(current_settings, str):
         current_settings = _json.loads(current_settings)
 
     # Parse the defaults

@@ -645,7 +645,12 @@
     "settingAutoCorrelation": "自动关联",
     "settingAutoCorrelationDesc": "按计划自动运行关联分析。启用后，系统将定期分析未分配的告警，无需手动触发。",
     "settingCorrelationInterval": "关联间隔（分钟）",
-    "settingCorrelationIntervalDesc": "自动关联运行之间的间隔（分钟）。最小 5 分钟。"
+    "settingCorrelationIntervalDesc": "自动关联运行之间的间隔（分钟）。最小 5 分钟。",
+    "loadError": "加载 AI 引擎数据失败",
+    "loadErrorDescription": "无法获取 AI 关联引擎状态。请检查后端服务是否正常运行，或稍后重试。",
+    "noModelConfigured": "尚未配置 AI 模型",
+    "noModelConfiguredDescription": "AI 关联引擎需要至少配置一个大语言模型才能工作。请前往「设置 → AI 配置」添加模型。",
+    "goToAISettings": "前往 AI 配置"
   },
   "correlation": {
     "form": {
