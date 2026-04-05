@@ -78,6 +78,19 @@ def get_providers(
     providers = ProvidersService.get_all_providers()
     installed_providers = ProvidersService.get_installed_providers(tenant_id)
     linked_providers = ProvidersService.get_linked_providers(tenant_id)
+
+    # Filter hidden providers from the catalog — read directly from DB to avoid
+    # TenantConfiguration singleton cache staleness across gunicorn workers
+    from keep.api.core.db import get_tenant_config
+    try:
+        tenant_config = get_tenant_config(tenant_id) or {}
+        hidden_providers_set = set(tenant_config.get("hidden_providers", []))
+    except Exception:
+        hidden_providers_set = set()
+    if hidden_providers_set:
+        providers = [p for p in providers if p.type not in hidden_providers_set]
+        installed_providers = [p for p in installed_providers if p.type not in hidden_providers_set]
+        linked_providers = [p for p in linked_providers if p.type not in hidden_providers_set]
     if PROVIDER_DISTRIBUTION_ENABLED:
         # generate distribution only if not in read only mode
         if READ_ONLY:
