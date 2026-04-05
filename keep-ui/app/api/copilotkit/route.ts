@@ -5,18 +5,50 @@ import {
 } from "@copilotkit/runtime";
 import OpenAI from "openai";
 import { NextRequest } from "next/server";
-import { createServerApiClient } from "@/shared/api/server";
+import { auth } from "@/auth";
+import { getApiURL } from "@/utils/apiUrl";
 
-async function initializeCopilotRuntime() {
+async function initializeCopilotRuntime(req: NextRequest) {
   try {
-    const apiClient = await createServerApiClient();
+    // Get the session to obtain the access token for backend authentication
+    const session = await auth();
 
-    // Fetch OpenAI-compatible config from backend AI model settings
-    const config = await apiClient.get<{
+    if (!session?.accessToken) {
+      console.error(
+        "CopilotKit route: No session or access token available. " +
+          "Make sure the user is logged in."
+      );
+      return null;
+    }
+
+    // Build the backend URL for the copilotkit config endpoint
+    const apiUrl = getApiURL();
+    const configUrl = `${apiUrl}/ai/copilotkit/config`;
+
+    // Use the session access token to authenticate with the backend
+    const response = await fetch(configUrl, {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        `Failed to fetch CopilotKit config from backend (${response.status}): ${errorText}`
+      );
+      return null;
+    }
+
+    const config = (await response.json()) as {
       base_url: string | null;
       api_key: string;
       model_name: string;
-    }>("/ai/copilotkit/config");
+    };
+
+    console.log(
+      `CopilotKit config loaded: model=${config.model_name}, base_url=${config.base_url || "default"}`
+    );
 
     const openai = new OpenAI({
       apiKey: config.api_key,
@@ -35,7 +67,7 @@ async function initializeCopilotRuntime() {
 }
 
 export const POST = async (req: NextRequest) => {
-  const runtimeOptions = await initializeCopilotRuntime();
+  const runtimeOptions = await initializeCopilotRuntime(req);
 
   if (!runtimeOptions) {
     return new Response("Error initializing Copilot Runtime", { status: 500 });
