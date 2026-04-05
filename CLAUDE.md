@@ -11,8 +11,13 @@
 
 ## 分支策略
 - `main` — 上游主分支，只同步不推送
-- `develop` — 本地开发分支
-- 功能分支从 `develop` 创建，合并后可删除
+- `develop` / `feature/*` — 本地开发分支（不推送上游）
+- 所有改动在 develop 或 feature 分支上做
+
+## Remote 仓库
+- **origin** — GitHub 个人仓库 (https://github.com/fadewalk/keep)
+- **gitee** — Gitee 个人仓库 (https://gitee.com/wyule/keep)
+- **upstream** — 官方仓库 (https://github.com/keephq/keep)
 
 ## 版本锁定
 - **@monaco-editor/react**: 锁定在 `4.7.0-rc.0`（不要升级到 `4.8.x`）。`4.8.x` 的 worker 初始化存在破坏性变更，会导致 Docker 环境中的 hydration 错误。未经完整 Docker 环境测试，不要升级此包。
@@ -85,7 +90,7 @@ cd deploy/idc && docker compose build keep-backend keep-frontend && docker compo
 - 查看日志：`docker logs keep-backend --tail 20` / `docker logs keep-frontend --tail 20`
 
 ## 截图与临时文件
-- 所有截图（Playwright、浏览器截图等）存放到 `.playwright-mcp/` 目录，**不要放项目根目录**
+- 所有截图存放到 `.playwright-mcp/` 目录，**不要放项目根目录**
 - 其他临时文件同理，不要污染项目根目录
 
 ## AI 模型配置
@@ -93,3 +98,38 @@ cd deploy/idc && docker compose build keep-backend keep-frontend && docker compo
 - 配置存储在数据库中，通过 SecretManager 管理 API Key
 - 不再使用环境变量配置模型（`OPENAI_API_KEY` 等已废弃）
 - 后端服务：`keep/api/bl/ai_model_service.py`，API 路由：`keep/api/routes/ai_settings.py`
+
+## 已完成的工作
+
+### 1. OPENAI_BASE_URL 私有 LLM 支持
+支持 GLM-5/Kimi-2.5/MiniMax-2.5 等 OpenAI 兼容接口：
+- `keep/api/consts.py` — OPENAI_BASE_URL 常量
+- `keep/api/bl/ai_suggestion_bl.py` — AI 告警聚类支持 base_url
+- `keep/api/bl/incident_reports.py` — 事件报告支持 base_url
+- `keep-ui/app/api/copilotkit/route.ts` — CopilotKit 前端支持 base_url
+- `docker-compose.common.yml` — 环境变量透传
+
+### 2. 中文文档翻译
+- 翻译了 370 个文档文件到 `docs/zh-Hans/`
+- 独立出 `docs-zh/` 目录，包含完整的中文文档结构
+- 本地预览：`mintlify dev --port 3003`（目录 docs-zh）
+
+### 3. AI 关联引擎自实现
+- 替代商业版 External AI Transformers 的自托管方案
+- 前端 → POST /ai/correlate → AISuggestionBl.suggest_incidents() → LLM API → 自动创建事件
+- LLM 兼容：所有 OpenAI 兼容 API，通过 OPENAI_BASE_URL 环境变量配置
+- 设计文档：`docs/ai-correlation-design.md`
+
+### 4. AI 模型配置管理
+- 数据库驱动的多模型/多场景配置（ai_model_config 表）
+- 前端 AI 设置页面重构，支持动态模型和场景管理
+- wiki：`wiki/260402-200535-AI模型配置管理设计.md`
+
+## 历史问题参考
+
+### LDAP 浏览器登录失败
+- **原因：** `keep-frontend` 容器没加入 `keep-shared` Docker 网络，无法解析 `keep-backend`
+- **修复：** `deploy/local-mac/docker-compose.yml` 给 frontend 加 `networks: [keep-shared]`
+
+## 参考资料
+- Obsidian 笔记目录：`/Users/fadewalk/Documents/mycode/obsidian/03-work/Keep/`
