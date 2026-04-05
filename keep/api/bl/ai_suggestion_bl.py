@@ -270,6 +270,31 @@ class AISuggestionBl:
             if raw_content.endswith("```"):
                 raw_content = raw_content[:-3].strip()
 
+            # Strip thinking tags that some LLMs output (e.g., MiniMax-M2.7-highspeed)
+            # These models output content like "<think>...</think>{...}" or just "<think>...thinking...}"
+            import re
+            thinking_pattern = r'<think>[^}]*?</think>'
+            raw_content = re.sub(thinking_pattern, '', raw_content, flags=re.DOTALL).strip()
+
+            # Some LLMs output thinking followed by JSON without proper tags,
+            # so try to find JSON starting from the first '{'
+            json_start = raw_content.find('{')
+            if json_start > 0:
+                raw_content = raw_content[json_start:]
+                # Find the matching closing brace by counting nesting level
+                brace_count = 0
+                json_end = -1
+                for i, c in enumerate(raw_content):
+                    if c == '{':
+                        brace_count += 1
+                    elif c == '}':
+                        brace_count -= 1
+                        if brace_count == 0:
+                            json_end = i + 1
+                            break
+                if json_end > 0:
+                    raw_content = raw_content[:json_end]
+
             # Parse JSON and normalize LLM field name variations
             raw_data = json.loads(raw_content)
             incidents = raw_data.get("incidents", [])
@@ -411,9 +436,18 @@ class AISuggestionBl:
                 suggestion_id=str(suggestion.id),
             )
 
+        except json.JSONDecodeError as e:
+            self.logger.error(f"AI incident creation failed: invalid JSON response from model: {e}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"LLM 返回了无效响应，请检查模型配置是否正确。原始错误: {str(e)[:100]}",
+            )
         except Exception as e:
             self.logger.error(f"AI incident creation failed: {e}")
-            raise HTTPException(status_code=500, detail=t("AI service is unavailable."))
+            raise HTTPException(
+                status_code=500,
+                detail=f"AI 服务不可用: {str(e)[:200]}",
+            )
 
     async def commit_incidents(
         self,
@@ -523,14 +557,20 @@ class AISuggestionBl:
         return system_prompt, user_prompt
 
     def _get_ai_completion(self, system_prompt: str, user_prompt: str):
-        """Get completion from OpenAI."""
-        return self._client.chat.completions.create(
-            model=get_model_name(self.tenant_id),
-            messages=[
+        """Get completion from OpenAI. Falls back without response_format if API doesn't support it."""
+        kwargs = {
+            "model": get_model_name(self.tenant_id),
+            "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            response_format={
+            "temperature": 0.2,
+            "max_tokens": 4096,  # Set a reasonable limit for response
+        }
+        # Only add response_format for OpenAI; many compatible APIs don't support json_schema
+        base_url_str = str(self._client.base_url) if self._client.base_url else ""
+        if "api.openai.com" in base_url_str:
+            kwargs["response_format"] = {
                 "type": "json_schema",
                 "json_schema": {
                     "name": "incident_clustering",
@@ -581,9 +621,23 @@ class AISuggestionBl:
                         "required": ["incidents"],
                     },
                 },
-            },
-            temperature=0.2,
-        )
+            }
+        try:
+            completion = self._client.chat.completions.create(**kwargs)
+            raw_content = completion.choices[0].message.content
+            if not raw_content:
+                raise ValueError("API returned empty response content")
+            return completion
+        except Exception as e:
+            self.logger.error(
+                f"AI API call failed: {type(e).__name__}: {e}",
+                extra={
+                    "model": kwargs["model"],
+                    "base_url": base_url_str,
+                    "messages_length": len(system_prompt) + len(user_prompt),
+                },
+            )
+            raise
 
     def _process_incidents(
         self, incidents: List[IncidentCandidate], alerts_dto: List[AlertDto]
