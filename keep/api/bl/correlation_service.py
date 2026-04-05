@@ -8,7 +8,7 @@ so it can be called both from the API and from scheduled cron tasks.
 import json
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from sqlmodel import Session
@@ -218,7 +218,7 @@ def _update_feedback_logs(
         return
 
     log_entry = (
-        f"[{datetime.now(timezone.utc).isoformat()}] "
+        f"[{datetime.now(timezone(timedelta(hours=8))).isoformat()}] "
         f"Correlation run: {alerts_analyzed} alerts analyzed, "
         f"{incidents_suggested} incidents suggested, "
         f"{incidents_above_threshold} above threshold, "
