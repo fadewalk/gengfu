@@ -783,12 +783,24 @@ def get_random_workflow_templates(
 @router.post("/templates/query", description="Query workflow templates")
 def query_workflow_templates(
     query: QueryDto,
+    include_hidden: bool = False,
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:workflows"])
     ),
 ) -> dict:
     tenant_id = authenticated_entity.tenant_id
     workflowstore = WorkflowStore()
+
+    # Load hidden templates list unless explicitly requesting all
+    hidden_templates: list[str] = []
+    if not include_hidden:
+        from keep.api.core.db import get_tenant_config
+        try:
+            tenant_config = get_tenant_config(tenant_id) or {}
+            hidden_templates = tenant_config.get("hidden_workflow_templates", [])
+        except Exception:
+            hidden_templates = []
+
     default_directory = os.environ.get(
         "KEEP_WORKFLOWS_PATH",
         os.path.join(os.path.dirname(__file__), "../../../examples/workflows"),
@@ -807,7 +819,8 @@ def query_workflow_templates(
                 f"Neither {default_directory} nor {fallback_directory} exist"
             )
     workflows, total_count = workflowstore.query_workflow_templates(
-        tenant_id=tenant_id, workflows_dir=default_directory, query=query
+        tenant_id=tenant_id, workflows_dir=default_directory, query=query,
+        hidden_templates=hidden_templates,
     )
     return {
         "limit": query.limit,

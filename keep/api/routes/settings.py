@@ -479,3 +479,59 @@ async def update_hidden_providers(
 
     logger.info(f"Updated hidden providers for tenant {tenant_id}: {len(hidden_providers)} providers hidden")
     return JSONResponse(status_code=200, content={"hidden_providers": hidden_providers})
+
+
+@router.get("/tenant/hidden-workflow-templates")
+def get_hidden_workflow_templates(
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:settings"])
+    ),
+) -> dict:
+    tenant_id = authenticated_entity.tenant_id
+    tenant_configuration = TenantConfiguration()
+    config_value = tenant_configuration.get_configuration(tenant_id=tenant_id)
+    hidden_workflow_templates = config_value.get("hidden_workflow_templates", [])
+    return JSONResponse(
+        status_code=200,
+        content={"hidden_workflow_templates": hidden_workflow_templates},
+    )
+
+
+@router.put("/tenant/hidden-workflow-templates")
+async def update_hidden_workflow_templates(
+    request: Request,
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["write:settings"])
+    ),
+    session: Session = Depends(get_session),
+):
+    tenant_id = authenticated_entity.tenant_id
+    body = await request.json()
+
+    hidden_workflow_templates = body.get("hidden_workflow_templates", [])
+
+    if not isinstance(hidden_workflow_templates, list):
+        raise HTTPException(
+            status_code=400, detail="hidden_workflow_templates must be a list"
+        )
+
+    if not all(isinstance(p, str) for p in hidden_workflow_templates):
+        raise HTTPException(
+            status_code=400, detail="All template IDs must be strings"
+        )
+
+    current_config = get_tenant_config(tenant_id) or {}
+    current_config["hidden_workflow_templates"] = hidden_workflow_templates
+    write_tenant_config(tenant_id, current_config)
+
+    # Invalidate the TenantConfiguration cache so changes take effect immediately
+    TenantConfiguration._instance = None
+
+    logger.info(
+        f"Updated hidden workflow templates for tenant {tenant_id}: "
+        f"{len(hidden_workflow_templates)} templates hidden"
+    )
+    return JSONResponse(
+        status_code=200,
+        content={"hidden_workflow_templates": hidden_workflow_templates},
+    )

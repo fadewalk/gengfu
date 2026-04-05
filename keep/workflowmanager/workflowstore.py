@@ -591,18 +591,20 @@ class WorkflowStore:
         return workflows
 
     def query_workflow_templates(
-        self, tenant_id: str, workflows_dir: str, query: QueryDto
+        self, tenant_id: str, workflows_dir: str, query: QueryDto, hidden_templates: list[str] | None = None
     ) -> Tuple[list[dict], int]:
         """
         Get random workflows from a directory.
         Args:
             tenant_id (str): The tenant to which the workflows belong.
             workflows_dir (str): A directory containing workflows yamls.
-            limit (int): The number of workflows to return.
+            query (QueryDto): Query parameters including cel, limit, offset.
+            hidden_templates (list[str] | None): Template IDs to exclude from results.
 
         Returns:
-            List[dict]: A list of workflows
+            Tuple[list[dict], int]: A tuple of (workflows list, total count)
         """
+        hidden_set = set(hidden_templates or [])
         if not os.path.isdir(workflows_dir):
             raise FileNotFoundError(f"Directory {workflows_dir} does not exist")
 
@@ -622,6 +624,10 @@ class WorkflowStore:
                     workflow_yaml["name"] = workflow_yaml["workflow"]["id"]
                     workflow_yaml["workflow_raw"] = cyaml.dump(workflow_yaml)
                     workflow_yaml["workflow_raw_id"] = workflow_yaml["workflow"]["id"]
+
+                    # Filter out hidden templates
+                    if workflow_yaml["workflow_raw_id"] in hidden_set:
+                        continue
 
                     if not query.cel:
                         workflows.append(workflow_yaml)

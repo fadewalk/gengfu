@@ -12,6 +12,7 @@ import {
   PhotoIcon,
   CpuChipIcon,
   EyeIcon,
+  Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import { MdOutlineSecurity } from "react-icons/md";
 import { useHydratedSession as useSession } from "@/shared/lib/hooks/useHydratedSession";
@@ -40,6 +41,7 @@ import { User } from "@/app/(keep)/settings/models";
 import ProviderImagesSettings from "./provider-images/provider-images-settings";
 import AISettings from "./ai/ai-settings";
 import ProviderVisibilitySettings from "./provider-visibility/provider-visibility-settings";
+import WorkflowTemplateVisibilitySettings from "./workflow-template-visibility/workflow-template-visibility-settings";
 import { useI18n } from "@/i18n/hooks/useI18n";
 
 export default function SettingsPage() {
@@ -91,6 +93,8 @@ export default function SettingsPage() {
         ? 4
         : newSelectedTab === "provider-visibility"
         ? 5
+        : newSelectedTab === "workflow-template-visibility"
+        ? 6
         : 0;
     const userSubTabIndex =
       newUserSubTab === "users"
@@ -406,6 +410,12 @@ export default function SettingsPage() {
           >
             {t("settings.tabs.providerVisibility")}
           </Tab>
+          <Tab
+            icon={Squares2X2Icon}
+            onClick={() => handleTabChange("workflow-template-visibility")}
+          >
+            {t("settings.tabs.workflowTemplateVisibility")}
+          </Tab>
         </TabList>
         <TabPanels className="flex-grow overflow-hidden p-px">
           <TabPanel className="h-full">
@@ -488,6 +498,9 @@ export default function SettingsPage() {
           </TabPanel>
           <TabPanel className="h-full pt-4">
             <ProviderVisibilitySettings />
+          </TabPanel>
+          <TabPanel className="h-full pt-4">
+            <WorkflowTemplateVisibilitySettings />
           </TabPanel>
         </TabPanels>
       </TabGroup>

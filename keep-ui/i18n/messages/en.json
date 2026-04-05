@@ -1536,7 +1536,8 @@
       "smtp": "SMTP",
       "providerImages": "Provider Icons",
       "ai": "AI Configuration",
-      "providerVisibility": "Provider Visibility"
+      "providerVisibility": "Provider Visibility",
+      "workflowTemplateVisibility": "Workflow Template Visibility"
     },
     "subTabs": {
       "users": "Users",
@@ -2489,6 +2490,13 @@
     "subtitle": "Control which providers are shown in the catalog. Hidden providers won't appear in the provider browse page.",
     "showAll": "Show All",
     "hideAll": "Hide All"
+  },
+  "workflowTemplateVisibility": {
+    "title": "Workflow Template Visibility",
+    "subtitle": "Control which workflow templates are shown when creating workflows. Hidden templates won't appear in the template selection page.",
+    "showAll": "Show All",
+    "hideAll": "Hide All",
+    "stats": "{hidden} hidden of {total} templates"
   },
   "apiKey": {
     "modal": {

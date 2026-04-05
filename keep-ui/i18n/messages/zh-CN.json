@@ -6,7 +6,8 @@
       "smtp": "SMTP",
       "providerImages": "集成图标",
       "ai": "AI 配置",
-      "providerVisibility": "集成可见性"
+      "providerVisibility": "集成可见性",
+      "workflowTemplateVisibility": "工作流模板可见性"
     },
     "subTabs": {
       "users": "用户",
@@ -858,6 +859,13 @@
     "subtitle": "控制哪些集成在浏览页面中可见。隐藏的集成不会出现在集成浏览页面中。",
     "showAll": "全部显示",
     "hideAll": "全部隐藏"
+  },
+  "workflowTemplateVisibility": {
+    "title": "工作流模板可见性",
+    "subtitle": "控制哪些工作流模板在创建工作流页面中可见。隐藏的模板不会出现在模板选择页面中。",
+    "showAll": "全部显示",
+    "hideAll": "全部隐藏",
+    "stats": "已隐藏 {hidden} / 共 {total} 个模板"
   },
   "userSidebar": {
     "name": "名称",
