@@ -29,7 +29,7 @@ export default function ProviderVisibilitySettings() {
     { revalidateOnFocus: false },
     { include_hidden: "true" }
   );
-  const { data: hiddenData } = useSWR(
+  const { data: hiddenData, mutate: mutateHidden } = useSWR(
     api.isReady() ? "/settings/tenant/hidden-providers" : null,
     (url: string) => api.get(url),
     { revalidateOnFocus: false }
@@ -72,6 +72,8 @@ export default function ProviderVisibilitySettings() {
       await api.put("/settings/tenant/hidden-providers", {
         hidden_providers: localHidden,
       });
+      // Update SWR cache immediately so the UI reflects the change without refresh
+      await mutateHidden({ hidden_providers: localHidden }, false);
       showSuccessToast(t("common.messages.updatedSuccessfully"));
       setLocalHidden(null);
     } catch {
