@@ -1,5 +1,5 @@
-import { useConfig } from "@/utils/hooks/useConfig";
 import { useI18n } from "@/i18n/hooks/useI18n";
+import { useAIEnabled } from "@/utils/hooks/useAIEnabled";
 import Image from "next/image";
 import { SparklesIcon } from "@heroicons/react/24/outline";
 import { Text, Title } from "@tremor/react";
@@ -23,10 +23,15 @@ export function WorkflowBuilderChatSafe({
   ...props
 }: WorkflowBuilderChatSafeProps) {
   const { t } = useI18n();
-  const { data: config } = useConfig();
+  const { enabled: isAIEnabled, isLoading } = useAIEnabled();
 
-  // If AI is not enabled, return null to collapse the chat section
-  if (!config?.OPEN_AI_API_KEY_SET) {
+  // Still loading and no env key → show nothing briefly
+  if (isLoading) {
+    return null;
+  }
+
+  // AI is not enabled from either env var or database config
+  if (!isAIEnabled) {
     return (
       <div className="flex flex-col items-center justify-center h-full relative">
         <Image

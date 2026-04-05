@@ -126,6 +126,7 @@ export function WorkflowBuilderChat({
             : value;
         const result: string[] = [];
         toolboxConfig?.groups?.forEach((group: any) => {
+          if (!group.steps || group.steps.length === 0) return;
           result.push(
             `==== ${group.name}, componentType: ${group.steps[0].componentType} ====`
           );

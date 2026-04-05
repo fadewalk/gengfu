@@ -8,7 +8,7 @@ import { SparklesIcon } from "@heroicons/react/24/outline";
 import { useCopilotChat } from "@copilotkit/react-core";
 import { Role } from "@copilotkit/runtime-client-gql";
 import { TextMessage } from "@copilotkit/runtime-client-gql";
-import { useConfig } from "@/utils/hooks/useConfig";
+import { useAIEnabled } from "@/utils/hooks/useAIEnabled";
 import { useI18n } from "@/i18n/hooks/useI18n";
 
 export function useTestStep() {
@@ -65,8 +65,8 @@ const WFDebugWithAIButton = ({
   errors: { [key: string]: string };
   description: string;
 }) => {
-  const { data: config } = useConfig();
-  if (!config?.OPEN_AI_API_KEY_SET) {
+  const { enabled: isAIEnabled } = useAIEnabled();
+  if (!isAIEnabled) {
     return null;
   }
   return <WFDebugWithAI errors={errors} description={description} />;

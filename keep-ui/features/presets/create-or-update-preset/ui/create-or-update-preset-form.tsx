@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui";
-import { useConfig } from "@/utils/hooks/useConfig";
+import { useAIEnabled } from "@/utils/hooks/useAIEnabled";
 import {
   useCopilotAction,
   useCopilotContext,
@@ -96,8 +96,7 @@ export function CreateOrUpdatePresetForm({
     );
   };
 
-  const { data: configData } = useConfig();
-  const isAIEnabled = configData?.OPEN_AI_API_KEY_SET;
+  const isAIEnabled = useAIEnabled().enabled;
   const context = useCopilotContext();
 
   useCopilotReadable({

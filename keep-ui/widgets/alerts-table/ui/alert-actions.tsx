@@ -11,7 +11,7 @@ import { useApi } from "@/shared/lib/hooks/useApi";
 import { Table } from "@tanstack/react-table";
 
 import { useRevalidateMultiple } from "@/shared/lib/state-utils";
-import { useConfig } from "@/utils/hooks/useConfig";
+import { useAIEnabled } from "@/utils/hooks/useAIEnabled";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDoubleRightIcon } from "@heroicons/react/24/solid";
 import { AlertChangeStatusModal } from "@/features/alerts/alert-change-status/ui/alert-change-status-modal";
@@ -43,7 +43,7 @@ export default function AlertActions({
   const t = useTranslations("alerts.actions");
   const router = useRouter();
   const api = useApi();
-  const { data: config } = useConfig();
+  const { enabled: isAIEnabled } = useAIEnabled();
   const revalidateMultiple = useRevalidateMultiple();
   const presetsMutator = () => revalidateMultiple(["/preset"]);
   const [modalAlert, setModalAlert] = useState<AlertDto | AlertDto[] | null>(null);
@@ -186,11 +186,11 @@ export default function AlertActions({
         color="orange"
         onClick={showCreateIncidentWithAI}
         tooltip={
-          config?.OPEN_AI_API_KEY_SET
+          isAIEnabled
             ? t("createIncidentsWithAITooltip")
             : t("aiNotConfigured")
         }
-        disabled={!config?.OPEN_AI_API_KEY_SET}
+        disabled={!isAIEnabled}
       >
         {t("createIncidentsWithAI")}
       </Button>

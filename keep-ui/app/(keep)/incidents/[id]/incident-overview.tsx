@@ -34,6 +34,7 @@ import { IncidentChangeSeveritySelect } from "features/incidents/change-incident
 import { useApi } from "@/shared/lib/hooks/useApi";
 import { startCase, map } from "lodash";
 import { useConfig } from "@/utils/hooks/useConfig";
+import { useAIEnabled } from "@/utils/hooks/useAIEnabled";
 import { EnrichmentEditableField } from "@/app/(keep)/incidents/[id]/enrichments/EnrichmentEditableField";
 import { EnrichmentEditableForm } from "@/app/(keep)/incidents/[id]/enrichments/EnrichmentEditableForm";
 import { FormattedContent } from "@/shared/ui/FormattedContent/FormattedContent";
@@ -73,6 +74,7 @@ function Summary({
   const { t } = useI18n();
   const [generatedSummary, setGeneratedSummary] = useState("");
   const { data: config } = useConfig();
+  const { enabled: isAIEnabled } = useAIEnabled();
   const { updateIncident } = useIncidentActions();
   const context = useCopilotContext();
   useCopilotReadable({
@@ -145,12 +147,12 @@ function Summary({
         variant="secondary"
         onClick={executeTask}
         className="mt-2.5"
-        disabled={generatingSummary || !config?.OPEN_AI_API_KEY_SET}
+        disabled={generatingSummary || !isAIEnabled}
         loading={generatingSummary}
         icon={TbSparkles}
         size="xs"
         tooltip={
-          !config?.OPEN_AI_API_KEY_SET
+          !isAIEnabled
             ? t("incidents.overview.aiNotConfigured")
             : t("incidents.overview.generateAiSummary")
         }

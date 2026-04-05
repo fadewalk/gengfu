@@ -5,12 +5,13 @@ import {
   WorkflowBuilderWidget,
   WorkflowBuilderWidgetProps,
 } from "./workflow-builder-widget";
-import { useConfig } from "@/utils/hooks/useConfig";
+import { useAIEnabled } from "@/utils/hooks/useAIEnabled";
 
 export function WorkflowBuilderWidgetSafe(props: WorkflowBuilderWidgetProps) {
-  const { data: config } = useConfig();
+  const { enabled: isAIEnabled, isLoading } = useAIEnabled();
 
-  if (!config?.OPEN_AI_API_KEY_SET) {
+  // If loading, render without CopilotKit temporarily
+  if (isLoading || !isAIEnabled) {
     return <WorkflowBuilderWidget {...props} />;
   }
 

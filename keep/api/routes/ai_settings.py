@@ -26,6 +26,45 @@ logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
+# AI Status Check
+# ---------------------------------------------------------------------------
+
+
+@router.get("/status", description="Check if AI is configured and available")
+def get_ai_status(
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:settings"])
+    ),
+    session: Session = Depends(get_session),
+):
+    """Check whether AI features are available.
+
+    Returns true if either:
+    - An OpenAI API key is set via environment variable
+    - At least one enabled AI model config exists in the database
+    """
+    from keep.api.models.db.ai_model_config import AIModelConfig
+    from sqlmodel import select
+
+    # Check environment variables first
+    import os
+    env_key_set = bool(os.environ.get("OPEN_AI_API_KEY") or os.environ.get("OPENAI_API_KEY"))
+    if env_key_set:
+        return {"ai_available": True, "source": "environment"}
+
+    # Check database for enabled model configs
+    tenant_id = authenticated_entity.tenant_id
+    enabled_configs = session.exec(
+        select(AIModelConfig).where(
+            AIModelConfig.tenant_id == tenant_id,
+            AIModelConfig.enabled == True,  # noqa: E712
+        )
+    ).first()
+
+    return {"ai_available": enabled_configs is not None, "source": "database" if enabled_configs else "none"}
+
+
+# ---------------------------------------------------------------------------
 # Model Config CRUD
 # ---------------------------------------------------------------------------
 
