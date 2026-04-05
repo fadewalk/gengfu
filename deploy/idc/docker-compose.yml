@@ -62,6 +62,15 @@ services:
       - USE_NGROK=false
       - KEEP_API_URL=http://localhost:8080
       - KEEP_JWT_SECRET=${KEEP_JWT_SECRET:-keep-idc-jwt-secret-2026}
+      # LDAP 认证
+      - LDAP_URL=${LDAP_URL:-}
+      - LDAP_BIND_DN=${LDAP_BIND_DN:-}
+      - LDAP_BIND_PASSWORD=${LDAP_BIND_PASSWORD:-}
+      - LDAP_BASE_DN=${LDAP_BASE_DN:-}
+      - LDAP_USER_SEARCH_BASE=${LDAP_USER_SEARCH_BASE:-}
+      - LDAP_USER_FILTER=${LDAP_USER_FILTER:-}
+      - LDAP_MAIL_ATTRIBUTE=${LDAP_MAIL_ATTRIBUTE:-mail}
+      - LDAP_NAME_ATTRIBUTE=${LDAP_NAME_ATTRIBUTE:-displayName}
     volumes:
       - keep-state:/state
     healthcheck:
