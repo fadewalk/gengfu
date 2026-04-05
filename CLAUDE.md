@@ -59,6 +59,31 @@ kill $(lsof -ti :3000)
 - 提交信息要求：简洁说明改动内容（功能/修复/优化），避免无意义描述
 - commit 格式参考：`fix: 描述`、`feat: 描述`、`refactor: 描述`、`docs: 描述`
 
+## 编译与重启
+
+修改代码后需要重新构建 Docker 镜像并重启容器才能生效。项目使用 `deploy/idc/docker-compose.yml` 编排。
+
+### 后端改动（Python）
+```bash
+cd deploy/idc && docker compose build keep-backend && docker compose up -d keep-backend
+```
+
+### 前端改动（TypeScript/Next.js）
+```bash
+cd deploy/idc && docker compose build keep-frontend && docker compose up -d keep-frontend
+```
+注意：前端构建较慢（约 5-10 分钟），因为包含 Next.js 全量 build。
+
+### 前后端都改了
+```bash
+cd deploy/idc && docker compose build keep-backend keep-frontend && docker compose up -d
+```
+
+### 常见问题
+- 端口冲突（`port already allocated`）：先 `docker stop <旧容器名> && docker rm <旧容器名>`，再 `docker compose up -d`
+- 后端健康检查：`curl -s http://localhost:8080/healthcheck`
+- 查看日志：`docker logs keep-backend --tail 20` / `docker logs keep-frontend --tail 20`
+
 ## 截图与临时文件
 - 所有截图（Playwright、浏览器截图等）存放到 `.playwright-mcp/` 目录，**不要放项目根目录**
 - 其他临时文件同理，不要污染项目根目录
