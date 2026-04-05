@@ -46,7 +46,9 @@ export default function AlertActions({
   const { enabled: isAIEnabled } = useAIEnabled();
   const revalidateMultiple = useRevalidateMultiple();
   const presetsMutator = () => revalidateMultiple(["/preset"]);
-  const [modalAlert, setModalAlert] = useState<AlertDto | AlertDto[] | null>(null);
+  const [modalAlert, setModalAlert] = useState<AlertDto | AlertDto[] | null>(
+    null
+  );
 
   // TODO: refactor
   const searchParams = useSearchParams();
@@ -186,9 +188,7 @@ export default function AlertActions({
         color="orange"
         onClick={showCreateIncidentWithAI}
         tooltip={
-          isAIEnabled
-            ? t("createIncidentsWithAITooltip")
-            : t("aiNotConfigured")
+          isAIEnabled ? t("createIncidentsWithAITooltip") : t("aiNotConfigured")
         }
         disabled={!isAIEnabled}
       >

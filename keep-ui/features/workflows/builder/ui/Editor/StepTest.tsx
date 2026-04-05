@@ -168,7 +168,8 @@ export function TestRunStepForm({
         );
         setResult(result);
       } catch (e: unknown) {
-        const errorMessage = e instanceof Error ? e.message : t("workflows.builder.unknownError");
+        const errorMessage =
+          e instanceof Error ? e.message : t("workflows.builder.unknownError");
         setErrors({
           [t("workflows.builder.failedToTestStep")]: errorMessage,
         });
@@ -189,7 +190,9 @@ export function TestRunStepForm({
       <EditorLayout className="flex-1 flex flex-col gap-5">
         {Object.values(variables).length > 0 && (
           <section>
-            <Text className="font-bold mb-2">{t("workflows.builder.overrideVariables")}</Text>
+            <Text className="font-bold mb-2">
+              {t("workflows.builder.overrideVariables")}
+            </Text>
             <Text className="mb-2">
               {t("workflows.builder.overrideVariablesDescription")}
             </Text>
@@ -212,19 +215,29 @@ export function TestRunStepForm({
           </section>
         )}
         <section>
-          <Text className="font-bold mb-2">{t("workflows.builder.providerAndParams")}</Text>
+          <Text className="font-bold mb-2">
+            {t("workflows.builder.providerAndParams")}
+          </Text>
           {Object.values(variablesOverride).some((value) => value) && (
             <Text className="mb-2">
               {t("workflows.builder.providerAndParamsDescription")}
             </Text>
           )}
           <div>
-            <JsonCard title={t("workflows.builder.providerConfiguration")} json={providerInfo} />
-            <JsonCard title={t("workflows.builder.parameters")} json={resultingParameters} />
+            <JsonCard
+              title={t("workflows.builder.providerConfiguration")}
+              json={providerInfo}
+            />
+            <JsonCard
+              title={t("workflows.builder.parameters")}
+              json={resultingParameters}
+            />
           </div>
         </section>
         <section>
-          <Text className="font-bold mb-2">{t("workflows.builder.result")}</Text>
+          <Text className="font-bold mb-2">
+            {t("workflows.builder.result")}
+          </Text>
           <Text className="mb-2">
             {t("workflows.builder.resultDescription")}
           </Text>
@@ -237,7 +250,9 @@ export function TestRunStepForm({
                 }
               }}
             >
-              <div className="text-gray-500 bg-gray-50 p-2">{t("workflows.builder.result")}</div>
+              <div className="text-gray-500 bg-gray-50 p-2">
+                {t("workflows.builder.result")}
+              </div>
               <div
                 className="overflow-auto bg-[#fffffe] break-words whitespace-pre-wrap py-2 border rounded-[inherit] rounded-t-none  border-gray-200"
                 style={{
@@ -298,7 +313,9 @@ export function TestRunStepForm({
           disabled={isLoading || isDisabled}
           data-testid="wf-editor-step-test-run-button"
         >
-          {isLoading ? t("workflows.builder.running") : t("workflows.builder.testRun")}
+          {isLoading
+            ? t("workflows.builder.running")
+            : t("workflows.builder.testRun")}
         </Button>
       </div>
     </form>

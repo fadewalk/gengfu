@@ -347,7 +347,9 @@ export function IncidentOverview({ incident: initialIncidentData }: Props) {
               </div>
 
               <div>
-                <FieldHeader>{t("incidents.overview.environments")}</FieldHeader>
+                <FieldHeader>
+                  {t("incidents.overview.environments")}
+                </FieldHeader>
                 <EnrichmentEditableField
                   name="environments"
                   value={environments}
@@ -361,7 +363,9 @@ export function IncidentOverview({ incident: initialIncidentData }: Props) {
               </div>
 
               <div>
-                <FieldHeader>{t("incidents.overview.externalIncident")}</FieldHeader>
+                <FieldHeader>
+                  {t("incidents.overview.externalIncident")}
+                </FieldHeader>
 
                 <EnrichmentEditableForm
                   fields={{
@@ -416,7 +420,9 @@ export function IncidentOverview({ incident: initialIncidentData }: Props) {
               </div>
 
               <div>
-                <FieldHeader>{t("incidents.overview.repositories")}</FieldHeader>
+                <FieldHeader>
+                  {t("incidents.overview.repositories")}
+                </FieldHeader>
 
                 <EnrichmentEditableField
                   name="repositories"
@@ -471,11 +477,7 @@ export function IncidentOverview({ incident: initialIncidentData }: Props) {
                     <span
                       className="text-sm text-gray-500 cursor-pointer hover:text-orange-500 underline"
                       onClick={() => {
-                        if (
-                          confirm(
-                            t("incidents.overview.assignConfirm")
-                          )
-                        ) {
+                        if (confirm(t("incidents.overview.assignConfirm"))) {
                           assignIncident(incident.id);
                         }
                       }}
@@ -488,7 +490,9 @@ export function IncidentOverview({ incident: initialIncidentData }: Props) {
               {incident.rule_fingerprint !== "none" &&
                 !!incident.rule_fingerprint && (
                   <div>
-                    <FieldHeader>{t("incidents.overview.groupedBy")}</FieldHeader>
+                    <FieldHeader>
+                      {t("incidents.overview.groupedBy")}
+                    </FieldHeader>
                     <div className="flex flex-wrap gap-1">
                       <Badge
                         color="orange"

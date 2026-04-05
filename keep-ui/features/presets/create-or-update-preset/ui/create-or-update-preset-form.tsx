@@ -231,10 +231,7 @@ export function CreateOrUpdatePresetForm({
       {/* Group selector for group-level data isolation */}
       <div className="flex flex-col gap-1">
         <Subtitle>Group</Subtitle>
-        <GroupSelector
-          value={groupId}
-          onChange={setGroupId}
-        />
+        <GroupSelector value={groupId} onChange={setGroupId} />
       </div>
 
       <Subtitle>Tags</Subtitle>
