@@ -1,0 +1,93 @@
+# syntax=docker/dockerfile:1
+# ============================================================
+# Keep 前端 IDC 离线构建 Dockerfile
+# 基于 docker/Dockerfile.ui，移除所有外网依赖
+# Build context: keep-ui/ 目录
+# ============================================================
+
+FROM node:20-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add --no-cache libc6-compat bash
+WORKDIR /app
+
+# 使用 pnpm 镜像安装依赖
+COPY package.json pnpm-lock.yaml ./
+COPY scripts ./scripts
+RUN npm config set registry https://registry.npmmirror.com && \
+    npm install -g pnpm && \
+    pnpm config set registry https://registry.npmmirror.com && \
+    pnpm install --frozen-lockfile
+
+# Rebuild the source code only when needed
+FROM base AS builder
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN apk add --no-cache libc6-compat bash
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm install -g pnpm
+
+# 将 Monaco Editor 静态资源复制到 public 目录（替代 CDN）
+RUN mkdir -p public/monaco-vs/vs && \
+    cp -r node_modules/monaco-editor/min/vs/* public/monaco-vs/vs/
+
+# 禁用 Next.js 遥测
+ENV NEXT_TELEMETRY_DISABLED=1
+# 禁用 Sentry
+ENV SENTRY_DISABLED=true
+# 禁用 PostHog
+ENV POSTHOG_DISABLED=true
+
+ENV API_URL=http://localhost:8080
+
+RUN NODE_OPTIONS=--max-old-space-size=8192 pnpm exec next build --no-lint
+
+# Production image, copy all the files and run next
+FROM base AS runner
+ARG GIT_COMMIT_HASH=local
+ARG KEEP_VERSION=local
+ARG KEEP_INCLUDE_SOURCES=false
+
+WORKDIR /app
+
+ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
+ENV KEEP_VERSION=${KEEP_VERSION}
+ENV KEEP_INCLUDE_SOURCES=${KEEP_INCLUDE_SOURCES}
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY entrypoint.sh /app/entrypoint.sh
+
+# as per Openshift guidelines
+RUN chmod +x /app/entrypoint.sh && \
+    chgrp -R 0 /app && chmod -R g=u /app && \
+    addgroup nextjs root
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+
+# 完全禁用外部服务 - 不设置 PostHog 和 Sentry 密钥
+ENV POSTHOG_DISABLED=true
+ENV POSTHOG_KEY=
+ENV POSTHOG_HOST=
+ENV PUSHER_HOST=keep-websocket-server
+ENV PUSHER_PORT=6001
+ENV PUSHER_APP_KEY=keepappkey
+ENV NEXT_PUBLIC_SENTRY_DSN=
+
+ENTRYPOINT ["/app/entrypoint.sh"]

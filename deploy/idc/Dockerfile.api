@@ -1,0 +1,66 @@
+# ============================================================
+# Keep 后端 IDC 离线构建 Dockerfile
+# 基于 docker/Dockerfile.api，禁用遥测
+# Build context: 项目根目录
+# ============================================================
+
+FROM python:3.13-slim-bookworm as base
+
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    PYTHONUNBUFFERED=1
+
+RUN groupadd -g 1000 keep && \
+    adduser --disabled-password --gecos "" --uid 1000 --gid 1000 --shell /bin/sh keep
+WORKDIR /app
+
+FROM base as builder
+
+# 阿里云镜像加速（构建时需要）
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    libffi-dev \
+    libssl-dev \
+    libpq-dev \
+    default-libmysqlclient-dev \
+    build-essential \
+    git && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN python -m venv /venv
+ENV PATH="/venv/bin:${PATH}"
+
+COPY requirements.txt pyproject.toml poetry.lock ./
+RUN /venv/bin/pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple -r requirements.txt
+
+COPY keep keep
+COPY examples examples
+COPY keep-ui/public/icons/unknown-icon.png unknown-icon.png
+RUN /venv/bin/pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple --use-deprecated=legacy-resolver -e . && \
+    find /venv -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true && \
+    find /venv -type f -name "*.pyc" -delete 2>/dev/null || true
+
+FROM base as final
+ENV PATH="/venv/bin:${PATH}"
+ENV VIRTUAL_ENV="/venv"
+ENV EE_PATH="ee"
+COPY --from=builder /venv /venv
+COPY --from=builder /app/keep /app/keep
+COPY --from=builder /app/examples /examples
+COPY --from=builder /app/unknown-icon.png unknown-icon.png
+RUN mkdir -p /state && \
+    chgrp -R 0 /app /examples /state && chmod -R g=u /app /examples /state && \
+    chown -R keep:keep /app /examples && \
+    chown -R keep:keep /venv && \
+    chown -R keep:keep /state
+USER keep
+
+# 禁用遥测
+ENV POSTHOG_DISABLED=true
+ENV KEEP_METRICS=false
+
+ENTRYPOINT ["/app/keep/entrypoint.sh"]
+CMD ["gunicorn", "keep.api.api:get_app", "--bind" , "0.0.0.0:8080" , "--workers", "4" , "-k" , "uvicorn.workers.UvicornWorker", "-c", "/app/keep/api/config.py", "--preload"]
