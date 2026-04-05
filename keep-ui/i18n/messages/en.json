@@ -1535,7 +1535,8 @@
       "incomingWebhook": "Incoming Webhook",
       "smtp": "SMTP",
       "providerImages": "Provider Icons",
-      "ai": "AI Configuration"
+      "ai": "AI Configuration",
+      "providerVisibility": "Provider Visibility"
     },
     "subTabs": {
       "users": "Users",
@@ -2477,6 +2478,12 @@
     "title": "Provider Icons",
     "subtitle": "Customize provider icons",
     "uploadNewImage": "Upload New Image"
+  },
+  "providerVisibility": {
+    "title": "Provider Visibility",
+    "subtitle": "Control which providers are shown in the catalog. Hidden providers won't appear in the provider browse page.",
+    "showAll": "Show All",
+    "hideAll": "Hide All"
   },
   "apiKey": {
     "modal": {

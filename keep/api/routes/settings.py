@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from sqlmodel import Session
 
 from keep.api.core.config import config
-from keep.api.core.db import get_session
+from keep.api.core.db import get_session, get_tenant_config, write_tenant_config
 from keep.api.i18n import t
 from keep.api.core.tenant_configuration import TenantConfiguration
 from keep.api.models.alert import AlertDto
@@ -436,3 +436,46 @@ def get_tenant_configuration(
     tenant_configuration = TenantConfiguration()
     config_value = tenant_configuration.get_configuration(tenant_id=tenant_id)
     return JSONResponse(status_code=200, content=config_value)
+
+
+@router.get("/tenant/hidden-providers")
+def get_hidden_providers(
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:settings"])
+    ),
+) -> dict:
+    tenant_id = authenticated_entity.tenant_id
+    tenant_configuration = TenantConfiguration()
+    config_value = tenant_configuration.get_configuration(tenant_id=tenant_id)
+    hidden_providers = config_value.get("hidden_providers", [])
+    return JSONResponse(status_code=200, content={"hidden_providers": hidden_providers})
+
+
+@router.put("/tenant/hidden-providers")
+async def update_hidden_providers(
+    request: Request,
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["write:settings"])
+    ),
+    session: Session = Depends(get_session),
+):
+    tenant_id = authenticated_entity.tenant_id
+    body = await request.json()
+
+    hidden_providers = body.get("hidden_providers", [])
+
+    if not isinstance(hidden_providers, list):
+        raise HTTPException(status_code=400, detail="hidden_providers must be a list")
+
+    if not all(isinstance(p, str) for p in hidden_providers):
+        raise HTTPException(status_code=400, detail="All provider IDs must be strings")
+
+    current_config = get_tenant_config(tenant_id) or {}
+    current_config["hidden_providers"] = hidden_providers
+    write_tenant_config(tenant_id, current_config)
+
+    # Invalidate the TenantConfiguration cache so changes take effect immediately
+    TenantConfiguration._instance = None
+
+    logger.info(f"Updated hidden providers for tenant {tenant_id}: {len(hidden_providers)} providers hidden")
+    return JSONResponse(status_code=200, content={"hidden_providers": hidden_providers})

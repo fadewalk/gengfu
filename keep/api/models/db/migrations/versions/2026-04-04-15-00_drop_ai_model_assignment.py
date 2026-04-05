@@ -1,15 +1,15 @@
 """drop unused ai_model_assignment table
 
-Revision ID: b2c3d4e5f6a7
-Revises: a1b2c3d4e5f6
+Revision ID: g2a3i4m5o6d7
+Revises: f1a2i3m4o5d6
 Create Date: 2026-04-04 15:00:00.000000
 
 """
 from alembic import op
 import sqlalchemy as sa
 
-revision = "b2c3d4e5f6a7"
-down_revision = "a1b2c3d4e5f6"
+revision = "g2a3i4m5o6d7"
+down_revision = "f1a2i3m4o5d6"
 branch_labels = None
 depends_on = None
 

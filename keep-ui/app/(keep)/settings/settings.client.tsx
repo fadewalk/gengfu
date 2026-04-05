@@ -11,6 +11,7 @@ import {
   LockClosedIcon,
   PhotoIcon,
   CpuChipIcon,
+  EyeIcon,
 } from "@heroicons/react/24/outline";
 import { MdOutlineSecurity } from "react-icons/md";
 import { useHydratedSession as useSession } from "@/shared/lib/hooks/useHydratedSession";
@@ -38,6 +39,7 @@ import { APIKeysTable } from "./auth/api-key-table";
 import { User } from "@/app/(keep)/settings/models";
 import ProviderImagesSettings from "./provider-images/provider-images-settings";
 import AISettings from "./ai/ai-settings";
+import ProviderVisibilitySettings from "./provider-visibility/provider-visibility-settings";
 import { useI18n } from "@/i18n/hooks/useI18n";
 
 export default function SettingsPage() {
@@ -87,6 +89,8 @@ export default function SettingsPage() {
         ? 3
         : newSelectedTab === "ai"
         ? 4
+        : newSelectedTab === "provider-visibility"
+        ? 5
         : 0;
     const userSubTabIndex =
       newUserSubTab === "users"
@@ -396,6 +400,12 @@ export default function SettingsPage() {
           >
             {t("settings.tabs.ai")}
           </Tab>
+          <Tab
+            icon={EyeIcon}
+            onClick={() => handleTabChange("provider-visibility")}
+          >
+            {t("settings.tabs.providerVisibility")}
+          </Tab>
         </TabList>
         <TabPanels className="flex-grow overflow-hidden p-px">
           <TabPanel className="h-full">
@@ -474,6 +484,9 @@ export default function SettingsPage() {
           </TabPanel>
           <TabPanel className="h-full pt-4">
             <AISettings />
+          </TabPanel>
+          <TabPanel className="h-full pt-4">
+            <ProviderVisibilitySettings />
           </TabPanel>
         </TabPanels>
       </TabGroup>

@@ -1,6 +1,6 @@
 """add ai_model_config and ai_model_assignment tables
 
-Revision ID: a1b2c3d4e5f6
+Revision ID: f1a2i3m4o5d6
 Revises: h6i7j8k9l0m1
 Create Date: 2026-04-01 23:30:00.000000
 
@@ -8,7 +8,7 @@ Create Date: 2026-04-01 23:30:00.000000
 from alembic import op
 import sqlalchemy as sa
 
-revision = "a1b2c3d4e5f6"
+revision = "f1a2i3m4o5d6"
 down_revision = "h6i7j8k9l0m1"
 branch_labels = None
 depends_on = None

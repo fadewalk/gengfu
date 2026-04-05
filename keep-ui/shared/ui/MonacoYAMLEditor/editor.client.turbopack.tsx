@@ -10,9 +10,16 @@ import { MonacoYamlEditorProps } from "./MonacoYAMLEditor.types";
 import { MonacoEditorErrorBoundary } from "./MonacoEditorErrorBoundary";
 const Loader = <KeepLoader loadingText="Loading Code Editor ..." />;
 
+// IDC 离线部署：从本地 /public/monaco-vs/ 加载，无需 CDN
+// 此目录需在构建时由 Dockerfile 从 node_modules 复制到 public/
+const MONACO_VS_PATH =
+  typeof window !== "undefined"
+    ? window.location.origin + "/monaco-vs/vs"
+    : "/monaco-vs/vs";
+
 loader.config({
   paths: {
-    vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs",
+    vs: MONACO_VS_PATH,
   },
 });
 
@@ -87,8 +94,8 @@ export function MonacoYAMLEditorTurbopack({
     return (
       <ErrorComponent
         error={error}
-        defaultMessage={`Error loading Monaco Editor from CDN`}
-        description="Check your internet connection and try again"
+        defaultMessage={`Error loading Monaco Editor`}
+        description="Please refresh the page and try again"
       />
     );
   }

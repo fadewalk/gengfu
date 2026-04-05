@@ -5,7 +5,8 @@
       "incomingWebhook": "Webhook 接收",
       "smtp": "SMTP",
       "providerImages": "集成图标",
-      "ai": "AI 配置"
+      "ai": "AI 配置",
+      "providerVisibility": "集成可见性"
     },
     "subTabs": {
       "users": "用户",
@@ -846,6 +847,12 @@
     "subtitle": "自定义集成图标",
     "title": "集成图标",
     "uploadNewImage": "上传新图标"
+  },
+  "providerVisibility": {
+    "title": "集成可见性",
+    "subtitle": "控制哪些集成在浏览页面中可见。隐藏的集成不会出现在集成浏览页面中。",
+    "showAll": "全部显示",
+    "hideAll": "全部隐藏"
   },
   "userSidebar": {
     "name": "名称",
