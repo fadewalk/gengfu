@@ -6,7 +6,7 @@
   "scripts": {
     "build-monaco-workers": "node scripts/build-monaco-workers-turbopack.js",
     "build": "./next_build.sh",
-    "postinstall": "patch-package",
+    "postinstall": "bash scripts/patch-react-code-blocks.sh",
     "build:workflow-yaml-json-schema": "ts-node -P tsconfig.scripts.json scripts/generate-workflow-yaml-json-schema.ts",
     "dev": "NODE_OPTIONS='--max-old-space-size=8192' npm run build-monaco-workers && next dev -p 3000",
     "dev:webpack": "NODE_OPTIONS='--max-old-space-size=8192' next dev -p 3000",
@@ -14,10 +14,10 @@
     "start": "next start",
     "test": "jest",
     "typecheck": "tsc --noEmit",
-    "test:workflow-examples": "ts-node -P tsconfig.scripts.json scripts/validate-workflow-examples.ts",
-    "postinstall": "bash scripts/patch-react-code-blocks.sh"
+    "test:workflow-examples": "ts-node -P tsconfig.scripts.json scripts/validate-workflow-examples.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.50",
     "@auth/core": "^0.38.0",
     "@boiseitguru/cookie-cutter": "^0.2.3",
     "@copilotkit/react-core": "^1.8.11",

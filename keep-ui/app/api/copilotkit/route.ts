@@ -1,9 +1,9 @@
 import {
   CopilotRuntime,
-  OpenAIAdapter,
   copilotRuntimeNextJSAppRouterEndpoint,
+  ExperimentalEmptyAdapter,
 } from "@copilotkit/runtime";
-import OpenAI from "openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { getApiURL } from "@/utils/apiUrl";
@@ -50,16 +50,23 @@ async function initializeCopilotRuntime(req: NextRequest) {
       `CopilotKit config loaded: model=${config.model_name}, base_url=${config.base_url || "default"}`
     );
 
-    const openai = new OpenAI({
+    // Use @ai-sdk/openai's createOpenAI and explicitly use .chat() to avoid
+    // the Responses API (/v1/responses) which is not supported by third-party
+    // OpenAI-compatible providers like MiniMax.
+    const openai = createOpenAI({
       apiKey: config.api_key,
       ...(config.base_url ? { baseURL: config.base_url } : {}),
     });
-    const serviceAdapter = new OpenAIAdapter({
-      openai,
-      ...(config.model_name ? { model: config.model_name } : {}),
-    });
+
+    // Force chat completions API instead of the default Responses API
+    const languageModel = openai.chat(config.model_name || "gpt-4o");
+
+    // CopilotRuntime requires a serviceAdapter. We create a minimal one
+    // that returns our configured language model.
+    const serviceAdapter = new ExperimentalEmptyAdapter();
+
     const runtime = new CopilotRuntime();
-    return { runtime, serviceAdapter };
+    return { runtime, serviceAdapter: { ...serviceAdapter, getLanguageModel: () => languageModel } as any };
   } catch (error) {
     console.error("Error initializing Copilot Runtime:", error);
     return null;
