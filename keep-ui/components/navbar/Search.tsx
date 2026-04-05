@@ -14,11 +14,6 @@ import {
   Transition,
 } from "@headlessui/react";
 import {
-  GitHubLogoIcon,
-  FileTextIcon,
-  TwitterLogoIcon,
-} from "@radix-ui/react-icons";
-import {
   GlobeAltIcon,
   UserGroupIcon,
   EnvelopeIcon,
@@ -28,7 +23,6 @@ import { VscDebugDisconnect } from "react-icons/vsc";
 import { LuWorkflow } from "react-icons/lu";
 import { AiOutlineAlert, AiOutlineGroup } from "react-icons/ai";
 import { MdOutlineEngineering, MdOutlineSearchOff } from "react-icons/md";
-import { useConfig } from "utils/hooks/useConfig";
 import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import KeepPng from "../../keep.png";
@@ -102,8 +96,6 @@ export const Search = ({ session }: SearchProps) => {
   const [, setSelectedOption] = useState<string | null>(null);
   const router = useRouter();
   const comboboxInputRef = useRef<ElementRef<"input">>(null);
-  const { data: configData } = useConfig();
-  const docsUrl = configData?.KEEP_DOCS_URL || "https://docs.keephq.dev";
   const [isLoading, setIsLoading] = useState(false);
 
   // Log session for debugging
@@ -111,28 +103,7 @@ export const Search = ({ session }: SearchProps) => {
     console.log("Search component session:", session);
   }, [session]);
 
-  const EXTERNAL_OPTIONS = [
-    {
-      icon: FileTextIcon,
-      labelKey: "nav.searchMenu.keepDocs",
-      shortcut: ["⇧", "D"],
-      navigate: docsUrl,
-    },
-    {
-      icon: GitHubLogoIcon,
-      labelKey: "nav.searchMenu.keepSourceCode",
-      shortcut: ["⇧", "C"],
-      navigate: "https://github.com/keephq/keep",
-    },
-    {
-      icon: TwitterLogoIcon,
-      labelKey: "nav.searchMenu.keepTwitter",
-      shortcut: ["⇧", "T"],
-      navigate: "https://twitter.com/keepalerting",
-    },
-  ];
-
-  const OPTIONS = [...NAVIGATION_OPTIONS, ...EXTERNAL_OPTIONS].map(option => ({
+  const OPTIONS = NAVIGATION_OPTIONS.map(option => ({
     ...option,
     label: t(option.labelKey)
   }));
@@ -257,31 +228,6 @@ export const Search = ({ session }: SearchProps) => {
             <Subtitle>{t("nav.searchMenu.navigate")}</Subtitle>
           </ListItem>
           {NAVIGATION_OPTIONS.map((option) => (
-            <ComboboxOption
-              key={option.labelKey}
-              as={Fragment}
-              value={option.navigate}
-            >
-              {({ active }) => (
-                <ListItem className="flex items-center justify-start space-x-3 cursor-default select-none p-2 ui-active:bg-orange-400 ui-active:text-white ui-not-active:text-gray-900">
-                  <Icon
-                    className={`py-2 px-0 ${
-                      active ? "bg-orange-400 text-white" : "text-gray-900"
-                    }`}
-                    icon={option.icon}
-                    color="orange"
-                  />
-                  <span className="text-left">{t(option.labelKey)}</span>
-                </ListItem>
-              )}
-            </ComboboxOption>
-          ))}
-        </List>
-        <List>
-          <ListItem className="pl-2">
-            <Subtitle>{t("nav.searchMenu.externalSources")}</Subtitle>
-          </ListItem>
-          {EXTERNAL_OPTIONS.map((option) => (
             <ComboboxOption
               key={option.labelKey}
               as={Fragment}
