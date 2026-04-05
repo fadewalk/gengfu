@@ -72,6 +72,7 @@ def get_providers(
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["read:providers"])
     ),
+    include_hidden: bool = False,
 ):
     tenant_id = authenticated_entity.tenant_id
     logger.info("Getting installed providers", extra={"tenant_id": tenant_id})
@@ -81,16 +82,18 @@ def get_providers(
 
     # Filter hidden providers from the catalog — read directly from DB to avoid
     # TenantConfiguration singleton cache staleness across gunicorn workers
-    from keep.api.core.db import get_tenant_config
-    try:
-        tenant_config = get_tenant_config(tenant_id) or {}
-        hidden_providers_set = set(tenant_config.get("hidden_providers", []))
-    except Exception:
-        hidden_providers_set = set()
-    if hidden_providers_set:
-        providers = [p for p in providers if p.type not in hidden_providers_set]
-        installed_providers = [p for p in installed_providers if p.type not in hidden_providers_set]
-        linked_providers = [p for p in linked_providers if p.type not in hidden_providers_set]
+    # Skip filtering if include_hidden=True (used by settings page to show all providers)
+    if not include_hidden:
+        from keep.api.core.db import get_tenant_config
+        try:
+            tenant_config = get_tenant_config(tenant_id) or {}
+            hidden_providers_set = set(tenant_config.get("hidden_providers", []))
+        except Exception:
+            hidden_providers_set = set()
+        if hidden_providers_set:
+            providers = [p for p in providers if p.type not in hidden_providers_set]
+            installed_providers = [p for p in installed_providers if p.type not in hidden_providers_set]
+            linked_providers = [p for p in linked_providers if p.type not in hidden_providers_set]
     if PROVIDER_DISTRIBUTION_ENABLED:
         # generate distribution only if not in read only mode
         if READ_ONLY:
