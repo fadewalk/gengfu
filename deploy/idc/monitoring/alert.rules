@@ -1,0 +1,172 @@
+groups:
+  # ============================================================
+  # 主机基础监控 - CPU / 内存 / 磁盘 / 网络
+  # ============================================================
+  - name: host_basic
+    interval: 10s
+    rules:
+      # CPU
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 5
+        for: 15s
+        labels:
+          severity: warning
+          team: infra
+          category: cpu
+        annotations:
+          summary: "CPU 使用率过高"
+          description: "主机 {{ $labels.instance }} CPU 使用率 {{ $value | printf \"%.1f\" }}%"
+
+      - alert: CriticalCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+        for: 5s
+        labels:
+          severity: critical
+          team: infra
+          category: cpu
+        annotations:
+          summary: "CPU 使用率严重过高"
+          description: "主机 {{ $labels.instance }} CPU 使用率 {{ $value | printf \"%.1f\" }}%，超过 80% 阈值"
+
+      - alert: LoadAverageHigh
+        expr: node_load1 > 2
+        for: 10s
+        labels:
+          severity: warning
+          team: infra
+          category: cpu
+        annotations:
+          summary: "系统负载过高"
+          description: "1分钟负载 {{ $value | printf \"%.2f\" }}"
+
+      # 内存
+      - alert: HighMemoryUsage
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 70
+        for: 15s
+        labels:
+          severity: warning
+          team: infra
+          category: memory
+        annotations:
+          summary: "内存使用率过高"
+          description: "主机 {{ $labels.instance }} 内存使用率 {{ $value | printf \"%.1f\" }}%"
+
+      - alert: CriticalMemoryUsage
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 90
+        for: 5s
+        labels:
+          severity: critical
+          team: infra
+          category: memory
+        annotations:
+          summary: "内存即将耗尽"
+          description: "内存使用率 {{ $value | printf \"%.1f\" }}%，OOM 风险"
+
+      # 磁盘
+      - alert: DiskSpaceWarning
+        expr: (1 - node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 > 80
+        for: 30s
+        labels:
+          severity: warning
+          team: infra
+          category: disk
+        annotations:
+          summary: "磁盘空间不足"
+          description: "挂载点 {{ $labels.mountpoint }} 使用率 {{ $value | printf \"%.1f\" }}%"
+
+      - alert: DiskSpaceCritical
+        expr: (1 - node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 > 95
+        for: 10s
+        labels:
+          severity: critical
+          team: infra
+          category: disk
+        annotations:
+          summary: "磁盘空间严重不足"
+          description: "挂载点 {{ $labels.mountpoint }} 使用率 {{ $value | printf \"%.1f\" }}%，即将写满"
+
+      # 网络
+      - alert: NetworkReceiveHigh
+        expr: rate(node_network_receive_bytes_total{device=~"en[0-9]+|eth0"}[5m]) > 10485760
+        for: 30s
+        labels:
+          severity: warning
+          team: network
+          category: network
+        annotations:
+          summary: "网络入流量过高"
+          description: "网卡 {{ $labels.device }} 入流量 {{ $value | printf \"%.0f\" }} bytes/s"
+
+  # ============================================================
+  # 监控系统自身
+  # ============================================================
+  - name: monitoring_self
+    interval: 15s
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 15s
+        labels:
+          severity: warning
+          team: infra
+          category: monitoring
+        annotations:
+          summary: "监控目标离线"
+          description: "目标 {{ $labels.instance }} (job={{ $labels.job }}) 已离线"
+
+      - alert: PrometheusScrapeSlow
+        expr: scrape_duration_seconds > 3
+        for: 30s
+        labels:
+          severity: warning
+          team: infra
+          category: monitoring
+        annotations:
+          summary: "采集耗时过长"
+          description: "目标 {{ $labels.instance }} 采集耗时 {{ $value | printf \"%.1f\" }}s"
+
+  # ============================================================
+  # 关联场景 - 测试 Keep 告警关联
+  # ============================================================
+  - name: correlation_demo
+    interval: 10s
+    rules:
+      # 资源级联: CPU → 负载 → 内存
+      - alert: CascadeCPU
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[1m])) * 100) > 1
+        for: 0s
+        labels:
+          severity: warning
+          team: infra
+          category: correlation
+          correlation_id: "cascade-resource"
+          correlation_type: "resource_cascade"
+        annotations:
+          summary: "[关联] CPU 压力触发"
+          description: "关联场景：CPU {{ $value | printf \"%.1f\" }}%"
+
+      - alert: CascadeLoad
+        expr: node_load1 > 0.5
+        for: 0s
+        labels:
+          severity: warning
+          team: infra
+          category: correlation
+          correlation_id: "cascade-resource"
+          correlation_type: "resource_cascade"
+        annotations:
+          summary: "[关联] 负载升高"
+          description: "关联场景：负载 {{ $value | printf \"%.2f\" }}"
+
+      - alert: CascadeMemory
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 30
+        for: 0s
+        labels:
+          severity: warning
+          team: infra
+          category: correlation
+          correlation_id: "cascade-resource"
+          correlation_type: "resource_cascade"
+        annotations:
+          summary: "[关联] 内存压力升高"
+          description: "关联场景：内存 {{ $value | printf \"%.1f\" }}%"

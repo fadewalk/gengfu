@@ -1,0 +1,52 @@
+global:
+  resolve_timeout: 2m
+
+route:
+  group_by: ['alertname', 'cluster']
+  group_wait: 5s
+  group_interval: 10s
+  repeat_interval: 5m
+  receiver: 'keep-webhook'
+
+  routes:
+    # critical 告警立即发送
+    - match:
+        severity: critical
+      group_by: ['alertname']
+      group_wait: 3s
+      group_interval: 5s
+      repeat_interval: 1m
+      receiver: 'keep-webhook'
+
+    # warning 告警正常聚合
+    - match:
+        severity: warning
+      group_by: ['alertname', 'category']
+      group_wait: 10s
+      group_interval: 30s
+      repeat_interval: 5m
+      receiver: 'keep-webhook'
+
+    # info 级别低优先级
+    - match:
+        severity: info
+      group_by: ['category']
+      group_wait: 30s
+      group_interval: 1m
+      repeat_interval: 10m
+      receiver: 'keep-webhook'
+
+inhibit_rules:
+  # critical 告警抑制同名的 warning
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']
+
+receivers:
+  - name: 'keep-webhook'
+    webhook_configs:
+      - url: 'http://keep-backend:8080/alerts/event/prometheus?api_key=7f664d70-4513-4288-a2f5-c91a475979b4'
+        send_resolved: true
+        max_alerts: 100

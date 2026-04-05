@@ -1,0 +1,64 @@
+# ============================================================
+# Keep IDC 监控模拟 - Prometheus + Alertmanager + Node Exporter
+# 告警通过 webhook 推送到 Keep 后端
+# ============================================================
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.0
+    container_name: idc-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alert.rules:/etc/prometheus/alert.rules:ro
+      - idc-prometheus-data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - keep-network
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: idc-alertmanager
+    ports:
+      - "${ALERTMANAGER_PORT:-9093}:9093"
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - keep-network
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: idc-node-exporter
+    ports:
+      - "${NODE_EXPORTER_PORT:-9101}:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+    restart: unless-stopped
+    networks:
+      - keep-network
+
+volumes:
+  idc-prometheus-data:
+
+networks:
+  keep-network:
+    external: true
+    name: idc_keep-network
