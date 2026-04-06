@@ -28,7 +28,6 @@ class IncidentReport(SQLModel, table=True):
     status: str = Field(
         default=ReportStatus.PENDING.value,
         sa_column=Column(TEXT),
-        index=True,
     )
 
     # Filter criteria used to generate the report
@@ -53,4 +52,5 @@ class IncidentReport(SQLModel, table=True):
 
     __table_args__ = (
         Index("ix_incident_report_tenant_created", "tenant_id", "created_at"),
+        Index("ix_incident_report_status", "status"),
     )
