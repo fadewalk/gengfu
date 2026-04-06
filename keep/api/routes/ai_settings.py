@@ -175,7 +175,7 @@ def get_copilotkit_config(
     try:
         client, model_name = _resolve_model(tenant_id)
         return {
-            "base_url": client.base_url,
+            "base_url": str(client.base_url),
             "api_key": client.api_key,
             "model_name": model_name,
         }
