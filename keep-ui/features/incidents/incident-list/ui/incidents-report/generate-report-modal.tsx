@@ -3,17 +3,15 @@ import { Button } from "@/components/ui";
 import Modal from "@/components/ui/Modal";
 import { KeepLoader } from "@/shared/ui";
 import { useReactToPrint } from "react-to-print";
+import { CopilotKit } from "@copilotkit/react-core";
 import { useReportData } from "./use-report-data";
 import { IncidentData, ReportTemplateType } from "./models";
 import { IncidentsReport } from "./incidents-report";
 import { ReportTemplateNav } from "./report-template-nav";
-import {
-  PrinterIcon,
-  ClockIcon,
-  ChatBubbleOvalLeftIcon,
-} from "@heroicons/react/24/outline";
+import { ReportAIChatPanel } from "./report-ai-chat-panel";
+import { useAIEnabled } from "@/utils/hooks/useAI";
+import { PrinterIcon, ChatBubbleOvalLeftIcon } from "@heroicons/react/24/outline";
 import { useI18n } from "@/i18n/hooks/useI18n";
-import { toast } from "react-toastify";
 
 interface GenerateReportModalProps {
   filterCel?: string;
@@ -28,7 +26,8 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
   selectedIncidentIds,
   onClose,
 }) => {
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("comprehensive");
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<string>("comprehensive");
   const { t } = useI18n();
 
   return (
@@ -124,7 +123,7 @@ function ReportContentPanel({
   );
 }
 
-/** AI chat analysis panel - placeholder for CopilotKit integration */
+/** AI chat analysis panel with CopilotKit integration */
 function AIChatPanel({
   filterCel,
   incidentIds,
@@ -133,24 +132,30 @@ function AIChatPanel({
   incidentIds?: string[];
 }) {
   const { t } = useI18n();
+  const isAIEnabled = useAIEnabled();
 
-  // TODO: Integrate CopilotKit for AI chat-based analysis
-  // This will use <CopilotKit> + <CopilotChat> similar to incident-chat.tsx
+  if (!isAIEnabled) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full gap-4 text-center p-8">
+        <ChatBubbleOvalLeftIcon className="w-16 h-16 text-slate-300" />
+        <div>
+          <h3 className="text-lg font-semibold text-slate-700">
+            {t("incidents.report.aiChat.title")}
+          </h3>
+          <p className="text-sm text-slate-500 mt-2 max-w-md">
+            {t("incidents.report.aiChat.notEnabled")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-4 text-center p-8">
-      <ChatBubbleOvalLeftIcon className="w-16 h-16 text-slate-300" />
-      <div>
-        <h3 className="text-lg font-semibold text-slate-700">
-          {t("incidents.report.aiChat.title")}
-        </h3>
-        <p className="text-sm text-slate-500 mt-2 max-w-md">
-          {t("incidents.report.aiChat.description")}
-        </p>
-      </div>
-      <div className="flex items-center gap-2 text-xs text-slate-400 mt-2">
-        <ClockIcon className="w-4 h-4" />
-        {t("incidents.report.aiChat.comingSoon")}
-      </div>
-    </div>
+    <CopilotKit runtimeUrl="/api/copilotkit" showDevConsole={false}>
+      <ReportAIChatPanel
+        filterCel={filterCel}
+        incidentIds={incidentIds}
+      />
+    </CopilotKit>
   );
 }

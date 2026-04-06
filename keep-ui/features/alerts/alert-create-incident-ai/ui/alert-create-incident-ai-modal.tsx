@@ -144,13 +144,9 @@ export const CreateIncidentWithAIModal = ({
     } catch (error) {
       if (error instanceof KeepApiError) {
         if (error.statusCode === 400) {
-          setError(
-            t("alerts.createIncidentAI.errorNotInitialized")
-          );
+          setError(t("alerts.createIncidentAI.errorNotInitialized"));
         } else {
-          setError(
-            error.message || t("alerts.createIncidentAI.errorFailed")
-          );
+          setError(error.message || t("alerts.createIncidentAI.errorFailed"));
         }
       } else {
         setError(t("alerts.createIncidentAI.errorUnexpected"));
@@ -295,7 +291,9 @@ export const CreateIncidentWithAIModal = ({
     } catch (error) {
       console.error("Error creating incidents:", error);
       if (error instanceof KeepApiError) {
-        setError(error.message || t("alerts.createIncidentAI.errorCreateFailed"));
+        setError(
+          error.message || t("alerts.createIncidentAI.errorCreateFailed")
+        );
       } else {
         setError(t("alerts.createIncidentAI.errorUnexpected"));
       }
@@ -374,17 +372,22 @@ export const CreateIncidentWithAIModal = ({
                 {activeAlert && activeIncidentIndex !== null && (
                   <div className="bg-white shadow-lg rounded p-2 border border-gray-200 min-w-[800px] flex items-center gap-4">
                     <div className="w-1/6 break-words font-medium">
-                      {activeAlert.name || t("alerts.createIncidentAI.unnamedAlert")}
+                      {activeAlert.name ||
+                        t("alerts.createIncidentAI.unnamedAlert")}
                     </div>
                     <div className="w-2/3 break-words whitespace-normal text-gray-600">
                       <FormattedContent
-                        content={activeAlert.description || t("alerts.createIncidentAI.noDescription")}
+                        content={
+                          activeAlert.description ||
+                          t("alerts.createIncidentAI.noDescription")
+                        }
                         format={activeAlert.description_format}
                       />
                     </div>
                     <div className="w-1/12 break-words">
                       <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-sm">
-                        {activeAlert.severity || t("common.messages.notApplicable")}
+                        {activeAlert.severity ||
+                          t("common.messages.notApplicable")}
                       </span>
                     </div>
                     <div className="w-1/12 break-words text-gray-600">
@@ -398,7 +401,9 @@ export const CreateIncidentWithAIModal = ({
           </DndContext>
         ) : (
           <Card className="flex flex-col items-center h-[400px] p-8">
-            <Title className="text-2xl">{t("alerts.createIncidentAI.cardTitle")}</Title>
+            <Title className="text-2xl">
+              {t("alerts.createIncidentAI.cardTitle")}
+            </Title>
             <div className="flex-1" />
             <div className="w-full flex flex-col items-center">
               {alerts.length > 50 ? (
@@ -407,7 +412,9 @@ export const CreateIncidentWithAIModal = ({
                   color="orange"
                   className="w-full mb-4"
                 >
-                  {t("alerts.createIncidentAI.alertLimitMessage", { count: alerts.length })}
+                  {t("alerts.createIncidentAI.alertLimitMessage", {
+                    count: alerts.length,
+                  })}
                 </Callout>
               ) : (
                 <Callout
@@ -415,11 +422,17 @@ export const CreateIncidentWithAIModal = ({
                   color="purple"
                   className="w-full mb-4"
                 >
-                  {t("alerts.createIncidentAI.aiAnalysisMessage", { count: alerts.length })}
+                  {t("alerts.createIncidentAI.aiAnalysisMessage", {
+                    count: alerts.length,
+                  })}
                 </Callout>
               )}
               {error && (
-                <Callout title={t("alerts.createIncidentAI.errorTitle")} color="red" className="w-full mb-4">
+                <Callout
+                  title={t("alerts.createIncidentAI.errorTitle")}
+                  color="red"
+                  className="w-full mb-4"
+                >
                   {error}
                 </Callout>
               )}

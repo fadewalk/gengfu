@@ -2157,7 +2157,10 @@
       "aiChat": {
         "title": "AI 对话分析",
         "description": "与 AI 助手对话，深入探索事件数据，获取定制化分析和建议。",
-        "comingSoon": "即将上线"
+        "comingSoon": "即将上线",
+        "notEnabled": "AI 未配置，请先在设置中启用 AI 功能。",
+        "initialMessage": "你好！我是事件分析助手，可以针对选中的事件回答任何问题——趋势、根因、风险评估或改进建议。",
+        "placeholder": "输入问题分析事件..."
       },
       "history": "历史",
       "reports": "报告",

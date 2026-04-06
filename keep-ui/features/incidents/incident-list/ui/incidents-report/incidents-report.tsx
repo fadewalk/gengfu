@@ -412,7 +412,9 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
         renderTrendAnalysis()}
       {(templateType === "comprehensive" || templateType === "root_cause") &&
         renderRootCauseAnalysis()}
-      {(templateType === "comprehensive" || templateType === "root_cause" || templateType === "deep") &&
+      {(templateType === "comprehensive" ||
+        templateType === "root_cause" ||
+        templateType === "deep") &&
         renderRecommendations()}
       {(templateType === "comprehensive" || templateType === "deep") &&
         renderRiskAssessment()}

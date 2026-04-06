@@ -1013,7 +1013,10 @@
       "aiChat": {
         "title": "AI Chat Analysis",
         "description": "Chat with an AI assistant to explore incident data and get customized analysis and recommendations.",
-        "comingSoon": "Coming soon"
+        "comingSoon": "Coming soon",
+        "notEnabled": "AI is not configured. Please enable AI in Settings to use this feature.",
+        "initialMessage": "Hi! I'm your incident analysis assistant. Ask me anything about the selected incidents — trends, root causes, risk assessment, or recommendations.",
+        "placeholder": "Ask about incidents..."
       },
       "history": "History",
       "reports": "reports",
