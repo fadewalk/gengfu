@@ -197,21 +197,27 @@ class IncidentReportsBl:
         response = open_ai_client.chat.completions.create(**kwargs)
 
         model_response = response.choices[0].message.content
+        if not model_response:
+            logger.error("LLM returned empty response")
+            return OpenAIReportPart()
         try:
-            # Strip markdown code fences that some LLMs (e.g. GLM) wrap around JSON
-            stripped = model_response.strip()
-            if stripped.startswith("```"):
-                stripped = stripped.split("\n", 1)[1] if "\n" in stripped else stripped[3:]
-            if stripped.endswith("```"):
-                stripped = stripped[:-3]
-            stripped = stripped.strip()
+            # Extract JSON from markdown code fences using regex (more robust)
+            import re
+            # Try to find JSON between ```json and ``` or just between ``` and ```
+            json_match = re.search(r'```(?:json)?\s*\n(.*?)\n```', model_response, re.DOTALL)
+            if json_match:
+                stripped = json_match.group(1).strip()
+            else:
+                # No markdown fences, use the raw response
+                stripped = model_response.strip()
+            if not stripped:
+                logger.error("LLM response empty after stripping markdown")
+                return OpenAIReportPart()
             report = OpenAIReportPart(**json.loads(stripped))
             return report
         except Exception as e:
             logger.error(
-                f"""Failed to parse OpenAI response: {e}
-                    Response: {model_response}
-                """
+                f"Failed to parse OpenAI response: {e}, Response: {model_response}"
             )
             raise e
 
