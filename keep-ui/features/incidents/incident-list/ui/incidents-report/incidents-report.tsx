@@ -187,6 +187,9 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
     );
     if (reasons.length === 0) return <></>;
 
+    // 计算最大计数用于进度条宽度
+    const maxCount = Math.max(...reasons.map(([, ids]) => ids.length), 1);
+
     return (
       <Card className="bg-white border border-slate-100 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
@@ -196,16 +199,31 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
           </Title>
         </div>
         <div className="space-y-3">
-          {reasons.slice(0, 6).map(([reason, incidentIds]) => (
-            <div key={reason} className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Badge color="orange" size="sm" className="font-normal">
-                  {incidentIds.length}
-                </Badge>
-                <Text className="text-slate-700">{reason}</Text>
+          {reasons.slice(0, 6).map(([reason, incidentIds]) => {
+            const count = incidentIds.length;
+            const widthPercent = (count / maxCount) * 100;
+            return (
+              <div key={reason} className="flex items-center justify-between">
+                <div className="flex items-center gap-2 flex-1">
+                  <Badge color="orange" size="sm" className="font-bold min-w-[28px] justify-center">
+                    {count}
+                  </Badge>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <Text className="text-slate-700 text-sm">{reason}</Text>
+                      <Text className="text-xs text-slate-400">{count} {t("incidents.report.incidents")}</Text>
+                    </div>
+                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-orange-400 to-orange-500 rounded-full transition-all duration-500"
+                        style={{ width: `${widthPercent}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Card>
     );

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui";
 import Modal from "@/components/ui/Modal";
 import { KeepLoader } from "@/shared/ui";
@@ -39,6 +39,25 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
   const api = useApi();
   const [isCreating, setIsCreating] = useState(false);
   const [createdReportId, setCreatedReportId] = useState<string | null>(null);
+
+  // 创建异步报告任务保存到历史记录
+  const handleCreateHistoryRecord = useCallback(async () => {
+    try {
+      await createAsyncReport(api, {
+        filterCel,
+        incidentIds: selectedIncidentIds,
+      });
+    } catch (error) {
+      console.error("Failed to create history record:", error);
+    }
+  }, [api, filterCel, selectedIncidentIds]);
+
+  // 数据加载完成后自动保存到历史记录（仅同步模式）
+  useEffect(() => {
+    if (!isLoading && data && !asyncMode) {
+      handleCreateHistoryRecord();
+    }
+  }, [isLoading, data, asyncMode, handleCreateHistoryRecord]);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({
