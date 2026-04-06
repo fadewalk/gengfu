@@ -382,11 +382,28 @@ def create_incidents_report(
     )
 
     try:
-        return reports_bl.get_incident_reports(
+        result = reports_bl.get_incident_reports(
             incidents_query_cel=cel or "true",
             allowed_incident_ids=allowed_incident_ids,
             incident_ids=incident_ids,
         )
+
+        # 同时保存到历史记录
+        with Session(engine) as session:
+            report = IncidentReport(
+                tenant_id=tenant_id,
+                name=f"Incident Report {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}",
+                status=ReportStatus.COMPLETED.value,
+                filter_cel=cel,
+                incident_ids=incident_ids,
+                result=result.model_dump() if hasattr(result, 'model_dump') else vars(result),
+                created_by=authenticated_entity.email,
+                completed_at=datetime.utcnow(),
+            )
+            session.add(report)
+            session.commit()
+
+        return result
     except CelToSqlException as e:
         logger.exception(f'Error parsing CEL expression "{cel}". {str(e)}')
         raise HTTPException(
