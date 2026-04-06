@@ -54,8 +54,13 @@ def apply_group_filter(query, model, authenticated_entity: AuthenticatedEntity):
 
     group_ids = authenticated_entity.group_ids
 
-    if group_ids is None or len(group_ids) == 0:
-        # No groups → only see tenant-wide resources
+    if group_ids is None:
+        # group_ids is None means group feature is not enabled for this user
+        # (no groups configured in the system), allow access to all resources.
+        return query
+
+    if len(group_ids) == 0:
+        # User explicitly has no groups → only see tenant-wide resources
         return query.filter(model.group_id.is_(None))
 
     # See tenant-wide resources + resources from all user's groups
@@ -119,6 +124,7 @@ def check_group_access(resource, authenticated_entity: AuthenticatedEntity) -> b
 
     Returns True if:
       - The resource has no group_id (tenant-wide, visible to all)
+      - The user's group_ids is None (group feature not enabled for this user)
       - The user's group_ids overlap with the resource's group_id
 
     Returns False if the resource belongs to a group the user is not in.
@@ -127,7 +133,12 @@ def check_group_access(resource, authenticated_entity: AuthenticatedEntity) -> b
     if resource_group_id is None:
         return True
 
-    user_group_ids = authenticated_entity.group_ids or []
+    user_group_ids = authenticated_entity.group_ids
+    # If group_ids is None, the group feature is not enabled for this user
+    # (no groups configured in the system), allow access to all resources.
+    if user_group_ids is None:
+        return True
+
     return resource_group_id in user_group_ids
 
 
