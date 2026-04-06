@@ -34,7 +34,8 @@ import {
 import { UserStatefulAvatar } from "@/entities/users/ui";
 import { DynamicImageProviderIcon } from "@/components/ui";
 import { GenerateReportModal } from "./incidents-report";
-import { DocumentChartBarIcon } from "@heroicons/react/24/outline";
+import { ReportHistory } from "./incidents-report/report-history";
+import { DocumentChartBarIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { FormattedContent } from "@/shared/ui/FormattedContent/FormattedContent";
 import { Pagination, PaginationState } from "@/features/filter/pagination";
 import { useI18n } from "@/i18n/hooks/useI18n";
@@ -44,16 +45,18 @@ function SelectedRowActions({
   onMergeInitiated,
   onDelete,
   onGenerateReport,
+  onShowHistory,
 }: {
   selectedRowIds: string[];
   onMergeInitiated: () => void;
   onDelete: () => void;
   onGenerateReport: () => void;
+  onShowHistory: () => void;
 }) {
   const { t } = useI18n();
   return (
     <div className="w-full flex justify-between">
-      <div>
+      <div className="flex gap-2">
         <Button
           color="orange"
           variant="primary"
@@ -63,6 +66,16 @@ function SelectedRowActions({
           onClick={onGenerateReport}
         >
           {t("incidents.table.generateReport")}
+        </Button>
+        <Button
+          color="blue"
+          variant="secondary"
+          icon={ClockIcon}
+          tooltip={t("incidents.table.reportHistoryTooltip")}
+          size="md"
+          onClick={onShowHistory}
+        >
+          {t("incidents.table.reportHistory")}
         </Button>
       </div>
 
@@ -122,6 +135,7 @@ export default function IncidentsTable({
 
   const [isGenerateReportModalOpen, setIsGenerateReportModalOpen] =
     useState(false);
+  const [isReportHistoryOpen, setIsReportHistoryOpen] = useState(false);
   const [runWorkflowModalIncident, setRunWorkflowModalIncident] =
     useState<IncidentDto | null>();
 
@@ -254,7 +268,8 @@ export default function IncidentsTable({
               <span>
                 {t("common.labels.and")}{" "}
                 <Link href={`/incidents/${row.original.id}/alerts`}>
-                  {notNullServices.length - maxServices} {t("common.labels.more")}
+                  {notNullServices.length - maxServices}{" "}
+                  {t("common.labels.more")}
                 </Link>
               </span>
             ) : null}
@@ -361,6 +376,11 @@ export default function IncidentsTable({
     [setIsGenerateReportModalOpen]
   );
 
+  const handleShowHistory = useCallback(
+    () => setIsReportHistoryOpen(true),
+    [setIsReportHistoryOpen]
+  );
+
   return (
     <>
       <SelectedRowActions
@@ -368,6 +388,7 @@ export default function IncidentsTable({
         onMergeInitiated={handleMergeInitiated}
         onDelete={handleDeleteMultiple}
         onGenerateReport={generateReport}
+        onShowHistory={handleShowHistory}
       />
       {incidents.items.length > 0 ? (
         <Card className="p-0 overflow-hidden">
@@ -413,6 +434,16 @@ export default function IncidentsTable({
           selectedIncidentIds={selectedRowIds}
           onClose={() => setIsGenerateReportModalOpen(false)}
         />
+      )}
+      {isReportHistoryOpen && (
+        <Modal
+          title=""
+          className="min-w-[80vw] h-[80vh]"
+          isOpen={true}
+          onClose={() => setIsReportHistoryOpen(false)}
+        >
+          <ReportHistory />
+        </Modal>
       )}
     </>
   );

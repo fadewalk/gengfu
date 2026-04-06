@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
@@ -15,7 +16,7 @@ from fastapi import (
     Response,
 )
 from pusher import Pusher
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from keep.api.arq_pool import get_pool
 from keep.api.bl.ai_suggestion_bl import AISuggestionBl
@@ -75,6 +76,8 @@ from keep.api.models.incident import (
 )
 from keep.api.models.workflow import WorkflowExecutionDTO
 from keep.api.tasks.process_incident_task import process_incident
+from keep.api.models.db.incident_report import IncidentReport, ReportStatus
+from keep.api.core.db import engine
 from keep.api.utils.enrichment_helpers import convert_db_alerts_to_dto_alerts
 from keep.api.utils.pagination import (
     AlertWithIncidentLinkMetadataPaginatedResultsDto,
@@ -388,6 +391,145 @@ def create_incidents_report(
         raise HTTPException(
             status_code=400, detail=t("Error parsing CEL expression: {cel}", cel=cel)
         )
+
+
+@router.post(
+    "/reports",
+    description="Create an async incident report task",
+    status_code=202,
+)
+async def create_incident_report_task(
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:alert"])
+    ),
+    incident_ids: Optional[List[str]] = Body(None),
+    cel: Optional[str] = Body(None),
+):
+    from arq import ArqRedis
+    from keep.api.arq_pool import get_pool
+    from keep.api.consts import KEEP_ARQ_QUEUE_BASIC
+
+    tenant_id = authenticated_entity.tenant_id
+
+    # Get allowed incident ids
+    identity_manager = IdentityManagerFactory.get_identity_manager(tenant_id)
+    allowed_incident_ids = identity_manager.get_user_permission_on_resource_type(
+        resource_type="incident",
+        authenticated_entity=authenticated_entity,
+    )
+
+    # Create report record
+    with Session(engine) as session:
+        report = IncidentReport(
+            tenant_id=tenant_id,
+            name=f"Incident Report {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}",
+            status=ReportStatus.PENDING.value,
+            filter_cel=cel,
+            incident_ids=incident_ids,
+            created_by=authenticated_entity.email,
+        )
+        session.add(report)
+        session.commit()
+        session.refresh(report)
+        report_id = report.id
+
+    # Enqueue the async task
+    redis: ArqRedis = await get_pool()
+    await redis.enqueue_job(
+        "async_process_incident_report",
+        tenant_id,
+        report_id,
+        filter_cel,
+        incident_ids,
+        allowed_incident_ids,
+        _queue_name=KEEP_ARQ_QUEUE_BASIC,
+    )
+
+    return {"report_id": str(report_id), "status": "pending"}
+
+
+@router.get(
+    "/reports",
+    description="Get incident report history",
+)
+def get_incident_reports(
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:alert"])
+    ),
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
+    tenant_id = authenticated_entity.tenant_id
+
+    with Session(engine) as session:
+        reports = session.exec(
+            select(IncidentReport)
+            .where(IncidentReport.tenant_id == tenant_id)
+            .order_by(IncidentReport.created_at.desc())
+            .limit(limit)
+            .offset(offset)
+        ).all()
+
+        total = session.exec(
+            select(IncidentReport).where(IncidentReport.tenant_id == tenant_id)
+        ).count()
+
+        return {
+            "items": [
+                {
+                    "id": str(r.id),
+                    "name": r.name,
+                    "status": r.status,
+                    "filter_cel": r.filter_cel,
+                    "incident_ids": r.incident_ids,
+                    "error": r.error,
+                    "created_at": r.created_at.isoformat() if r.created_at else None,
+                    "completed_at": r.completed_at.isoformat() if r.completed_at else None,
+                    "created_by": r.created_by,
+                }
+                for r in reports
+            ],
+            "count": total,
+            "limit": limit,
+            "offset": offset,
+        }
+
+
+@router.get(
+    "/reports/{report_id}",
+    description="Get incident report by id",
+)
+def get_incident_report(
+    report_id: UUID,
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:alert"])
+    ),
+):
+    tenant_id = authenticated_entity.tenant_id
+
+    with Session(engine) as session:
+        report = session.exec(
+            select(IncidentReport).where(
+                IncidentReport.id == report_id,
+                IncidentReport.tenant_id == tenant_id,
+            )
+        ).first()
+
+        if not report:
+            raise HTTPException(status_code=404, detail=t("Report not found"))
+
+        return {
+            "id": str(report.id),
+            "name": report.name,
+            "status": report.status,
+            "filter_cel": report.filter_cel,
+            "incident_ids": report.incident_ids,
+            "result": report.result,
+            "error": report.error,
+            "created_at": report.created_at.isoformat() if report.created_at else None,
+            "completed_at": report.completed_at.isoformat() if report.completed_at else None,
+            "created_by": report.created_by,
+        }
 
 
 @router.get(

@@ -23,6 +23,7 @@ from keep.api.consts import (
 from keep.api.core.config import config
 from keep.api.redis_settings import get_redis_settings
 from keep.api.tasks.process_event_task import process_event
+from keep.api.tasks.process_incident_report_task import async_process_incident_report
 
 # Load environment variables
 load_dotenv(find_dotenv())
@@ -45,6 +46,10 @@ if KEEP_ARQ_TASK_POOL in [KEEP_ARQ_TASK_POOL_ALL, KEEP_ARQ_TASK_POOL_BASIC_PROCE
         ),
         (
             "keep.api.tasks.process_incident_task.async_process_incident",
+            KEEP_ARQ_QUEUE_BASIC,
+        ),
+        (
+            "keep.api.tasks.process_incident_report_task.async_process_incident_report",
             KEEP_ARQ_QUEUE_BASIC,
         ),
     ]
@@ -119,6 +124,7 @@ async def process_event_in_worker(
 
 
 FUNCTIONS.append(process_event_in_worker)
+FUNCTIONS.append(async_process_incident_report)
 
 
 

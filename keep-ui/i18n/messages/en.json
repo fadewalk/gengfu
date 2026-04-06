@@ -191,7 +191,13 @@
       "weeksAgo": "{count} week ago",
       "weeksAgo_other": "{count} weeks ago",
       "monthsAgo": "{count} month ago",
-      "monthsAgo_other": "{count} months ago"
+      "monthsAgo_other": "{count} months ago",
+      "months": "months",
+      "weeks": "weeks",
+      "days": "days",
+      "hours": "hours",
+      "minutes": "minutes",
+      "seconds": "seconds"
     },
     "theme": {
       "light": "Light",
@@ -968,17 +974,20 @@
     "report": {
       "title": "Incidents Report",
       "print": "Print",
-      "mostCommonReasons": "Most of the incidents reasons:",
-      "affectedServices": "Affected services:",
-      "recurringIncidents": "Recurring incidents:",
-      "incidentMetrics": "Incident Metrics:",
+      "mostCommonReasons": "Most Frequent Reasons",
+      "affectedServices": "Affected Services",
+      "recurringIncidents": "Recurring Incidents",
+      "incidentMetrics": "Incident Metrics",
       "mTTD": "Mean Time To Detect (MTTD)",
       "mTTR": "Mean Time To Resolve (MTTR)",
-      "shortestDuration": "Shortest Incident Duration",
-      "longestDuration": "Longest Incident Duration",
-      "incidentsSeverity": "Incidents severity:",
+      "shortestDuration": "Shortest Duration",
+      "longestDuration": "Longest Duration",
+      "incidentsSeverity": "Incidents Severity",
       "incidentCountSingle": "1 incident",
-      "incidentCountPlural": "{count} incidents"
+      "incidentCountPlural": "{count} incidents",
+      "totalIncidents": "Total Incidents",
+      "filterCondition": "Filter Condition",
+      "incidents": "incidents"
     },
     "sort": {
       "ascending": "Sort ascending",

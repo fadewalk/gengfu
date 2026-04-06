@@ -17,9 +17,9 @@ export const useReportData = (options: UseReportDataOptions = {}) => {
       setData(null);
       if (incidentIds && incidentIds.length > 0) {
         // Use POST with incident_ids for selected incidents
-        api.post(`/incidents/report`, { incident_ids: incidentIds }).then((data) =>
-          setData(data)
-        );
+        api
+          .post(`/incidents/report`, { incident_ids: incidentIds })
+          .then((data) => setData(data));
       } else {
         // Use GET with CEL filter
         let requestUrl = `/incidents/report`;

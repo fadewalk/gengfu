@@ -6,6 +6,8 @@ import {
   UISeverity,
 } from "@/shared/ui/utils/severity-utils";
 import { useI18n } from "@/i18n/hooks/useI18n";
+import { Card, Title, Badge } from "@tremor/react";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 interface IncidentSeverityMetricProps {
   severityMetrics: SeverityMetrics;
@@ -54,30 +56,35 @@ export const IncidentSeverityMetric: React.FC<IncidentSeverityMetricProps> = ({
   }
 
   return (
-    <div className="break-inside-avoid text-lg">
-      <p className="font-bold mb-2">{t("incidents.report.incidentsSeverity")}</p>
-      <div className="flex items-center gap-10">
+    <Card className="bg-white border border-slate-100 shadow-sm h-full">
+      <div className="flex items-center gap-2 mb-4">
+        <ExclamationCircleIcon className="w-5 h-5 text-orange-600" />
+        <Title className="text-lg">{t("incidents.report.incidentsSeverity")}</Title>
+      </div>
+      <div className="flex items-center gap-6">
         <DonutChart
-          className="w-48 h-48"
+          className="w-36 h-36"
           data={sortedByValue}
           colors={severityColorsSorted}
           variant="pie"
-          onValueChange={(v) => console.log(v)}
+          showAnimation={true}
         />
-        <div className="flex-col">
-          {sortedByValue.map((chartValue, index) => (
-            <div key={chartValue.name} className="flex gap-2">
+        <div className="flex-col flex-1 space-y-2">
+          {sortedByValue.map((chartValue) => (
+            <div key={chartValue.name} className="flex items-center gap-2">
               <div
-                className={`min-w-5 h-3 mt-2 ${severityBgColorDictionary[chartValue.name]}`}
+                className={`w-3 h-3 rounded-full ${severityBgColorDictionary[chartValue.name]}`}
               ></div>
-              <div>
-                <span className="font-bold">{translateSeverity(chartValue.name)}</span> -{" "}
-                <span>{formatIncidentsCount(chartValue.value)}</span>
-              </div>
+              <span className="font-medium text-slate-700">
+                {translateSeverity(chartValue.name)}
+              </span>
+              <Badge color="slate" size="sm" className="ml-auto">
+                {formatIncidentsCount(chartValue.value)}
+              </Badge>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </Card>
   );
 };

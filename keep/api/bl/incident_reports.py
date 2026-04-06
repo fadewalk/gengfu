@@ -1,6 +1,7 @@
 import json
 import logging
 import math
+import os
 from typing import List, Optional
 from uuid import UUID
 
@@ -68,6 +69,28 @@ Generate an incident report based on the provided incidents dataset and response
                 "Reason 1": ["incident_id_1", "incident_id_2"],
                 "Reason 2": ["incident_id_3"],
                 "Reason 3": ["incident_id_4", "incident_id_5", "incident_id_6"]
+            }
+"""
+
+system_prompt_zh = """
+根据提供的事件数据集和响应架构生成事件报告。确保所有计算指标遵循指定格式以保持一致性。
+
+**计算和指标：**
+1. **最常见事件原因**
+   - JSON 属性名：most_frequent_reasons
+   - 通过分析以下字段识别最常见的根本原因：incident_name（事件名称）、incident_summary（事件摘要）、severity（严重程度）
+   - 尝试找出数据集中未明确提及的根本原因
+   - 保持简洁，原因必须简短但同时具有描述性
+   - 对相似原因进行分组以避免重复
+   - 仅输出前 6 个原因
+   - 返回一个 JSON 对象，即一个字典
+   - 字典中每个键必须是事件原因（描述事件原因的字符串）
+   - 每个键的值必须是与该原因对应的事件 ID 列表（字符串）
+   - most_frequent_reasons 属性中的对象结构应遵循以下确切格式：
+            {
+                "原因 1": ["incident_id_1", "incident_id_2"],
+                "原因 2": ["incident_id_3"],
+                "原因 3": ["incident_id_4", "incident_id_5", "incident_id_6"]
             }
 """
 
@@ -147,12 +170,17 @@ class IncidentReportsBl:
 
         incidents_json = json.dumps(incidents_minified, default=str)
 
+        # Select prompt based on locale
+        locale = os.environ.get("KEEP_DEFAULT_LOCALE", "zh_CN")
+        use_chinese = locale in ("zh_CN", "zh")
+        selected_prompt = system_prompt_zh if use_chinese else system_prompt
+
         # Only add response_format for OpenAI API; many compatible APIs don't support json_schema
         base_url_str = str(open_ai_client.base_url) if open_ai_client.base_url else ""
         kwargs: dict = {
             "model": get_model_name(self.tenant_id),
             "messages": [
-                {"role": "system", "content": system_prompt},
+                {"role": "system", "content": selected_prompt},
                 {"role": "user", "content": incidents_json},
             ],
             "seed": 1239,

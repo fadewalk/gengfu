@@ -1288,7 +1288,13 @@
       "daysAgo_other": "{count} 天前",
       "weeksAgo_other": "{count} 周前",
       "monthsAgo": "{count} 个月前",
-      "secondsAgo_other": "{count} 秒前"
+      "secondsAgo_other": "{count} 秒前",
+      "months": "个月",
+      "weeks": "周",
+      "days": "天",
+      "hours": "小时",
+      "minutes": "分钟",
+      "seconds": "秒"
     },
     "pagination": {
       "results": "条结果",
@@ -2112,17 +2118,20 @@
     "report": {
       "title": "事件报告",
       "print": "打印",
-      "mostCommonReasons": "最常见的事件原因：",
-      "affectedServices": "受影响的服务：",
-      "recurringIncidents": "重复发生的事件：",
-      "incidentMetrics": "事件指标：",
+      "mostCommonReasons": "最常见事件原因",
+      "affectedServices": "受影响服务",
+      "recurringIncidents": "重复发生事件",
+      "incidentMetrics": "事件指标",
       "mTTD": "平均检测时间 (MTTD)",
       "mTTR": "平均恢复时间 (MTTR)",
-      "shortestDuration": "最短事件持续时间",
-      "longestDuration": "最长事件持续时间",
-      "incidentsSeverity": "事件严重程度：",
+      "shortestDuration": "最短持续时间",
+      "longestDuration": "最长持续时间",
+      "incidentsSeverity": "事件严重程度",
       "incidentCountSingle": "1 个事件",
-      "incidentCountPlural": "{count} 个事件"
+      "incidentCountPlural": "{count} 个事件",
+      "totalIncidents": "事件总数",
+      "filterCondition": "筛选条件",
+      "incidents": "事件"
     },
     "sort": {
       "ascending": "升序排序",
