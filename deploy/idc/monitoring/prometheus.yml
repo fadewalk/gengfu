@@ -6,6 +6,16 @@ global:
     env: 'production'
     datacenter: 'idc'
 
+remote_write:
+  - url: http://192.168.1.23:18428/api/v1/write
+    tls_config:
+      insecure_skip_verify: true
+    queue_config:
+      capacity: 10000
+      max_shards: 30
+      min_shards: 1
+      max_samples_per_send: 2000
+
 alerting:
   alertmanagers:
     - static_configs:
@@ -45,4 +55,24 @@ scrape_configs:
         labels:
           instance: 'prometheus'
           service: 'monitoring'
+          env: 'production'
+
+  # Federation: scrape VictoriaMetrics /metrics (self-monitoring)
+  - job_name: 'victorialogs'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['victorialogs:9428']
+        labels:
+          instance: 'victorialogs'
+          service: 'victorialogs'
+          env: 'production'
+
+  - job_name: 'victoriametrics'
+    scrape_interval: 15s
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['victoriametrics:8428']
+        labels:
+          instance: 'victoriametrics'
+          service: 'victoriametrics'
           env: 'production'
