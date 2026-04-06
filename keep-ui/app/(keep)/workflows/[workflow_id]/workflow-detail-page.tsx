@@ -11,7 +11,6 @@ import {
 } from "@tremor/react";
 import React, { useState, useEffect } from "react";
 import {
-  ArrowUpRightIcon,
   CodeBracketIcon,
   WrenchIcon,
   KeyIcon,
@@ -20,11 +19,10 @@ import { Workflow } from "@/shared/api/workflows";
 import { WorkflowBuilderWidget } from "@/widgets/workflow-builder";
 import WorkflowOverview from "./workflow-overview";
 import WorkflowSecrets from "./workflow-secrets";
-import { useConfig } from "utils/hooks/useConfig";
 import { AiOutlineSwap } from "react-icons/ai";
-import { ErrorComponent, TabNavigationLink } from "@/shared/ui";
+import { ErrorComponent } from "@/shared/ui";
 import Skeleton from "react-loading-skeleton";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useWorkflowDetail } from "@/entities/workflows/model/useWorkflowDetail";
 import { WorkflowYAMLEditorStandalone } from "@/shared/ui/WorkflowYAMLEditor/ui/WorkflowYAMLEditorStandalone";
 import { getOrderedWorkflowYamlString } from "@/entities/workflows/lib/yaml-utils";
@@ -51,12 +49,10 @@ export default function WorkflowDetailPage({
   initialData?: Workflow;
 }) {
   const { t } = useI18n();
-  const { data: configData } = useConfig();
   const searchParams = useSearchParams();
   const [tabIndex, setTabIndex] = useState(
     getTabIndex(searchParams.get("tab") ?? "")
   );
-  const router = useRouter();
 
   const isUIBuilderUnsaved = useUIBuilderUnsavedChanges();
   const { hasUnsavedChanges: isYamlEditorUnsaved } =
@@ -75,8 +71,6 @@ export default function WorkflowDetailPage({
       fallbackData: initialData,
     }
   );
-
-  const docsUrl = configData?.KEEP_DOCS_URL || "https://docs.keephq.dev";
 
   if (error) {
     return <ErrorComponent error={error} />;
@@ -112,22 +106,10 @@ export default function WorkflowDetailPage({
               ) : null}
             </div>
           </Tab>
-          <Tab icon={PiClockCounterClockwise}>{t("workflows.tabs.versions")}</Tab>
+          <Tab icon={PiClockCounterClockwise}>
+            {t("workflows.tabs.versions")}
+          </Tab>
           <Tab icon={KeyIcon}>{t("workflows.tabs.secrets")}</Tab>
-          <TabNavigationLink
-            href="https://www.youtube.com/@keepalerting"
-            icon={ArrowUpRightIcon}
-            target="_blank"
-          >
-            {t("workflows.tabs.tutorials")}
-          </TabNavigationLink>
-          <TabNavigationLink
-            href={`${docsUrl}/workflows`}
-            icon={ArrowUpRightIcon}
-            target="_blank"
-          >
-            {t("workflows.tabs.documentation")}
-          </TabNavigationLink>
         </TabList>
         <TabPanels>
           <TabPanel id="overview">
