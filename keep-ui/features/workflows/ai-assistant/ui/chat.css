@@ -21,4 +21,10 @@
   .copilotKitMessages .suggestion {
     @apply bg-white text-black scale-100 border-tremor-border border-2 hover:border-tremor-brand hover:text-tremor-brand hover:bg-tremor-brand-muted dark:border-dark-tremor-brand dark:hover:bg-dark-tremor-brand-muted transition !important;
   }
+
+  /* Hide CopilotKit version upgrade notification */
+  .copilotKitDevConsoleUpgrade,
+  .copilotKitVersionInfo {
+    display: none !important;
+  }
 }

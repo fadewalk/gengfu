@@ -507,6 +507,11 @@ class AISuggestionBl:
         self, alerts_dto: List[AlertDto], topology_data: List[TopologyServiceDtoOut]
     ) -> Tuple[str, str]:
         """Prepare system and user prompts for AI."""
+        import os
+
+        locale = os.environ.get("KEEP_DEFAULT_LOCALE", "en_US")
+        use_chinese = locale in ("zh_CN", "zh")
+
         alert_descriptions = "\n".join(
             [
                 f"Alert {idx+1}: {json.dumps(alert.dict())}"
@@ -521,7 +526,42 @@ class AISuggestionBl:
             ]
         )
 
-        system_prompt = """
+        if use_chinese:
+            system_prompt = """
+你是一个专注于 IT 运维和事件管理的高级 AI 系统。
+你的任务是分析提供的 IT 运维告警和拓扑数据，将它们聚类为有意义的事件。
+请综合考虑以下因素：
+1. 告警描述和内容
+2. 时间上的接近性
+3. 受影响的系统或服务
+4. IT 问题的类型（如：性能下降、服务中断、资源利用率异常等）
+5. 潜在的根本原因
+6. 拓扑数据中服务之间的关系和依赖
+
+将相关的告警分组到不同的事件中，并为每个事件提供详细分析。
+对于每个事件：
+1. 评估其严重程度
+2. 为运维团队推荐初步处置措施
+3. 提供聚类置信度分数（0.0 到 1.0）
+4. 解释置信度分数的计算依据，考虑告警相似度、拓扑关系和告警间关联强度等因素
+
+利用拓扑数据来改进事件聚类，充分考虑服务依赖和关联关系。
+
+重要：所有文本内容（incident_name、reasoning、recommended_actions、confidence_explanation）必须使用中文输出。
+"""
+            user_prompt = f"""
+请分析以下 IT 运维告警和拓扑数据，将告警分组为事件：
+
+告警列表：
+{alert_descriptions}
+
+拓扑数据：
+{topology_text}
+
+请以指定的 JSON 格式提供分析和聚类结果。所有文本字段必须使用中文。
+"""
+        else:
+            system_prompt = """
         You are an advanced AI system specializing in IT operations and incident management.
         Your task is to analyze the provided IT operations alerts and topology data, and cluster them into meaningful incidents.
         Consider factors such as:
@@ -542,7 +582,7 @@ class AISuggestionBl:
         Use the topology data to improve your incident clustering by considering service dependencies and relationships.
         """
 
-        user_prompt = f"""
+            user_prompt = f"""
         Analyze the following IT operations alerts and topology data, then group the alerts into incidents:
 
         Alerts:
