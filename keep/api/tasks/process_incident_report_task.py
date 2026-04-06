@@ -53,8 +53,9 @@ def process_incident_report(
                 incident_ids=incident_ids,
             )
 
-            # Store the result
-            report.result = result.model_dump() if hasattr(result, 'model_dump') else vars(result)
+            # Store the result — ensure JSON-serializable (convert any enum keys etc.)
+            result_dict = result.model_dump() if hasattr(result, 'model_dump') else vars(result)
+            report.result = json.loads(json.dumps(result_dict, default=str))
             report.status = ReportStatus.COMPLETED.value
             report.completed_at = datetime.utcnow()
             session.commit()

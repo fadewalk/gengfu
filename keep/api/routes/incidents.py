@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import datetime
 from typing import List, Optional
@@ -396,7 +397,7 @@ def create_incidents_report(
                 status=ReportStatus.COMPLETED.value,
                 filter_cel=cel,
                 incident_ids=incident_ids,
-                result=result.model_dump() if hasattr(result, 'model_dump') else vars(result),
+                result=json.loads(json.dumps(result.model_dump() if hasattr(result, 'model_dump') else vars(result), default=str)),
                 created_by=authenticated_entity.email,
                 completed_at=datetime.utcnow(),
             )

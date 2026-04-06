@@ -238,11 +238,12 @@ class IncidentReportsBl:
     def __calculate_severity_metrics(
         self, incidents: list[IncidentDto]
     ) -> dict[str, list[IncidentReportDto]]:
-        severity_metrics = {}
+        severity_metrics: dict[str, list[IncidentReportDto]] = {}
         for incident in incidents:
-            if incident.severity not in severity_metrics:
-                severity_metrics[incident.severity] = []
-            severity_metrics[incident.severity].append(
+            severity_key = str(incident.severity)
+            if severity_key not in severity_metrics:
+                severity_metrics[severity_key] = []
+            severity_metrics[severity_key].append(
                 IncidentReportDto(
                     incident_name=incident.user_generated_name
                     or incident.ai_generated_name,
