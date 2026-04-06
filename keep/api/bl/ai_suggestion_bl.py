@@ -509,7 +509,7 @@ class AISuggestionBl:
         """Prepare system and user prompts for AI."""
         import os
 
-        locale = os.environ.get("KEEP_DEFAULT_LOCALE", "en_US")
+        locale = os.environ.get("KEEP_DEFAULT_LOCALE", "zh_CN")
         use_chinese = locale in ("zh_CN", "zh")
 
         alert_descriptions = "\n".join(
