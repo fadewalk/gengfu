@@ -2136,7 +2136,8 @@
       "filterCondition": "筛选条件",
       "incidents": "事件",
       "history": "历史",
-      "reports": "报告"
+      "reports": "报告",
+      "noReports": "暂无报告"
     },
     "sort": {
       "ascending": "升序排序",

@@ -16,6 +16,7 @@ from fastapi import (
     Response,
 )
 from pusher import Pusher
+from sqlalchemy import func
 from sqlmodel import Session, select
 
 from keep.api.arq_pool import get_pool
@@ -470,9 +471,9 @@ def get_incident_reports(
             .offset(offset)
         ).all()
 
-        total = session.exec(
-            select(IncidentReport).where(IncidentReport.tenant_id == tenant_id)
-        ).count()
+        total = session.scalar(
+            select(func.count()).select_from(IncidentReport).where(IncidentReport.tenant_id == tenant_id)
+        ) or 0
 
         return {
             "items": [

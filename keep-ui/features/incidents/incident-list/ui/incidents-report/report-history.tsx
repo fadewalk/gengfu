@@ -11,7 +11,6 @@ import {
   Text,
   Flex,
   Col,
-  Row,
 } from "@tremor/react";
 import {
   DocumentChartBarIcon,

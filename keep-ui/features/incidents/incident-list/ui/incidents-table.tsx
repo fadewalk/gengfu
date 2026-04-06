@@ -19,6 +19,7 @@ import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import IncidentTableComponent from "./incident-table-component";
 import { ManualRunWorkflowModal } from "@/features/workflows/manual-run-workflow";
 import { Button, Link } from "@/components/ui";
+import Modal from "@/components/ui/Modal";
 import { MergeIncidentsModal } from "@/features/incidents/merge-incidents";
 import { IncidentDropdownMenu } from "./incident-dropdown-menu";
 import clsx from "clsx";

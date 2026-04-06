@@ -992,7 +992,8 @@
       "filterCondition": "Filter Condition",
       "incidents": "incidents",
       "history": "History",
-      "reports": "reports"
+      "reports": "reports",
+      "noReports": "No reports"
     },
     "sort": {
       "ascending": "Sort ascending",
