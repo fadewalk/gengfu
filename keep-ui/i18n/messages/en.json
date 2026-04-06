@@ -247,7 +247,8 @@
       "past6Days": "Past 6 days",
       "past60Days": "Past 60 days"
     },
-    "error": "Error"
+    "error": "Error",
+    "refresh": "Refresh"
   },
   "auth": {
     "login": {
@@ -830,11 +831,13 @@
       "involvedServices": "Involved Services",
       "assignee": "Assignee",
       "createdAt": "Created At",
-      "generateReport": "Generate report",
-      "generateReportTooltip": "Generate report for currently visible incidents",
-      "selected": "selected",
+      "generateReport": "Generate Report",
+      "generateReportTooltip": "Generate report for current visible incidents",
+      "selected": "Selected",
       "merge": "Merge",
-      "delete": "Delete"
+      "delete": "Delete",
+      "reportHistory": "Report History",
+      "reportHistoryTooltip": "View report history"
     },
     "messages": {
       "addCommentPlaceholder": "Add a comment...",
@@ -987,11 +990,9 @@
       "incidentCountPlural": "{count} incidents",
       "totalIncidents": "Total Incidents",
       "filterCondition": "Filter Condition",
-      "incidents": "incidents"
-    },
-    "table": {
-      "reportHistory": "Report History",
-      "reportHistoryTooltip": "View report history"
+      "incidents": "incidents",
+      "history": "History",
+      "reports": "reports"
     },
     "sort": {
       "ascending": "Sort ascending",

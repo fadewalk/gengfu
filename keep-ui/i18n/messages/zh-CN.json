@@ -1308,7 +1308,8 @@
       "previous": "上一页",
       "next": "下一步"
     },
-    "error": "错误"
+    "error": "错误",
+    "refresh": "刷新"
   },
   "shared": {
     "error": {
@@ -1932,7 +1933,9 @@
       "generateReportTooltip": "为当前可见事件生成报告",
       "selected": "已选择",
       "merge": "合并",
-      "delete": "删除"
+      "delete": "删除",
+      "reportHistory": "历史报告",
+      "reportHistoryTooltip": "查看历史报告"
     },
     "status": {
       "deleted": "已删除",
@@ -2131,11 +2134,9 @@
       "incidentCountPlural": "{count} 个事件",
       "totalIncidents": "事件总数",
       "filterCondition": "筛选条件",
-      "incidents": "事件"
-    },
-    "table": {
-      "reportHistory": "历史报告",
-      "reportHistoryTooltip": "查看历史报告"
+      "incidents": "事件",
+      "history": "历史",
+      "reports": "报告"
     },
     "sort": {
       "ascending": "升序排序",
