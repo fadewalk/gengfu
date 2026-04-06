@@ -59,7 +59,9 @@ export const IncidentSeverityMetric: React.FC<IncidentSeverityMetricProps> = ({
     <Card className="bg-white border border-slate-100 shadow-sm h-full">
       <div className="flex items-center gap-2 mb-4">
         <ExclamationCircleIcon className="w-5 h-5 text-orange-600" />
-        <Title className="text-lg">{t("incidents.report.incidentsSeverity")}</Title>
+        <Title className="text-lg">
+          {t("incidents.report.incidentsSeverity")}
+        </Title>
       </div>
       <div className="flex items-center gap-6">
         <DonutChart

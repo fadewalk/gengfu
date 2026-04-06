@@ -2,11 +2,16 @@ import React, { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui";
 import Modal from "@/components/ui/Modal";
 import { KeepLoader } from "@/shared/ui";
+import { Title } from "@tremor/react";
 import { useReactToPrint } from "react-to-print";
 import { useReportData } from "./use-report-data";
 import { IncidentData } from "./models";
 import { IncidentsReport } from "./incidents-report";
-import { PrinterIcon, ClockIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import {
+  PrinterIcon,
+  ClockIcon,
+  ArrowPathIcon,
+} from "@heroicons/react/24/outline";
 import { useI18n } from "@/i18n/hooks/useI18n";
 import { useApi } from "@/shared/lib/hooks/useApi";
 import { createAsyncReport } from "./use-async-report";

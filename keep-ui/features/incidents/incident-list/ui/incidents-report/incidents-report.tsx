@@ -136,9 +136,7 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
         <div>
           <Text className="text-sm text-slate-500">{metricName}</Text>
           <Text className="font-semibold text-slate-800">
-            {metricValueInSeconds
-              ? convertSeconds(metricValueInSeconds)
-              : "-"}
+            {metricValueInSeconds ? convertSeconds(metricValueInSeconds) : "-"}
           </Text>
         </div>
       </div>
@@ -150,7 +148,9 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
       <Card className="bg-white border border-slate-100 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
           <ArrowTrendingUpIcon className="w-5 h-5 text-orange-600" />
-          <Title className="text-lg">{t("incidents.report.incidentMetrics")}</Title>
+          <Title className="text-lg">
+            {t("incidents.report.incidentMetrics")}
+          </Title>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {renderTimeMetric(
@@ -166,7 +166,8 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
           {incidentsReportData?.incident_durations &&
             renderTimeMetric(
               t("incidents.report.shortestDuration"),
-              incidentsReportData?.incident_durations?.shortest_duration_seconds,
+              incidentsReportData?.incident_durations
+                ?.shortest_duration_seconds,
               ClockIcon
             )}
           {incidentsReportData?.incident_durations &&
@@ -190,7 +191,9 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
       <Card className="bg-white border border-slate-100 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
           <ExclamationTriangleIcon className="w-5 h-5 text-orange-600" />
-          <Title className="text-lg">{t("incidents.report.mostCommonReasons")}</Title>
+          <Title className="text-lg">
+            {t("incidents.report.mostCommonReasons")}
+          </Title>
         </div>
         <div className="space-y-3">
           {reasons.slice(0, 6).map(([reason, incidentIds]) => (
@@ -218,7 +221,9 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
       <Card className="bg-white border border-slate-100 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
           <DocumentChartBarIcon className="w-5 h-5 text-orange-600" />
-          <Title className="text-lg">{t("incidents.report.affectedServices")}</Title>
+          <Title className="text-lg">
+            {t("incidents.report.affectedServices")}
+          </Title>
         </div>
         <div className="flex flex-wrap gap-2">
           {services.map(([service, count]) => (
@@ -239,12 +244,14 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
       <Card className="bg-white border border-slate-100 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
           <ArrowTrendingUpIcon className="w-5 h-5 text-orange-600" />
-          <Title className="text-lg">{t("incidents.report.recurringIncidents")}</Title>
+          <Title className="text-lg">
+            {t("incidents.report.recurringIncidents")}
+          </Title>
         </div>
         <div className="space-y-2">
           {recurring.map((incident) => (
             <div
-              key={incident.incident_id}
+              key={incident.incident_id || ""}
               className="flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
             >
               <div className="flex items-center gap-2">
@@ -256,7 +263,7 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
                 </Text>
               </div>
               <Text className="text-xs text-slate-400 font-mono">
-                {incident.incident_id.slice(0, 8)}...
+                {incident.incident_id?.slice(0, 8) || ""}...
               </Text>
             </div>
           ))}

@@ -88,7 +88,9 @@ export const useReportHistory = (options: UseReportHistoryOptions = {}) => {
       setReports(data.items || []);
       setTotal(data.count || 0);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch report history");
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch report history"
+      );
     } finally {
       setIsLoading(false);
     }

@@ -20,7 +20,11 @@ import {
   XCircleIcon,
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
-import { useReportHistory, useAsyncReport, AsyncReport } from "./use-async-report";
+import {
+  useReportHistory,
+  useAsyncReport,
+  AsyncReport,
+} from "./use-async-report";
 import { useI18n } from "@/i18n/hooks/useI18n";
 import { KeepLoader } from "@/shared/ui";
 import { IncidentsReport } from "./incidents-report";
@@ -29,11 +33,24 @@ import { IncidentData } from "./models";
 function ReportStatusBadge({ status }: { status: string }) {
   const { t } = useI18n();
   const statusConfig = {
-    pending: { color: "yellow", icon: ClockIcon, label: t("incidents.report.status.pending") },
-    completed: { color: "green", icon: CheckCircleIcon, label: t("incidents.report.status.completed") },
-    failed: { color: "red", icon: XCircleIcon, label: t("incidents.report.status.failed") },
+    pending: {
+      color: "yellow",
+      icon: ClockIcon,
+      label: t("incidents.report.status.pending"),
+    },
+    completed: {
+      color: "green",
+      icon: CheckCircleIcon,
+      label: t("incidents.report.status.completed"),
+    },
+    failed: {
+      color: "red",
+      icon: XCircleIcon,
+      label: t("incidents.report.status.failed"),
+    },
   };
-  const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+  const config =
+    statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
   const Icon = config.icon;
 
   return (
@@ -123,7 +140,9 @@ function ReportDetail({
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
         <XCircleIcon className="w-12 h-12 text-red-500" />
-        <Text className="text-red-500">{t("incidents.report.status.failed")}</Text>
+        <Text className="text-red-500">
+          {t("incidents.report.status.failed")}
+        </Text>
         <Text className="text-gray-500 text-sm">{report.error}</Text>
         <Button variant="secondary" onClick={onClose}>
           {t("common.close")}
@@ -150,7 +169,9 @@ function ReportDetail({
         <div className="flex-1 overflow-auto">
           <IncidentsReport
             incidentsReportData={report.result as IncidentData}
-            generatedAt={report.created_at ? new Date(report.created_at) : undefined}
+            generatedAt={
+              report.created_at ? new Date(report.created_at) : undefined
+            }
           />
         </div>
         <div className="flex justify-end p-4 border-t">
@@ -168,7 +189,9 @@ function ReportDetail({
 export function ReportHistory() {
   const { t } = useI18n();
   const { reports, isLoading, error, refetch } = useReportHistory();
-  const [selectedReportId, setSelectedReportId] = React.useState<string | null>(null);
+  const [selectedReportId, setSelectedReportId] = React.useState<string | null>(
+    null
+  );
 
   const handleViewReport = useCallback((reportId: string) => {
     setSelectedReportId(reportId);
@@ -188,7 +211,10 @@ export function ReportHistory() {
           </Button>
         </div>
         <div className="flex-1 overflow-auto p-4">
-          <ReportDetail reportId={selectedReportId} onClose={handleCloseDetail} />
+          <ReportDetail
+            reportId={selectedReportId}
+            onClose={handleCloseDetail}
+          />
         </div>
       </div>
     );
@@ -224,7 +250,9 @@ export function ReportHistory() {
         ) : reports.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 gap-4">
             <DocumentChartBarIcon className="w-12 h-12 text-gray-400" />
-            <Text className="text-gray-500">{t("incidents.report.noReports")}</Text>
+            <Text className="text-gray-500">
+              {t("incidents.report.noReports")}
+            </Text>
           </div>
         ) : (
           <div className="space-y-3">
