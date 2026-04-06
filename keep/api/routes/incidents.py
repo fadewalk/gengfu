@@ -423,10 +423,6 @@ async def create_incident_report_task(
     incident_ids: Optional[List[str]] = Body(None),
     cel: Optional[str] = Body(None),
 ):
-    from arq import ArqRedis
-    from keep.api.arq_pool import get_pool
-    from keep.api.consts import KEEP_ARQ_QUEUE_BASIC
-
     tenant_id = authenticated_entity.tenant_id
 
     # Get allowed incident ids
@@ -451,19 +447,38 @@ async def create_incident_report_task(
         session.refresh(report)
         report_id = report.id
 
-    # Enqueue the async task
-    redis: ArqRedis = await get_pool()
-    await redis.enqueue_job(
-        "async_process_incident_report",
-        tenant_id,
-        report_id,
-        filter_cel,
-        incident_ids,
-        allowed_incident_ids,
-        _queue_name=KEEP_ARQ_QUEUE_BASIC,
-    )
+    if REDIS:
+        from arq import ArqRedis
 
-    return {"report_id": str(report_id), "status": "pending"}
+        from keep.api.arq_pool import get_pool
+
+        # Enqueue the async task
+        redis: ArqRedis = await get_pool()
+        await redis.enqueue_job(
+            "async_process_incident_report",
+            tenant_id,
+            report_id,
+            cel,
+            incident_ids,
+            allowed_incident_ids,
+            _queue_name=KEEP_ARQ_QUEUE_BASIC,
+        )
+        return {"report_id": str(report_id), "status": "pending"}
+    else:
+        # No Redis — generate report synchronously
+        from keep.api.tasks.process_incident_report_task import (
+            process_incident_report,
+        )
+
+        process_incident_report(
+            ctx={},
+            tenant_id=tenant_id,
+            report_id=report_id,
+            filter_cel=cel,
+            incident_ids=incident_ids,
+            allowed_incident_ids=allowed_incident_ids,
+        )
+        return {"report_id": str(report_id), "status": "completed"}
 
 
 @router.get(
