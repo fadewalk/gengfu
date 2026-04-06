@@ -2133,6 +2133,10 @@
       "filterCondition": "筛选条件",
       "incidents": "事件"
     },
+    "table": {
+      "reportHistory": "历史报告",
+      "reportHistoryTooltip": "查看历史报告"
+    },
     "sort": {
       "ascending": "升序排序",
       "descending": "降序排序",

@@ -989,6 +989,10 @@
       "filterCondition": "Filter Condition",
       "incidents": "incidents"
     },
+    "table": {
+      "reportHistory": "Report History",
+      "reportHistoryTooltip": "View report history"
+    },
     "sort": {
       "ascending": "Sort ascending",
       "descending": "Sort descending",
