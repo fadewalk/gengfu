@@ -23,6 +23,7 @@ import { useApi } from "@/shared/lib/hooks/useApi";
 import { KeepApiError } from "@/shared/api";
 import { FormattedContent } from "@/shared/ui/FormattedContent/FormattedContent";
 import { useI18n } from "@/i18n/hooks/useI18n";
+import { useLocale } from "next-intl";
 
 interface CreateIncidentWithAIModalProps {
   isOpen: boolean;
@@ -50,6 +51,7 @@ export const CreateIncidentWithAIModal = ({
   alerts,
 }: CreateIncidentWithAIModalProps) => {
   const { t } = useI18n();
+  const locale = useLocale();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [incidentCandidates, setIncidentCandidates] = useState<
@@ -116,7 +118,7 @@ export const CreateIncidentWithAIModal = ({
           controller: AbortController
         ) => {
           return await api.post(
-            "/incidents/ai/suggest",
+            `/incidents/ai/suggest?locale=${locale}`,
             alertsToProcess.map((alert) => alert.fingerprint),
             { signal: controller.signal }
           );

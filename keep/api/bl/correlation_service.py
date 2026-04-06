@@ -81,6 +81,7 @@ def run_correlation(
     tenant_id: str,
     session: Optional[Session] = None,
     user_id: Optional[str] = None,
+    locale: Optional[str] = None,
 ) -> CorrelationResult:
     """Execute a single correlation run for a tenant.
 
@@ -91,6 +92,7 @@ def run_correlation(
         tenant_id: The tenant to run correlation for.
         session: Optional existing DB session. If None, a new one is created.
         user_id: Optional user identifier for AI suggestion tracking.
+        locale: Optional locale string (e.g. "zh-CN", "en") to control AI output language.
 
     Returns:
         CorrelationResult with statistics of the run.
@@ -145,6 +147,7 @@ def run_correlation(
             alerts_dto=alerts_dto,
             topology_data=topology_data,
             user_id=user_id or "auto-correlation",
+            locale=locale,
         )
 
         # Filter by confidence threshold

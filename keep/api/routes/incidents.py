@@ -1197,6 +1197,7 @@ def add_comment(
 )
 async def create_with_ai(
     alerts_fingerprints: List[str],
+    locale: Optional[str] = Query(None, description="Locale for AI output language"),
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["write:incident"])
     ),
@@ -1217,6 +1218,7 @@ async def create_with_ai(
         alerts_dto=alerts_dto,
         topology_data=topology_data,
         user_id=authenticated_entity.email,
+        locale=locale,
     )
 
 

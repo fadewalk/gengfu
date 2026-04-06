@@ -131,5 +131,9 @@ cd deploy/idc && docker compose build keep-backend keep-frontend && docker compo
 - **原因：** `keep-frontend` 容器没加入 `keep-shared` Docker 网络，无法解析 `keep-backend`
 - **修复：** `deploy/local-mac/docker-compose.yml` 给 frontend 加 `networks: [keep-shared]`
 
-## 参考资料
-- Obsidian 笔记目录：`/Users/fadewalk/Documents/mycode/obsidian/03-work/Keep/`
+
+
+## ldap 登录
+
+本地测试的ldap 登录账号的密码在这里可以查看，没有特别说明的话，你可以用里面的账号登录去测试和调试
+/Users/fadewalk/Documents/mycode/keep/deploy/ldap/ldif

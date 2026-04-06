@@ -1,7 +1,8 @@
 import json
 import logging
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from keep.api.bl.correlation_service import run_correlation
 from keep.api.core.db import (
@@ -72,6 +73,7 @@ def update_settings(
     include_in_schema=False,
 )
 def trigger_correlation(
+    locale: Optional[str] = Query(None, description="Locale for AI output language (e.g. zh-CN, en)"),
     authenticated_entity: AuthenticatedEntity = Depends(
         IdentityManagerFactory.get_auth_verifier(["write:alert"])
     ),
@@ -82,6 +84,7 @@ def trigger_correlation(
     result = run_correlation(
         tenant_id=tenant_id,
         user_id=authenticated_entity.email,
+        locale=locale,
     )
 
     if result.status == "no_model":

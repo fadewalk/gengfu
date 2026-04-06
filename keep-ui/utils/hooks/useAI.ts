@@ -3,6 +3,7 @@ import { useCallback, useEffect } from "react";
 import { useApi } from "@/shared/lib/hooks/useApi";
 import { AIConfig, AILogs, AIStats } from "@/app/(keep)/ai/model";
 import useSWR, { SWRConfiguration } from "swr";
+import { useLocale } from "next-intl";
 
 export const useAIStats = (
   options: SWRConfiguration = {
@@ -65,6 +66,7 @@ export interface CorrelationResult {
 
 export function useAIActions(): UseAIActionsValue {
   const api = useApi();
+  const locale = useLocale();
 
   const updateAISettings = async (
     algorithm_id: string,
@@ -87,7 +89,9 @@ export function useAIActions(): UseAIActionsValue {
   };
 
   const triggerCorrelation = async (): Promise<CorrelationResult> => {
-    const response = await api.post<CorrelationResult>("/ai/correlate");
+    const response = await api.post<CorrelationResult>(
+      `/ai/correlate?locale=${locale}`
+    );
     if (!response) {
       throw new Error("Failed to trigger AI correlation");
     }

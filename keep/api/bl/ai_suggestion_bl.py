@@ -230,6 +230,7 @@ class AISuggestionBl:
         alerts_dto: List[AlertDto],
         topology_data: List[TopologyServiceDtoOut],
         user_id: str,
+        locale: Optional[str] = None,
     ) -> IncidentsClusteringSuggestion:
         """Create incident suggestions using AI."""
         if len(alerts_dto) > 50:
@@ -256,7 +257,7 @@ class AISuggestionBl:
         try:
             # Prepare prompts
             system_prompt, user_prompt = self._prepare_prompts(
-                alerts_dto, topology_data
+                alerts_dto, topology_data, locale=locale
             )
 
             # Get completion from OpenAI
@@ -504,13 +505,19 @@ class AISuggestionBl:
         return committed_incidents
 
     def _prepare_prompts(
-        self, alerts_dto: List[AlertDto], topology_data: List[TopologyServiceDtoOut]
+        self,
+        alerts_dto: List[AlertDto],
+        topology_data: List[TopologyServiceDtoOut],
+        locale: Optional[str] = None,
     ) -> Tuple[str, str]:
         """Prepare system and user prompts for AI."""
         import os
 
-        locale = os.environ.get("KEEP_DEFAULT_LOCALE", "zh_CN")
-        use_chinese = locale in ("zh_CN", "zh")
+        # Priority: request locale > env locale > default zh_CN
+        effective_locale = locale or os.environ.get("KEEP_DEFAULT_LOCALE", "zh_CN")
+        # Normalize locale formats: "zh-CN" -> "zh_CN", "en-US" -> "en_US"
+        normalized = effective_locale.replace("-", "_")
+        use_chinese = normalized.lower().startswith("zh")
 
         alert_descriptions = "\n".join(
             [
