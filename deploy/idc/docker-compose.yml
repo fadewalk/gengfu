@@ -71,6 +71,10 @@ services:
       - LDAP_USER_FILTER=${LDAP_USER_FILTER:-}
       - LDAP_MAIL_ATTRIBUTE=${LDAP_MAIL_ATTRIBUTE:-mail}
       - LDAP_NAME_ATTRIBUTE=${LDAP_NAME_ATTRIBUTE:-displayName}
+      # Redis (ARQ 任务队列)
+      - REDIS=true
+      - REDIS_HOST=keep-redis
+      - REDIS_PORT=6379
     volumes:
       - keep-state:/state
     healthcheck:
@@ -116,15 +120,15 @@ services:
   #   networks:
   #     - keep-network
 
-  # 可选：Redis (Celery)
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: keep-redis
-  #   ports:
-  #     - "${REDIS_PORT:-6379}:6379"
-  #   restart: unless-stopped
-  #   networks:
-  #     - keep-network
+  # Redis (ARQ 任务队列)
+  keep-redis:
+    image: redis:7-alpine
+    container_name: keep-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    restart: unless-stopped
+    networks:
+      - keep-network
 
 volumes:
   keep-state:
