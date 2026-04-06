@@ -86,9 +86,7 @@ export function IncidentHeader({
           {!incident.is_candidate && (
             <div className="flex">
               {config?.KEEP_TICKETING_ENABLED && (
-                <TicketingIncidentOptions
-                  incident={incident}
-                />
+                <TicketingIncidentOptions incident={incident} />
               )}
               <Button
                 color="orange"
@@ -138,7 +136,9 @@ export function IncidentHeader({
                 color="orange"
                 size="xs"
                 icon={TbInfoCircle}
-                tooltip={t("messages.orphanedTooltip", { ruleName: incident.rule_name ?? "" })}
+                tooltip={t("messages.orphanedTooltip", {
+                  ruleName: incident.rule_name ?? "",
+                })}
               >
                 {t("messages.orphaned")}
               </Badge>
