@@ -1,7 +1,7 @@
 import json
 import logging
 import math
-from typing import Optional
+from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -83,9 +83,14 @@ class IncidentReportsBl:
         )
 
     def get_incident_reports(
-        self, incidents_query_cel: str, allowed_incident_ids: list[str]
+        self,
+        incidents_query_cel: str,
+        allowed_incident_ids: list[str],
+        incident_ids: Optional[List[str]] = None,
     ) -> IncidentReport:
-        incidents = self.__get_incidents(incidents_query_cel, allowed_incident_ids)
+        incidents = self.__get_incidents(
+            incidents_query_cel, allowed_incident_ids, incident_ids
+        )
         open_ai_report_part = self.__calculate_report_in_openai(incidents)
         report = IncidentReport(
             most_frequent_reasons=open_ai_report_part.most_frequent_reasons
@@ -142,22 +147,26 @@ class IncidentReportsBl:
 
         incidents_json = json.dumps(incidents_minified, default=str)
 
-        response = open_ai_client.chat.completions.create(
-            model=get_model_name(self.tenant_id),
-            messages=[
+        # Only add response_format for OpenAI API; many compatible APIs don't support json_schema
+        base_url_str = str(open_ai_client.base_url) if open_ai_client.base_url else ""
+        kwargs: dict = {
+            "model": get_model_name(self.tenant_id),
+            "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": incidents_json},
             ],
-            response_format={
+            "seed": 1239,
+            "temperature": 0.2,
+        }
+        if "api.openai.com" in base_url_str:
+            kwargs["response_format"] = {
                 "type": "json_schema",
                 "json_schema": {
                     "name": "OpenAIReportPart",
                     "schema": OpenAIReportPart.schema(),
                 },
-            },
-            seed=1239,
-            temperature=0.2,
-        )
+            }
+        response = open_ai_client.chat.completions.create(**kwargs)
 
         model_response = response.choices[0].message.content
         try:
@@ -319,11 +328,23 @@ class IncidentReportsBl:
         ]
 
     def __get_incidents(
-        self, incidents_query_cel: str, allowed_incident_ids: list[str]
+        self,
+        incidents_query_cel: str,
+        allowed_incident_ids: list[str],
+        incident_ids: Optional[List[str]] = None,
     ) -> list[IncidentDto]:
+        # When incident_ids are provided directly, use them instead of CEL
+        if incident_ids:
+            if not incident_ids:
+                return []
+            # Build CEL expression: id == 'uuid1' || id == 'uuid2' || ...
+            id_expressions = " || ".join([f"id == '{uid}'" for uid in incident_ids])
+            query_cel = f"status != 'deleted' && ({id_expressions})"
+        else:
+            query_cel = f"status != 'deleted' && {incidents_query_cel}"
         query_result = self.incidents_bl.query_incidents(
             tenant_id=self.tenant_id,
-            cel=f"status != 'deleted' && {incidents_query_cel}",
+            cel=query_cel,
             limit=100,
             offset=0,
             allowed_incident_ids=allowed_incident_ids,

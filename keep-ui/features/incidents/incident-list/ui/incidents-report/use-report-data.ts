@@ -2,22 +2,34 @@ import { useApi } from "@/shared/lib/hooks/useApi";
 import { IncidentData } from "./models";
 import { useEffect, useState } from "react";
 
-export const useReportData = (filterCel: string) => {
+interface UseReportDataOptions {
+  filterCel?: string;
+  incidentIds?: string[];
+}
+
+export const useReportData = (options: UseReportDataOptions = {}) => {
+  const { filterCel, incidentIds } = options;
   const api = useApi();
   const [data, setData] = useState<IncidentData | null>();
-
-  let requestUrl = `/incidents/report`;
-
-  if (filterCel) {
-    requestUrl += `?cel=${filterCel}`;
-  }
 
   useEffect(() => {
     if (api.isReady()) {
       setData(null);
-      api.get(requestUrl).then((data) => setData(data));
+      if (incidentIds && incidentIds.length > 0) {
+        // Use POST with incident_ids for selected incidents
+        api.post(`/incidents/report`, { incident_ids: incidentIds }).then((data) =>
+          setData(data)
+        );
+      } else {
+        // Use GET with CEL filter
+        let requestUrl = `/incidents/report`;
+        if (filterCel) {
+          requestUrl += `?cel=${filterCel}`;
+        }
+        api.get(requestUrl).then((data) => setData(data));
+      }
     }
-  }, [api, api.isReady(), requestUrl]);
+  }, [api, api.isReady(), filterCel, incidentIds]);
 
   return {
     data,

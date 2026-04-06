@@ -354,6 +354,42 @@ def get_incidents_report(
         )
 
 
+@router.post(
+    "/report",
+    description="Get incidents report for selected incident IDs",
+)
+def create_incidents_report(
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:alert"])
+    ),
+    incident_ids: Optional[List[str]] = Body(None),
+    cel: Optional[str] = Body(None),
+):
+    tenant_id = authenticated_entity.tenant_id
+    reports_bl = IncidentReportsBl(tenant_id)
+
+    # get all preset ids that the user has access to
+    identity_manager = IdentityManagerFactory.get_identity_manager(
+        authenticated_entity.tenant_id
+    )
+    allowed_incident_ids = identity_manager.get_user_permission_on_resource_type(
+        resource_type="incident",
+        authenticated_entity=authenticated_entity,
+    )
+
+    try:
+        return reports_bl.get_incident_reports(
+            incidents_query_cel=cel or "true",
+            allowed_incident_ids=allowed_incident_ids,
+            incident_ids=incident_ids,
+        )
+    except CelToSqlException as e:
+        logger.exception(f'Error parsing CEL expression "{cel}". {str(e)}')
+        raise HTTPException(
+            status_code=400, detail=t("Error parsing CEL expression: {cel}", cel=cel)
+        )
+
+
 @router.get(
     "/{incident_id}",
     description="Get incident by id",

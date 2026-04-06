@@ -410,6 +410,7 @@ export default function IncidentsTable({
       {isGenerateReportModalOpen && (
         <GenerateReportModal
           filterCel={filterCel}
+          selectedIncidentIds={selectedRowIds}
           onClose={() => setIsGenerateReportModalOpen(false)}
         />
       )}

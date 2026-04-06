@@ -10,15 +10,20 @@ import { PrinterIcon } from "@heroicons/react/24/outline";
 import { useI18n } from "@/i18n/hooks/useI18n";
 
 interface GenerateReportModalProps {
-  filterCel: string;
+  filterCel?: string;
+  selectedIncidentIds?: string[];
   onClose: () => void;
 }
 
 export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
   filterCel,
+  selectedIncidentIds,
   onClose,
 }) => {
-  const { data, isLoading } = useReportData(filterCel);
+  const { data, isLoading } = useReportData({
+    filterCel,
+    incidentIds: selectedIncidentIds,
+  });
   const { t } = useI18n();
 
   const contentRef = useRef<HTMLDivElement>(null);
