@@ -18,19 +18,19 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3
       '@copilotkit/react-core':
-        specifier: ^1.8.11
+        specifier: ^1.54.1
         version: 1.54.1(@ag-ui/core@0.0.48)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(graphql@16.13.2)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.0.1(react@19.0.1))(react@19.0.1)(signal-polyfill@0.2.2)(zod@3.25.76)
       '@copilotkit/react-textarea':
-        specifier: ^1.8.11
+        specifier: ^1.54.1
         version: 1.54.1(@ag-ui/core@0.0.48)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(graphql@16.13.2)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.0.1(react@19.0.1))(react@19.0.1)(signal-polyfill@0.2.2)(zod@3.25.76)
       '@copilotkit/react-ui':
-        specifier: ^1.8.11
+        specifier: ^1.54.1
         version: 1.54.1(@ag-ui/core@0.0.48)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(graphql@16.13.2)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.0.1(react@19.0.1))(react@19.0.1)(signal-polyfill@0.2.2)(zod@3.25.76)
       '@copilotkit/runtime':
-        specifier: ^1.8.11
+        specifier: ^1.54.1
         version: 1.54.1(55c1268182cd78e966e1d28eb55cd316)
       '@copilotkit/runtime-client-gql':
-        specifier: ^1.6.0
+        specifier: ^1.54.1
         version: 1.54.1(@ag-ui/core@0.0.48)(graphql@16.13.2)(react@19.0.1)
       '@dagrejs/dagre':
         specifier: ^1.1.3
