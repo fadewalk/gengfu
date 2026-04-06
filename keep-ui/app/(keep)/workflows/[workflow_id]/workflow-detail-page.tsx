@@ -22,7 +22,7 @@ import WorkflowSecrets from "./workflow-secrets";
 import { AiOutlineSwap } from "react-icons/ai";
 import { ErrorComponent } from "@/shared/ui";
 import Skeleton from "react-loading-skeleton";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useWorkflowDetail } from "@/entities/workflows/model/useWorkflowDetail";
 import { WorkflowYAMLEditorStandalone } from "@/shared/ui/WorkflowYAMLEditor/ui/WorkflowYAMLEditorStandalone";
 import { getOrderedWorkflowYamlString } from "@/entities/workflows/lib/yaml-utils";
@@ -50,6 +50,7 @@ export default function WorkflowDetailPage({
 }) {
   const { t } = useI18n();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [tabIndex, setTabIndex] = useState(
     getTabIndex(searchParams.get("tab") ?? "")
   );
