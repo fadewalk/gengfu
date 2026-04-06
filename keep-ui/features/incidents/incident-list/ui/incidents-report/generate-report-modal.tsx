@@ -9,7 +9,7 @@ import { IncidentData, ReportTemplateType } from "./models";
 import { IncidentsReport } from "./incidents-report";
 import { ReportTemplateNav } from "./report-template-nav";
 import { ReportAIChatPanel } from "./report-ai-chat-panel";
-import { useAIEnabled } from "@/utils/hooks/useAI";
+import { useAIEnabled } from "@/utils/hooks/useAIEnabled";
 import { PrinterIcon, ChatBubbleOvalLeftIcon } from "@heroicons/react/24/outline";
 import { useI18n } from "@/i18n/hooks/useI18n";
 
@@ -132,7 +132,7 @@ function AIChatPanel({
   incidentIds?: string[];
 }) {
   const { t } = useI18n();
-  const isAIEnabled = useAIEnabled();
+  const { enabled: isAIEnabled } = useAIEnabled();
 
   if (!isAIEnabled) {
     return (

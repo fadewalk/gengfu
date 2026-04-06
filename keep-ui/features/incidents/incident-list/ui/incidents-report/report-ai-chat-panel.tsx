@@ -14,6 +14,7 @@ import {
 } from "@copilotkit/runtime-client-gql";
 import { useApi } from "@/shared/lib/hooks/useApi";
 import { useI18n } from "@/i18n/hooks/useI18n";
+import { useLocale } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "@copilotkit/react-ui/styles.css";
@@ -57,7 +58,8 @@ export function ReportAIChatPanel({
   filterCel,
   incidentIds,
 }: ReportAIChatPanelProps) {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
+  const locale = useLocale();
   const api = useApi();
   const { messages, setMessages } = useCopilotMessagesContext();
   const { runChatCompletion } = useCopilotChat();
