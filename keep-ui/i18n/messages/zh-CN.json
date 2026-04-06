@@ -1061,6 +1061,8 @@
     "notConnected": "未连接"
   },
   "common": {
+    "close": "关闭",
+    "cancel": "取消",
     "actions": {
       "back": "返回",
       "enable": "启用",
@@ -2137,7 +2139,22 @@
       "incidents": "事件",
       "history": "历史",
       "reports": "报告",
-      "noReports": "暂无报告"
+      "noReports": "暂无报告",
+      "creating": "正在创建报告...",
+      "submitted": "报告已提交",
+      "submittedDesc": "报告正在后台生成中，您可以在历史记录标签页查看进度。",
+      "viewHistory": "查看历史",
+      "asyncTitle": "生成报告",
+      "asyncDesc": "为筛选的事件生成 AI 分析报告。",
+      "generateAsync": "生成报告",
+      "generating": "报告生成中...",
+      "viewReport": "查看报告",
+      "backToList": "返回列表",
+      "status": {
+        "pending": "处理中",
+        "completed": "已完成",
+        "failed": "失败"
+      }
     },
     "sort": {
       "ascending": "升序排序",

@@ -205,13 +205,19 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
             return (
               <div key={reason} className="flex items-center justify-between">
                 <div className="flex items-center gap-2 flex-1">
-                  <Badge color="orange" size="sm" className="font-bold min-w-[28px] justify-center">
+                  <Badge
+                    color="orange"
+                    size="sm"
+                    className="font-bold min-w-[28px] justify-center"
+                  >
                     {count}
                   </Badge>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <Text className="text-slate-700 text-sm">{reason}</Text>
-                      <Text className="text-xs text-slate-400">{count} {t("incidents.report.incidents")}</Text>
+                      <Text className="text-xs text-slate-400">
+                        {count} {t("incidents.report.incidents")}
+                      </Text>
                     </div>
                     <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div

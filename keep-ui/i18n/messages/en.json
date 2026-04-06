@@ -1,5 +1,7 @@
 {
   "common": {
+    "cancel": "Cancel",
+    "close": "Close",
     "actions": {
       "edit": "Edit",
       "save": "Save",
@@ -993,7 +995,22 @@
       "incidents": "incidents",
       "history": "History",
       "reports": "reports",
-      "noReports": "No reports"
+      "noReports": "No reports",
+      "creating": "Creating report...",
+      "submitted": "Report Submitted",
+      "submittedDesc": "Your report is being generated in the background. You can check the history tab for progress.",
+      "viewHistory": "View History",
+      "asyncTitle": "Generate Report",
+      "asyncDesc": "Generate an AI-powered analysis report for the filtered incidents.",
+      "generateAsync": "Generate Report",
+      "generating": "Report is being generated...",
+      "viewReport": "View Report",
+      "backToList": "Back to List",
+      "status": {
+        "pending": "Pending",
+        "completed": "Completed",
+        "failed": "Failed"
+      }
     },
     "sort": {
       "ascending": "Sort ascending",
