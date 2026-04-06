@@ -114,11 +114,13 @@ export const createAsyncReport = async (
   params: {
     filterCel?: string;
     incidentIds?: string[];
+    templateType?: string;
   }
 ): Promise<{ report_id: string; status: string }> => {
-  const { filterCel, incidentIds } = params;
+  const { filterCel, incidentIds, templateType = "comprehensive" } = params;
   return await api.post(`/incidents/reports`, {
     cel: filterCel,
     incident_ids: incidentIds,
+    template_type: templateType,
   });
 };

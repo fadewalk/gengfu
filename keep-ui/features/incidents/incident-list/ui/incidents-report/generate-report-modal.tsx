@@ -1,20 +1,19 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui";
 import Modal from "@/components/ui/Modal";
 import { KeepLoader } from "@/shared/ui";
-import { Title } from "@tremor/react";
 import { useReactToPrint } from "react-to-print";
 import { useReportData } from "./use-report-data";
-import { IncidentData } from "./models";
+import { IncidentData, ReportTemplateType } from "./models";
 import { IncidentsReport } from "./incidents-report";
+import { ReportTemplateNav } from "./report-template-nav";
 import {
   PrinterIcon,
   ClockIcon,
-  ArrowPathIcon,
+  ChatBubbleOvalLeftIcon,
 } from "@heroicons/react/24/outline";
 import { useI18n } from "@/i18n/hooks/useI18n";
-import { useApi } from "@/shared/lib/hooks/useApi";
-import { createAsyncReport } from "./use-async-report";
+import { toast } from "react-toastify";
 
 interface GenerateReportModalProps {
   filterCel?: string;
@@ -27,38 +26,60 @@ interface GenerateReportModalProps {
 export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
   filterCel,
   selectedIncidentIds,
-  asyncMode = false,
   onClose,
-  onNavigateToHistory,
 }) => {
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("comprehensive");
+  const { t } = useI18n();
+
+  return (
+    <Modal
+      title={t("incidents.report.title")}
+      className="min-w-[90vw] h-[85vh]"
+      isOpen={true}
+      onClose={onClose}
+    >
+      <div className="flex w-full h-full overflow-hidden">
+        {/* Left panel: template navigation */}
+        <ReportTemplateNav
+          selected={selectedTemplate}
+          onSelect={setSelectedTemplate}
+        />
+        {/* Right panel: report content or AI chat */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {selectedTemplate === "ai_chat" ? (
+            <AIChatPanel
+              filterCel={filterCel}
+              incidentIds={selectedIncidentIds}
+            />
+          ) : (
+            <ReportContentPanel
+              filterCel={filterCel}
+              incidentIds={selectedIncidentIds}
+              templateType={selectedTemplate as ReportTemplateType}
+            />
+          )}
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+/** Report content panel for predefined templates */
+function ReportContentPanel({
+  filterCel,
+  incidentIds,
+  templateType,
+}: {
+  filterCel?: string;
+  incidentIds?: string[];
+  templateType: ReportTemplateType;
+}) {
   const { data, isLoading } = useReportData({
     filterCel,
-    incidentIds: selectedIncidentIds,
+    incidentIds,
+    templateType,
   });
   const { t } = useI18n();
-  const api = useApi();
-  const [isCreating, setIsCreating] = useState(false);
-  const [createdReportId, setCreatedReportId] = useState<string | null>(null);
-
-  // 创建异步报告任务保存到历史记录
-  const handleCreateHistoryRecord = useCallback(async () => {
-    try {
-      await createAsyncReport(api, {
-        filterCel,
-        incidentIds: selectedIncidentIds,
-      });
-    } catch (error) {
-      console.error("Failed to create history record:", error);
-    }
-  }, [api, filterCel, selectedIncidentIds]);
-
-  // 数据加载完成后自动保存到历史记录（仅同步模式）
-  useEffect(() => {
-    if (!isLoading && data && !asyncMode) {
-      handleCreateHistoryRecord();
-    }
-  }, [isLoading, data, asyncMode, handleCreateHistoryRecord]);
-
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({
     contentRef,
@@ -67,127 +88,69 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
 
   const handlePrint = useCallback(() => reactToPrintFn(), [reactToPrintFn]);
 
-  const handleCreateAsyncReport = useCallback(async () => {
-    setIsCreating(true);
-    try {
-      const result = await createAsyncReport(api, {
-        filterCel,
-        incidentIds: selectedIncidentIds,
-      });
-      setCreatedReportId(result.report_id);
-    } catch (error) {
-      console.error("Failed to create async report:", error);
-    } finally {
-      setIsCreating(false);
-    }
-  }, [api, filterCel, selectedIncidentIds]);
-
-  // Async mode with report created notification
-  if (asyncMode) {
-    return (
-      <Modal
-        title={t("incidents.report.title")}
-        className="min-w-[500px]"
-        isOpen={true}
-        onClose={onClose}
-      >
-        <div className="flex flex-col items-center justify-center gap-6 py-8">
-          {isCreating ? (
-            <>
-              <KeepLoader />
-              <p className="text-gray-500">{t("incidents.report.creating")}</p>
-            </>
-          ) : createdReportId ? (
-            <>
-              <ClockIcon className="w-16 h-16 text-yellow-500" />
-              <div className="text-center">
-                <Title className="text-lg mb-2">
-                  {t("incidents.report.submitted")}
-                </Title>
-                <p className="text-gray-500 text-sm mb-4">
-                  {t("incidents.report.submittedDesc")}
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    onClose();
-                    onNavigateToHistory?.();
-                  }}
-                >
-                  {t("incidents.report.viewHistory")}
-                </Button>
-                <Button variant="primary" onClick={onClose}>
-                  {t("common.close")}
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <ClockIcon className="w-16 h-16 text-blue-500" />
-              <div className="text-center">
-                <Title className="text-lg mb-2">
-                  {t("incidents.report.asyncTitle")}
-                </Title>
-                <p className="text-gray-500 text-sm mb-4">
-                  {t("incidents.report.asyncDesc")}
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  color="orange"
-                  variant="primary"
-                  onClick={handleCreateAsyncReport}
-                >
-                  {t("incidents.report.generateAsync")}
-                </Button>
-                <Button variant="secondary" onClick={onClose}>
-                  {t("common.cancel")}
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
-      </Modal>
-    );
-  }
-
-  // Sync mode (original behavior)
   return (
-    <Modal
-      title={t("incidents.report.title")}
-      className="min-w-[80vw] h-[80vh]"
-      isOpen={true}
-      onClose={onClose}
-    >
-      <div className="w-full h-full">
-        {isLoading && <KeepLoader />}
-        {!isLoading && (
-          <div className="flex flex-col w-full h-full">
-            <div className="flex-1 overflow-auto">
-              <div ref={contentRef}>
-                <IncidentsReport
-                  incidentsReportData={data as IncidentData}
-                  filterCel={filterCel}
-                  generatedAt={new Date()}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end p-6 border-teal-100 border-t">
-              <Button
-                color="orange"
-                variant="primary"
-                size="md"
-                icon={PrinterIcon}
-                onClick={handlePrint}
-              >
-                {t("incidents.report.print")}
-              </Button>
-            </div>
+    <div className="flex flex-col w-full h-full">
+      <div className="flex-1 overflow-auto">
+        {isLoading && (
+          <div className="flex items-center justify-center h-full">
+            <KeepLoader />
+          </div>
+        )}
+        {!isLoading && data && (
+          <div ref={contentRef}>
+            <IncidentsReport
+              incidentsReportData={data as IncidentData}
+              filterCel={filterCel}
+              generatedAt={new Date()}
+              templateType={templateType}
+            />
           </div>
         )}
       </div>
-    </Modal>
+      {!isLoading && data && (
+        <div className="flex justify-end p-4 border-t border-slate-100">
+          <Button
+            color="orange"
+            variant="primary"
+            size="md"
+            icon={PrinterIcon}
+            onClick={handlePrint}
+          >
+            {t("incidents.report.print")}
+          </Button>
+        </div>
+      )}
+    </div>
   );
-};
+}
+
+/** AI chat analysis panel - placeholder for CopilotKit integration */
+function AIChatPanel({
+  filterCel,
+  incidentIds,
+}: {
+  filterCel?: string;
+  incidentIds?: string[];
+}) {
+  const { t } = useI18n();
+
+  // TODO: Integrate CopilotKit for AI chat-based analysis
+  // This will use <CopilotKit> + <CopilotChat> similar to incident-chat.tsx
+  return (
+    <div className="flex flex-col items-center justify-center h-full gap-4 text-center p-8">
+      <ChatBubbleOvalLeftIcon className="w-16 h-16 text-slate-300" />
+      <div>
+        <h3 className="text-lg font-semibold text-slate-700">
+          {t("incidents.report.aiChat.title")}
+        </h3>
+        <p className="text-sm text-slate-500 mt-2 max-w-md">
+          {t("incidents.report.aiChat.description")}
+        </p>
+      </div>
+      <div className="flex items-center gap-2 text-xs text-slate-400 mt-2">
+        <ClockIcon className="w-4 h-4" />
+        {t("incidents.report.aiChat.comingSoon")}
+      </div>
+    </div>
+  );
+}

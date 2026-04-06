@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { IncidentData } from "./models";
+import { IncidentData, ReportTemplateType } from "./models";
 import { IncidentSeverityMetric } from "./incident-severity-metric";
 import { PieChart } from "./pie-chart";
 import { useI18n } from "@/i18n/hooks/useI18n";
@@ -10,18 +10,23 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
   ArrowTrendingUpIcon,
+  LightBulbIcon,
+  ShieldExclamationIcon,
+  MagnifyingGlassCircleIcon,
 } from "@heroicons/react/24/outline";
 
 interface IncidentsReportProps {
   incidentsReportData: IncidentData;
   filterCel?: string;
   generatedAt?: Date;
+  templateType?: ReportTemplateType;
 }
 
 export const IncidentsReport: React.FC<IncidentsReportProps> = ({
   incidentsReportData,
   filterCel,
   generatedAt,
+  templateType = "comprehensive",
 }) => {
   const { t } = useI18n();
 
@@ -296,6 +301,95 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
     );
   }
 
+  /** Render AI trend analysis section */
+  function renderTrendAnalysis(): React.JSX.Element {
+    const analysis = incidentsReportData?.trend_analysis;
+    if (!analysis) return <></>;
+
+    return (
+      <Card className="bg-white border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <ArrowTrendingUpIcon className="w-5 h-5 text-green-600" />
+          <Title className="text-lg">
+            {t("incidents.report.trendAnalysis")}
+          </Title>
+        </div>
+        <div className="prose prose-sm max-w-none text-slate-700 whitespace-pre-line">
+          {analysis}
+        </div>
+      </Card>
+    );
+  }
+
+  /** Render AI root cause analysis section */
+  function renderRootCauseAnalysis(): React.JSX.Element {
+    const analysis = incidentsReportData?.root_cause_analysis;
+    if (!analysis) return <></>;
+
+    return (
+      <Card className="bg-white border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <MagnifyingGlassCircleIcon className="w-5 h-5 text-orange-600" />
+          <Title className="text-lg">
+            {t("incidents.report.rootCauseAnalysis")}
+          </Title>
+        </div>
+        <div className="prose prose-sm max-w-none text-slate-700 whitespace-pre-line">
+          {analysis}
+        </div>
+      </Card>
+    );
+  }
+
+  /** Render AI recommendations section */
+  function renderRecommendations(): React.JSX.Element {
+    const recommendations = incidentsReportData?.recommendations;
+    if (!recommendations || recommendations.length === 0) return <></>;
+
+    return (
+      <Card className="bg-white border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <LightBulbIcon className="w-5 h-5 text-amber-500" />
+          <Title className="text-lg">
+            {t("incidents.report.recommendations")}
+          </Title>
+        </div>
+        <ol className="space-y-3">
+          {recommendations.map((rec, idx) => (
+            <li key={idx} className="flex gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-semibold">
+                {idx + 1}
+              </span>
+              <Text className="text-sm text-slate-700 leading-relaxed">
+                {rec}
+              </Text>
+            </li>
+          ))}
+        </ol>
+      </Card>
+    );
+  }
+
+  /** Render AI risk assessment section */
+  function renderRiskAssessment(): React.JSX.Element {
+    const assessment = incidentsReportData?.risk_assessment;
+    if (!assessment) return <></>;
+
+    return (
+      <Card className="bg-white border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <ShieldExclamationIcon className="w-5 h-5 text-red-600" />
+          <Title className="text-lg">
+            {t("incidents.report.riskAssessment")}
+          </Title>
+        </div>
+        <div className="prose prose-sm max-w-none text-slate-700 whitespace-pre-line">
+          {assessment}
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4 px-6 py-4 bg-slate-50 min-h-full">
       {renderReportHeader()}
@@ -313,6 +407,15 @@ export const IncidentsReport: React.FC<IncidentsReportProps> = ({
           renderAffectedServices()}
         {incidentsReportData?.recurring_incidents && renderRecurringIncidents()}
       </div>
+      {/* AI-enhanced analysis sections */}
+      {(templateType === "comprehensive" || templateType === "trend") &&
+        renderTrendAnalysis()}
+      {(templateType === "comprehensive" || templateType === "root_cause") &&
+        renderRootCauseAnalysis()}
+      {(templateType === "comprehensive" || templateType === "root_cause" || templateType === "deep") &&
+        renderRecommendations()}
+      {(templateType === "comprehensive" || templateType === "deep") &&
+        renderRiskAssessment()}
     </div>
   );
 };

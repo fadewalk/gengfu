@@ -993,6 +993,28 @@
       "totalIncidents": "Total Incidents",
       "filterCondition": "Filter Condition",
       "incidents": "incidents",
+      "trendAnalysis": "Trend Analysis",
+      "rootCauseAnalysis": "Root Cause Analysis",
+      "recommendations": "Recommendations",
+      "riskAssessment": "Risk Assessment",
+      "template": {
+        "label": "Report Template",
+        "comprehensive": "Comprehensive",
+        "comprehensiveDesc": "Full analysis with all metrics",
+        "trend": "Trend Analysis",
+        "trendDesc": "Incident trends and pattern recognition",
+        "rootCause": "Root Cause",
+        "rootCauseDesc": "Deep dive into incident root causes",
+        "deep": "Deep Analysis",
+        "deepDesc": "Comprehensive deep analysis and risk assessment",
+        "aiChat": "AI Chat Analysis",
+        "aiChatDesc": "Chat with AI to explore incident data"
+      },
+      "aiChat": {
+        "title": "AI Chat Analysis",
+        "description": "Chat with an AI assistant to explore incident data and get customized analysis and recommendations.",
+        "comingSoon": "Coming soon"
+      },
       "history": "History",
       "reports": "reports",
       "noReports": "No reports",

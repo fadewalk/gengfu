@@ -2137,6 +2137,28 @@
       "totalIncidents": "事件总数",
       "filterCondition": "筛选条件",
       "incidents": "事件",
+      "trendAnalysis": "趋势分析",
+      "rootCauseAnalysis": "根因分析",
+      "recommendations": "改进建议",
+      "riskAssessment": "风险评估",
+      "template": {
+        "label": "报告模板",
+        "comprehensive": "综合报告",
+        "comprehensiveDesc": "包含所有指标的全面分析",
+        "trend": "趋势分析",
+        "trendDesc": "事件趋势和模式识别",
+        "rootCause": "根因分析",
+        "rootCauseDesc": "深入分析事件根本原因",
+        "deep": "深度分析",
+        "deepDesc": "全面深度分析与风险评估",
+        "aiChat": "AI 对话分析",
+        "aiChatDesc": "与 AI 对话探索事件数据"
+      },
+      "aiChat": {
+        "title": "AI 对话分析",
+        "description": "与 AI 助手对话，深入探索事件数据，获取定制化分析和建议。",
+        "comingSoon": "即将上线"
+      },
       "history": "历史",
       "reports": "报告",
       "noReports": "暂无报告",

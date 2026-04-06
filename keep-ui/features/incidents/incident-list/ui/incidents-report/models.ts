@@ -25,6 +25,13 @@ export interface SeverityMetrics {
   [key: string]: Incident[];
 }
 
+/** Report template types supported by the backend */
+export type ReportTemplateType =
+  | "comprehensive"
+  | "trend"
+  | "root_cause"
+  | "deep";
+
 export interface IncidentData {
   services_affected_metrics: { [key: string]: number };
   severity_metrics: SeverityMetrics;
@@ -33,4 +40,10 @@ export interface IncidentData {
   mean_time_to_resolve_seconds: number;
   most_frequent_reasons: Record<string, string[]>;
   recurring_incidents: ReoccurringIncident[];
+  // Enhanced AI analysis fields
+  trend_analysis?: string;
+  root_cause_analysis?: string;
+  recommendations?: string[];
+  risk_assessment?: string;
+  template_type?: ReportTemplateType;
 }
