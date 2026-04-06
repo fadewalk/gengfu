@@ -93,7 +93,7 @@ export function WorkflowBuilderChat({
 
   useCopilotReadable(
     {
-      description: "Current workflow",
+      description: "当前工作流",
       value: workflowSummary,
     },
     [workflowSummary]
@@ -101,7 +101,7 @@ export function WorkflowBuilderChat({
 
   useCopilotReadable(
     {
-      description: "Installed providers",
+      description: "已安装的 Provider",
       value: installedProviders,
       convert: (description: string, value: Provider[]) => {
         // At runtime CopilotKit calls convert(value), so first arg is the array
@@ -116,7 +116,7 @@ export function WorkflowBuilderChat({
 
   useCopilotReadable(
     {
-      description: "These are steps that you can add to the workflow",
+      description: "以下是可以添加到工作流中的步骤",
       value: toolboxConfiguration,
       convert: (description: string, value: ToolboxConfiguration) => {
         // At runtime CopilotKit calls convert(value), so first arg is the data
@@ -146,7 +146,7 @@ export function WorkflowBuilderChat({
 
   useCopilotReadable(
     {
-      description: "Selected node id",
+      description: "当前选中的节点 ID",
       value: selectedNode,
     },
     [selectedNode]
@@ -154,7 +154,7 @@ export function WorkflowBuilderChat({
 
   useCopilotReadable(
     {
-      description: "Validation errors",
+      description: "验证错误",
       value: validationErrors,
     },
     [validationErrors]
@@ -163,7 +163,7 @@ export function WorkflowBuilderChat({
   useCopilotChatSuggestions(
     {
       instructions:
-        "Suggest the most relevant next actions. E.g. if workflow is empty ask what workflow user is trying to build, if workflow already has some steps, suggest either to explain or add a new step. If some step is selected, suggest to explain it or help to configure it. If there are validation errors, suggest to fix them. If you waiting for user to accept or reject the suggestion, suggest relevant short answers.",
+        "建议最相关的下一步操作。例如：工作流为空时询问用户想构建什么工作流；已有步骤时建议解释或添加新步骤；选中了某个步骤时建议解释或帮助配置；有验证错误时建议修复；等待用户确认时建议简短回复。",
       minSuggestions: 1,
       maxSuggestions: 3,
     },
@@ -1067,8 +1067,8 @@ Example: 'node_123__empty_true'`,
   const [debugInfoVisible, setDebugInfoVisible] = useState(false);
   const chatInstructions =
     GENERAL_INSTRUCTIONS +
-    `If you you need to use a provider that is not installed, add step, but mention to user that you need to add the provider first.
-      Then asked to create a complete workflow, you break down the workflow into steps, outline the steps, show them to user, and then iterate over the steps one by one, generate step definition, show it to user to decide if they want to add them to the workflow.`;
+    `如果你需要使用尚未安装的 Provider，请添加步骤，但要告知用户需要先添加该 Provider。
+      当被要求创建完整工作流时，先将工作流拆分为步骤，概述各步骤并展示给用户，然后逐一生成步骤定义，展示给用户以决定是否添加到工作流中。`;
 
   return (
     // using 'workflow-chat' class to apply styles only to that chat component

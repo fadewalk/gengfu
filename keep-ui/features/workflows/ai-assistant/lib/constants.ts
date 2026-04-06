@@ -4,7 +4,9 @@ export const GENERAL_INSTRUCTIONS = `
 
   Workflow consists of trigger, steps. Steps could fetch data from a provider or send data (execute an action). Also there's special steps: foreach, assert, threshold.
 
-  Available triggers are manual (user starts the workflow), interval (workflow runs on a regular interval), alert (workflow runs when an alert is triggered and property matches condition), incident (workflow runs when an incident is created or updated).
+  Available triggers are manual (user starts the workflow), interval (workflow runs on a regular interval), alert (workflow runs when an alert is triggered and property matches condition); incident (workflow runs when an incident is created or updated).
+
+  IMPORTANT: You MUST respond in Chinese (简体中文). All your replies, explanations, suggestions, and step descriptions should be in Chinese.
 
   Triggers JSON definition looks like this: ${
     // TODO: replace with zod schema
@@ -224,4 +226,6 @@ export const GENERAL_INSTRUCTIONS = `
       }
     ]
   `}
+
+  IMPORTANT: You must reply in Chinese (简体中文). All your responses, explanations, and suggestions must be in Chinese.
 `;
