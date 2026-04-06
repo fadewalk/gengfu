@@ -44,55 +44,106 @@ class IncidentReport(BaseModel):
     mean_time_to_resolve_seconds: Optional[int] = None
     most_frequent_reasons: Optional[dict[str, list[str]]] = None
     recurring_incidents: Optional[list[ReoccuringIncidentReportDto]] = None
+    # Enhanced report fields
+    trend_analysis: Optional[str] = None
+    root_cause_analysis: Optional[str] = None
+    recommendations: Optional[list[str]] = None
+    risk_assessment: Optional[str] = None
+    template_type: Optional[str] = None  # comprehensive/trend/root_cause/deep
 
 
 class OpenAIReportPart(BaseModel):
     most_frequent_reasons: Optional[dict[str, list[str]]] = None
+    trend_analysis: Optional[str] = None
+    root_cause_analysis: Optional[str] = None
+    recommendations: Optional[list[str]] = None
+    risk_assessment: Optional[str] = None
 
 
-system_prompt = """
-Generate an incident report based on the provided incidents dataset and response schema. Ensure all calculated metrics follow the specified format for consistency.
+# ── Multi-template prompts ──────────────────────────────────────────────────
 
-**Calculations and Metrics:**
-1. **Most Frequent Incident Reasons**
-   - JSON property name: most_frequent_reasons
-   - Identify the most common root causes by analyzing the following fields: incident_name, incident_summary, severity.
-   - Try to find root causes that are not explicitly mentioned in the dataset.
-   - Be concise, the reasons must be short but descriptive at the same time.
-   - Group similar reasons to avoid duplicates.
-   - Output only top 6 reasons.
-   - Return a JSON object, which is a dictionary.
-   - Each key in this dictionary must be an incident reason (a string describing the reason for the incident).
-   - The value for each key must be a list of incident IDs (strings) that correspond to that reason.
-   - The structure of object in most_frequent_reasons property should follow this exact format:
-            {
-                "Reason 1": ["incident_id_1", "incident_id_2"],
-                "Reason 2": ["incident_id_3"],
-                "Reason 3": ["incident_id_4", "incident_id_5", "incident_id_6"]
-            }
-"""
+_PROMPTS_EN = {
+    "comprehensive": """Generate a comprehensive incident report based on the provided incidents dataset. Return valid JSON with these fields:
 
-system_prompt_zh = """
-根据提供的事件数据集和响应架构生成事件报告。确保所有计算指标遵循指定格式以保持一致性。
+1. **most_frequent_reasons** (object): Identify top 6 root causes by analyzing incident_name, incident_summary, severity. Try to find root causes not explicitly mentioned. Be concise but descriptive. Group similar reasons. Format: {"Reason 1": ["id1","id2"], "Reason 2": ["id3"]}
 
-**计算和指标：**
-1. **最常见事件原因**
-   - JSON 属性名：most_frequent_reasons
-   - 通过分析以下字段识别最常见的根本原因：incident_name（事件名称）、incident_summary（事件摘要）、severity（严重程度）
-   - 尝试找出数据集中未明确提及的根本原因
-   - 保持简洁，原因必须简短但同时具有描述性
-   - 对相似原因进行分组以避免重复
-   - 仅输出前 6 个原因
-   - 返回一个 JSON 对象，即一个字典
-   - 字典中每个键必须是事件原因（描述事件原因的字符串）
-   - 每个键的值必须是与该原因对应的事件 ID 列表（字符串）
-   - most_frequent_reasons 属性中的对象结构应遵循以下确切格式：
-            {
-                "原因 1": ["incident_id_1", "incident_id_2"],
-                "原因 2": ["incident_id_3"],
-                "原因 3": ["incident_id_4", "incident_id_5", "incident_id_6"]
-            }
-"""
+2. **trend_analysis** (string): Identify temporal patterns — time-of-day concentration, day-of-week patterns, frequency trends (increasing/decreasing/stable), seasonality. Be specific with time references.
+
+3. **root_cause_analysis** (string): Deep analysis of root causes — categorize causes (infrastructure/code/config/external), identify dependencies and cascade effects, analyze severity-correlation with causes.
+
+4. **recommendations** (array of strings): 3-5 actionable improvement suggestions prioritized by impact. Each should be specific and implementable.
+
+5. **risk_assessment** (string): Assess current risk level (low/medium/high/critical) with justification. Identify potential future risks based on current patterns.""",
+
+    "trend": """Analyze temporal trends in the provided incidents dataset. Return valid JSON with these fields:
+
+1. **most_frequent_reasons** (object): Top 6 reasons. Format: {"Reason": ["id1","id2"]}
+2. **trend_analysis** (string): Detailed temporal analysis — time-of-day patterns, day-of-week distribution, frequency trend direction, seasonality, burst detection, correlation between time and severity.
+3. **recommendations** (array of strings): 3-5 suggestions specifically targeting time-based patterns (e.g., scaling schedules, on-call coverage, batch job timing).
+4. **root_cause_analysis** (string): Brief — only if time patterns reveal root causes.
+5. **risk_assessment** (string): Risk level based on trend trajectory.""",
+
+    "root_cause": """Perform root cause analysis on the provided incidents dataset. Return valid JSON with these fields:
+
+1. **most_frequent_reasons** (object): Top 6 root causes with incident IDs. Format: {"Root Cause": ["id1","id2"]}
+2. **root_cause_analysis** (string): Comprehensive root cause analysis — categorize causes, identify cascade effects, map service-to-cause relationships, analyze severity per cause category.
+3. **recommendations** (array of strings): 3-5 targeted fixes for identified root causes.
+4. **trend_analysis** (string): Brief — only if trends help explain root causes.
+5. **risk_assessment** (string): Risk assessment focused on root cause recurrence probability.""",
+
+    "deep": """Perform deep analysis on the provided incidents dataset. Return valid JSON with ALL fields fully populated:
+
+1. **most_frequent_reasons** (object): Top 6 reasons with IDs. Format: {"Reason": ["id1","id2"]}
+2. **trend_analysis** (string): Complete temporal analysis — patterns, seasonality, anomalies, predictions.
+3. **root_cause_analysis** (string): Exhaustive root cause analysis — categorization, cascade mapping, service dependencies, severity correlation.
+4. **recommendations** (array of strings): 5-8 prioritized actionable recommendations with estimated impact.
+5. **risk_assessment** (string): Detailed risk matrix — current risk level, future risk projection, worst-case scenarios, mitigation priority.""",
+}
+
+_PROMPTS_ZH = {
+    "comprehensive": """根据提供的事件数据集生成综合事件报告。返回合法 JSON，包含以下字段：
+
+1. **most_frequent_reasons** (对象)：通过分析 incident_name、incident_summary、severity 识别前 6 个根本原因。尝试找出未明确提及的原因。简洁但有描述性。对相似原因分组。格式：{"原因 1": ["id1","id2"], "原因 2": ["id3"]}
+
+2. **trend_analysis** (字符串)：识别时间模式——时段集中、星期分布、频率趋势（上升/下降/稳定）、季节性。引用具体时间。
+
+3. **root_cause_analysis** (字符串)：根因深度分析——将原因分类（基础设施/代码/配置/外部），识别依赖链和级联效应，分析严重程度与原因的关联。
+
+4. **recommendations** (字符串数组)：3-5 条按影响优先级排列的可执行改进建议。每条应具体可落地。
+
+5. **risk_assessment** (字符串)：评估当前风险等级（低/中/高/严重）并说明理由。基于当前模式识别未来潜在风险。""",
+
+    "trend": """分析事件数据集中的时间趋势。返回合法 JSON，包含以下字段：
+
+1. **most_frequent_reasons** (对象)：前 6 个原因。格式：{"原因": ["id1","id2"]}
+2. **trend_analysis** (字符串)：详细时间分析——时段模式、星期分布、频率趋势方向、季节性、突发检测、时间与严重程度的关联。
+3. **recommendations** (字符串数组)：3-5 条针对时间模式的建议（如扩缩容计划、on-call 覆盖、批处理调度）。
+4. **root_cause_analysis** (字符串)：简要——仅在时间模式揭示根因时展开。
+5. **risk_assessment** (字符串)：基于趋势走向的风险评估。""",
+
+    "root_cause": """对事件数据集执行根因分析。返回合法 JSON，包含以下字段：
+
+1. **most_frequent_reasons** (对象)：前 6 个根因及事件 ID。格式：{"根因": ["id1","id2"]}
+2. **root_cause_analysis** (字符串)：全面的根因分析——原因分类、级联效应、服务与原因映射、各原因类别的严重程度分析。
+3. **recommendations** (字符串数组)：3-5 条针对识别到的根因的修复建议。
+4. **trend_analysis** (字符串)：简要——仅在趋势有助于解释根因时展开。
+5. **risk_assessment** (字符串)：聚焦于根因复发概率的风险评估。""",
+
+    "deep": """对事件数据集执行深度分析。返回合法 JSON，所有字段需完整填充：
+
+1. **most_frequent_reasons** (对象)：前 6 个原因及 ID。格式：{"原因": ["id1","id2"]}
+2. **trend_analysis** (字符串)：完整时间分析——模式、季节性、异常、预测。
+3. **root_cause_analysis** (字符串)：详尽的根因分析——分类、级联映射、服务依赖、严重程度关联。
+4. **recommendations** (字符串数组)：5-8 条按优先级排列的可执行建议，附预期影响评估。
+5. **risk_assessment** (字符串)：详细风险矩阵——当前风险等级、未来风险预测、最坏场景、缓解优先级。
+""",
+}
+
+
+def _get_system_prompt(template_type: str, locale: str = "") -> str:
+    use_chinese = locale in ("zh_CN", "zh")
+    prompts = _PROMPTS_ZH if use_chinese else _PROMPTS_EN
+    return prompts.get(template_type, prompts["comprehensive"])
 
 logger = logging.getLogger(__name__)
 
@@ -110,13 +161,31 @@ class IncidentReportsBl:
         incidents_query_cel: str,
         allowed_incident_ids: list[str],
         incident_ids: Optional[List[str]] = None,
+        template_type: str = "comprehensive",
     ) -> IncidentReport:
         incidents = self.__get_incidents(
             incidents_query_cel, allowed_incident_ids, incident_ids
         )
-        open_ai_report_part = self.__calculate_report_in_openai(incidents)
+        open_ai_report_part = self.__calculate_report_in_openai(
+            incidents, template_type=template_type
+        )
         report = IncidentReport(
             most_frequent_reasons=open_ai_report_part.most_frequent_reasons
+            if open_ai_report_part
+            else None,
+            trend_analysis=open_ai_report_part.trend_analysis
+            if open_ai_report_part
+            else None,
+            root_cause_analysis=open_ai_report_part.root_cause_analysis
+            if open_ai_report_part
+            else None,
+            recommendations=open_ai_report_part.recommendations
+            if open_ai_report_part
+            else None,
+            risk_assessment=open_ai_report_part.risk_assessment
+            if open_ai_report_part
+            else None,
+            template_type=template_type,
         )
         incidents_dict = {incident.id: incident for incident in incidents}
         resolved_incidents = [
@@ -138,7 +207,7 @@ class IncidentReportsBl:
         return report
 
     def __calculate_report_in_openai(
-        self, incidents: list[IncidentDto]
+        self, incidents: list[IncidentDto], template_type: str = "comprehensive"
     ) -> OpenAIReportPart:
         try:
             open_ai_client = get_client(self.tenant_id)
@@ -170,10 +239,9 @@ class IncidentReportsBl:
 
         incidents_json = json.dumps(incidents_minified, default=str)
 
-        # Select prompt based on locale
+        # Select prompt based on locale and template type
         locale = os.environ.get("KEEP_DEFAULT_LOCALE", "zh_CN")
-        use_chinese = locale in ("zh_CN", "zh")
-        selected_prompt = system_prompt_zh if use_chinese else system_prompt
+        selected_prompt = _get_system_prompt(template_type, locale)
 
         # Only add response_format for OpenAI API; many compatible APIs don't support json_schema
         base_url_str = str(open_ai_client.base_url) if open_ai_client.base_url else ""

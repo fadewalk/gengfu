@@ -37,6 +37,9 @@ class IncidentReport(SQLModel, table=True):
         default=None, sa_column=Column(JSON)
     )
 
+    # Report template type: comprehensive/trend/root_cause/deep
+    template_type: Optional[str] = Field(default="comprehensive", sa_column=Column(TEXT))
+
     # Result stored when completed
     result: Optional[dict] = Field(default=None, sa_column=Column(JSON))
 

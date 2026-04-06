@@ -369,6 +369,7 @@ def create_incidents_report(
     ),
     incident_ids: Optional[List[str]] = Body(None),
     cel: Optional[str] = Body(None),
+    template_type: Optional[str] = Body("comprehensive"),
 ):
     tenant_id = authenticated_entity.tenant_id
     reports_bl = IncidentReportsBl(tenant_id)
@@ -387,6 +388,7 @@ def create_incidents_report(
             incidents_query_cel=cel or "true",
             allowed_incident_ids=allowed_incident_ids,
             incident_ids=incident_ids,
+            template_type=template_type or "comprehensive",
         )
 
         # 同时保存到历史记录
@@ -397,6 +399,7 @@ def create_incidents_report(
                 status=ReportStatus.COMPLETED.value,
                 filter_cel=cel,
                 incident_ids=incident_ids,
+                template_type=template_type or "comprehensive",
                 result=json.loads(json.dumps(result.model_dump() if hasattr(result, 'model_dump') else vars(result), default=str)),
                 created_by=authenticated_entity.email,
                 completed_at=datetime.utcnow(),
@@ -423,6 +426,7 @@ async def create_incident_report_task(
     ),
     incident_ids: Optional[List[str]] = Body(None),
     cel: Optional[str] = Body(None),
+    template_type: Optional[str] = Body("comprehensive"),
 ):
     tenant_id = authenticated_entity.tenant_id
 
@@ -441,6 +445,7 @@ async def create_incident_report_task(
             status=ReportStatus.PENDING.value,
             filter_cel=cel,
             incident_ids=incident_ids,
+            template_type=template_type or "comprehensive",
             created_by=authenticated_entity.email,
         )
         session.add(report)
@@ -462,6 +467,7 @@ async def create_incident_report_task(
             cel,
             incident_ids,
             allowed_incident_ids,
+            template_type or "comprehensive",
             _queue_name=KEEP_ARQ_QUEUE_BASIC,
         )
         return {"report_id": str(report_id), "status": "pending"}
@@ -478,6 +484,7 @@ async def create_incident_report_task(
             filter_cel=cel,
             incident_ids=incident_ids,
             allowed_incident_ids=allowed_incident_ids,
+            template_type=template_type or "comprehensive",
         )
         return {"report_id": str(report_id), "status": "completed"}
 
