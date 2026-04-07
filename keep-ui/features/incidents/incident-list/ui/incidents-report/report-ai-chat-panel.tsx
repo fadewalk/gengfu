@@ -1,30 +1,29 @@
 "use client";
 
-import { CopilotChat } from "@copilotkit/react-ui";
 import {
   useCopilotAction,
   useCopilotReadable,
-  useCopilotMessagesContext,
-  useCopilotChat,
+  useCopilotChatInternal,
 } from "@copilotkit/react-core";
 import {
-  ActionExecutionMessage,
-  MessageRole,
-  ResultMessage,
   TextMessage,
+  MessageRole,
 } from "@copilotkit/runtime-client-gql";
 import { useApi } from "@/shared/lib/hooks/useApi";
 import { useI18n } from "@/i18n/hooks/useI18n";
 import { useLocale } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import {
   DocumentChartBarIcon,
   ArrowTrendingUpIcon,
   MagnifyingGlassIcon,
   BeakerIcon,
+  PaperAirplaneIcon,
+  SparklesIcon,
+  WrenchScrewdriverIcon,
+  UserIcon,
 } from "@heroicons/react/24/outline";
-import "@copilotkit/react-ui/styles.css";
 
 const REPORT_CHAT_INSTRUCTIONS_EN = `You are an expert incident analyst. The user has selected a set of incidents and wants to explore them interactively.
 
@@ -121,13 +120,23 @@ export function ReportAIChatPanel({
   const { t } = useI18n();
   const locale = useLocale();
   const api = useApi();
-  const { messages, setMessages } = useCopilotMessagesContext();
-  const { runChatCompletion } = useCopilotChat();
+  const isZh = locale === "zh" || locale === "zh-CN";
+  const instructions = isZh
+    ? REPORT_CHAT_INSTRUCTIONS_ZH
+    : REPORT_CHAT_INSTRUCTIONS_EN;
+
+  const { messages: chatMessages, appendMessage, isLoading, isAvailable } = useCopilotChatInternal();
+  const messages = chatMessages ?? [];
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [reportData, setReportData] = useState<any>(null);
-  const [sendingPreset, setSendingPreset] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const isZh = locale === "zh" || locale === "zh-CN";
+  // Auto-scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
 
   // Load incident data for context
   useEffect(() => {
@@ -158,48 +167,30 @@ export function ReportAIChatPanel({
 
   useEffect(() => {
     if (messages.length !== 0) {
-      localStorage.setItem(storageKey, JSON.stringify(messages));
+      try {
+        const serializable = messages.map((msg) => {
+          const m = msg as unknown as Record<string, unknown>;
+          return {
+            id: m.id,
+            role: m.role,
+            content: m.content,
+          };
+        });
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify(serializable.filter(Boolean))
+        );
+      } catch {
+        // Ignore serialization errors
+      }
     }
   }, [messages, storageKey]);
 
-  useEffect(() => {
-    const stored = localStorage.getItem(storageKey);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored).map((message: Record<string, unknown>) => {
-          if (message.type === "TextMessage") {
-            return new TextMessage({
-              id: message.id as string,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              role: message.role as any,
-              content: message.content as string,
-              createdAt: message.createdAt as string,
-            });
-          } else if (message.type === "ActionExecutionMessage") {
-            return new ActionExecutionMessage({
-              id: message.id as string,
-              name: message.name as string,
-              scope: message.scope as string,
-              arguments: message.arguments as Record<string, unknown>,
-              createdAt: message.createdAt as string,
-            });
-          } else if (message.type === "ResultMessage") {
-            return new ResultMessage({
-              id: message.id as string,
-              actionExecutionId: message.actionExecutionId as string,
-              actionName: message.actionName as string,
-              result: message.result as string,
-              createdAt: message.createdAt as string,
-            });
-          }
-          return null;
-        });
-        setMessages(parsed.filter(Boolean));
-      } catch {
-        // Ignore parse errors
-      }
-    }
-  }, []);
+  // System instructions as readable context
+  useCopilotReadable({
+    description: "AI assistant system instructions",
+    value: instructions,
+  });
 
   // Provide incident data as readable context
   useCopilotReadable({
@@ -236,7 +227,13 @@ export function ReportAIChatPanel({
         description: "The specific question to explore",
       },
     ],
-    handler: async ({ focusArea, question }: { focusArea: string; question: string }) => {
+    handler: async ({
+      focusArea,
+      question,
+    }: {
+      focusArea: string;
+      question: string;
+    }) => {
       try {
         const result = await api.post(`/incidents/report`, {
           incident_ids: incidentIds,
@@ -250,46 +247,140 @@ export function ReportAIChatPanel({
     },
   });
 
-  // Handle preset prompt click
-  const handlePresetClick = useCallback(
-    (prompt: PresetPrompt) => {
-      if (sendingPreset) return;
-      setSendingPreset(true);
-      const text = isZh ? prompt.promptZH : prompt.promptEN;
+  // Send a user message and trigger AI completion
+  const sendMessage = useCallback(
+    async (text: string) => {
+      if (!isAvailable) {
+        console.warn("[ReportAIChat] Agent not available, skipping send");
+        return;
+      }
       const userMessage = new TextMessage({
         id: crypto.randomUUID(),
         role: MessageRole.User,
         content: text,
         createdAt: new Date().toISOString(),
       });
-      setMessages([...messages, userMessage]);
-      setTimeout(() => {
-        runChatCompletion();
-        setSendingPreset(false);
-      }, 100);
+      try {
+        await appendMessage(userMessage);
+      } catch (err) {
+        console.error("[ReportAIChat] appendMessage failed:", err);
+      }
     },
-    [isZh, sendingPreset, messages, setMessages, runChatCompletion]
+    [appendMessage, isAvailable]
   );
 
-  const handleSubmitMessage = useCallback((_message: string) => {
-    // Track usage if needed
-  }, []);
+  // Handle preset tab click
+  const handlePresetClick = useCallback(
+    (prompt: PresetPrompt) => {
+      if (isLoading) return;
+      const text = isZh ? prompt.promptZH : prompt.promptEN;
+      sendMessage(text);
+    },
+    [isZh, isLoading, sendMessage]
+  );
 
-  const instructions = isZh
-    ? REPORT_CHAT_INSTRUCTIONS_ZH
-    : REPORT_CHAT_INSTRUCTIONS_EN;
+  // Handle textarea submit
+  const handleSubmit = useCallback(() => {
+    if (!inputValue.trim() || isLoading) return;
+    sendMessage(inputValue.trim());
+    setInputValue("");
+  }, [inputValue, isLoading, sendMessage]);
+
+  // Enter to submit, Shift+Enter for newline
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    },
+    [handleSubmit]
+  );
+
+  // Render each message
+  const renderMessage = (
+    message: (typeof messages)[0],
+    index: number
+  ): React.ReactNode => {
+    // AG-UI messages use role: "user" | "assistant"
+    // Tool call messages have role: "assistant" and a toolCall or function_call field
+    const msg = message as unknown as Record<string, unknown>;
+    const role = msg.role as string;
+    const isUser = role === "user";
+    const content = msg.content as string;
+    const msgId = (msg.id as string) || `msg-${index}`;
+
+    // Check if this is a tool call message (has toolCall or function_call)
+    const hasToolCall =
+      !!msg.toolCall ||
+      !!msg.function_call;
+
+    // Render tool call messages as "generating analysis" indicator
+    if (role === "assistant" && hasToolCall) {
+      const toolName =
+        (msg.toolCall as Record<string, unknown>)?.name as string ||
+        (msg.function_call as Record<string, unknown>)?.name as string ||
+        "";
+      return (
+        <div
+          key={msgId}
+          className="flex justify-start gap-2.5"
+        >
+          <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <WrenchScrewdriverIcon className="w-3.5 h-3.5 text-amber-600" />
+          </div>
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs text-amber-700 flex items-center gap-1.5">
+            <span className="animate-pulse">●</span>
+            <span className="font-medium">
+              {toolName === "generateFocusedAnalysis"
+                ? isZh
+                  ? "正在生成分析..."
+                  : "Generating analysis..."
+                : `${toolName}...`}
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    // Render text messages (user or assistant)
+    if (isUser || (role === "assistant" && content)) {
+      return (
+        <div
+          key={msgId}
+          className={clsx("flex gap-2.5", isUser ? "justify-end" : "justify-start")}
+        >
+          {!isUser && (
+            <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <SparklesIcon className="w-3.5 h-3.5 text-blue-600" />
+            </div>
+          )}
+          <div
+            className={clsx(
+              "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
+              isUser
+                ? "bg-blue-600 text-white rounded-br-sm"
+                : "bg-slate-100 text-slate-800 rounded-bl-sm"
+            )}
+          >
+            <div className="whitespace-pre-wrap break-words">
+              {content}
+            </div>
+          </div>
+          {isUser && (
+            <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <UserIcon className="w-3.5 h-3.5 text-slate-500" />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div className="flex flex-col h-full">
-      <style>{`
-        .report-chat .copilotKitMessages {
-          height: calc(85vh - 170px) !important;
-          overflow-y: auto;
-        }
-        .report-chat .copilotKitInput {
-          border-top: 1px solid #e2e8f0;
-        }
-      `}</style>
       {/* Preset prompt tabs */}
       <div className="flex items-center gap-2 px-4 pt-3 pb-2 border-b border-slate-100 bg-slate-50/30 flex-shrink-0">
         <span className="text-xs text-slate-400 mr-1 flex-shrink-0">
@@ -302,12 +393,12 @@ export function ReportAIChatPanel({
               <button
                 key={prompt.key}
                 onClick={() => handlePresetClick(prompt)}
-                disabled={sendingPreset}
+                disabled={isLoading}
                 type="button"
                 className={clsx(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap",
                   prompt.color,
-                  sendingPreset
+                  isLoading
                     ? "opacity-50 cursor-not-allowed"
                     : "cursor-pointer"
                 )}
@@ -319,18 +410,62 @@ export function ReportAIChatPanel({
           })}
         </div>
       </div>
-      {/* Chat area */}
-      <div className="flex-1 report-chat">
-        <CopilotChat
-          className="h-full"
-          instructions={instructions}
-          labels={{
-            title: t("incidents.report.aiChat.title"),
-            initial: t("incidents.report.aiChat.initialMessage"),
-            placeholder: t("incidents.report.aiChat.placeholder"),
-          }}
-          onSubmitMessage={handleSubmitMessage}
-        />
+
+      {/* Message list */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+        {messages.length === 0 && !isLoading && (
+          <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-60">
+            <SparklesIcon className="w-10 h-10 text-slate-300 mb-3" />
+            <p className="text-sm text-slate-500 max-w-md">
+              {t("incidents.report.aiChat.initialMessage")}
+            </p>
+          </div>
+        )}
+        {messages.map((msg, i) => renderMessage(msg, i))}
+        {isLoading && (
+          <div className="flex justify-start gap-2.5">
+            <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <SparklesIcon className="w-3.5 h-3.5 text-blue-600" />
+            </div>
+            <div className="bg-slate-100 rounded-2xl rounded-bl-sm px-4 py-3">
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0ms]" />
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:150ms]" />
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:300ms]" />
+              </div>
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input area */}
+      <div className="flex-shrink-0 border-t border-slate-200 px-3 py-3">
+        <div className="flex items-end gap-2">
+          <textarea
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={t("incidents.report.aiChat.placeholder")}
+            disabled={isLoading}
+            rows={1}
+            className="flex-1 resize-none max-h-[120px] rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+          <button
+            onClick={handleSubmit}
+            disabled={!inputValue.trim() || isLoading}
+            type="button"
+            aria-label={t("incidents.report.aiChat.placeholder")}
+            className={clsx(
+              "rounded-xl p-2.5 transition-all flex-shrink-0",
+              inputValue.trim() && !isLoading
+                ? "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+                : "bg-slate-100 text-slate-400 cursor-not-allowed"
+            )}
+          >
+            <PaperAirplaneIcon className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -81,16 +81,28 @@ async function initializeCopilotRuntime(req: NextRequest) {
 }
 
 export const POST = async (req: NextRequest) => {
-  const runtimeOptions = await initializeCopilotRuntime(req);
+  try {
+    const runtimeOptions = await initializeCopilotRuntime(req);
 
-  if (!runtimeOptions) {
-    return new Response("Error initializing Copilot Runtime", { status: 500 });
+    if (!runtimeOptions) {
+      console.error("[CopilotKit] Failed to initialize runtime - returning 503");
+      return new Response(
+        JSON.stringify({ error: "CopilotKit runtime initialization failed" }),
+        { status: 503, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
+      runtime: runtimeOptions.runtime,
+      serviceAdapter: runtimeOptions.serviceAdapter,
+      endpoint: "/api/copilotkit",
+    });
+
+    return handleRequest(req);
+  } catch (error) {
+    console.error("[CopilotKit] POST handler error:", error);
+    return new Response(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
-  const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
-    runtime: runtimeOptions.runtime,
-    serviceAdapter: runtimeOptions.serviceAdapter,
-    endpoint: "/api/copilotkit",
-  });
-
-  return handleRequest(req);
 };
