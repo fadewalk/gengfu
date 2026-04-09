@@ -24,6 +24,8 @@ import {
 import { IncidentsReport } from "./incidents-report";
 import type { IncidentData, ReportTemplateType } from "./models";
 
+const STORAGE_KEY = "keep-report-chat-messages";
+
 const REPORT_CHAT_INSTRUCTIONS_EN = `You are an expert incident analyst. The user wants to explore incidents interactively.
 
 Your capabilities:
@@ -115,6 +117,40 @@ export function ReportAIChatPanel({
     isAvailable,
   } = useCopilotChatInternal();
   const messages = chatMessages ?? [];
+
+  // Persist messages to localStorage on change
+  useEffect(() => {
+    if (messages.length === 0) return;
+    try {
+      const serialized = messages.map((m) => {
+        const msg = m as unknown as Record<string, unknown>;
+        return {
+          id: (msg.id as string) || crypto.randomUUID(),
+          role: msg.role as string,
+          content: msg.content as string,
+          createdAt: msg.createdAt as string | undefined,
+        };
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
+    } catch {
+      // ignore storage errors
+    }
+  }, [messages]);
+
+  // Restore messages from localStorage on mount
+  const [restoredMessages, setRestoredMessages] = useState<
+    { id: string; role: string; content: string; createdAt?: string }[]
+  >([]);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        setRestoredMessages(JSON.parse(raw));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   // Structured report from backend API (fixed format)
   const [activeReport, setActiveReport] = useState<IncidentData | null>(null);
@@ -470,7 +506,10 @@ export function ReportAIChatPanel({
 
         {/* Chat messages */}
         <div className="px-4 py-4 space-y-3">
-          {messages.length === 0 && !isLoading && !activeReport && (
+          {messages.length === 0 &&
+            restoredMessages.length === 0 &&
+            !isLoading &&
+            !activeReport && (
             <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-60">
               <SparklesIcon className="w-10 h-10 text-slate-300 mb-3" />
               <p className="text-sm text-slate-500 max-w-md">
@@ -478,7 +517,11 @@ export function ReportAIChatPanel({
               </p>
             </div>
           )}
-          {messages.map((msg, i) => renderMessage(msg, i))}
+          {messages.length > 0
+            ? messages.map((msg, i) => renderMessage(msg, i))
+            : restoredMessages.map((msg, i) =>
+                renderMessage(msg as unknown as (typeof messages)[0], i)
+              )}
           {isLoading && (
             <div className="flex justify-start gap-2.5">
               <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
