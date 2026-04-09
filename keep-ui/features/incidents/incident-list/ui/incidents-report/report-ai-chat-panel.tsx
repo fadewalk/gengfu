@@ -5,10 +5,7 @@ import {
   useCopilotReadable,
   useCopilotChatInternal,
 } from "@copilotkit/react-core";
-import {
-  TextMessage,
-  MessageRole,
-} from "@copilotkit/runtime-client-gql";
+import { TextMessage, MessageRole } from "@copilotkit/runtime-client-gql";
 import { useApi } from "@/shared/lib/hooks/useApi";
 import { useI18n } from "@/i18n/hooks/useI18n";
 import { useLocale } from "next-intl";
@@ -24,14 +21,17 @@ import {
   WrenchScrewdriverIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
+import { IncidentsReport } from "./incidents-report";
+import type { IncidentData, ReportTemplateType } from "./models";
 
-const REPORT_CHAT_INSTRUCTIONS_EN = `You are an expert incident analyst. The user has selected a set of incidents and wants to explore them interactively.
+const REPORT_CHAT_INSTRUCTIONS_EN = `You are an expert incident analyst. The user wants to explore incidents interactively.
 
 Your capabilities:
 - Analyze incident patterns, trends, and root causes
 - Compare incidents and identify recurring issues
 - Suggest improvements and preventive measures
 - Assess risk levels and potential impact
+- Query incidents by time range, severity, or category using the queryIncidents action when the user asks about specific aspects
 
 Rules:
 - DO NOT make up any information. Use only the data provided.
@@ -40,13 +40,14 @@ Rules:
 - If you need more context, ask the user.
 - Always respond in the same language as the user's question.`;
 
-const REPORT_CHAT_INSTRUCTIONS_ZH = `你是一个专业的事件分析师。用户选择了一组事件，希望通过对话来深入探索。
+const REPORT_CHAT_INSTRUCTIONS_ZH = `你是一个专业的事件分析师。用户希望通过对话来深入探索事件。
 
 你的能力：
 - 分析事件模式、趋势和根因
 - 比较事件并识别重复出现的问题
 - 提出改进建议和预防措施
 - 评估风险等级和潜在影响
+- 当用户询问特定方面时，可使用 queryIncidents 工具按时间段、严重程度或类别查询事件
 
 规则：
 - 不要编造任何信息，只使用提供的数据
@@ -57,12 +58,10 @@ const REPORT_CHAT_INSTRUCTIONS_ZH = `你是一个专业的事件分析师。用�
 
 /** Preset prompt definitions */
 interface PresetPrompt {
-  key: string;
+  key: ReportTemplateType;
   labelKey: string;
   icon: React.ElementType;
   color: string;
-  promptEN: string;
-  promptZH: string;
 }
 
 const PRESET_PROMPTS: PresetPrompt[] = [
@@ -71,40 +70,24 @@ const PRESET_PROMPTS: PresetPrompt[] = [
     labelKey: "incidents.report.template.comprehensive",
     icon: DocumentChartBarIcon,
     color: "text-blue-600 bg-blue-50 hover:bg-blue-100",
-    promptEN:
-      "Please generate a comprehensive incident report covering all metrics: severity distribution, affected services, MTTD, MTTR, recurring incidents, most common reasons, and actionable recommendations.",
-    promptZH:
-      "请生成一份综合事件报告，涵盖所有指标：严重程度分布、受影响服务、平均检测时间(MTTD)、平均恢复时间(MTTR)、重复发生事件、最常见原因、以及可执行的改进建议。",
   },
   {
     key: "trend",
     labelKey: "incidents.report.template.trend",
     icon: ArrowTrendingUpIcon,
     color: "text-green-600 bg-green-50 hover:bg-green-100",
-    promptEN:
-      "Please analyze the incident trends: time distribution patterns, frequency changes over time, identify any emerging patterns or anomalies, and suggest what trends might develop.",
-    promptZH:
-      "请分析事件趋势：时间分布规律、频率随时间的变化、识别任何新出现的模式或异常、并预测未来可能的发展趋势。",
   },
   {
     key: "root_cause",
     labelKey: "incidents.report.template.rootCause",
     icon: MagnifyingGlassIcon,
     color: "text-orange-600 bg-orange-50 hover:bg-orange-100",
-    promptEN:
-      "Please perform a root cause analysis: identify the most common root causes, analyze systemic weaknesses, find correlations between incidents, and suggest specific fixes for each root cause.",
-    promptZH:
-      "请进行根因分析：识别最常见的根本原因、分析系统性的薄弱环节、找出事件之间的关联、并为每个根因提供具体的修复建议。",
   },
   {
     key: "deep",
     labelKey: "incidents.report.template.deep",
     icon: BeakerIcon,
     color: "text-purple-600 bg-purple-50 hover:bg-purple-100",
-    promptEN:
-      "Please perform a deep analysis including: risk assessment of each incident, impact scope analysis, improvement roadmap with priorities, and preventive measures that would reduce future incidents.",
-    promptZH:
-      "请进行深度分析，包括：每个事件的风险评估、影响范围分析、按优先级排序的改进路线图、以及能减少未来事件的预防措施。",
   },
 ];
 
@@ -125,8 +108,20 @@ export function ReportAIChatPanel({
     ? REPORT_CHAT_INSTRUCTIONS_ZH
     : REPORT_CHAT_INSTRUCTIONS_EN;
 
-  const { messages: chatMessages, appendMessage, isLoading, isAvailable } = useCopilotChatInternal();
+  const {
+    messages: chatMessages,
+    appendMessage,
+    isLoading,
+    isAvailable,
+  } = useCopilotChatInternal();
   const messages = chatMessages ?? [];
+
+  // Structured report from backend API (fixed format)
+  const [activeReport, setActiveReport] = useState<IncidentData | null>(null);
+  const [activeTemplateType, setActiveTemplateType] =
+    useState<ReportTemplateType | null>(null);
+  const [isLoadingReport, setIsLoadingReport] = useState(false);
+  const [reportCollapsed, setReportCollapsed] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [reportData, setReportData] = useState<any>(null);
@@ -138,22 +133,16 @@ export function ReportAIChatPanel({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // Load incident data for context
+  // Load incident data for AI context (lightweight, no template_type)
   useEffect(() => {
     if (!api.isReady()) return;
     const fetchReportData = async () => {
       try {
-        let data: Record<string, unknown>;
-        if (incidentIds && incidentIds.length > 0) {
-          data = await api.post(`/incidents/report`, {
-            incident_ids: incidentIds,
-            template_type: "comprehensive",
-          });
-        } else {
-          let url = `/incidents/report`;
-          if (filterCel) url += `?cel=${filterCel}`;
-          data = await api.get(url);
-        }
+        const data = await api.post(`/incidents/report`, {
+          incident_ids: incidentIds?.length ? incidentIds : undefined,
+          cel: filterCel || undefined,
+          template_type: "comprehensive",
+        });
         setReportData(data);
       } catch (err) {
         console.error("Failed to load report data for AI chat:", err);
@@ -161,30 +150,6 @@ export function ReportAIChatPanel({
     };
     fetchReportData();
   }, [api, filterCel, incidentIds]);
-
-  // Persist messages to localStorage
-  const storageKey = `copilotkit-messages-report-${filterCel || "all"}-${(incidentIds || []).slice(0, 3).join(",")}`;
-
-  useEffect(() => {
-    if (messages.length !== 0) {
-      try {
-        const serializable = messages.map((msg) => {
-          const m = msg as unknown as Record<string, unknown>;
-          return {
-            id: m.id,
-            role: m.role,
-            content: m.content,
-          };
-        });
-        localStorage.setItem(
-          storageKey,
-          JSON.stringify(serializable.filter(Boolean))
-        );
-      } catch {
-        // Ignore serialization errors
-      }
-    }
-  }, [messages, storageKey]);
 
   // System instructions as readable context
   useCopilotReadable({
@@ -209,7 +174,45 @@ export function ReportAIChatPanel({
     value: incidentIds,
   });
 
-  // Action: Generate a focused analysis
+  // Action: Query incidents with custom filters (for AI auto-query)
+  useCopilotAction({
+    name: "queryIncidents",
+    description:
+      "Query incidents with custom CEL filter expression to analyze specific time ranges, severities, or categories. Returns structured incident report data.",
+    parameters: [
+      {
+        name: "celFilter",
+        type: "string",
+        description:
+          "CEL expression to filter incidents, e.g. 'severity == \"critical\"', 'creation_time > now() - duration(\"7d\")', or combined expressions",
+      },
+      {
+        name: "analysisType",
+        type: "string",
+        description:
+          "Type of analysis: 'comprehensive', 'trend', 'root_cause', or 'deep'",
+      },
+    ],
+    handler: async ({
+      celFilter,
+      analysisType,
+    }: {
+      celFilter: string;
+      analysisType: string;
+    }) => {
+      try {
+        const result = await api.post(`/incidents/report`, {
+          cel: celFilter,
+          template_type: analysisType || "comprehensive",
+        });
+        return result;
+      } catch (err) {
+        return `Error querying incidents: ${err}`;
+      }
+    },
+  });
+
+  // Action: Generate a focused analysis (legacy, kept for compatibility)
   useCopilotAction({
     name: "generateFocusedAnalysis",
     description:
@@ -250,10 +253,7 @@ export function ReportAIChatPanel({
   // Send a user message and trigger AI completion
   const sendMessage = useCallback(
     async (text: string) => {
-      if (!isAvailable) {
-        console.warn("[ReportAIChat] Agent not available, skipping send");
-        return;
-      }
+      if (!isAvailable) return;
       const userMessage = new TextMessage({
         id: crypto.randomUUID(),
         role: MessageRole.User,
@@ -269,14 +269,30 @@ export function ReportAIChatPanel({
     [appendMessage, isAvailable]
   );
 
-  // Handle preset tab click
+  // Handle preset tab click — call backend API for fixed-format report
   const handlePresetClick = useCallback(
-    (prompt: PresetPrompt) => {
-      if (isLoading) return;
-      const text = isZh ? prompt.promptZH : prompt.promptEN;
-      sendMessage(text);
+    async (prompt: PresetPrompt) => {
+      if (isLoadingReport || isLoading) return;
+      const templateType = prompt.key;
+      setActiveTemplateType(templateType);
+      setIsLoadingReport(true);
+      setActiveReport(null);
+      setReportCollapsed(false);
+      try {
+        const data = await api.post(`/incidents/report`, {
+          incident_ids: incidentIds?.length ? incidentIds : undefined,
+          cel: filterCel || undefined,
+          template_type: templateType,
+        });
+        setActiveReport(data);
+        setReportData(data);
+      } catch (err) {
+        console.error("Failed to generate report:", err);
+      } finally {
+        setIsLoadingReport(false);
+      }
     },
-    [isZh, isLoading, sendMessage]
+    [api, filterCel, incidentIds, isLoadingReport, isLoading]
   );
 
   // Handle textarea submit
@@ -302,40 +318,33 @@ export function ReportAIChatPanel({
     message: (typeof messages)[0],
     index: number
   ): React.ReactNode => {
-    // AG-UI messages use role: "user" | "assistant"
-    // Tool call messages have role: "assistant" and a toolCall or function_call field
     const msg = message as unknown as Record<string, unknown>;
     const role = msg.role as string;
     const isUser = role === "user";
     const content = msg.content as string;
     const msgId = (msg.id as string) || `msg-${index}`;
 
-    // Check if this is a tool call message (has toolCall or function_call)
-    const hasToolCall =
-      !!msg.toolCall ||
-      !!msg.function_call;
+    // Check if this is a tool call message
+    const hasToolCall = !!msg.toolCall || !!msg.function_call;
 
-    // Render tool call messages as "generating analysis" indicator
     if (role === "assistant" && hasToolCall) {
       const toolName =
-        (msg.toolCall as Record<string, unknown>)?.name as string ||
-        (msg.function_call as Record<string, unknown>)?.name as string ||
+        ((msg.toolCall as Record<string, unknown>)?.name as string) ||
+        ((msg.function_call as Record<string, unknown>)?.name as string) ||
         "";
       return (
-        <div
-          key={msgId}
-          className="flex justify-start gap-2.5"
-        >
+        <div key={msgId} className="flex justify-start gap-2.5">
           <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
             <WrenchScrewdriverIcon className="w-3.5 h-3.5 text-amber-600" />
           </div>
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs text-amber-700 flex items-center gap-1.5">
             <span className="animate-pulse">●</span>
             <span className="font-medium">
-              {toolName === "generateFocusedAnalysis"
+              {toolName === "generateFocusedAnalysis" ||
+              toolName === "queryIncidents"
                 ? isZh
-                  ? "正在生成分析..."
-                  : "Generating analysis..."
+                  ? "正在查询事件数据..."
+                  : "Querying incidents..."
                 : `${toolName}...`}
             </span>
           </div>
@@ -343,12 +352,14 @@ export function ReportAIChatPanel({
       );
     }
 
-    // Render text messages (user or assistant)
     if (isUser || (role === "assistant" && content)) {
       return (
         <div
           key={msgId}
-          className={clsx("flex gap-2.5", isUser ? "justify-end" : "justify-start")}
+          className={clsx(
+            "flex gap-2.5",
+            isUser ? "justify-end" : "justify-start"
+          )}
         >
           {!isUser && (
             <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -363,9 +374,7 @@ export function ReportAIChatPanel({
                 : "bg-slate-100 text-slate-800 rounded-bl-sm"
             )}
           >
-            <div className="whitespace-pre-wrap break-words">
-              {content}
-            </div>
+            <div className="whitespace-pre-wrap break-words">{content}</div>
           </div>
           {isUser && (
             <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -379,6 +388,13 @@ export function ReportAIChatPanel({
     return null;
   };
 
+  const templateLabels: Record<string, string> = {
+    comprehensive: isZh ? "综合报告" : "Comprehensive Report",
+    trend: isZh ? "趋势分析" : "Trend Analysis",
+    root_cause: isZh ? "根因分析" : "Root Cause Analysis",
+    deep: isZh ? "深度分析" : "Deep Analysis",
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Preset prompt tabs */}
@@ -389,54 +405,96 @@ export function ReportAIChatPanel({
         <div className="flex items-center gap-1.5 overflow-x-auto">
           {PRESET_PROMPTS.map((prompt) => {
             const Icon = prompt.icon;
+            const isActive = activeTemplateType === prompt.key;
             return (
               <button
                 key={prompt.key}
                 onClick={() => handlePresetClick(prompt)}
-                disabled={isLoading}
+                disabled={isLoadingReport || isLoading}
                 type="button"
                 className={clsx(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap",
                   prompt.color,
-                  isLoading
+                  isLoadingReport || isLoading
                     ? "opacity-50 cursor-not-allowed"
-                    : "cursor-pointer"
+                    : "cursor-pointer",
+                  isActive && "ring-2 ring-offset-1 ring-blue-400"
                 )}
               >
                 <Icon className="w-3.5 h-3.5" />
                 <span>{t(prompt.labelKey)}</span>
+                {isLoadingReport && isActive && (
+                  <span className="animate-spin inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full" />
+                )}
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Message list */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-        {messages.length === 0 && !isLoading && (
-          <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-60">
-            <SparklesIcon className="w-10 h-10 text-slate-300 mb-3" />
-            <p className="text-sm text-slate-500 max-w-md">
-              {t("incidents.report.aiChat.initialMessage")}
-            </p>
+      {/* Scrollable content area: report card + chat messages */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Structured report card (fixed format) */}
+        {activeReport && activeTemplateType && (
+          <div className="border-b border-slate-200">
+            <div className="flex items-center justify-between px-4 py-2 bg-slate-50">
+              <span className="text-xs font-medium text-slate-600">
+                {templateLabels[activeTemplateType] || activeTemplateType}
+              </span>
+              <button
+                type="button"
+                onClick={() => setReportCollapsed(!reportCollapsed)}
+                className="text-xs text-slate-400 hover:text-slate-600"
+              >
+                {reportCollapsed
+                  ? isZh
+                    ? "展开"
+                    : "Expand"
+                  : isZh
+                    ? "收起"
+                    : "Collapse"}
+              </button>
+            </div>
+            {!reportCollapsed && (
+              <div className="max-h-[60vh] overflow-y-auto">
+                <IncidentsReport
+                  incidentsReportData={activeReport}
+                  filterCel={filterCel}
+                  generatedAt={new Date()}
+                  templateType={activeTemplateType}
+                />
+              </div>
+            )}
           </div>
         )}
-        {messages.map((msg, i) => renderMessage(msg, i))}
-        {isLoading && (
-          <div className="flex justify-start gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <SparklesIcon className="w-3.5 h-3.5 text-blue-600" />
+
+        {/* Chat messages */}
+        <div className="px-4 py-4 space-y-3">
+          {messages.length === 0 && !isLoading && !activeReport && (
+            <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-60">
+              <SparklesIcon className="w-10 h-10 text-slate-300 mb-3" />
+              <p className="text-sm text-slate-500 max-w-md">
+                {t("incidents.report.aiChat.initialMessage")}
+              </p>
             </div>
-            <div className="bg-slate-100 rounded-2xl rounded-bl-sm px-4 py-3">
-              <div className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0ms]" />
-                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:150ms]" />
-                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:300ms]" />
+          )}
+          {messages.map((msg, i) => renderMessage(msg, i))}
+          {isLoading && (
+            <div className="flex justify-start gap-2.5">
+              <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <SparklesIcon className="w-3.5 h-3.5 text-blue-600" />
+              </div>
+              <div className="bg-slate-100 rounded-2xl rounded-bl-sm px-4 py-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:0ms]" />
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:150ms]" />
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce [animation-delay:300ms]" />
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
+          )}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* Input area */}
