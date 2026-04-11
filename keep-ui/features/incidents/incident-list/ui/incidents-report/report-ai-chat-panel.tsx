@@ -472,29 +472,33 @@ export function ReportAIChatPanel({
               </button>
             );
           })}
-          {/* Chat history button */}
+          {/* Chat history indicator */}
           {restoredMessages.length > 0 && messages.length === 0 && (
-            <button
-              type="button"
-              onClick={async () => {
-                if (!api.isReady()) return;
-                try {
-                  await api.delete(`/incidents/chat/messages?session_id=${sessionId}`);
-                  setRestoredMessages([]);
-                  lastSavedCount.current = 0;
-                } catch {
-                  // ignore
-                }
-              }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 bg-slate-100 hover:bg-slate-200 transition-all whitespace-nowrap cursor-pointer ml-auto"
-            >
+            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 bg-slate-100 whitespace-nowrap ml-auto">
               <ClockIcon className="w-3.5 h-3.5" />
               <span>{isZh ? "历史记录" : "History"}</span>
               <span className="bg-slate-300 text-white rounded-full px-1.5 py-0.5 text-[10px] leading-none">
                 {restoredMessages.length}
               </span>
-              <TrashIcon className="w-3 h-3 text-slate-400 hover:text-red-500" />
-            </button>
+              <button
+                type="button"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (!api.isReady()) return;
+                  try {
+                    await api.delete(`/incidents/chat/messages?session_id=${sessionId}`);
+                    setRestoredMessages([]);
+                    lastSavedCount.current = 0;
+                  } catch {
+                    // ignore
+                  }
+                }}
+                className="p-0.5 rounded hover:bg-red-100 cursor-pointer"
+                title={isZh ? "清空历史" : "Clear history"}
+              >
+                <TrashIcon className="w-3 h-3 text-slate-400 hover:text-red-500" />
+              </button>
+            </span>
           )}
         </div>
       </div>
