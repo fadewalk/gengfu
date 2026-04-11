@@ -24,8 +24,6 @@ import {
 import { IncidentsReport } from "./incidents-report";
 import type { IncidentData, ReportTemplateType } from "./models";
 
-const STORAGE_KEY = "keep-report-chat-messages";
-
 const REPORT_CHAT_INSTRUCTIONS_EN = `You are an expert incident analyst. The user wants to explore incidents interactively.
 
 Your capabilities:
@@ -118,39 +116,46 @@ export function ReportAIChatPanel({
   } = useCopilotChatInternal();
   const messages = chatMessages ?? [];
 
-  // Persist messages to localStorage on change
-  useEffect(() => {
-    if (messages.length === 0) return;
-    try {
-      const serialized = messages.map((m) => {
-        const msg = m as unknown as Record<string, unknown>;
-        return {
-          id: (msg.id as string) || crypto.randomUUID(),
-          role: msg.role as string,
-          content: msg.content as string,
-          createdAt: msg.createdAt as string | undefined,
-        };
-      });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
-    } catch {
-      // ignore storage errors
-    }
-  }, [messages]);
+  // Session ID for this report chat (stable per user)
+  const sessionId = "incident-report-chat";
 
-  // Restore messages from localStorage on mount
+  // Persist messages to backend on change
+  const lastSavedCount = useRef(0);
+  useEffect(() => {
+    if (messages.length === 0 || messages.length <= lastSavedCount.current) return;
+    lastSavedCount.current = messages.length;
+    const serialized = messages.map((m) => {
+      const msg = m as unknown as Record<string, unknown>;
+      return {
+        session_id: sessionId,
+        role: msg.role as string,
+        content: msg.content as string,
+      };
+    });
+    // Fire-and-forget save (only new messages since last save)
+    api.post(`/incidents/chat/messages`, {
+      session_id: sessionId,
+      messages: serialized,
+    }).catch(() => {
+      // ignore save errors
+    });
+  }, [messages, api, sessionId]);
+
+  // Restore messages from backend on mount
   const [restoredMessages, setRestoredMessages] = useState<
     { id: string; role: string; content: string; createdAt?: string }[]
   >([]);
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        setRestoredMessages(JSON.parse(raw));
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
+    if (!api.isReady()) return;
+    api.get(`/incidents/chat/messages?session_id=${sessionId}&limit=200`)
+      .then((data: { id: string; role: string; content: string; createdAt?: string }[]) => {
+        setRestoredMessages(data);
+        lastSavedCount.current = data.length;
+      })
+      .catch(() => {
+        // ignore load errors
+      });
+  }, [api, sessionId]);
 
   // Structured report from backend API (fixed format)
   const [activeReport, setActiveReport] = useState<IncidentData | null>(null);

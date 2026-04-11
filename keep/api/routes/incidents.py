@@ -1412,3 +1412,84 @@ async def unenrich_incident(
             )
 
     return Response(status_code=202)
+
+
+# ── Chat Message History ──────────────────────────────────────────────
+from pydantic import BaseModel as PydanticBaseModel
+from keep.api.models.db.chat_message import ChatMessage
+
+
+class ChatMessageIn(PydanticBaseModel):
+    session_id: str
+    role: str  # "user" | "assistant"
+    content: str
+
+
+class ChatMessageBatchIn(PydanticBaseModel):
+    session_id: str
+    messages: list[ChatMessageIn]
+
+
+@router.post(
+    "/chat/messages",
+    description="Save chat messages for a session",
+)
+def save_chat_messages(
+    body: ChatMessageBatchIn,
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:alert"])
+    ),
+):
+    tenant_id = authenticated_entity.tenant_id
+    user_email = authenticated_entity.email
+
+    with Session(engine) as session:
+        for msg in body.messages:
+            record = ChatMessage(
+                tenant_id=tenant_id,
+                user_email=user_email,
+                session_id=msg.session_id,
+                role=msg.role,
+                content=msg.content,
+            )
+            session.add(record)
+        session.commit()
+
+    return {"saved": len(body.messages)}
+
+
+@router.get(
+    "/chat/messages",
+    description="Get chat messages for a session",
+)
+def get_chat_messages(
+    session_id: str = Query(...),
+    limit: int = Query(200, ge=1, le=1000),
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:alert"])
+    ),
+):
+    tenant_id = authenticated_entity.tenant_id
+    user_email = authenticated_entity.email
+
+    with Session(engine) as session:
+        records = session.exec(
+            select(ChatMessage)
+            .where(
+                ChatMessage.tenant_id == tenant_id,
+                ChatMessage.user_email == user_email,
+                ChatMessage.session_id == session_id,
+            )
+            .order_by(ChatMessage.created_at.asc())
+            .limit(limit)
+        ).all()
+
+    return [
+        {
+            "id": r.id,
+            "role": r.role,
+            "content": r.content,
+            "createdAt": r.created_at.isoformat() if r.created_at else None,
+        }
+        for r in records
+    ]
