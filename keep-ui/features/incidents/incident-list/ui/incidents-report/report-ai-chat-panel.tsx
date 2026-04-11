@@ -165,6 +165,7 @@ export function ReportAIChatPanel({
     useState<ReportTemplateType | null>(null);
   const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [reportCollapsed, setReportCollapsed] = useState(false);
+  const [historyCollapsed, setHistoryCollapsed] = useState(true);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [reportData, setReportData] = useState<any>(null);
@@ -472,12 +473,24 @@ export function ReportAIChatPanel({
               </button>
             );
           })}
-          {/* Chat history indicator */}
-          {restoredMessages.length > 0 && messages.length === 0 && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 bg-slate-100 whitespace-nowrap ml-auto">
+          {/* Chat history button */}
+          {restoredMessages.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setHistoryCollapsed(!historyCollapsed)}
+              className={clsx(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ml-auto cursor-pointer transition-all",
+                historyCollapsed
+                  ? "text-slate-500 bg-slate-100 hover:bg-slate-200"
+                  : "text-blue-600 bg-blue-50 hover:bg-blue-100"
+              )}
+            >
               <ClockIcon className="w-3.5 h-3.5" />
               <span>{isZh ? "历史记录" : "History"}</span>
-              <span className="bg-slate-300 text-white rounded-full px-1.5 py-0.5 text-[10px] leading-none">
+              <span className={clsx(
+                "rounded-full px-1.5 py-0.5 text-[10px] leading-none",
+                historyCollapsed ? "bg-slate-300 text-white" : "bg-blue-200 text-blue-700"
+              )}>
                 {restoredMessages.length}
               </span>
               <button
@@ -498,7 +511,7 @@ export function ReportAIChatPanel({
               >
                 <TrashIcon className="w-3 h-3 text-slate-400 hover:text-red-500" />
               </button>
-            </span>
+            </button>
           )}
         </div>
       </div>
@@ -541,6 +554,23 @@ export function ReportAIChatPanel({
 
         {/* Chat messages */}
         <div className="px-4 py-4 space-y-3">
+          {/* History section (collapsible) */}
+          {restoredMessages.length > 0 && !historyCollapsed && (
+            <div className="border border-slate-200 rounded-xl bg-slate-50/50 overflow-hidden">
+              <div className="flex items-center justify-between px-3 py-1.5 bg-slate-100/80">
+                <span className="text-[11px] font-medium text-slate-500">
+                  {isZh ? `历史记录 (${restoredMessages.length}条)` : `History (${restoredMessages.length} messages)`}
+                </span>
+              </div>
+              <div className="px-3 py-2 space-y-2 max-h-[40vh] overflow-y-auto">
+                {restoredMessages.map((msg, i) =>
+                  renderMessage(msg as unknown as (typeof messages)[0], i)
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Current session messages */}
           {messages.length === 0 &&
             restoredMessages.length === 0 &&
             !isLoading &&
@@ -554,7 +584,7 @@ export function ReportAIChatPanel({
           )}
           {messages.length > 0
             ? messages.map((msg, i) => renderMessage(msg, i))
-            : restoredMessages.map((msg, i) =>
+            : (restoredMessages.length === 0 || !historyCollapsed) && restoredMessages.map((msg, i) =>
                 renderMessage(msg as unknown as (typeof messages)[0], i)
               )}
           {isLoading && (
