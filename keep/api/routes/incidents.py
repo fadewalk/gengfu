@@ -1493,3 +1493,32 @@ def get_chat_messages(
         }
         for r in records
     ]
+
+
+@router.delete(
+    "/chat/messages",
+    description="Delete all chat messages for a session",
+)
+def delete_chat_messages(
+    session_id: str = Query(...),
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:alert"])
+    ),
+):
+    tenant_id = authenticated_entity.tenant_id
+    user_email = authenticated_entity.email
+
+    with Session(engine) as session:
+        records = session.exec(
+            select(ChatMessage).where(
+                ChatMessage.tenant_id == tenant_id,
+                ChatMessage.user_email == user_email,
+                ChatMessage.session_id == session_id,
+            )
+        ).all()
+        count = len(records)
+        for r in records:
+            session.delete(r)
+        session.commit()
+
+    return {"deleted": count}
