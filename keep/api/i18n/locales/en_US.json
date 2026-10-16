@@ -1552,5 +1552,13 @@
   "value": "value",
   "verifier": "verifier",
   "version": "version",
-  "via": "via"
+  "via": "via",
+  "Gengfu Alert": "Gengfu Alert",
+  "Send alert message to a DingTalk group robot.": "Send alert message to a DingTalk group robot.",
+  "Robot webhook access_token (from the webhook URL)": "Robot webhook access_token (from the webhook URL)",
+  "Sign secret (starts with SEC) if the robot uses the signed security mode": "Sign secret (starts with SEC) if the robot uses the signed security mode",
+  "Send messages to the DingTalk group via robot webhook": "Send messages to the DingTalk group via robot webhook",
+  "{provider} failed to notify: message is required": "{provider} failed to notify: message is required",
+  "{provider} failed to notify alert message to DingTalk: {error}": "{provider} failed to notify alert message to DingTalk: {error}",
+  "{provider} DingTalk API error: {errcode} {errmsg}": "{provider} DingTalk API error: {errcode} {errmsg}"
 }
