@@ -1579,5 +1579,16 @@
   "Send messages to the DingTalk group via robot webhook": "通过机器人 Webhook 向钉钉群发送消息",
   "{provider} failed to notify: message is required": "{provider} 发送失败：message 为必填项",
   "{provider} failed to notify alert message to DingTalk: {error}": "{provider} 发送钉钉告警消息失败：{error}",
-  "{provider} DingTalk API error: {errcode} {errmsg}": "{provider} 钉钉接口返回错误：{errcode} {errmsg}"
+  "{provider} DingTalk API error: {errcode} {errmsg}": "{provider} 钉钉接口返回错误：{errcode} {errmsg}",
+  "Send alert message to a WeCom group robot.": "通过企业微信群机器人发送告警消息。",
+  "Send alert message to a Feishu group robot.": "通过飞书群机器人发送告警消息。",
+  "Send messages to the WeCom group via robot webhook": "通过机器人 Webhook 向企业微信群发送消息",
+  "Send messages to the Feishu group via robot webhook": "通过机器人 Webhook 向飞书群发送消息",
+  "Robot webhook key (the key= parameter of the webhook URL)": "机器人 Webhook 的 key 参数（取自 Webhook URL）",
+  "Robot hook token (the path segment after /bot/v2/hook/)": "机器人 hook token（Webhook URL 中 /bot/v2/hook/ 之后的路径段）",
+  "Sign secret if the robot uses signature verification": "签名校验密钥，机器人启用签名校验时必填",
+  "{provider} failed to notify alert message to WeCom: {error}": "{provider} 发送企业微信告警消息失败：{error}",
+  "{provider} failed to notify alert message to Feishu: {error}": "{provider} 发送飞书告警消息失败：{error}",
+  "{provider} WeCom API error: {errcode} {errmsg}": "{provider} 企业微信接口返回错误：{errcode} {errmsg}",
+  "{provider} Feishu API error: {code} {msg}": "{provider} 飞书接口返回错误：{code} {msg}"
 }

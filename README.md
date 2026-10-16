@@ -66,13 +66,14 @@
 - AI 提示词与事件报告中文输出：多模板报告、报告聊天历史持久化
 - 内网私有化部署套件（`deploy/idc/`）：LDAP 认证、无 Redis 降级运行、VictoriaMetrics 监控栈
 - AI 模型数据库化配置：OpenAI 兼容接口直连 DeepSeek / Qwen / GLM 等国产模型
+- 国内 IM 三件套原生 provider：钉钉（加签/关键词）、企业微信（@手机号）、飞书（签名/卡片）
 
 **进行中 / 计划**
 
-- 钉钉、企业微信、飞书原生 provider（当前最高优先级）
 - 定期合并上游更新（上游修复节奏约每季度近百个提交）
 - 海外 SaaS 集成（PagerDuty、ServiceNow、Slack 等）转为默认关闭的可选项
 - 国产大模型兼容性验证清单（DeepSeek / Qwen / GLM / Kimi 等）
+- 企业微信/飞书 @ 指定值班人（需开放平台 user_id 映射）
 
 ## 与上游 Keep 的关系
 

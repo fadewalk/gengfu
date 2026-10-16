@@ -1560,5 +1560,16 @@
   "Send messages to the DingTalk group via robot webhook": "Send messages to the DingTalk group via robot webhook",
   "{provider} failed to notify: message is required": "{provider} failed to notify: message is required",
   "{provider} failed to notify alert message to DingTalk: {error}": "{provider} failed to notify alert message to DingTalk: {error}",
-  "{provider} DingTalk API error: {errcode} {errmsg}": "{provider} DingTalk API error: {errcode} {errmsg}"
+  "{provider} DingTalk API error: {errcode} {errmsg}": "{provider} DingTalk API error: {errcode} {errmsg}",
+  "Send alert message to a WeCom group robot.": "Send alert message to a WeCom group robot.",
+  "Send alert message to a Feishu group robot.": "Send alert message to a Feishu group robot.",
+  "Send messages to the WeCom group via robot webhook": "Send messages to the WeCom group via robot webhook",
+  "Send messages to the Feishu group via robot webhook": "Send messages to the Feishu group via robot webhook",
+  "Robot webhook key (the key= parameter of the webhook URL)": "Robot webhook key (the key= parameter of the webhook URL)",
+  "Robot hook token (the path segment after /bot/v2/hook/)": "Robot hook token (the path segment after /bot/v2/hook/)",
+  "Sign secret if the robot uses signature verification": "Sign secret if the robot uses signature verification",
+  "{provider} failed to notify alert message to WeCom: {error}": "{provider} failed to notify alert message to WeCom: {error}",
+  "{provider} failed to notify alert message to Feishu: {error}": "{provider} failed to notify alert message to Feishu: {error}",
+  "{provider} WeCom API error: {errcode} {errmsg}": "{provider} WeCom API error: {errcode} {errmsg}",
+  "{provider} Feishu API error: {code} {msg}": "{provider} Feishu API error: {code} {msg}"
 }
