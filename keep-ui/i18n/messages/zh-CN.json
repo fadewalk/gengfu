@@ -881,6 +881,7 @@
     "emailRequired": "邮箱为必填项",
     "passwordRequired": "请输入密码",
     "password": "密码",
+    "resetPassword": "重置密码",
     "externallyManagedDescription": "用户管理通过外部认证系统处理。",
     "saving": "保存中...",
     "username": "用户名",

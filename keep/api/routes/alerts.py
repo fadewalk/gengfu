@@ -21,7 +21,7 @@ from sqlmodel import Session
 from keep.api.arq_pool import get_pool
 from keep.api.i18n import t
 from keep.api.bl.enrichments_bl import EnrichmentsBl
-from keep.api.consts import KEEP_ARQ_QUEUE_BASIC
+from keep.api.consts import KEEP_ARQ_QUEUE_BASIC, fingerprints_for_poll_payload
 from keep.api.core.alerts import (
     get_alert_facets,
     get_alert_facets_data,
@@ -289,6 +289,27 @@ def get_all_alerts(
     return enriched_alerts_dto
 
 
+@router.post("/batch", description="Get alerts by fingerprints")
+def get_alerts_by_fingerprints_batch(
+    fingerprints: list[str],
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:alert"])
+    ),
+) -> list[AlertDto]:
+    tenant_id = authenticated_entity.tenant_id
+    if not fingerprints:
+        return []
+
+    last_alerts = get_last_alerts_by_fingerprints(tenant_id, fingerprints)
+    alert_ids = [last_alert.alert_id for last_alert in last_alerts]
+    if not alert_ids:
+        return []
+
+    db_alerts = get_alerts_by_ids(tenant_id, alert_ids)
+    db_alerts = enrich_alerts_with_incidents(tenant_id, db_alerts)
+    return convert_db_alerts_to_dto_alerts(db_alerts, with_incidents=True)
+
+
 @router.get("/{fingerprint}/history", description="Get alert history")
 def get_alert_history(
     fingerprint: str,
@@ -374,7 +395,7 @@ def delete_alert(
 
     if delete_alert.lastReceived not in assignees_last_receievd:
         # auto-assign the deleting user to the alert
-        assignees_last_receievd[delete_alert.lastReceived] = user_email
+        assignees_last_receievd[delete_alert.lastReceived] = user_email.lower()
 
     # overwrite the enrichment
     enrichment_bl = EnrichmentsBl(tenant_id)
@@ -437,9 +458,13 @@ def assign_alert(
     if unassign:
         assignees_last_receievd.pop(last_received, None)
     else:
-        assignees_last_receievd[last_received] = user_email
+        assignees_last_receievd[last_received] = user_email.lower()
 
-    enrichments = {"assignees": assignees_last_receievd}
+    # Store the most recent assignee as a flat field so the facet/filter system
+    # can query it directly (the nested "assignees" dict is not queryable by facets).
+    flat_assignee = next(iter(reversed(assignees_last_receievd.values())), None) if assignees_last_receievd else None
+
+    enrichments = {"assignees": assignees_last_receievd, "assignee": flat_assignee}
     if not status:
         enrichments["status"] = "acknowledged"
 
@@ -484,6 +509,23 @@ def assign_alert(
             "fingerprint": fingerprint,
         },
     )
+
+    # Trigger workflows so that assign/unassign changes are picked up
+    # by workflows with only_on_change: [assignee]
+    try:
+        alert = get_alerts_by_fingerprint(tenant_id, fingerprint, limit=1)
+        if alert:
+            enriched_alerts_dto = convert_db_alerts_to_dto_alerts(alert)
+            workflow_manager = WorkflowManager.get_instance()
+            workflow_manager.insert_events(
+                tenant_id=tenant_id, events=enriched_alerts_dto
+            )
+    except Exception:
+        logger.exception(
+            "Failed to trigger workflows after alert assignment",
+            extra={"fingerprint": fingerprint, "tenant_id": tenant_id},
+        )
+
     return {"status": "ok"}
 
 
@@ -974,7 +1016,7 @@ def batch_enrich_alerts(
                 pusher_client.trigger(
                     f"private-{tenant_id}",
                     "poll-alerts",
-                    "{}",
+                    {"fingerprints": fingerprints_for_poll_payload(fingerprints)},
                 )
                 logger.info("Told client to poll alerts")
             except Exception:
@@ -996,15 +1038,21 @@ def batch_enrich_alerts(
         # @tb add "and session" cuz I saw AttributeError: 'NoneType' object has no attribute 'add'"
         if should_check_incidents_resolution and session:
             enrich_alerts_with_incidents(tenant_id=tenant_id, alerts=alerts)
-            for alert in alerts:
-                for incident in alert._incidents:
-                    if (
-                        incident.resolve_on == ResolveOn.ALL.value
-                        and is_all_alerts_resolved(incident=incident, session=session)
-                    ):
-                        incident.status = IncidentStatus.RESOLVED.value
-                        session.add(incident)
-                    session.commit()
+            # the same incident may be linked to many of the enriched alerts,
+            # so check each incident only once and commit once at the end
+            unique_incidents = {
+                incident.id: incident
+                for alert in alerts
+                for incident in alert._incidents
+            }
+            for incident in unique_incidents.values():
+                if (
+                    incident.resolve_on == ResolveOn.ALL.value
+                    and is_all_alerts_resolved(incident=incident, session=session)
+                ):
+                    incident.status = IncidentStatus.RESOLVED.value
+                    session.add(incident)
+            session.commit()
 
         return {"status": "ok"}
     except HTTPException:
@@ -1128,7 +1176,11 @@ def _enrich_alert(
                 pusher_client.trigger(
                     f"private-{tenant_id}",
                     "poll-alerts",
-                    "{}",
+                    {
+                        "fingerprints": fingerprints_for_poll_payload(
+                            [enrich_data.fingerprint]
+                        )
+                    },
                 )
                 logger.info("Told client to poll alerts")
             except Exception:
@@ -1248,7 +1300,11 @@ def unenrich_alert(
                 pusher_client.trigger(
                     f"private-{tenant_id}",
                     "poll-alerts",
-                    "{}",
+                    {
+                        "fingerprints": fingerprints_for_poll_payload(
+                            [enrich_data.fingerprint]
+                        )
+                    },
                 )
                 logger.info("Told client to poll alerts")
             except Exception:

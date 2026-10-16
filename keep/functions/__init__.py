@@ -212,6 +212,21 @@ def timestamp_delta(
     return dt + delta
 
 
+def _assume_utc(dt: datetime.datetime) -> datetime.datetime:
+    """Attach UTC to a datetime that carries no offset.
+
+    A timestamp written without an offset, such as ``2024-01-01T00:00:00``,
+    is the documented input to to_utc and to_timestamp, and it is what most
+    alert payloads carry. astimezone reads such a value in the host's local
+    timezone, so the same alert converted on a UTC server and on a server in
+    Asia/Kolkata comes out 5.5 hours apart. UTC is the only reading that does
+    not depend on where Keep happens to run.
+    """
+    if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
+        return dt.replace(tzinfo=datetime.timezone.utc)
+    return dt
+
+
 def to_utc(dt: datetime.datetime | str = "") -> datetime.datetime:
     if isinstance(dt, str):
         try:
@@ -219,7 +234,7 @@ def to_utc(dt: datetime.datetime | str = "") -> datetime.datetime:
         except ParserError:
             # Failed to parse the date
             return ""
-    utc_dt = dt.astimezone(pytz.utc)
+    utc_dt = _assume_utc(dt).astimezone(pytz.utc)
     return utc_dt
 
 
@@ -241,7 +256,7 @@ def to_timestamp(dt: datetime.datetime | str = "") -> int:
         except ParserError:
             # Failed to parse the date
             return 0
-    return int(dt.timestamp())
+    return int(_assume_utc(dt).timestamp())
 
 
 def datetime_compare(t1: datetime = None, t2: datetime = None) -> float:
@@ -558,6 +573,8 @@ def is_business_hours(
     if not dt:  # Handle case where parsing failed
         return False
 
+    dt = _assume_utc(dt)
+
     # Convert to specified timezone
     dt = dt.astimezone(tz)
 
@@ -604,3 +621,56 @@ def dictget(data: str | dict, key: str, default: any = None) -> any:
         return default
 
     return data.get(key, default)
+
+
+def dict_set(data: str | dict, key: str, value: any) -> dict:
+    """
+    Sets a key-value pair in a dictionary, returning a new dictionary.
+    
+    Args:
+        data (str | dict): The dictionary to update. Can be a JSON string or dict.
+        key (str): The key to set.
+        value (any): The value to set.
+        
+    Returns:
+        dict: A new dictionary with the key set to the value.
+    """
+    if isinstance(data, str):
+        try:
+            data = json.loads(data)
+        except Exception:
+            data = {}
+
+    if not isinstance(data, dict):
+        data = {}
+
+    import copy
+    dict_copy = copy.deepcopy(data)
+    dict_copy[key] = value
+    return dict_copy
+
+
+def dict_merge(*args) -> dict:
+    """
+    Merges multiple dictionaries into one, returning a new dictionary.
+    Dictionaries passed later override earlier ones.
+    
+    Args:
+        *args: Dictionaries or JSON strings to merge.
+        
+    Returns:
+        dict: A new dictionary containing all merged keys and values.
+    """
+    result = {}
+    for data in args:
+        if isinstance(data, str):
+            try:
+                data = json.loads(data)
+            except Exception:
+                continue
+
+        if isinstance(data, dict):
+            result.update(data)
+            
+    return result
+

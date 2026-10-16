@@ -23,6 +23,7 @@ from keep.api.models.incident import (
     IncidentDto,
     IncidentsClusteringSuggestion,
 )
+from keep.api.utils.ai_utils import get_ai_temperature_kwargs
 
 
 class AISuggestionBl:
@@ -611,7 +612,7 @@ class AISuggestionBl:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            "temperature": 0.2,
+            **get_ai_temperature_kwargs(0.2),
             "max_tokens": 4096,  # Set a reasonable limit for response
         }
         # Only add response_format for OpenAI; many compatible APIs don't support json_schema

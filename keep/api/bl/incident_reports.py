@@ -11,6 +11,7 @@ from keep.api.bl.ai_model_service import get_client, get_model_name
 from keep.api.bl.incidents_bl import IncidentBl
 from keep.api.models.db.incident import IncidentStatus
 from keep.api.models.incident import IncidentDto
+from keep.api.utils.ai_utils import get_ai_temperature_kwargs
 
 
 class IncidentMetrics(BaseModel):
@@ -252,7 +253,7 @@ class IncidentReportsBl:
                 {"role": "user", "content": incidents_json},
             ],
             "seed": 1239,
-            "temperature": 0.2,
+            **get_ai_temperature_kwargs(0.2),
         }
         if "api.openai.com" in base_url_str:
             kwargs["response_format"] = {

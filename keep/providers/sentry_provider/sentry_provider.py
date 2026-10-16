@@ -157,6 +157,16 @@ class SentryProvider(BaseProvider):
     def get_parameters(self):
         return {}
 
+    @staticmethod
+    def _extract_error_detail(response: requests.Response) -> str:
+        try:
+            response_json = response.json()
+            if isinstance(response_json, dict):
+                return response_json.get("detail") or str(response_json)
+        except Exception:
+            pass
+        return f"HTTP {response.status_code}"
+
     def validate_scopes(self) -> dict[str, bool | str]:
         validated_scopes = {}
         project_slug = None
@@ -168,8 +178,7 @@ class SentryProvider(BaseProvider):
                         headers=self.__headers,
                     )
                     if not response.ok:
-                        response_json = response.json()
-                        validated_scopes[scope.name] = response_json.get("detail")
+                        validated_scopes[scope.name] = self._extract_error_detail(response)
                         continue
                 else:
                     projects_response = requests.get(
@@ -177,18 +186,22 @@ class SentryProvider(BaseProvider):
                         headers=self.__headers,
                     )
                     if not projects_response.ok:
-                        response_json = projects_response.json()
-                        validated_scopes[scope.name] = response_json.get("detail")
+                        validated_scopes[scope.name] = self._extract_error_detail(projects_response)
                         continue
-                    projects = projects_response.json()
-                    project_slug = projects[0].get("slug")
+                    try:
+                        projects = projects_response.json()
+                        project_slug = projects[0].get("slug") if projects else None
+                    except Exception:
+                        project_slug = None
+                    if not project_slug:
+                        validated_scopes[scope.name] = "No projects found"
+                        continue
                     response = requests.get(
                         f"{self.sentry_api}/projects/{self.sentry_org_slug}/{project_slug}/issues/",
                         headers=self.__headers,
                     )
                     if not response.ok:
-                        response_json = response.json()
-                        validated_scopes[scope.name] = response_json.get("detail")
+                        validated_scopes[scope.name] = self._extract_error_detail(response)
                         continue
                 validated_scopes[scope.name] = True
             elif scope.name == "project:read":
@@ -197,8 +210,7 @@ class SentryProvider(BaseProvider):
                     headers=self.__headers,
                 )
                 if not response.ok:
-                    response_json = response.json()
-                    validated_scopes[scope.name] = response_json.get("detail")
+                    validated_scopes[scope.name] = self._extract_error_detail(response)
                     continue
                 validated_scopes[scope.name] = True
             elif scope.name == "project:write":
@@ -207,8 +219,7 @@ class SentryProvider(BaseProvider):
                     headers=self.__headers,
                 )
                 if not response.ok:
-                    response_json = response.json()
-                    validated_scopes[scope.name] = response_json.get("detail")
+                    validated_scopes[scope.name] = self._extract_error_detail(response)
                     continue
                 validated_scopes[scope.name] = True
         return validated_scopes

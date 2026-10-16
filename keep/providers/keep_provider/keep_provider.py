@@ -137,7 +137,7 @@ class KeepProvider(BaseProvider):
         self.logger.info("Got alerts from Keep", extra={"num_of_alerts": len(alerts)})
         return alerts
 
-    def _build_alert(self, alert_data, fingerprint_fields=[], **kwargs):
+    def _build_alert(self, alert_data, fingerprint_fields=None, **kwargs):
         """
         Build alerts from Keep.
         """
@@ -175,7 +175,9 @@ class KeepProvider(BaseProvider):
             fingerprint_fields = ["labels." + label for label in list(labels.keys())]
 
         # workflowId is used as the "rule id" - it's used to identify the rule that created the alert
-        fingerprint_fields.append("workflowId")
+        # build a new list instead of appending in place, since fingerprint_fields may be a
+        # list the caller (e.g. _notify_alert's per-alert loop) reuses across multiple alerts
+        fingerprint_fields = fingerprint_fields + ["workflowId"]
         alert.fingerprint = self.get_alert_fingerprint(alert, fingerprint_fields)
         return alert
 
@@ -539,7 +541,7 @@ class KeepProvider(BaseProvider):
         # if no if_condition, trigger all alerts
         else:
             self.logger.info("No 'if' condition - triggering all alerts")
-            trigger_alerts = alert_results
+            trigger_alerts = alert_results or []
 
         # build the alert dtos
         alert_dtos = []

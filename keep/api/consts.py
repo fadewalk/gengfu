@@ -58,3 +58,11 @@ OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", None)
 # The env vars below are kept only for backward compatibility during migration.
 
 KEEP_CORRELATION_ENABLED = os.environ.get("KEEP_CORRELATION_ENABLED", "true") == "true"
+
+FINGERPRINT_PAYLOAD_LIMIT = 100
+
+
+def fingerprints_for_poll_payload(fingerprints: list[str]) -> list[str]:
+    if len(fingerprints) <= FINGERPRINT_PAYLOAD_LIMIT:
+        return fingerprints
+    return []

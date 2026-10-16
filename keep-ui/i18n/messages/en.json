@@ -2700,6 +2700,7 @@
     "username": "Username",
     "usernameRequired": "Username is required",
     "password": "Password",
+    "resetPassword": "Reset Password",
     "passwordRequired": "Password is required",
     "role": "Role",
     "selectRole": "Select a role",

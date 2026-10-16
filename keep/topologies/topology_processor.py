@@ -232,8 +232,15 @@ class TopologyProcessor:
     ) -> Optional[Incident]:
         """Get the incident for an application"""
         with existed_or_new_session() as session:
+            # Exclude deleted incidents: deletion marks the incident as deleted
+            # but keeps the row (and its incident_application link), so without
+            # this filter a new alert would reuse the deleted incident instead
+            # of creating a new one.
             incident = session.exec(
-                select(Incident).where(Incident.incident_application == application.id)
+                select(Incident).where(
+                    Incident.incident_application == application.id,
+                    Incident.status != IncidentStatus.DELETED.value,
+                )
             ).first()
             return incident
 
@@ -357,7 +364,14 @@ class TopologyProcessor:
                 incident_application=application.id,
                 is_candidate=False,  # Topology-based incidents are always confirmed
                 is_visible=True,  # Topology-based incidents are always confirmed
+                is_predicted=True,  # Topology-based incidents are algorithmically generated
             )
+
+            # Persist incident to database before adding alerts
+            # This is required because assign_alert_to_incident creates LastAlertToIncident
+            # records that reference incident.id via foreign key
+            session.add(incident)
+            session.flush()  # Flush to get the incident.id without committing
 
             # Get all alerts for the services and find max severity
             for service in services_with_alerts:

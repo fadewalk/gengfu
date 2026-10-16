@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useI18n } from "@/i18n/hooks/useI18n";
 import { type AlertDto, type AlertsQuery } from "@/entities/alerts/model";
@@ -64,6 +64,7 @@ export default function Alerts({ presetName, initialFacets }: AlertsProps) {
     [providersData.installed_providers]
   );
 
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   // hooks for the note and ticket modals
   const [noteModalAlert, setNoteModalAlert] = useState<AlertDto | null>();
@@ -168,18 +169,16 @@ export default function Alerts({ presetName, initialFacets }: AlertsProps) {
   );
 
   const resetUrlAfterModal = useCallback(() => {
-    const currentParams = new URLSearchParams(window.location.search);
+    const currentParams = new URLSearchParams(searchParams?.toString() ?? "");
     Array.from(currentParams.keys())
       .filter((paramKey) => paramKey !== "cel")
       .forEach((paramKey) => currentParams.delete(paramKey));
-    let url = `${window.location.pathname}`;
-
-    if (currentParams.toString()) {
-      url += `?${currentParams.toString()}`;
-    }
+    const url = currentParams.toString()
+      ? `${pathname}?${currentParams.toString()}`
+      : pathname;
 
     router.replace(url);
-  }, [router]);
+  }, [router, pathname, searchParams]);
 
   // if we don't have presets data yet, just show loading
   if (!selectedPreset && isPresetsLoading) {

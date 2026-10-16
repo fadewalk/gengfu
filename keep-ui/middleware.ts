@@ -107,7 +107,6 @@ export const middleware = auth(async (request) => {
   if (
     !isAuthenticated &&
     !pathname.startsWith("/signin") &&
-    !pathname.startsWith("/health") &&
     !pathname.startsWith("/error") &&
     !pathname.startsWith("/api/healthcheck")
   ) {
@@ -155,6 +154,7 @@ export const config = {
      * - api (API routes)
      * - keep_big.svg (logo)
      * - keep.svg (logo)
+     * - keep.png (logo)
      * - gnip.webp (logo)
      * - api/aws-marketplace (aws marketplace)
      * - api/auth (auth)
@@ -164,7 +164,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * - icons (providers' logos)
      * - api/provider-images (provider icons)
+     * - public static assets (png, jpg, jpeg, gif, webp, svg, ico)
      */
-    "/((?!keep_big\\.svg$|gnip\\.webp|api/aws-marketplace$|api/auth|monitoring|_next/static|_next/image|favicon\\.ico|icons|music|keep\\.svg|api/provider-images).*)",
+    "/((?!keep_big\\.svg$|keep\\.png$|gnip\\.webp|api/aws-marketplace$|api/auth|monitoring|_next/static|_next/image|favicon\\.ico|icons|music|keep\\.svg|api/provider-images|.*\\.(?:png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

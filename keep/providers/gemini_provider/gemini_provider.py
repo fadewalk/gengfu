@@ -44,7 +44,7 @@ class GeminiProvider(BaseProvider):
     def _query(
         self,
         prompt,
-        model="gemini-pro",
+        model="gemini-3.7-flash",
         max_tokens=1024,
         structured_output_format=None,
     ):
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     print(
         provider.query(
             prompt="Here is an alert, define environment for it: Clients are panicking, nothing works.",
-            model="gemini-pro",
+            model="gemini-3.7-flash",
             structured_output_format={
                 "type": "json_schema",
                 "json_schema": {

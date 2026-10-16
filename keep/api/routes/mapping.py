@@ -161,6 +161,12 @@ def delete_rule(
     if not check_group_access(rule, authenticated_entity):
         raise HTTPException(status_code=403, detail="No access to this resource")
 
+    if rule.is_provisioned:
+        raise HTTPException(
+            status_code=409,
+            detail="Provisioned mapping rule cannot be deleted",
+        )
+
     session.delete(rule)
     session.commit()
     logger.info("Deleted a mapping rule", extra={"rule_id": rule_id})
@@ -187,6 +193,11 @@ def update_rule(
     )
     if existing_rule is None:
         raise HTTPException(status_code=404, detail=t("Rule not found"))
+    if existing_rule.is_provisioned:
+        raise HTTPException(
+            status_code=409,
+            detail="Provisioned mapping rule cannot be updated",
+        )
 
     # Check group access
     if not check_group_access(existing_rule, authenticated_entity):

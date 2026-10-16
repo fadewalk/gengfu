@@ -13,6 +13,8 @@ RUN npm ci  --noproxy registry.npmjs.org --maxsockets 1
 
 # Rebuild the source code only when needed
 FROM base AS builder
+ARG KEEP_INCLUDE_SOURCES=false
+ENV KEEP_INCLUDE_SOURCES=${KEEP_INCLUDE_SOURCES}
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -55,6 +57,7 @@ COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
 COPY entrypoint.sh /app/entrypoint.sh
 
 # as per Openshift guidelines, https://docs.openshift.com/container-platform/4.11/openshift_images/create-images.html#use-uid_create-images

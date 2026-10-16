@@ -42,6 +42,11 @@ class MappingRule(SQLModel, table=True):
     new_property_name: Optional[str] = Field(max_length=255)
     prefix_to_remove: Optional[str] = Field(max_length=255)
     group_id: str | None = Field(default=None, foreign_key="tenant_group.id", index=True)
+    # Provisioning fields (set when the rule is loaded from KEEP_MAPPINGS_DIRECTORY at startup)
+    is_provisioned: bool = Field(default=False)
+    # Uncapped (no max_length) — real GitOps mount paths regularly exceed 255 chars.
+    # Mirrors Workflow.provisioned_file.
+    provisioned_file: Optional[str] = Field(default=None)
 
 
 class MappRuleDtoBase(BaseModel):

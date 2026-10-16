@@ -423,6 +423,13 @@ def test_add_workflow(browser: Page, setup_page_logging, failure_artifacts):
         page.get_by_placeholder("message", exact=True).fill("Hello world!")
         page.get_by_test_id("wf-editor-configure-save-button").click()
         page.wait_for_url(re.compile("http://localhost:3000/workflows/.*"))
+        # wait_for_url returns as soon as the URL changes, which is before the
+        # workflow detail fetch resolves. Until it does, WorkflowDetailHeader
+        # renders a skeleton and wf-name is absent from the DOM rather than
+        # empty, so an immediate text assertion spends its default 5s window
+        # waiting for an element that does not exist yet. Wait for the heading
+        # to attach first, then assert on what it says.
+        expect(page.get_by_test_id("wf-name")).to_be_visible(timeout=15000)
         expect(page.get_by_test_id("wf-name")).to_contain_text(
             "Example Console Workflow"
         )
@@ -827,7 +834,7 @@ def test_run_workflow_from_alert_and_incident(
         select = modal.get_by_test_id("manual-run-workflow-select-control")
         choose_combobox_option_with_retry(page, select, "Log every incident")
         modal.get_by_role("button", name="Run").click()
-        expect(page.get_by_text("Workflow started successfully")).to_be_visible()
+        expect(page.get_by_text("Workflow started successfully").first).to_be_visible()
         # Run workflow from alert
         page.locator("[data-testid='menu-alerts-feed-link']").click()
         # wait for the alerts facets to load, so it doesn't interfere with the dropdown
@@ -843,7 +850,7 @@ def test_run_workflow_from_alert_and_incident(
         select = modal.get_by_test_id("manual-run-workflow-select-control")
         choose_combobox_option_with_retry(page, select, "Log every alert")
         modal.get_by_role("button", name="Run").click()
-        expect(page.get_by_text("Workflow started successfully")).to_be_visible()
+        expect(page.get_by_text("Workflow started successfully").first).to_be_visible()
     except Exception:
         save_failure_artifacts(page, log_entries)
         raise
