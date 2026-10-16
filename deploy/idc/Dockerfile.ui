@@ -17,7 +17,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY scripts ./scripts
 RUN npm config set registry https://registry.npmmirror.com && \
-    npm install -g pnpm && \
+    npm install -g pnpm@9 && \
     pnpm config set registry https://registry.npmmirror.com && \
     pnpm install --frozen-lockfile
 
@@ -28,7 +28,7 @@ RUN apk add --no-cache libc6-compat bash
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm install -g pnpm
+RUN npm install -g pnpm@9
 
 # 将 Monaco Editor 静态资源复制到 public 目录（替代 CDN）
 RUN mkdir -p public/monaco-vs/vs && \
