@@ -240,3 +240,7 @@ posthog.py
 .claude/settings.local.json
 .next/wiki/claude-code/sessions/
 .claude/hooks/.session/
+
+# 本地架构文档产物（生成的 HTML/截图）
+archify-guide/
+keep-architecture/

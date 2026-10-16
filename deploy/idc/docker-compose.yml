@@ -15,7 +15,7 @@ services:
     environment:
       - AUTH_TYPE=${AUTH_TYPE:-NO_AUTH}
       - API_URL=http://keep-backend:8080
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8088}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-secret}
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:4000}
       # 禁用遥测
@@ -40,7 +40,7 @@ services:
       dockerfile: deploy/idc/Dockerfile.api
     container_name: keep-backend
     ports:
-      - "${BACKEND_PORT:-8080}:8080"
+      - "8088:8080"
     environment:
       - AUTH_TYPE=${AUTH_TYPE:-NO_AUTH}
       - PORT=8080
@@ -60,7 +60,7 @@ services:
       - PUSHER_HOST=keep-websocket-server
       - PUSHER_PORT=6001
       - USE_NGROK=false
-      - KEEP_API_URL=http://localhost:8080
+      - KEEP_API_URL=http://localhost:8088
       - KEEP_JWT_SECRET=${KEEP_JWT_SECRET:-keep-idc-jwt-secret-2026}
       # LDAP 认证
       - LDAP_URL=${LDAP_URL:-}
@@ -78,7 +78,7 @@ services:
     volumes:
       - keep-state:/state
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthcheck')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8088/healthcheck')"]
       interval: 30s
       timeout: 10s
       retries: 5
