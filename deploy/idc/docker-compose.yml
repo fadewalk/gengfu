@@ -78,7 +78,7 @@ services:
     volumes:
       - keep-state:/state
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8088/healthcheck')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthcheck')"]
       interval: 30s
       timeout: 10s
       retries: 5

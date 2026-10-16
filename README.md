@@ -913,6 +913,24 @@ workflow:
 
 ## 入门指南
 
+最简单的启动方式是 Docker Compose（默认 NO_AUTH 免认证、SQLite 存储，适合内网试用）：
+
+```bash
+mkdir gengfu && cd gengfu
+curl -O https://raw.githubusercontent.com/fadewalk/gengfu/main/docker-compose.yml
+docker compose up -d
+```
+
+打开 `http://localhost:4000` 即可使用（API 在 `http://localhost:8080`）。
+
+**生产环境建议**：
+
+- 认证：设置 `AUTH_TYPE=LDAP` 并填入 `LDAP_URL` / `LDAP_BASE_DN` 等环境变量对接企业 AD/OpenLDAP（所有变量见 compose 文件内注释）
+- 数据库：注释 SQLite 连接串，启用 MySQL 段
+- 集成目录默认隐藏了 54 个海外 SaaS（`KEEP_DEFAULT_HIDDEN_PROVIDERS` 可整体覆盖），钉钉、企业微信、飞书、Zabbix、Prometheus、Grafana 等国内常用集成开箱可见
+
+## 入门指南（源码开发）
+
 Keep 可在多种环境与配置中运行。最简单的启动方式是使用 Docker Compose。
 
 ```bash

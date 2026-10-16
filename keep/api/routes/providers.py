@@ -84,12 +84,17 @@ def get_providers(
     # TenantConfiguration singleton cache staleness across gunicorn workers
     # Skip filtering if include_hidden=True (used by settings page to show all providers)
     if not include_hidden:
+        from keep.api.consts import get_default_hidden_providers
         from keep.api.core.db import get_tenant_config
         try:
             tenant_config = get_tenant_config(tenant_id) or {}
-            hidden_providers_set = set(tenant_config.get("hidden_providers", []))
+            # 租户保存过列表（含空列表）则完全以其为准；未设置时用出厂默认裁剪
+            hidden_providers = tenant_config.get("hidden_providers")
+            if hidden_providers is None:
+                hidden_providers = get_default_hidden_providers()
+            hidden_providers_set = set(hidden_providers)
         except Exception:
-            hidden_providers_set = set()
+            hidden_providers_set = set(get_default_hidden_providers())
         if hidden_providers_set:
             providers = [p for p in providers if p.type not in hidden_providers_set]
             installed_providers = [p for p in installed_providers if p.type not in hidden_providers_set]

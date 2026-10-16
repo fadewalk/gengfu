@@ -447,7 +447,12 @@ def get_hidden_providers(
     tenant_id = authenticated_entity.tenant_id
     tenant_configuration = TenantConfiguration()
     config_value = tenant_configuration.get_configuration(tenant_id=tenant_id)
-    hidden_providers = config_value.get("hidden_providers", [])
+    # 未设置时返回出厂默认裁剪清单，设置页展示的即是当前生效值
+    hidden_providers = config_value.get("hidden_providers")
+    if hidden_providers is None:
+        from keep.api.consts import get_default_hidden_providers
+
+        hidden_providers = get_default_hidden_providers()
     return JSONResponse(status_code=200, content={"hidden_providers": hidden_providers})
 
 

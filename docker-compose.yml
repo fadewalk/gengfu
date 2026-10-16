@@ -1,0 +1,136 @@
+# ============================================================
+# 更夫 Gengfu — 快速开始部署
+#
+#   docker compose up -d
+#
+# 打开 http://localhost:4000 即可使用。
+# 默认 NO_AUTH 免认证模式（内网试用）；生产环境请配置认证，见下方 LDAP 段。
+# 数据默认落在 SQLite（keep-state 卷），无需外部数据库。
+# ============================================================
+
+services:
+  keep-frontend:
+    image: ghcr.io/fadewalk/gengfu-ui:latest
+    container_name: gengfu-frontend
+    ports:
+      - "${FRONTEND_PORT:-4000}:3000"
+    environment:
+      - AUTH_TYPE=${AUTH_TYPE:-NO_AUTH}
+      - API_URL=http://keep-backend:8080
+      # 浏览器访问后端的地址，改了 BACKEND_PORT 就要一起改
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-secret}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:4000}
+      # 遥测全部禁用
+      - POSTHOG_DISABLED=true
+      - NEXT_TELEMETRY_DISABLED=1
+      # WebSocket — 前端需要浏览器可达的地址（非容器内部地址）
+      - PUSHER_HOST=${FRONTEND_PUSHER_HOST:-localhost}
+      - PUSHER_PORT=${WEBSOCKET_PORT:-6001}
+      - PUSHER_APP_KEY=${PUSHER_APP_KEY:-keepappkey}
+    volumes:
+      - keep-state:/state
+    depends_on:
+      keep-backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - gengfu-network
+
+  keep-backend:
+    image: ghcr.io/fadewalk/gengfu-api:latest
+    container_name: gengfu-backend
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      - AUTH_TYPE=${AUTH_TYPE:-NO_AUTH}
+      - PORT=8080
+      - SECRET_MANAGER_TYPE=${SECRET_MANAGER_TYPE:-FILE}
+      - SECRET_MANAGER_DIRECTORY=/state
+      # 默认 SQLite，零依赖；生产建议切 MySQL（取消注释并注释 SQLite 行）
+      - DATABASE_CONNECTION_STRING=sqlite:////state/db.sqlite3?check_same_thread=False
+      # - DATABASE_CONNECTION_STRING=mysql+pymysql://${DB_USER:-keep}:${DB_PASSWORD:-keep123}@mysql:3306/${DB_NAME:-keep}
+      # 遥测全部禁用
+      - POSTHOG_DISABLED=true
+      - KEEP_METRICS=false
+      # WebSocket
+      - PUSHER_APP_ID=${PUSHER_APP_ID:-1}
+      - PUSHER_APP_KEY=${PUSHER_APP_KEY:-keepappkey}
+      - PUSHER_APP_SECRET=${PUSHER_APP_SECRET:-keepappsecret}
+      - PUSHER_HOST=keep-websocket-server
+      - PUSHER_PORT=6001
+      - USE_NGROK=false
+      - KEEP_API_URL=${KEEP_API_URL:-http://localhost:8080}
+      - KEEP_JWT_SECRET=${KEEP_JWT_SECRET:-please-change-me-in-production}
+      # LDAP 认证（AUTH_TYPE=NO_AUTH 时忽略；企业内网接 AD/OpenLDAP 示例见 README）
+      - LDAP_URL=${LDAP_URL:-}
+      - LDAP_BIND_DN=${LDAP_BIND_DN:-}
+      - LDAP_BIND_PASSWORD=${LDAP_BIND_PASSWORD:-}
+      - LDAP_BASE_DN=${LDAP_BASE_DN:-}
+      - LDAP_USER_SEARCH_BASE=${LDAP_USER_SEARCH_BASE:-}
+      - LDAP_USER_FILTER=${LDAP_USER_FILTER:-}
+      - LDAP_MAIL_ATTRIBUTE=${LDAP_MAIL_ATTRIBUTE:-mail}
+      - LDAP_NAME_ATTRIBUTE=${LDAP_NAME_ATTRIBUTE:-displayName}
+      # 集成目录出厂裁剪：默认隐藏 54 个海外 SaaS，无需配置。
+      # 要显示全部集成，取消下一行注释（置空即关闭裁剪）；也可自定义逗号分隔清单
+      # - KEEP_DEFAULT_HIDDEN_PROVIDERS=
+      # Redis（ARQ 异步任务：AI 报告等）；改为 false 可单容器极简运行
+      - REDIS=${REDIS:-true}
+      - REDIS_HOST=keep-redis
+      - REDIS_PORT=6379
+    volumes:
+      - keep-state:/state
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthcheck')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - gengfu-network
+
+  keep-websocket-server:
+    image: quay.io/soketi/soketi:1.4-16-debian
+    container_name: gengfu-websocket
+    ports:
+      - "${WEBSOCKET_PORT:-6001}:6001"
+    environment:
+      - SOKETI_USER_AUTHENTICATION_TIMEOUT=3000
+      - SOKETI_DEBUG=0
+      - SOKETI_DEFAULT_APP_ID=${PUSHER_APP_ID:-1}
+      - SOKETI_DEFAULT_APP_KEY=${PUSHER_APP_KEY:-keepappkey}
+      - SOKETI_DEFAULT_APP_SECRET=${PUSHER_APP_SECRET:-keepappsecret}
+    restart: unless-stopped
+    networks:
+      - gengfu-network
+
+  # 可选：MySQL（生产推荐）。使用前注释掉上方 SQLite 连接串并取消下面注释
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: gengfu-mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-keep123}
+  #     MYSQL_DATABASE: ${DB_NAME:-keep}
+  #     MYSQL_USER: ${DB_USER:-keep}
+  #     MYSQL_PASSWORD: ${DB_PASSWORD:-keep123}
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+  #   restart: unless-stopped
+  #   networks:
+  #     - gengfu-network
+
+  keep-redis:
+    image: redis:7-alpine
+    container_name: gengfu-redis
+    restart: unless-stopped
+    networks:
+      - gengfu-network
+
+volumes:
+  keep-state:
+    driver: local
+
+networks:
+  gengfu-network:
+    driver: bridge
