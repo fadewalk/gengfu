@@ -275,7 +275,7 @@ class AISuggestionBl:
             # Strip thinking tags that some LLMs output (e.g., MiniMax-M2.7-highspeed)
             # These models output content like "<think>...</think>{...}" or just "<think>...thinking...}"
             import re
-            thinking_pattern = r'<think>[^}]*?</think>'
+            thinking_pattern = r'<think>.*?</think>'
             raw_content = re.sub(thinking_pattern, '', raw_content, flags=re.DOTALL).strip()
 
             # Some LLMs output thinking followed by JSON without proper tags,

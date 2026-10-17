@@ -72,7 +72,7 @@
 
 - 定期合并上游更新（上游修复节奏约每季度近百个提交）
 - 海外 SaaS 集成（PagerDuty、ServiceNow、Slack 等）转为默认关闭的可选项
-- 国产大模型兼容性验证清单（DeepSeek / Qwen / GLM / Kimi 等）
+- 国产大模型兼容矩阵：验证工具已就绪（`scripts/verify_llm_compat.py`），待接入各家 API key 实测并产出矩阵
 - 企业微信/飞书 @ 指定值班人（需开放平台 user_id 映射）
 
 ## 与上游 Keep 的关系

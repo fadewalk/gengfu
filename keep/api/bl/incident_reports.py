@@ -272,6 +272,11 @@ class IncidentReportsBl:
         try:
             # Extract JSON from markdown code fences using regex (more robust)
             import re
+            # 清理推理模型（DeepSeek-R1 / QwQ / GLM-Z 等）输出的思考过程，
+            # 否则无围栏 + think 前缀的输出会让 json.loads 失败（关联链已有同样处理）
+            model_response = re.sub(
+                r"<think>.*?</think>", "", model_response, flags=re.DOTALL
+            ).strip()
             # Try to find JSON between ```json and ``` or just between ``` and ```
             json_match = re.search(r'```(?:json)?\s*\n(.*?)\n```', model_response, re.DOTALL)
             if json_match:
