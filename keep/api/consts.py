@@ -92,7 +92,7 @@ GENGFU_DEFAULT_HIDDEN_PROVIDERS = [
     # 海外拨测/可用性 SaaS
     "checkly", "pingdom", "statuscake", "thousandeyes", "site24x7",
     # 海外工单/协作 SaaS
-    "jira", "asana", "trello", "monday", "planner", "linear", "linearb",
+    "jira", "servicenow", "asana", "trello", "monday", "planner", "linear", "linearb",
     # 海外云 / 云上 SaaS（中国大陆不可达或无中国区）
     "auth0", "azuremonitoring", "gcpmonitoring", "aks", "gke",
     "opensearchserverless", "bigquery", "snowflake", "salesforce", "posthog",
