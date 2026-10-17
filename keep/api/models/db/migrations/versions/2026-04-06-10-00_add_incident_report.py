@@ -17,7 +17,7 @@ depends_on = None
 
 def upgrade() -> None:
     conn = op.get_bind()
-    inspector = conn.inspector
+    inspector = sa.inspect(conn)
     if "incident_report" not in inspector.get_table_names():
         op.create_table(
             "incident_report",
@@ -41,6 +41,6 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     conn = op.get_bind()
-    inspector = conn.inspector
+    inspector = sa.inspect(conn)
     if "incident_report" in inspector.get_table_names():
         op.drop_table("incident_report")

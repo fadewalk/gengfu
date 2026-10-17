@@ -30,9 +30,7 @@ def upgrade() -> None:
     if "group_id" not in lastalert_columns:
         op.add_column(
             "lastalert",
-            sa.Column(
-                "group_id", sa.String(36), sa.ForeignKey("tenant_group.id"), nullable=True
-            ),
+            sa.Column("group_id", sa.String(36), nullable=True),
         )
         op.create_index("ix_lastalert_group_id", "lastalert", ["group_id"])
     else:

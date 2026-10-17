@@ -31,7 +31,7 @@ def upgrade() -> None:
     if "group_id" not in preset_columns:
         op.add_column(
             "preset",
-            sa.Column("group_id", sa.String(36), sa.ForeignKey("tenant_group.id"), nullable=True),
+            sa.Column("group_id", sa.String(36), nullable=True),
         )
         op.create_index("ix_preset_group_id", "preset", ["group_id"])
     else:
@@ -42,7 +42,7 @@ def upgrade() -> None:
     if "group_id" not in dashboard_columns:
         op.add_column(
             "dashboard",
-            sa.Column("group_id", sa.String(36), sa.ForeignKey("tenant_group.id"), nullable=True),
+            sa.Column("group_id", sa.String(36), nullable=True),
         )
         op.create_index("ix_dashboard_group_id", "dashboard", ["group_id"])
     else:

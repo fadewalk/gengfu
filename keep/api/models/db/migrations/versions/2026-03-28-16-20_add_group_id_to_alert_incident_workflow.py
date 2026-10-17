@@ -30,7 +30,7 @@ def upgrade() -> None:
     if "group_id" not in alert_columns:
         op.add_column(
             "alert",
-            sa.Column("group_id", sa.String(36), sa.ForeignKey("tenant_group.id"), nullable=True),
+            sa.Column("group_id", sa.String(36), nullable=True),
         )
         op.create_index("ix_alert_group_id", "alert", ["group_id"])
     else:
@@ -41,7 +41,7 @@ def upgrade() -> None:
     if "group_id" not in incident_columns:
         op.add_column(
             "incident",
-            sa.Column("group_id", sa.String(36), sa.ForeignKey("tenant_group.id"), nullable=True),
+            sa.Column("group_id", sa.String(36), nullable=True),
         )
         op.create_index("ix_incident_group_id", "incident", ["group_id"])
     else:
@@ -52,7 +52,7 @@ def upgrade() -> None:
     if "group_id" not in workflow_columns:
         op.add_column(
             "workflow",
-            sa.Column("group_id", sa.String(36), sa.ForeignKey("tenant_group.id"), nullable=True),
+            sa.Column("group_id", sa.String(36), nullable=True),
         )
         op.create_index("ix_workflow_group_id", "workflow", ["group_id"])
     else:

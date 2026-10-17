@@ -60,8 +60,9 @@ else
 
 
     echo "Running API gunicorn"
-    # migration will run from arq worker
-    SKIP_DB_CREATION=true exec "$@" &
+    # 迁移由 arq worker 与 API 双方幂等执行（alembic 检查版本后跳过）：
+    # 此前 API 跳过建表，慢盘环境下迁移未完成就查询会导致 no such table 崩溃
+    exec "$@" &
 
     KEEP_API_PID=$!
 

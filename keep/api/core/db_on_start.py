@@ -185,14 +185,7 @@ def migrate_db():
         "script_location",
         os.path.dirname(os.path.abspath(__file__)) + "/../models/db/migrations",
     )
-    try:
-        alembic.command.upgrade(config, "head")
-        logger.info("Finished migrations")
-    except Exception as e:
-        # SQLite doesn't support ALTER constraints, so some upstream migrations may fail.
-        # Log the error but continue — our group isolation migrations have already been applied.
-        logger.warning(
-            f"Migration warning (non-fatal): {e}. "
-            "Some upstream migrations may not be compatible with SQLite. "
-            "Group isolation migrations are already applied."
-        )
+    # 迁移失败必须让启动大声失败（fail-fast）：此前这里吞异常，
+    # 全新库上迁移链的任何断裂都会表现为后续随机性的 "no such table" 崩溃
+    alembic.command.upgrade(config, "heads")
+    logger.info("Finished migrations")

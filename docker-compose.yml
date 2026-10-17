@@ -74,8 +74,9 @@ services:
       # 集成目录出厂裁剪：默认隐藏 54 个海外 SaaS，无需配置。
       # 要显示全部集成，取消下一行注释（置空即关闭裁剪）；也可自定义逗号分隔清单
       # - KEEP_DEFAULT_HIDDEN_PROVIDERS=
-      # Redis（ARQ 异步任务：AI 报告等）；改为 false 可单容器极简运行
-      - REDIS=${REDIS:-true}
+      # Redis（ARQ 异步任务队列）。默认 false：SQLite + 无 Redis 即完整可用，
+      # AI 报告自动降级为同步生成；需要异步任务时改 true（redis 服务已内置）
+      - REDIS=${REDIS:-false}
       - REDIS_HOST=keep-redis
       - REDIS_PORT=6379
     volumes:
