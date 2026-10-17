@@ -1590,5 +1590,7 @@
   "{provider} failed to notify alert message to WeCom: {error}": "{provider} 发送企业微信告警消息失败：{error}",
   "{provider} failed to notify alert message to Feishu: {error}": "{provider} 发送飞书告警消息失败：{error}",
   "{provider} WeCom API error: {errcode} {errmsg}": "{provider} 企业微信接口返回错误：{errcode} {errmsg}",
-  "{provider} Feishu API error: {code} {msg}": "{provider} 飞书接口返回错误：{code} {msg}"
+  "{provider} Feishu API error: {code} {msg}": "{provider} 飞书接口返回错误：{code} {msg}",
+  "Model name, e.g. claude-sonnet-4-6, or glm-5.3-flash / kimi-k2 on Anthropic-compatible endpoints": "模型名，如 claude-sonnet-4-6；兼容端点可填 glm-5.3-flash、kimi-k2 等",
+  "Custom base_url for Anthropic-compatible endpoints (e.g. https://open.bigmodel.cn/api/anthropic for GLM coding-plan keys)": "Anthropic 兼容端点的自定义 base_url（如智谱编程套餐 key 填 https://open.bigmodel.cn/api/anthropic）"
 }

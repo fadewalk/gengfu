@@ -9,6 +9,9 @@
 |---|---|---|---|---|---|---|---|---|---|
 | **DeepSeek / deepseek-chat** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 7/8 |
 | **DeepSeek / deepseek-reasoner** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | 7/8 |
+| **GLM / glm-4-flash**（免费） | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 8/8 |
+| **GLM / glm-5.3-flash** | 429 余额不足（编程套餐订阅 key 仅限 Anthropic 端点） |||||||||
+| **GLM / glm-5.3-flash**（经 Anthropic 兼容端点） | ✅ 订阅 key 实测可用，已增强 anthropic provider 支持 base_url |||||||
 
 ## 结论与说明
 
@@ -19,6 +22,16 @@
   （此前推理模型在报告场景会解析失败）。
 - 更夫设置页的 AI 模型配置（Settings → AI Configuration）填入 DeepSeek base_url `https://api.deepseek.com`
   与 API key 即可直接使用。
+
+## GLM 接入指引（智谱）
+
+- **免费起步**：`glm-4-flash` 在 OpenAI 兼容端点（`https://open.bigmodel.cn/api/paas/v4`）实测 8/8，
+  且 **json_schema 原生支持**（比 DeepSeek 更全），零成本接入更夫 AI 链路。
+- **最新旗舰 glm-5.3-flash**：编程套餐（Claude Code 套餐）的订阅 key 只能走 Anthropic 兼容端点。
+  已增强更夫的 anthropic provider 支持自定义 base_url——工作流里配置
+  `base_url=https://open.bigmodel.cn/api/anthropic` + `model=glm-5.3-flash` 即可使用订阅额度（实测通过）。
+  AI 分析链路（事件报告/关联）走 OpenAI 协议，5.3 需 API 余额，4-flash 免费。
+- anthropic provider 同时修复：推理模型响应首个块是 thinking 导致的取文本崩溃。
 
 ## 待实测
 

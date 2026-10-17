@@ -24,13 +24,21 @@ class AnthropicProviderAuthConfig:
         default="claude-sonnet-4-6",
         metadata={
             "required": False,
-            "description": "Claude model to use",
-            "type": "select",
-            "options": [
-                "claude-opus-4-5",
-                "claude-sonnet-4-6",
-                "claude-haiku-4-5-20251001",
-            ],
+            "description": t(
+                "Model name, e.g. claude-sonnet-4-6, or glm-5.3-flash / kimi-k2 on Anthropic-compatible endpoints"
+            ),
+            "hint": "claude-sonnet-4-6",
+        },
+    )
+
+    base_url: str = dataclasses.field(
+        default="",
+        metadata={
+            "required": False,
+            "description": t(
+                "Custom base_url for Anthropic-compatible endpoints (e.g. https://open.bigmodel.cn/api/anthropic for GLM coding-plan keys)"
+            ),
+            "hint": "https://open.bigmodel.cn/api/anthropic",
         },
     )
 
@@ -60,9 +68,15 @@ class AnthropicProvider(BaseProvider):
     def dispose(self):
         pass
 
+    def _build_client(self) -> Anthropic:
+        client_kwargs = {"api_key": self.authentication_config.api_key}
+        if self.authentication_config.base_url:
+            client_kwargs["base_url"] = self.authentication_config.base_url
+        return Anthropic(**client_kwargs)
+
     def validate_scopes(self) -> dict[str, bool | str]:
         try:
-            client = Anthropic(api_key=self.authentication_config.api_key)
+            client = self._build_client()
             client.messages.create(
                 model=self.authentication_config.model,
                 max_tokens=10,
@@ -91,7 +105,7 @@ class AnthropicProvider(BaseProvider):
             system_prompt (str): System prompt override for this call.
             structured_output_format (dict): The structured output format to use.
         """
-        client = Anthropic(api_key=self.authentication_config.api_key)
+        client = self._build_client()
 
         messages = [{"role": "user", "content": prompt}]
 
@@ -111,7 +125,16 @@ class AnthropicProvider(BaseProvider):
             system=resolved_system,
         )
 
-        content = response.content[0].text
+        # 推理模型（如 GLM-5.x / Claude thinking）首个 content 块是 thinking，
+        # 只有 text 块带 .text——直接取 content[0] 会 AttributeError
+        content = next(
+            (block.text for block in response.content if getattr(block, "type", None) == "text"),
+            None,
+        )
+        if content is None:
+            raise ValueError(
+                f"No text block in Anthropic response (blocks: {[getattr(b, 'type', '?') for b in response.content]})"
+            )
 
         try:
             content = json.loads(content)

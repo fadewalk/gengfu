@@ -36,15 +36,17 @@ VENDOR_PRESETS = {
     },
     "qwen": {
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-        "models": ["qwen-max", "qwen-plus", "qwen-turbo"],
+        "models": ["qwen3-max", "qwen-plus"],
     },
     "glm": {
         "base_url": "https://open.bigmodel.cn/api/paas/v4",
-        "models": ["glm-4.6", "glm-4.5-air", "glm-4-flash"],
+        # glm-5.3-flash 为最新旗舰；编程套餐订阅 key 仅限 Anthropic 端点，
+        # OpenAI 端点付费模型需 API 余额，glm-4-flash 免费可用
+        "models": ["glm-5.3-flash", "glm-4-flash"],
     },
     "kimi": {
         "base_url": "https://api.moonshot.cn/v1",
-        "models": ["kimi-k2-0905-preview", "moonshot-v1-8k"],
+        "models": ["kimi-latest", "kimi-k2-turbo-preview"],
     },
     "siliconflow": {
         "base_url": "https://api.siliconflow.cn/v1",
@@ -328,7 +330,21 @@ def main():
     parser.add_argument("--vendor-name", help="矩阵里显示的厂商名（默认取 --vendor）")
     parser.add_argument("--api-key", default="", help="API key，也可用环境变量 LLM_API_KEY")
     parser.add_argument("--output", default="llm-compat-results.md", help="Markdown 结果输出路径")
+    parser.add_argument("--list-models", action="store_true", help="只列出端点可用的模型名后退出")
     args = parser.parse_args()
+
+    if args.list_models:
+        if not args.base_url and not args.vendor:
+            parser.error("必须给 --vendor 或 --base-url")
+        preset = VENDOR_PRESETS.get(args.vendor, {})
+        base_url = args.base_url or preset["base_url"]
+        api_key = args.api_key or os.environ.get("LLM_API_KEY", "")
+        headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
+        resp = requests.get(f"{base_url.rstrip('/')}/models", headers=headers, timeout=30)
+        resp.raise_for_status()
+        for m in resp.json().get("data", []):
+            print(m.get("id"))
+        return
 
     if not args.vendor and not args.base_url:
         parser.error("必须给 --vendor 或 --base-url")
