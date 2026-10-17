@@ -96,11 +96,15 @@ class DingtalkProvider(BaseProvider):
         title: str,
         at_mobiles: Optional[list[str]] = None,
         at_all: bool = False,
+        link_url: Optional[str] = None,
+        link_text: str = "",
     ) -> dict:
         """构造钉钉 markdown 消息体。"""
         at_section: dict = {"isAtAll": at_all}
         if at_mobiles:
             at_section["atMobiles"] = list(at_mobiles)
+        if link_url:
+            message = f"{message}\n\n**[{link_text or t('View details')}]({link_url})**"
         return {
             "msgtype": "markdown",
             "markdown": {"title": title, "text": message},
@@ -113,6 +117,8 @@ class DingtalkProvider(BaseProvider):
         title: str = "",
         at_mobiles: Optional[list[str]] = None,
         at_all: bool = False,
+        link_url: Optional[str] = None,
+        link_text: str = "",
         **kwargs: dict,
     ):
         """
@@ -124,6 +130,8 @@ class DingtalkProvider(BaseProvider):
             title (str): 消息标题，会话列表中展示，默认「更夫告警」
             at_mobiles (list[str], optional): 需要 @ 的手机号列表
             at_all (bool): 是否 @ 所有人，默认 False
+            link_url (str, optional): 「查看详情」链接（如更夫事件页地址）
+            link_text (str, optional): 链接文字，默认「查看详情」
         """
         self.logger.debug("Notifying alert message to DingTalk")
 
@@ -147,6 +155,8 @@ class DingtalkProvider(BaseProvider):
             title=title or t("Gengfu Alert"),
             at_mobiles=at_mobiles,
             at_all=at_all,
+            link_url=link_url,
+            link_text=link_text,
         )
 
         try:

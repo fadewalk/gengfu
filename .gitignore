@@ -252,3 +252,4 @@ keep-architecture/
 # LLM 兼容验证临时结果（正式结果入库 docs/llm-compatibility-zh.md）
 llm-compat-results.md
 llm-compat-reasoner.md
+llm-compat-glm.md

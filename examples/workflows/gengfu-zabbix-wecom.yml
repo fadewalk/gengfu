@@ -1,0 +1,25 @@
+workflow:
+  id: gengfu-zabbix-wecom
+  name: 更夫 · Zabbix 告警企业微信通知
+  description: >
+    Zabbix 告警推送到企业微信群（需先在集成页安装企业微信机器人，实例名设为 wecom）。
+    传 at_mobiles 时自动切换为纯文本消息以保留 @ 提醒能力。
+  triggers:
+    - type: alert
+      cel: source.contains("zabbix")
+  actions:
+    - name: notify-wecom
+      provider:
+        type: wecom
+        config: "{{ providers.wecom }}"
+        with:
+          title: "{{ alert.name }}"
+          message: |
+            **{{ alert.name }}**
+
+            - 严重度: {{ alert.severity }}
+            - 主机: {{ alert.entity }}
+            - 描述: {{ alert.description }}
+          link_url: "{{ alert.url }}"
+          # 需要 @ 指定值班人时放开下一行（会自动降级为纯文本消息）
+          # at_mobiles: ["13800138000"]

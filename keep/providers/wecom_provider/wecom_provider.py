@@ -92,6 +92,8 @@ class WecomProvider(BaseProvider):
         title: str = "",
         at_mobiles: Optional[list[str]] = None,
         at_all: bool = False,
+        link_url: Optional[str] = None,
+        link_text: str = "",
         **kwargs: dict,
     ):
         """
@@ -103,6 +105,8 @@ class WecomProvider(BaseProvider):
             title (str): 消息标题，非空时作为一级标题拼在正文前（仅 markdown 生效）
             at_mobiles (list[str], optional): 需要 @ 的成员手机号列表（仅 text 消息生效）
             at_all (bool): 是否 @ 所有人，默认 False（仅 text 消息生效）
+            link_url (str, optional): 「查看详情」链接（如更夫事件页地址）
+            link_text (str, optional): 链接文字，默认「查看详情」
         """
         self.logger.debug("Notifying alert message to WeCom")
 
@@ -115,6 +119,11 @@ class WecomProvider(BaseProvider):
             )
 
         # @ 提醒只在 text 消息类型下生效；有 @ 需求时降级为纯文本
+        # 「查看详情」：markdown 渲染为链接，text 只能展示裸链接
+        if link_url:
+            link_line = f"[{link_text or t('View details')}]({link_url})" if not (at_mobiles or at_all) else f"{link_text or '查看详情'}: {link_url}"
+            message = f"{message}\n{link_line}"
+
         if at_mobiles or at_all:
             payload = self._build_text_payload(
                 message=message, mentioned_mobiles=at_mobiles, at_all=at_all

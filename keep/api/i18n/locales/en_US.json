@@ -1573,5 +1573,6 @@
   "{provider} WeCom API error: {errcode} {errmsg}": "{provider} WeCom API error: {errcode} {errmsg}",
   "{provider} Feishu API error: {code} {msg}": "{provider} Feishu API error: {code} {msg}",
   "Model name, e.g. claude-sonnet-4-6, or glm-5.3-flash / kimi-k2 on Anthropic-compatible endpoints": "Model name, e.g. claude-sonnet-4-6, or glm-5.3-flash / kimi-k2 on Anthropic-compatible endpoints",
-  "Custom base_url for Anthropic-compatible endpoints (e.g. https://open.bigmodel.cn/api/anthropic for GLM coding-plan keys)": "Custom base_url for Anthropic-compatible endpoints (e.g. https://open.bigmodel.cn/api/anthropic for GLM coding-plan keys)"
+  "Custom base_url for Anthropic-compatible endpoints (e.g. https://open.bigmodel.cn/api/anthropic for GLM coding-plan keys)": "Custom base_url for Anthropic-compatible endpoints (e.g. https://open.bigmodel.cn/api/anthropic for GLM coding-plan keys)",
+  "View details": "View details"
 }

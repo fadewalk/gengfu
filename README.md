@@ -923,6 +923,8 @@ docker compose up -d
 
 打开 `http://localhost:4000` 即可使用（API 在 `http://localhost:8080`）。
 
+> 📖 **[中文快速上手：10 分钟从安装到收到第一条钉钉告警](docs/zh/quickstart.md)**
+
 **生产环境建议**：
 
 - 认证：设置 `AUTH_TYPE=LDAP` 并填入 `LDAP_URL` / `LDAP_BASE_DN` 等环境变量对接企业 AD/OpenLDAP（所有变量见 compose 文件内注释）

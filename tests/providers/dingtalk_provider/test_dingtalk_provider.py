@@ -78,6 +78,18 @@ class TestMarkdownPayload:
         )
         assert payload["at"] == {"isAtAll": True, "atMobiles": ["13800138000"]}
 
+    def test_link_url_appends_view_details(self):
+        payload = DingtalkProvider._build_markdown_payload(
+            "hello", "title", link_url="http://gengfu/incidents/1"
+        )
+        assert "[查看详情](http://gengfu/incidents/1)" in payload["markdown"]["text"]
+
+    def test_link_text_custom(self):
+        payload = DingtalkProvider._build_markdown_payload(
+            "hello", "title", link_url="http://x", link_text="处理告警"
+        )
+        assert "[处理告警](http://x)" in payload["markdown"]["text"]
+
 
 class TestNotify:
     def test_notify_success(self):

@@ -69,6 +69,16 @@ class TestNotify:
         assert sent["msgtype"] == "text"
         assert sent["text"]["mentioned_mobile_list"] == ["13800138000"]
 
+    def test_notify_with_link_appends_markdown_link(self):
+        provider = _build_provider()
+        response = MagicMock()
+        response.json.return_value = {"errcode": 0, "errmsg": "ok"}
+        response.raise_for_status.return_value = None
+        with patch("requests.post", return_value=response) as mock_post:
+            provider._notify(message="hello", link_url="http://gengfu/alerts/fp1")
+        sent = mock_post.call_args[1]["json"]
+        assert "[查看详情](http://gengfu/alerts/fp1)" in sent["markdown"]["content"]
+
     def test_notify_empty_message_raises(self):
         provider = _build_provider()
         with pytest.raises(ProviderException):

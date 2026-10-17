@@ -91,11 +91,28 @@ class FeishuProvider(BaseProvider):
         title: str,
         color: str = "blue",
         at_all: bool = False,
+        link_url: Optional[str] = None,
+        link_text: str = "",
     ) -> dict:
         """构造飞书交互卡片消息体，正文使用 markdown 元素。"""
         content = message
         if at_all:
             content = f"<at id=all></at>\n{content}"
+        elements = [{"tag": "markdown", "content": content}]
+        if link_url:
+            elements.append(
+                {
+                    "tag": "action",
+                    "actions": [
+                        {
+                            "tag": "button",
+                            "text": {"tag": "plain_text", "content": link_text or t("View details")},
+                            "type": "primary",
+                            "url": link_url,
+                        }
+                    ],
+                }
+            )
         return {
             "msg_type": "interactive",
             "card": {
@@ -103,7 +120,7 @@ class FeishuProvider(BaseProvider):
                     "title": {"tag": "plain_text", "content": title},
                     "template": color if color in _HEADER_TEMPLATES else "blue",
                 },
-                "elements": [{"tag": "markdown", "content": content}],
+                "elements": elements,
             },
         }
 
@@ -113,6 +130,8 @@ class FeishuProvider(BaseProvider):
         title: str = "",
         color: str = "blue",
         at_all: bool = False,
+        link_url: Optional[str] = None,
+        link_text: str = "",
         **kwargs: dict,
     ):
         """
@@ -124,6 +143,8 @@ class FeishuProvider(BaseProvider):
             title (str): 卡片标题，默认「更夫告警」
             color (str): 卡片头部分色，默认 blue；告警严重度可用 red/orange/yellow
             at_all (bool): 是否 @ 所有人，默认 False
+            link_url (str, optional): 「查看详情」按钮跳转地址（如更夫事件页）
+            link_text (str, optional): 按钮文字，默认「查看详情」
         """
         self.logger.debug("Notifying alert message to Feishu")
 
@@ -140,6 +161,8 @@ class FeishuProvider(BaseProvider):
             title=title or t("Gengfu Alert"),
             color=color,
             at_all=at_all,
+            link_url=link_url,
+            link_text=link_text,
         )
 
         url = f"{FEISHU_ROBOT_SEND_URL}/{self.authentication_config.hook_token}"

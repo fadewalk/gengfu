@@ -1,0 +1,28 @@
+workflow:
+  id: gengfu-prometheus-dingtalk
+  name: 更夫 · Prometheus 告警钉钉通知
+  description: >
+    Prometheus 的 critical 级告警实时推送到钉钉群（需先在集成页安装钉钉机器人，
+    实例名设为 dingtalk；@手机号与「查看详情」按需修改）。
+  triggers:
+    - type: alert
+      cel: source.contains("prometheus") && severity == "critical"
+  actions:
+    - name: notify-dingtalk
+      provider:
+        type: dingtalk
+        config: "{{ providers.dingtalk }}"
+        with:
+          title: "🔥 {{ alert.name }}"
+          message: |
+            **{{ alert.name }}**
+
+            - 严重度: {{ alert.severity }}
+            - 环境: {{ alert.environment }}
+            - 服务: {{ alert.service }}
+            - 描述: {{ alert.description }}
+
+            > 来源: Prometheus
+          # 「查看详情」默认跳转源告警地址；也可改为更夫页面，如 http://your-gengfu/alerts
+          link_url: "{{ alert.url }}"
+          at_mobiles: []

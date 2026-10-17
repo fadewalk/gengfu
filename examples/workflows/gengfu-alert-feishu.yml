@@ -1,0 +1,41 @@
+workflow:
+  id: gengfu-alert-feishu
+  name: 更夫 · 告警飞书卡片通知
+  description: >
+    高危告警以飞书卡片推送，按严重度自动配色（critical=红 / warning=橙），
+    附「查看详情」按钮（需先在集成页安装飞书机器人，实例名设为 feishu）。
+  triggers:
+    - type: alert
+      cel: severity in ["critical", "warning"]
+  actions:
+    - name: notify-feishu-critical
+      if: "{{ severity }} == critical"
+      provider:
+        type: feishu
+        config: "{{ providers.feishu }}"
+        with:
+          title: "🔴 {{ alert.name }}"
+          message: |
+            **{{ alert.name }}**
+
+            - 严重度: {{ alert.severity }}
+            - 环境: {{ alert.environment }}
+            - 服务: {{ alert.service }}
+            - 描述: {{ alert.description }}
+          color: red
+          link_url: "{{ alert.url }}"
+    - name: notify-feishu-warning
+      if: "{{ severity }} == warning"
+      provider:
+        type: feishu
+        config: "{{ providers.feishu }}"
+        with:
+          title: "🟠 {{ alert.name }}"
+          message: |
+            **{{ alert.name }}**
+
+            - 严重度: {{ alert.severity }}
+            - 环境: {{ alert.environment }}
+            - 描述: {{ alert.description }}
+          color: orange
+          link_url: "{{ alert.url }}"

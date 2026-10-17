@@ -57,6 +57,15 @@ class TestCardPayload:
         payload = FeishuProvider._build_card_payload("hello", "t", at_all=True)
         assert payload["card"]["elements"][0]["content"].startswith("<at id=all></at>")
 
+    def test_link_url_adds_action_button(self):
+        payload = FeishuProvider._build_card_payload(
+            "hello", "t", link_url="http://gengfu/incidents/1"
+        )
+        action = payload["card"]["elements"][-1]
+        assert action["tag"] == "action"
+        assert action["actions"][0]["url"] == "http://gengfu/incidents/1"
+        assert action["actions"][0]["text"]["content"] == "查看详情"
+
     def test_invalid_color_falls_back_to_blue(self):
         payload = FeishuProvider._build_card_payload("hello", "t", color="rainbow")
         assert payload["card"]["header"]["template"] == "blue"
