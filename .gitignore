@@ -248,3 +248,7 @@ posthog.py
 # 本地架构文档产物（生成的 HTML/截图）
 archify-guide/
 keep-architecture/
+
+# LLM 兼容验证临时结果（正式结果入库 docs/llm-compatibility-zh.md）
+llm-compat-results.md
+llm-compat-reasoner.md
