@@ -67,9 +67,9 @@ interface AIModelConfigCreate {
 
 // ── Presets ────────────────────────────────────────────────────────
 const PRESET_MODELS = [
-  { provider: "zhipu", name: "ZhiPu GLM", base_url: "https://open.bigmodel.cn/api/paas/v4", models: ["glm-4-plus", "glm-4-flash", "glm-4", "glm-3-turbo"], icon: CpuChipIcon },
+  { provider: "zhipu", name: "ZhiPu GLM", base_url: "https://open.bigmodel.cn/api/paas/v4", models: ["glm-5.3-flash", "glm-4.6", "glm-4-flash"], icon: CpuChipIcon },
   { provider: "deepseek", name: "DeepSeek", base_url: "https://api.deepseek.com/v1", models: ["deepseek-chat", "deepseek-reasoner"], icon: BeakerIcon },
-  { provider: "qwen", name: "Tongyi Qwen", base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1", models: ["qwen-turbo", "qwen-plus", "qwen-max"], icon: SignalIcon },
+  { provider: "qwen", name: "Tongyi Qwen", base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1", models: ["qwen3-max", "qwen-plus"], icon: SignalIcon },
   { provider: "moonshot", name: "Kimi", base_url: "https://api.moonshot.cn/v1", models: ["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"], icon: ChatBubbleLeftRightIcon },
   { provider: "minimax", name: "MiniMax", base_url: "https://api.minimax.chat/v1", models: ["MiniMax-Text-01"], icon: LightBulbIcon },
   { provider: "openai", name: "OpenAI", base_url: "https://api.openai.com/v1", models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"], icon: StarIcon },

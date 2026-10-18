@@ -5,8 +5,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 
 export const metadata = {
-  title: "Keep",
-  description: "The open-source alert management and AIOps platform",
+  title: "更夫 Gengfu",
+  description: "开源的告警聚合与 AI 事件管理平台 —— 监控交给夜莺们，告警之后的事交给更夫。",
 };
 
 export default async function RootLayout({

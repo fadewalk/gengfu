@@ -1,0 +1,27 @@
+workflow:
+  id: gengfu-nightingale-dingtalk
+  name: 更夫 · 夜莺告警钉钉通知
+  description: >
+    夜莺（Nightingale）的告警推送到钉钉群。接入方式：在夜莺「通知规则」里配置
+    Webhook 指向更夫的通用 Webhook 地址（Providers → Webhook，实例名设为 webhook），
+    告警即以 webhook 来源进入更夫并触发本工作流。
+  triggers:
+    - type: alert
+      cel: source.contains("webhook") && severity in ["critical", "warning"]
+  actions:
+    - name: notify-dingtalk
+      provider:
+        type: dingtalk
+        config: "{{ providers.dingtalk }}"
+        with:
+          title: "{{ alert.name }}"
+          message: |
+            **{{ alert.name }}**
+
+            - 严重度: {{ alert.severity }}
+            - 环境: {{ alert.environment }}
+            - 触发时间: {{ alert.lastReceived }}
+            - 描述: {{ alert.description }}
+
+            > 来源: 夜莺 Nightingale
+          link_url: "{{ alert.url }}"
