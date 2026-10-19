@@ -66,6 +66,16 @@ class TestCardPayload:
         assert action["actions"][0]["url"] == "http://gengfu/incidents/1"
         assert action["actions"][0]["text"]["content"] == "查看详情"
 
+    def test_at_emails_renders_email_mentions(self):
+        """按邮箱 @ 人：免开放平台映射，值班人邮箱即可。"""
+        payload = FeishuProvider._build_card_payload(
+            "hello", "t", at_emails=["zhiban@gengfu.cn", "ops@gengfu.cn"]
+        )
+        content = payload["card"]["elements"][0]["content"]
+        assert '<at email="zhiban@gengfu.cn"></at>' in content
+        assert '<at email="ops@gengfu.cn"></at>' in content
+        assert content.splitlines()[-1] == "hello"
+
     def test_invalid_color_falls_back_to_blue(self):
         payload = FeishuProvider._build_card_payload("hello", "t", color="rainbow")
         assert payload["card"]["header"]["template"] == "blue"
