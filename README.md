@@ -925,6 +925,7 @@ docker compose up -d
 
 > 📖 **[中文快速上手：10 分钟从安装到收到第一条钉钉告警](docs/zh/quickstart.md)**
 > 🌙 **[接入夜莺 Nightingale](docs/zh/nightingale.md)** —— 监控交给夜莺们，告警之后的事交给更夫
+> 🗓️ **[值班排班路线](docs/zh/oncall-roadmap.md)** —— 轻量排班 + 工作流动态解析（路线征集中）
 
 **生产环境建议**：
 
