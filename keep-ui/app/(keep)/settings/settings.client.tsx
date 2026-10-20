@@ -13,6 +13,7 @@ import {
   CpuChipIcon,
   EyeIcon,
   Squares2X2Icon,
+  BellIcon,
 } from "@heroicons/react/24/outline";
 import { MdOutlineSecurity } from "react-icons/md";
 import { useHydratedSession as useSession } from "@/shared/lib/hooks/useHydratedSession";
@@ -41,6 +42,7 @@ import { User } from "@/app/(keep)/settings/models";
 import ProviderImagesSettings from "./provider-images/provider-images-settings";
 import AISettings from "./ai/ai-settings";
 import ProviderVisibilitySettings from "./provider-visibility/provider-visibility-settings";
+import ScheduleSettings from "./schedule/schedule-settings";
 import WorkflowTemplateVisibilitySettings from "./workflow-template-visibility/workflow-template-visibility-settings";
 import { useI18n } from "@/i18n/hooks/useI18n";
 
@@ -416,6 +418,12 @@ export default function SettingsPage() {
           >
             {t("settings.tabs.workflowTemplateVisibility")}
           </Tab>
+          <Tab
+            icon={BellIcon}
+            onClick={() => handleTabChange("schedule")}
+          >
+            {t("settings.tabs.schedule")}
+          </Tab>
         </TabList>
         <TabPanels className="flex-grow overflow-hidden p-px">
           <TabPanel className="h-full">
@@ -501,6 +509,9 @@ export default function SettingsPage() {
           </TabPanel>
           <TabPanel className="h-full pt-4">
             <WorkflowTemplateVisibilitySettings />
+          </TabPanel>
+          <TabPanel className="h-full pt-4">
+            <ScheduleSettings />
           </TabPanel>
         </TabPanels>
       </TabGroup>

@@ -33,6 +33,15 @@ class WecomProviderAuthConfig:
     )
 
 
+
+def _normalize_at_list(value) -> list:
+    """at 参数归一化：接受 list 或逗号分隔字符串（工作流渲染产物）。"""
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [item.strip() for item in value.split(",") if item.strip()]
+    return list(value)
+
 class WecomProvider(BaseProvider):
     """发送告警消息到企业微信群。"""
 
@@ -71,6 +80,7 @@ class WecomProvider(BaseProvider):
         mentioned_mobile_list: list = []
         if at_all:
             mentioned_mobile_list.append("@all")
+        mentioned_mobiles = _normalize_at_list(mentioned_mobiles)
         if mentioned_mobiles:
             mentioned_mobile_list.extend(mentioned_mobiles)
         return {

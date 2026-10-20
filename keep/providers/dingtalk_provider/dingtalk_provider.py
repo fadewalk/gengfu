@@ -47,6 +47,15 @@ class DingtalkProviderAuthConfig:
     )
 
 
+
+def _normalize_at_list(value) -> list:
+    """at 参数归一化：接受 list 或逗号分隔字符串（工作流渲染产物）。"""
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [item.strip() for item in value.split(",") if item.strip()]
+    return list(value)
+
 class DingtalkProvider(BaseProvider):
     """发送告警消息到钉钉群。"""
 
@@ -101,8 +110,9 @@ class DingtalkProvider(BaseProvider):
     ) -> dict:
         """构造钉钉 markdown 消息体。"""
         at_section: dict = {"isAtAll": at_all}
+        at_mobiles = _normalize_at_list(at_mobiles)
         if at_mobiles:
-            at_section["atMobiles"] = list(at_mobiles)
+            at_section["atMobiles"] = at_mobiles
         if link_url:
             message = f"{message}\n\n**[{link_text or t('View details')}]({link_url})**"
         return {

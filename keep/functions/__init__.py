@@ -674,3 +674,51 @@ def dict_merge(*args) -> dict:
             
     return result
 
+
+
+def _resolve_oncall(schedule_name: str, **kwargs) -> dict:
+    """内部：解析值班组当前值班人，失败降级为空值（值班解析不应阻断告警通知）。"""
+    tenant_id = kwargs.get("tenant_id")
+    if not tenant_id:
+        from keep.api.core.dependencies import SINGLE_TENANT_UUID
+
+        tenant_id = SINGLE_TENANT_UUID
+    from keep.api.bl.schedules import resolve_oncall_for_context
+
+    return resolve_oncall_for_context(tenant_id, schedule_name)
+
+
+def oncall_current(schedule_name: str, **kwargs) -> str:
+    """
+    返回值班组当前值班人的姓名（按轮换规则解析）。
+
+    Args:
+        schedule_name (str): 值班组名称（设置页「值班管理」里配置）
+    Returns:
+        str: 当前值班人姓名；值班组不存在时为空串
+    """
+    return _resolve_oncall(schedule_name, **kwargs)["name"]
+
+
+def oncall_phone(schedule_name: str, **kwargs) -> str:
+    """
+    返回值班组当前值班人的手机号。
+
+    Args:
+        schedule_name (str): 值班组名称
+    Returns:
+        str: 当前值班人手机号（未配置时为空串）
+    """
+    return _resolve_oncall(schedule_name, **kwargs)["phone"]
+
+
+def oncall_email(schedule_name: str, **kwargs) -> str:
+    """
+    返回值班组当前值班人的飞书邮箱。
+
+    Args:
+        schedule_name (str): 值班组名称
+    Returns:
+        str: 当前值班人邮箱（未配置时为空串）
+    """
+    return _resolve_oncall(schedule_name, **kwargs)["email"]

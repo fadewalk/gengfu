@@ -250,7 +250,8 @@
       "past60Days": "Past 60 days"
     },
     "error": "Error",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "delete": "Delete"
   },
   "auth": {
     "login": {
@@ -1594,7 +1595,8 @@
       "providerImages": "Provider Icons",
       "ai": "AI Configuration",
       "providerVisibility": "Provider Visibility",
-      "workflowTemplateVisibility": "Workflow Template Visibility"
+      "workflowTemplateVisibility": "Workflow Template Visibility",
+      "schedule": "On-call"
     },
     "subTabs": {
       "users": "Users",
@@ -2943,5 +2945,17 @@
       "saveFailed": "Failed to save model",
       "deleteFailed": "Failed to delete model"
     }
-  }
+  },
+  "schedule.title": "On-call schedules",
+  "schedule.subtitle": "Configure rotation groups; resolve current on-call with {{ keep.oncall_phone('schedule-name') }} in workflows",
+  "schedule.namePlaceholder": "Schedule name, e.g. Payments on-call",
+  "schedule.timezonePlaceholder": "Timezone, e.g. Asia/Shanghai",
+  "schedule.daily": "Daily rotation",
+  "schedule.weekly": "Weekly rotation",
+  "schedule.memberName": "Member name",
+  "schedule.memberPhone": "Phone (for DingTalk/WeCom mentions)",
+  "schedule.memberEmail": "Feishu email (for Feishu mentions)",
+  "schedule.addMember": "+ Add member",
+  "schedule.listTitle": "Schedules",
+  "schedule.empty": "No schedules yet — create one with the form above"
 }

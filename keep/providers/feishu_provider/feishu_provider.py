@@ -46,6 +46,15 @@ class FeishuProviderAuthConfig:
     )
 
 
+
+def _normalize_at_list(value) -> list:
+    """at 参数归一化：接受 list 或逗号分隔字符串（工作流渲染产物）。"""
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [item.strip() for item in value.split(",") if item.strip()]
+    return list(value)
+
 class FeishuProvider(BaseProvider):
     """发送告警消息到飞书群。"""
 
@@ -101,7 +110,7 @@ class FeishuProvider(BaseProvider):
         if at_all:
             at_prefixes.append("<at id=all></at>")
         # 飞书卡片 lark_md 支持按邮箱 @ 人，无需开放平台 user_id 映射
-        for email in at_emails or []:
+        for email in _normalize_at_list(at_emails):
             at_prefixes.append(f'<at email="{email}"></at>')
         if at_prefixes:
             content = f"{' '.join(at_prefixes)}\n{content}"

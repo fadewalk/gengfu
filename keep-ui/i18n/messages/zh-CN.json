@@ -7,7 +7,8 @@
       "providerImages": "集成图标",
       "ai": "AI 配置",
       "providerVisibility": "集成可见性",
-      "workflowTemplateVisibility": "工作流模板可见性"
+      "workflowTemplateVisibility": "工作流模板可见性",
+      "schedule": "值班管理"
     },
     "subTabs": {
       "users": "用户",
@@ -1312,7 +1313,8 @@
       "next": "下一步"
     },
     "error": "错误",
-    "refresh": "刷新"
+    "refresh": "刷新",
+    "delete": "删除"
   },
   "shared": {
     "error": {
@@ -2943,5 +2945,17 @@
       "saveFailed": "保存模型失败",
       "deleteFailed": "删除模型失败"
     }
-  }
+  },
+  "schedule.title": "值班排班",
+  "schedule.subtitle": "配置值班组与轮换规则；工作流中用 {{ keep.oncall_phone('值班组名') }} 等解析当前值班人",
+  "schedule.namePlaceholder": "值班组名称，如：支付值班",
+  "schedule.timezonePlaceholder": "时区，如 Asia/Shanghai",
+  "schedule.daily": "每日轮换",
+  "schedule.weekly": "每周轮换",
+  "schedule.memberName": "成员姓名",
+  "schedule.memberPhone": "手机号（钉钉/企微 @ 用）",
+  "schedule.memberEmail": "飞书邮箱（飞书 @ 用）",
+  "schedule.addMember": "+ 添加成员",
+  "schedule.listTitle": "值班组",
+  "schedule.empty": "还没有值班组，先用上方表单创建一个"
 }
