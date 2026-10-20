@@ -49,6 +49,7 @@ from keep.api.routes import (
     maintenance,
     mapping,
     schedules,
+    ack,
     metrics,
     preset,
     provider_images,
@@ -307,6 +308,8 @@ def get_app(
     app.include_router(incidents.router, prefix="/incidents", tags=["incidents"])
     app.include_router(settings.router, prefix="/settings", tags=["settings"])
     app.include_router(schedules.router, prefix="/schedules", tags=["schedules"])
+    app.include_router(ack.router, prefix="/ack", tags=["ack"])
+    app.include_router(ack.router, prefix="/acks", tags=["ack"])
     app.include_router(
         workflows.router, prefix="/workflows", tags=["workflows", "alert"]
     )

@@ -722,3 +722,97 @@ def oncall_email(schedule_name: str, **kwargs) -> str:
         str: 当前值班人邮箱（未配置时为空串）
     """
     return _resolve_oncall(schedule_name, **kwargs)["email"]
+
+
+def oncall_ack_link(schedule_name: str, alert_name: str = "", **kwargs) -> str:
+    """
+    为值班组创建一条待认领记录，返回认领链接（放入通知消息即可）。
+
+    值班人点开链接即可一键认领（免登录，token 即凭证）；认领状态可由
+    keep.oncall_claimed() 查询，用于超时升级编排。
+    认领页地址基于 KEEP_API_URL 环境变量。
+
+    Args:
+        schedule_name (str): 值班组名称
+        alert_name (str, optional): 告警名，认领页展示用
+    Returns:
+        str: 认领链接，如 http://your-gengfu/ack/abcd1234...
+    """
+    import os
+    import uuid as _uuid
+
+    tenant_id = kwargs.get("tenant_id")
+    if not tenant_id:
+        from keep.api.core.dependencies import SINGLE_TENANT_UUID
+
+        tenant_id = SINGLE_TENANT_UUID
+
+    from keep.api.bl.schedules import resolve_current_member
+    from keep.api.models.db.ack_record import AckRecord
+
+    member = resolve_current_member(tenant_id, schedule_name)
+    record = AckRecord(
+        tenant_id=tenant_id,
+        schedule_name=schedule_name,
+        alert_name=alert_name or "",
+        notified_member_name=(member.name if member else ""),
+        notified_phone=(member.phone if member else "") or "",
+        notified_email=(member.email if member else "") or "",
+        ack_token=_uuid.uuid4().hex,
+    )
+    session = next(_get_ack_session_factory())
+    try:
+        session.add(record)
+        session.commit()
+    finally:
+        session.close()
+
+    base_url = os.environ.get("KEEP_API_URL", "http://localhost:8080").rstrip("/")
+    return f"{base_url}/ack/{record.ack_token}"
+
+
+def oncall_claimed(schedule_name: str, within_minutes: int = 30, **kwargs) -> bool:
+    """
+    查询值班组在最近 N 分钟内的通知是否已有人认领。
+
+    典型用法是升级编排工作流：interval 触发 + if 未认领 → 通知备份值班人。
+    对应 FlashDuty 的升级条件「未关闭且未认领」。
+
+    Args:
+        schedule_name (str): 值班组名称
+        within_minutes (int, optional): 回看窗口（分钟），默认 30
+    Returns:
+        bool: 窗口内有认领记录返回 True
+    """
+    tenant_id = kwargs.get("tenant_id")
+    if not tenant_id:
+        from keep.api.core.dependencies import SINGLE_TENANT_UUID
+
+        tenant_id = SINGLE_TENANT_UUID
+
+    import datetime as _dt
+
+    from sqlmodel import select as _select
+
+    from keep.api.models.db.ack_record import AckRecord
+
+    since = _dt.datetime.utcnow() - _dt.timedelta(minutes=int(within_minutes))
+    try:
+        session = next(_get_ack_session_factory())
+        records = session.exec(
+            _select(AckRecord).where(
+                AckRecord.tenant_id == tenant_id,
+                AckRecord.schedule_name == schedule_name,
+                AckRecord.created_at >= since,
+            )
+        ).all()
+        return any(r.acked_at is not None for r in records)
+    except Exception:
+        logger.exception("Failed to check claim status for schedule %s", schedule_name)
+        return False
+
+
+def _get_ack_session_factory():
+    from keep.api.core.db import get_session
+
+    return get_session

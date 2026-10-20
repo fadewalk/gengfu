@@ -1,0 +1,28 @@
+workflow:
+  id: gengfu-alert-oncall-dingtalk
+  name: 更夫 · 值班告警钉钉通知（含认领）
+  description: >
+    告警推送到钉钉并 @ 当前值班人（按值班组轮换解析），消息附认领链接——
+    值班人点开即可认领，认领状态供「值班升级」工作流检查。需先在设置页「值班管理」
+    配置值班组，并安装钉钉机器人（实例名 dingtalk）。
+  triggers:
+    - type: alert
+      cel: severity in ["critical", "warning"]
+  actions:
+    - name: notify-oncall
+      provider:
+        type: dingtalk
+        config: "{{ providers.dingtalk }}"
+        with:
+          title: "🔔 {{ alert.name }}"
+          message: |
+            **{{ alert.name }}**
+
+            - 严重度: {{ alert.severity }}
+            - 环境: {{ alert.environment }}
+            - 描述: {{ alert.description }}
+
+            > 值班人: {{ keep.oncall_current("支付值班") }}
+
+            **[✓ 认领这条告警]({{ keep.oncall_ack_link("支付值班", alert.name) }})**
+          at_mobiles: "{{ keep.oncall_phone(\"支付值班\") }}"
