@@ -253,3 +253,6 @@ keep-architecture/
 llm-compat-results.md
 llm-compat-reasoner.md
 llm-compat-glm.md
+
+# 视频代理插件本地产物
+.video_agent/
