@@ -739,7 +739,6 @@ def oncall_ack_link(schedule_name: str, alert_name: str = "", **kwargs) -> str:
         str: 认领链接，如 http://your-gengfu/ack/abcd1234...
     """
     import os
-    import uuid as _uuid
 
     tenant_id = kwargs.get("tenant_id")
     if not tenant_id:
@@ -747,28 +746,11 @@ def oncall_ack_link(schedule_name: str, alert_name: str = "", **kwargs) -> str:
 
         tenant_id = SINGLE_TENANT_UUID
 
-    from keep.api.bl.schedules import resolve_current_member
-    from keep.api.models.db.ack_record import AckRecord
+    from keep.api.bl.schedules import create_ack_record
 
-    member = resolve_current_member(tenant_id, schedule_name)
-    record = AckRecord(
-        tenant_id=tenant_id,
-        schedule_name=schedule_name,
-        alert_name=alert_name or "",
-        notified_member_name=(member.name if member else ""),
-        notified_phone=(member.phone if member else "") or "",
-        notified_email=(member.email if member else "") or "",
-        ack_token=_uuid.uuid4().hex,
-    )
-    session = next(_get_ack_session_factory())
-    try:
-        session.add(record)
-        session.commit()
-    finally:
-        session.close()
-
+    token, _ = create_ack_record(tenant_id, schedule_name, alert_name)
     base_url = os.environ.get("KEEP_API_URL", "http://localhost:8080").rstrip("/")
-    return f"{base_url}/ack/{record.ack_token}"
+    return f"{base_url}/ack/{token}"
 
 
 def oncall_claimed(schedule_name: str, within_minutes: int = 30, **kwargs) -> bool:
@@ -790,29 +772,8 @@ def oncall_claimed(schedule_name: str, within_minutes: int = 30, **kwargs) -> bo
 
         tenant_id = SINGLE_TENANT_UUID
 
-    import datetime as _dt
+    from keep.api.bl.schedules import has_claim
 
-    from sqlmodel import select as _select
-
-    from keep.api.models.db.ack_record import AckRecord
-
-    since = _dt.datetime.utcnow() - _dt.timedelta(minutes=int(within_minutes))
-    try:
-        session = next(_get_ack_session_factory())
-        records = session.exec(
-            _select(AckRecord).where(
-                AckRecord.tenant_id == tenant_id,
-                AckRecord.schedule_name == schedule_name,
-                AckRecord.created_at >= since,
-            )
-        ).all()
-        return any(r.acked_at is not None for r in records)
-    except Exception:
-        logger.exception("Failed to check claim status for schedule %s", schedule_name)
-        return False
+    return has_claim(tenant_id, schedule_name, within_minutes)
 
 
-def _get_ack_session_factory():
-    from keep.api.core.db import get_session
-
-    return get_session

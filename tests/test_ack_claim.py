@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 from fastapi.testclient import TestClient
 
 from keep.api.models.db.ack_record import AckRecord
+from keep.functions import oncall_claimed
 
 
 def _record(acked=False):
@@ -32,7 +33,7 @@ class TestAckRecordModel:
 
 class TestOncallClaimed:
     def test_claimed_within_window_returns_true(self):
-        from keep.functions import oncall_claimed
+        from keep.api.bl.schedules import has_claim
 
         now = datetime.datetime.utcnow()
         claimed = MagicMock(acked_at=now - datetime.timedelta(minutes=1))
@@ -40,30 +41,32 @@ class TestOncallClaimed:
         fake_session = MagicMock()
         fake_session.exec.return_value.all.return_value = [unclaimed, claimed]
 
-        def _factory():
-            yield fake_session
-
-        with patch("keep.functions._get_ack_session_factory", side_effect=lambda: _factory()):
-            assert oncall_claimed("支付值班", within_minutes=30) is True
+        with patch("keep.api.bl.schedules._get_session", return_value=fake_session):
+            assert has_claim("keep", "支付值班", 30) is True
 
     def test_unclaimed_within_window_returns_false(self):
-        from keep.functions import oncall_claimed
+        from keep.api.bl.schedules import has_claim
 
         unclaimed = MagicMock(acked_at=None)
         fake_session = MagicMock()
         fake_session.exec.return_value.all.return_value = [unclaimed]
 
-        def _factory():
-            yield fake_session
-
-        with patch("keep.functions._get_ack_session_factory", side_effect=lambda: _factory()):
-            assert oncall_claimed("支付值班", within_minutes=30) is False
+        with patch("keep.api.bl.schedules._get_session", return_value=fake_session):
+            assert has_claim("keep", "支付值班", 30) is False
 
     def test_exception_returns_false_not_raise(self):
-        from keep.functions import oncall_claimed
+        from keep.api.bl.schedules import has_claim
 
-        def _factory():
-            raise RuntimeError("db down")
+        with patch(
+            "keep.api.bl.schedules._get_session",
+            side_effect=RuntimeError("db down"),
+        ):
+            assert has_claim("keep", "支付值班", 30) is False
 
-        with patch("keep.functions._get_ack_session_factory", side_effect=_factory):
-            assert oncall_claimed("支付值班") is False
+    def test_functions_wrapper_injects_default_tenant(self):
+        """functions 层 oncall_claimed 未提供 tenant 时降级单租户并透传结果。"""
+        with patch("keep.api.bl.schedules.has_claim", return_value=True) as mock_has:
+            assert oncall_claimed("支付值班", 15) is True
+            mock_has.assert_called_once()
+            args = mock_has.call_args[0]
+            assert args[1] == "支付值班" and args[2] == 15

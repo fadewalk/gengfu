@@ -77,42 +77,6 @@ def _render_page(token: str, alert_name: str, member_name: str, created_at, acke
     return HTMLResponse(html)
 
 
-@router.get("/ack/{token}", description="On-call claim page (token-based, no login)")
-def ack_page(token: str, session: Session = Depends(get_session)):
-    record = session.exec(
-        select(AckRecord).where(AckRecord.ack_token == token)
-    ).first()
-    if record is None:
-        return HTMLResponse(
-            _ACK_PAGE.format(alert_name="链接无效", member_name="-",
-                             created_at="-", body='<p class="done">认领链接不存在或已失效</p>'),
-            status_code=404,
-        )
-    return _render_page(token, record.alert_name, record.notified_member_name,
-                        record.created_at, acked=record.acked_at is not None)
-
-
-@router.post("/ack/{token}", description="Claim the alert (form submit from the claim page)")
-def ack_claim(token: str, session: Session = Depends(get_session)):
-    record = session.exec(
-        select(AckRecord).where(AckRecord.ack_token == token)
-    ).first()
-    if record is None:
-        return HTMLResponse(
-            _ACK_PAGE.format(alert_name="链接无效", member_name="-",
-                             created_at="-", body='<p class="done">认领链接不存在或已失效</p>'),
-            status_code=404,
-        )
-    if record.acked_at is None:
-        record.acked_at = datetime.datetime.utcnow()
-        record.acked_by = record.notified_member_name or None
-        session.add(record)
-        session.commit()
-        logger.info("Ack claimed for schedule=%s alert=%s", record.schedule_name, record.alert_name)
-    return _render_page(token, record.alert_name, record.notified_member_name,
-                        record.created_at, acked=True)
-
-
 @router.get("/status", description="Whether the schedule has any claim within the last N minutes")
 def ack_status(
     schedule: str,
@@ -140,6 +104,74 @@ def ack_status(
         "first_created_at": min((r.created_at for r in records), default=None),
         "first_acked_at": min((r.acked_at for r in records if r.acked_at), default=None),
     }
+
+
+@router.get("/stats", description="Claim statistics for a schedule (MTTA etc.)")
+def ack_stats(
+    schedule: str,
+    days: int = 30,
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:settings"])
+    ),
+    session: Session = Depends(get_session),
+):
+    tenant_id = authenticated_entity.tenant_id
+    since = datetime.datetime.utcnow() - datetime.timedelta(days=days)
+    records = session.exec(
+        select(AckRecord).where(
+            AckRecord.tenant_id == tenant_id,
+            AckRecord.schedule_name == schedule,
+            AckRecord.created_at >= since,
+        )
+    ).all()
+    durations = [
+        (r.acked_at - r.created_at).total_seconds()
+        for r in records
+        if r.acked_at is not None
+    ]
+    return {
+        "schedule": schedule,
+        "days": days,
+        "total": len(records),
+        "claimed": len(durations),
+        "claim_rate": round(len(durations) / len(records), 2) if records else None,
+        # MTTA：平均认领时长（秒）
+        "mtta_seconds": round(sum(durations) / len(durations)) if durations else None,
+    }
+@router.get("/{token}", description="On-call claim page (token-based, no login)")
+def ack_page(token: str, session: Session = Depends(get_session)):
+    record = session.exec(
+        select(AckRecord).where(AckRecord.ack_token == token)
+    ).first()
+    if record is None:
+        return HTMLResponse(
+            _ACK_PAGE.format(alert_name="链接无效", member_name="-",
+                             created_at="-", body='<p class="done">认领链接不存在或已失效</p>'),
+            status_code=404,
+        )
+    return _render_page(token, record.alert_name, record.notified_member_name,
+                        record.created_at, acked=record.acked_at is not None)
+
+
+@router.post("/{token}", description="Claim the alert (form submit from the claim page)")
+def ack_claim(token: str, session: Session = Depends(get_session)):
+    record = session.exec(
+        select(AckRecord).where(AckRecord.ack_token == token)
+    ).first()
+    if record is None:
+        return HTMLResponse(
+            _ACK_PAGE.format(alert_name="链接无效", member_name="-",
+                             created_at="-", body='<p class="done">认领链接不存在或已失效</p>'),
+            status_code=404,
+        )
+    if record.acked_at is None:
+        record.acked_at = datetime.datetime.utcnow()
+        record.acked_by = record.notified_member_name or None
+        session.add(record)
+        session.commit()
+        logger.info("Ack claimed for schedule=%s alert=%s", record.schedule_name, record.alert_name)
+    return _render_page(token, record.alert_name, record.notified_member_name,
+                        record.created_at, acked=True)
 
 
 @router.get("/stats", description="Claim statistics for a schedule (MTTA etc.)")

@@ -23,15 +23,15 @@ _ROTATION_INTERVALS = {
 }
 
 
-def _get_session_factory():
+def _get_session():
     # 延迟导入避免循环依赖（functions 模块加载早于 db 初始化）
-    from keep.api.core.db import get_session
+    from keep.api.core.db import get_session_sync
 
-    return get_session
+    return get_session_sync()
 
 
 def get_schedules_with_members(tenant_id: str) -> list[tuple[Schedule, list[ScheduleMember]]]:
-    session = next(_get_session_factory())
+    session = _get_session()
     try:
         schedules = session.exec(
             select(Schedule).where(Schedule.tenant_id == tenant_id).order_by(Schedule.name)
@@ -84,8 +84,9 @@ def resolve_current_member(tenant_id: str, schedule_name: str, now: datetime.dat
     无该组 / 无成员 / 轮换类型未知时返回 None（调用方降级，不抛异常——值班解析
     失败不应该阻断告警通知）。
     """
-    session = next(_get_session_factory())
+    session = None
     try:
+        session = _get_session()
         schedule = session.exec(
             select(Schedule).where(Schedule.tenant_id == tenant_id, Schedule.name == schedule_name)
         ).first()
@@ -102,7 +103,8 @@ def resolve_current_member(tenant_id: str, schedule_name: str, now: datetime.dat
         logger.exception("Failed to resolve on-call for schedule %s", schedule_name)
         return None
     finally:
-        session.close()
+        if session is not None:
+            session.close()
 
 
 def resolve_oncall_for_context(tenant_id: str, schedule_name: str) -> dict:
@@ -115,3 +117,54 @@ def resolve_oncall_for_context(tenant_id: str, schedule_name: str) -> dict:
         "phone": member.phone or "",
         "email": member.email or "",
     }
+
+
+def create_ack_record(tenant_id: str, schedule_name: str, alert_name: str) -> tuple[str, ScheduleMember | None]:
+    """创建待认领记录，返回 (认领 token, 通知时的当前值班人)。"""
+    from keep.api.models.db.ack_record import AckRecord
+
+    member = resolve_current_member(tenant_id, schedule_name)
+    token = __import__("uuid").uuid4().hex
+    session = None
+    try:
+        session = _get_session()
+        session.add(
+            AckRecord(
+                tenant_id=tenant_id,
+                schedule_name=schedule_name,
+                alert_name=alert_name or "",
+                notified_member_name=(member.name if member else ""),
+                notified_phone=(member.phone if member else "") or "",
+                notified_email=(member.email if member else "") or "",
+                ack_token=token,
+            )
+        )
+        session.commit()
+    finally:
+        if session is not None:
+            session.close()
+    return token, member
+
+
+def has_claim(tenant_id: str, schedule_name: str, within_minutes: int) -> bool:
+    """最近 N 分钟内该值班组的通知是否已有人认领。失败返回 False。"""
+    from keep.api.models.db.ack_record import AckRecord
+
+    since = datetime.datetime.utcnow() - datetime.timedelta(minutes=int(within_minutes))
+    session = None
+    try:
+        session = _get_session()
+        records = session.exec(
+            select(AckRecord).where(
+                AckRecord.tenant_id == tenant_id,
+                AckRecord.schedule_name == schedule_name,
+                AckRecord.created_at >= since,
+            )
+        ).all()
+        return any(r.acked_at is not None for r in records)
+    except Exception:
+        logger.exception("Failed to check claim status for schedule %s", schedule_name)
+        return False
+    finally:
+        if session is not None:
+            session.close()
