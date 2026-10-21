@@ -142,7 +142,7 @@ def preview_rotation(
         .order_by(ScheduleMember.position)
         .all()
     )
-    days = max(1, min(days, 30))
+    days = max(1, min(days, 62))
     now = datetime.datetime.utcnow()
     preview = []
     for offset in range(days):

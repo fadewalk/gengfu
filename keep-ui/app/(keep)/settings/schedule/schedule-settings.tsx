@@ -33,6 +33,8 @@ type AckStats = {
   mtta_seconds?: number | null;
 };
 
+type AckWindow = "7" | "30";
+
 const EMPTY_FORM = {
   id: 0,
   name: "",
@@ -46,7 +48,8 @@ export default function ScheduleSettings() {
   const api = useApi();
   const { t } = useI18n();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [ackStats, setAckStats] = useState<Record<string, AckStats>>({});
+  const [ackStats, setAckStats] = useState<Record<string, Record<AckWindow, AckStats | null>>>({});
+  const [statWindow, setStatWindow] = useState<AckWindow>("30");
   const [previews, setPreviews] = useState<Record<string, { date: string; member: string }[]>>({});
   const [copied, setCopied] = useState<string>("");
   const [form, setForm] = useState<typeof EMPTY_FORM>({ ...EMPTY_FORM });
@@ -64,7 +67,7 @@ export default function ScheduleSettings() {
           .then((stats) => setAckStats((prev) => ({ ...prev, [s.name]: stats })))
           .catch(() => {});
         api
-          .get(`/schedules/${s.id}/preview?days=7`)
+          .get(`/schedules/${s.id}/preview?days=31`)
           .then((p) =>
             setPreviews((prev) => ({
               ...prev,
@@ -259,22 +262,53 @@ export default function ScheduleSettings() {
                   {" · "}
                   {s.members.map((m) => m.name).join(" → ")}
                 </p>
-                {ackStats[s.name] && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {t("schedule.ackStats", {
-                      total: ackStats[s.name]!.total,
-                      claimed: ackStats[s.name]!.claimed,
-                      mtta: ackStats[s.name]!.mtta_seconds != null
-                        ? `${Math.round(ackStats[s.name]!.mtta_seconds! / 60)} ${t("schedule.minutes")}`
-                        : "-",
-                    })}
-                  </p>
-                )}
+                {(() => {
+                  const st = ackStats[s.name]?.[statWindow];
+                  if (!st) return null;
+                  return (
+                    <div className="mt-2 flex items-center gap-2 text-xs">
+                      <select
+                        className="rounded border-gray-300 bg-transparent text-xs"
+                        value={statWindow}
+                        onChange={(e) => setStatWindow(e.target.value as AckWindow)}
+                      >
+                        <option value="7">{t("schedule.last7Days")}</option>
+                        <option value="30">{t("schedule.last30Days")}</option>
+                      </select>
+                      <span className="text-gray-500">
+                        {t("schedule.ackStats", {
+                          total: st.total,
+                          claimed: st.claimed,
+                          mtta: st.mtta_seconds != null
+                            ? `${Math.round(st.mtta_seconds / 60)} ${t("schedule.minutes")}`
+                            : "-",
+                        })}
+                      </span>
+                    </div>
+                  );
+                })()}
                 {previews[s.name] && previews[s.name]!.length > 0 && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {t("schedule.next7Days")}：
-                    {previews[s.name]!.map((p) => `${p.date.slice(5)} ${p.member}`).join(" → ")}
-                  </p>
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500 mb-1">{t("schedule.next7Days")}</p>
+                    <div className="flex gap-1 overflow-x-auto pb-1">
+                      {previews[s.name]!.slice(0, 14).map((p) => {
+                        const isToday = p.date === new Date().toISOString().slice(0, 10);
+                        return (
+                          <div
+                            key={p.date}
+                            className={`flex-shrink-0 rounded-md border px-2 py-1 text-center ${
+                              isToday ? "border-orange-400 bg-orange-50" : "border-gray-200"
+                            }`}
+                          >
+                            <p className={`text-xs font-medium ${isToday ? "text-orange-600" : "text-gray-700"}`}>
+                              {p.date.slice(5)}
+                            </p>
+                            <p className="text-xs text-gray-500">{p.member || "-"}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 )}
               </div>
               <Button

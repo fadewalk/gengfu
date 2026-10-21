@@ -2963,5 +2963,7 @@
   "schedule.minutes": "分钟",
   "schedule.next7Days": "未来 7 天",
   "schedule.copyClaimLink": "复制认领链接",
-  "schedule.copied": "已复制"
+  "schedule.copied": "已复制",
+  "schedule.last7Days": "近 7 天",
+  "schedule.last30Days": "近 30 天"
 }
