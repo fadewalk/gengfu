@@ -20,7 +20,17 @@ type Schedule = {
   timezone: string;
   rotation_type: "daily" | "weekly";
   rotation_starts_at: string;
+  current_oncall?: string;
   members: Member[];
+};
+
+type AckStats = {
+  schedule: string;
+  days: number;
+  total: number;
+  claimed: number;
+  claim_rate?: number | null;
+  mtta_seconds?: number | null;
 };
 
 const EMPTY_FORM = {
@@ -36,6 +46,7 @@ export default function ScheduleSettings() {
   const api = useApi();
   const { t } = useI18n();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [ackStats, setAckStats] = useState<Record<string, AckStats>>({});
   const [form, setForm] = useState<typeof EMPTY_FORM>({ ...EMPTY_FORM });
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -44,6 +55,13 @@ export default function ScheduleSettings() {
     try {
       const data = await api.get("/schedules");
       setSchedules(data.schedules ?? []);
+      // 逐组拉取认领统计（近 30 天）
+      for (const s of data.schedules ?? []) {
+        api
+          .get(`/acks/stats?schedule=${encodeURIComponent(s.name)}&days=30`)
+          .then((stats) => setAckStats((prev) => ({ ...prev, [s.name]: stats })))
+          .catch(() => {});
+      }
     } catch (e) {
       showErrorToast(e);
     }
@@ -215,7 +233,14 @@ export default function ScheduleSettings() {
           {schedules.map((s) => (
             <div key={s.id} className="flex items-center justify-between border rounded-lg p-3">
               <div>
-                <p className="font-medium">{s.name}</p>
+                <p className="font-medium">
+                  {s.name}
+                  {s.current_oncall && (
+                    <span className="ml-2 inline-block rounded bg-green-100 px-2 py-0.5 text-xs text-green-700">
+                      {t("schedule.currentOncall")}: {s.current_oncall}
+                    </span>
+                  )}
+                </p>
                 <p className="text-xs text-gray-500">
                   {s.rotation_type === "daily" ? t("schedule.daily") : t("schedule.weekly")}
                   {" · "}
@@ -223,6 +248,17 @@ export default function ScheduleSettings() {
                   {" · "}
                   {s.members.map((m) => m.name).join(" → ")}
                 </p>
+                {ackStats[s.name] && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t("schedule.ackStats", {
+                      total: ackStats[s.name]!.total,
+                      claimed: ackStats[s.name]!.claimed,
+                      mtta: ackStats[s.name]!.mtta_seconds != null
+                        ? `${Math.round(ackStats[s.name]!.mtta_seconds! / 60)} ${t("schedule.minutes")}`
+                        : "-",
+                    })}
+                  </p>
+                )}
               </div>
               <div className="flex gap-2">
                 <Button size="xs" variant="secondary" onClick={() => edit(s)}>

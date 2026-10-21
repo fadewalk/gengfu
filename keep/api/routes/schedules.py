@@ -11,6 +11,7 @@ import pydantic
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from keep.api.bl.schedules import compute_current_member
 from keep.api.core.db import get_session
 from keep.api.models.db.schedule import Schedule, ScheduleMember
 from keep.identitymanager.authenticatedentity import AuthenticatedEntity
@@ -48,14 +49,18 @@ def list_schedules(
         .order_by(Schedule.name)
         .all()
     )
-    return {
-        "schedules": [
+    now = datetime.datetime.utcnow()
+    result = []
+    for s in schedules:
+        current = compute_current_member(s, list(s.members), now=now)
+        result.append(
             {
                 "id": s.id,
                 "name": s.name,
                 "timezone": s.timezone,
                 "rotation_type": s.rotation_type,
                 "rotation_starts_at": s.rotation_starts_at.isoformat(),
+                "current_oncall": current.name if current else "",
                 "members": sorted(
                     (
                         {
@@ -70,9 +75,8 @@ def list_schedules(
                     key=lambda m: m["position"],
                 ),
             }
-            for s in schedules
-        ]
-    }
+        )
+    return {"schedules": result}
 
 
 @router.post("", description="Create an on-call schedule")

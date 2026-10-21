@@ -2957,5 +2957,8 @@
   "schedule.memberEmail": "飞书邮箱（飞书 @ 用）",
   "schedule.addMember": "+ 添加成员",
   "schedule.listTitle": "值班组",
-  "schedule.empty": "还没有值班组，先用上方表单创建一个"
+  "schedule.empty": "还没有值班组，先用上方表单创建一个",
+  "schedule.currentOncall": "当前值班",
+  "schedule.ackStats": "近30天通知 {total} 条 · 已认领 {claimed} 条 · MTTA {mtta}",
+  "schedule.minutes": "分钟"
 }

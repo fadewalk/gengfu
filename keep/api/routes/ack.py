@@ -140,3 +140,37 @@ def ack_status(
         "first_created_at": min((r.created_at for r in records), default=None),
         "first_acked_at": min((r.acked_at for r in records if r.acked_at), default=None),
     }
+
+
+@router.get("/stats", description="Claim statistics for a schedule (MTTA etc.)")
+def ack_stats(
+    schedule: str,
+    days: int = 30,
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:settings"])
+    ),
+    session: Session = Depends(get_session),
+):
+    tenant_id = authenticated_entity.tenant_id
+    since = datetime.datetime.utcnow() - datetime.timedelta(days=days)
+    records = session.exec(
+        select(AckRecord).where(
+            AckRecord.tenant_id == tenant_id,
+            AckRecord.schedule_name == schedule,
+            AckRecord.created_at >= since,
+        )
+    ).all()
+    durations = [
+        (r.acked_at - r.created_at).total_seconds()
+        for r in records
+        if r.acked_at is not None
+    ]
+    return {
+        "schedule": schedule,
+        "days": days,
+        "total": len(records),
+        "claimed": len(durations),
+        "claim_rate": round(len(durations) / len(records), 2) if records else None,
+        # MTTA：平均认领时长（秒）
+        "mtta_seconds": round(sum(durations) / len(durations)) if durations else None,
+    }

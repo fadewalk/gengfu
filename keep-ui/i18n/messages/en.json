@@ -2957,5 +2957,8 @@
   "schedule.memberEmail": "Feishu email (for Feishu mentions)",
   "schedule.addMember": "+ Add member",
   "schedule.listTitle": "Schedules",
-  "schedule.empty": "No schedules yet — create one with the form above"
+  "schedule.empty": "No schedules yet — create one with the form above",
+  "schedule.currentOncall": "On-call now",
+  "schedule.ackStats": "{total} notified · {claimed} claimed · MTTA {mtta} (30d)",
+  "schedule.minutes": "min"
 }
