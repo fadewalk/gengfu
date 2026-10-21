@@ -137,10 +137,15 @@ class LdapIdentityManager(BaseIdentityManager):
                 if self.ldap_mail_attribute in user_entry
                 else f"{username}@ldap"
             )
+            # displayName 缺失时回退 cn → uid（轻量目录常只有 cn）
             display_name = (
                 str(user_entry[self.ldap_name_attribute])
-                if self.ldap_name_attribute in user_entry
-                else username
+                if self.ldap_name_attribute in user_entry and user_entry[self.ldap_name_attribute]
+                else (
+                    str(user_entry["cn"])
+                    if "cn" in user_entry
+                    else username
+                )
             )
             return {
                 "username": username,
