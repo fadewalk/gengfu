@@ -119,6 +119,49 @@ def create_schedule(
     return {"id": schedule.id, "name": schedule.name}
 
 
+@router.get("/{schedule_id}/preview", description="Preview who is on-call for the next N days")
+def preview_rotation(
+    schedule_id: int,
+    days: int = 7,
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:settings"])
+    ),
+    session: Session = Depends(get_session),
+):
+    tenant_id = authenticated_entity.tenant_id
+    schedule = (
+        session.query(Schedule)
+        .filter(Schedule.tenant_id == tenant_id, Schedule.id == schedule_id)
+        .first()
+    )
+    if schedule is None:
+        raise HTTPException(status_code=404, detail="Schedule not found")
+    members = (
+        session.query(ScheduleMember)
+        .filter(ScheduleMember.schedule_id == schedule.id)
+        .order_by(ScheduleMember.position)
+        .all()
+    )
+    days = max(1, min(days, 30))
+    now = datetime.datetime.utcnow()
+    preview = []
+    for offset in range(days):
+        day = now + datetime.timedelta(days=offset)
+        member = compute_current_member(schedule, list(members), now=day)
+        preview.append(
+            {
+                "date": day.date().isoformat(),
+                "member": member.name if member else "",
+            }
+        )
+    return {
+        "schedule": schedule.name,
+        "rotation_type": schedule.rotation_type,
+        "days": days,
+        "rotation": preview,
+    }
+
+
 @router.delete("/{schedule_id}", description="Delete an on-call schedule")
 def delete_schedule(
     schedule_id: int,

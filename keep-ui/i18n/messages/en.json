@@ -2960,5 +2960,8 @@
   "schedule.empty": "No schedules yet — create one with the form above",
   "schedule.currentOncall": "On-call now",
   "schedule.ackStats": "{total} notified · {claimed} claimed · MTTA {mtta} (30d)",
-  "schedule.minutes": "min"
+  "schedule.minutes": "min",
+  "schedule.next7Days": "Next 7 days",
+  "schedule.copyClaimLink": "Copy claim link",
+  "schedule.copied": "Copied"
 }

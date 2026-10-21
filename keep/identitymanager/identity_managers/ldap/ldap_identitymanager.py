@@ -46,6 +46,13 @@ class LdapIdentityManager(BaseIdentityManager):
             "LDAP_NAME_ATTRIBUTE", "displayName"
         )
         self.ldap_default_role = os.environ.get("LDAP_DEFAULT_ROLE", "Admin")
+        # 组映射角色：读取用户的组成员属性（默认 memberOf），按映射表决定更夫角色。
+        # LDAP_ROLE_MAPPING 格式（分号分隔，DN 含逗号所以用分号）：
+        #   cn=gengfu-admins,ou=groups,dc=x=Admin;cn=gengfu-users,ou=groups,dc=x=User
+        self.ldap_role_attribute = os.environ.get("LDAP_ROLE_ATTRIBUTE", "memberOf")
+        self.ldap_role_mapping = self._parse_role_mapping(
+            os.environ.get("LDAP_ROLE_MAPPING", "")
+        )
         # LDAP is considered "configured" if LDAP_URL is explicitly set
         self.ldap_configured = bool(self.ldap_url)
         self.logger.info(
@@ -78,6 +85,50 @@ class LdapIdentityManager(BaseIdentityManager):
                 }
         return None
 
+    @staticmethod
+    def _parse_role_mapping(raw: str) -> list[tuple[str, str]]:
+        """解析 LDAP_ROLE_MAPPING：条目用分号分隔，每条为 LDAP值=更夫角色。"""
+        mapping = []
+        for entry in (raw or "").split(";"):
+            entry = entry.strip()
+            if not entry or "=" not in entry:
+                continue
+            ldap_value, role = entry.rsplit("=", 1)
+            ldap_value, role = ldap_value.strip(), role.strip()
+            if ldap_value and role:
+                mapping.append((ldap_value, role))
+        return mapping
+
+    def _resolve_role(self, user_entry):
+        """按用户属性（默认 memberOf）与映射表决定角色；无命中回退默认角色。"""
+        import os as _os
+
+        role_lower = (
+            self.ldap_default_role.lower()
+            if self.ldap_default_role
+            else "admin"
+        )
+        if not self.ldap_role_mapping:
+            return role_lower
+        try:
+            # ldap3 Entry 属性访问（返回 Attribute，含 .values 列表）
+            raw = getattr(user_entry, self.ldap_role_attribute, None)
+            if raw is None:
+                user_values = []
+            elif hasattr(raw, "values"):
+                user_values = [str(v).lower() for v in raw.values]
+            else:
+                user_values = [str(raw).lower()]
+        except Exception:
+            user_values = []
+
+        for ldap_value, role in self.ldap_role_mapping:
+            for uv in user_values:
+                # 精确匹配或 DN 前缀匹配（便于只写组名不写全 DN）
+                if uv == ldap_value.lower() or uv.endswith(ldap_value.lower()):
+                    return role.lower()
+        return role_lower
+
     def _get_connection(self, bind_dn=None, bind_password=None):
         """Create an LDAP connection and bind."""
         server = Server(self.ldap_url, get_info=ALL)
@@ -106,6 +157,7 @@ class LdapIdentityManager(BaseIdentityManager):
                 attributes=[
                     self.ldap_mail_attribute,
                     self.ldap_name_attribute,
+                    self.ldap_role_attribute,
                 ],
             )
             if conn.entries:
@@ -151,7 +203,7 @@ class LdapIdentityManager(BaseIdentityManager):
                 "username": username,
                 "display_name": display_name,
                 "mail": mail,
-                "role": self.ldap_default_role,
+                "role": self._resolve_role(user_entry),
             }
         except Exception:
             self.logger.warning(f"LDAP bind failed for user: {username}")

@@ -2960,5 +2960,8 @@
   "schedule.empty": "还没有值班组，先用上方表单创建一个",
   "schedule.currentOncall": "当前值班",
   "schedule.ackStats": "近30天通知 {total} 条 · 已认领 {claimed} 条 · MTTA {mtta}",
-  "schedule.minutes": "分钟"
+  "schedule.minutes": "分钟",
+  "schedule.next7Days": "未来 7 天",
+  "schedule.copyClaimLink": "复制认领链接",
+  "schedule.copied": "已复制"
 }

@@ -47,6 +47,8 @@ export default function ScheduleSettings() {
   const { t } = useI18n();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [ackStats, setAckStats] = useState<Record<string, AckStats>>({});
+  const [previews, setPreviews] = useState<Record<string, { date: string; member: string }[]>>({});
+  const [copied, setCopied] = useState<string>("");
   const [form, setForm] = useState<typeof EMPTY_FORM>({ ...EMPTY_FORM });
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -60,6 +62,15 @@ export default function ScheduleSettings() {
         api
           .get(`/acks/stats?schedule=${encodeURIComponent(s.name)}&days=30`)
           .then((stats) => setAckStats((prev) => ({ ...prev, [s.name]: stats })))
+          .catch(() => {});
+        api
+          .get(`/schedules/${s.id}/preview?days=7`)
+          .then((p) =>
+            setPreviews((prev) => ({
+              ...prev,
+              [s.name]: p.rotation?.map((r: { date: string; member: string }) => r) ?? [],
+            }))
+          )
           .catch(() => {});
       }
     } catch (e) {
@@ -259,7 +270,25 @@ export default function ScheduleSettings() {
                     })}
                   </p>
                 )}
+                {previews[s.name] && previews[s.name]!.length > 0 && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t("schedule.next7Days")}：
+                    {previews[s.name]!.map((p) => `${p.date.slice(5)} ${p.member}`).join(" → ")}
+                  </p>
+                )}
               </div>
+              <Button
+                size="xs"
+                variant="secondary"
+                onClick={() => {
+                  const link = `${window.location.origin}/ack/${s.name}`;
+                  navigator.clipboard.writeText(link);
+                  setCopied(s.name);
+                  setTimeout(() => setCopied(""), 1500);
+                }}
+              >
+                {copied === s.name ? t("schedule.copied") : t("schedule.copyClaimLink")}
+              </Button>
               <div className="flex gap-2">
                 <Button size="xs" variant="secondary" onClick={() => edit(s)}>
                   {t("common.actions.edit")}
