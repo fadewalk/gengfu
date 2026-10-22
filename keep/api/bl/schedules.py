@@ -168,3 +168,88 @@ def has_claim(tenant_id: str, schedule_name: str, within_minutes: int) -> bool:
     finally:
         if session is not None:
             session.close()
+
+
+def compute_escalation_target(
+    schedule: Schedule,
+    members: list[ScheduleMember],
+    notified_since: datetime.datetime | None,
+    timeout_minutes: int,
+    now: datetime.datetime | None = None,
+) -> ScheduleMember | None:
+    """多级升级纯函数：通知发出后超时未认领，按成员顺位逐级升级。
+
+    level = floor(通知发出后经过的分钟数 / timeout_minutes)；
+    level 0 = 当前值班人（首位），level 1 = 第二顺位，以此类推，循环回绕。
+    无通知记录或已认领时返回首位（正常通知对象）。
+    """
+    if schedule is None or not members:
+        return None
+    if notified_since is None:
+        return members[0]
+
+    tz = pytz.timezone(schedule.timezone)
+    current = now or datetime.datetime.utcnow()
+    if current.tzinfo is None:
+        current = tz.localize(current)
+    else:
+        current = current.astimezone(tz)
+    since = notified_since
+    if since.tzinfo is None:
+        since = tz.localize(since)
+
+    elapsed_minutes = (current - since).total_seconds() / 60
+    level = int(elapsed_minutes // max(1, timeout_minutes))
+    return members[level % len(members)]
+
+
+def resolve_escalation_target(tenant_id: str, schedule_name: str, timeout_minutes: int = 30, now: datetime.datetime | None = None) -> dict:
+    """供 keep.functions 调用：按「最近一次通知超时未认领」解析应升级到的成员。
+
+    锚点是该值班组最近一条认领记录：未认领 → 按超时时长逐级升级；
+    已认领或无记录 → 首位（当前值班人）。
+    """
+    from keep.api.models.db.ack_record import AckRecord
+
+    schedule, members = None, []
+    session = _get_session()
+    try:
+        schedule = session.exec(
+            select(Schedule).where(Schedule.tenant_id == tenant_id, Schedule.name == schedule_name)
+        ).first()
+        if schedule is not None:
+            members = list(
+                session.exec(
+                    select(ScheduleMember)
+                    .where(ScheduleMember.schedule_id == schedule.id)
+                    .order_by(ScheduleMember.position)
+                ).all()
+            )
+        last_record = session.exec(
+            select(AckRecord)
+            .where(AckRecord.tenant_id == tenant_id, AckRecord.schedule_name == schedule_name)
+            .order_by(AckRecord.created_at.desc())
+        ).first()
+    except Exception:
+        logger.exception("Failed to load escalation context for schedule %s", schedule_name)
+        return {"name": "", "phone": "", "email": ""}
+    finally:
+        session.close()
+
+    if schedule is None:
+        return {"name": "", "phone": "", "email": ""}
+
+    notified_since = last_record.created_at if last_record else None
+    claimed = last_record.acked_at is not None if last_record else False
+    if claimed:
+        # 已有人认领：升级链重置，回到当前值班人
+        notified_since = None
+    target = compute_escalation_target(schedule, members, notified_since, timeout_minutes, now=now)
+    member = target or (members[0] if members else None)
+    if member is None:
+        return {"name": "", "phone": "", "email": ""}
+    return {
+        "name": member.name or "",
+        "phone": member.phone or "",
+        "email": member.email or "",
+    }

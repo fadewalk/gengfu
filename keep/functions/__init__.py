@@ -777,3 +777,44 @@ def oncall_claimed(schedule_name: str, within_minutes: int = 30, **kwargs) -> bo
     return has_claim(tenant_id, schedule_name, within_minutes)
 
 
+
+
+def oncall_escalation_phone(schedule_name: str, timeout_minutes: int = 30, **kwargs) -> str:
+    """
+    多级升级：按「最近一次通知超时未认领」解析应升级到的成员手机号。
+
+    语义（参照 FlashDuty 升级条件「未关闭且未认领」）：
+    - 通知发出后每过 timeout_minutes 分钟升级一顺位（首位=当前值班人 → 第二顺位 → ...循环）
+    - 已有人认领 → 重置回首位
+    配合 interval 工作流使用：每次触发调本函数，@ 的对象随超时时间自动升级。
+
+    Args:
+        schedule_name (str): 值班组名称
+        timeout_minutes (int, optional): 每级超时（分钟），默认 30
+    Returns:
+        str: 应通知的成员手机号（升级链耗尽后循环回绕）
+    """
+    tenant_id = kwargs.get("tenant_id")
+    if not tenant_id:
+        from keep.api.core.dependencies import SINGLE_TENANT_UUID
+
+        tenant_id = SINGLE_TENANT_UUID
+
+    from keep.api.bl.schedules import resolve_escalation_target
+
+    return resolve_escalation_target(tenant_id, schedule_name, timeout_minutes)["phone"]
+
+
+def oncall_escalation_email(schedule_name: str, timeout_minutes: int = 30, **kwargs) -> str:
+    """
+    多级升级：同 oncall_escalation_phone，返回成员飞书邮箱。
+    """
+    tenant_id = kwargs.get("tenant_id")
+    if not tenant_id:
+        from keep.api.core.dependencies import SINGLE_TENANT_UUID
+
+        tenant_id = SINGLE_TENANT_UUID
+
+    from keep.api.bl.schedules import resolve_escalation_target
+
+    return resolve_escalation_target(tenant_id, schedule_name, timeout_minutes)["email"]

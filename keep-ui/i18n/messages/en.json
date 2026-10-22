@@ -2965,5 +2965,8 @@
   "schedule.copyClaimLink": "Copy claim link",
   "schedule.copied": "Copied",
   "schedule.last7Days": "Last 7 days",
-  "schedule.last30Days": "Last 30 days"
+  "schedule.last30Days": "Last 30 days",
+  "schedule.statNotifications": "Notifications (30d)",
+  "schedule.statClaimed": "Claimed (30d)",
+  "schedule.statMtta": "MTTA"
 }

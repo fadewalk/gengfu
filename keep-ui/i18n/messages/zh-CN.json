@@ -2965,5 +2965,8 @@
   "schedule.copyClaimLink": "复制认领链接",
   "schedule.copied": "已复制",
   "schedule.last7Days": "近 7 天",
-  "schedule.last30Days": "近 30 天"
+  "schedule.last30Days": "近 30 天",
+  "schedule.statNotifications": "近 30 天通知",
+  "schedule.statClaimed": "近 30 天已认领",
+  "schedule.statMtta": "平均认领时长 MTTA"
 }

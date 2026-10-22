@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Keep 中文文档",
+  "name": "更夫 Gengfu",
   "logo": {
     "light": "/logo/light.png",
     "dark": "/logo/dark.png"
@@ -13,12 +13,12 @@
   },
   "topbarCtaButton": {
     "type": "github",
-    "url": "https://github.com/keephq/keep"
+    "url": "https://github.com/fadewalk/gengfu"
   },
   "topbarLinks": [
     {
-      "name": "Platform",
-      "url": "https://platform.keephq.dev/"
+      "name": "GitHub",
+      "url": "https://github.com/fadewalk/gengfu"
     }
   ],
   "anchors": [],

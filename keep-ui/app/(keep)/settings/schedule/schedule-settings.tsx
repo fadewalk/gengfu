@@ -52,6 +52,8 @@ export default function ScheduleSettings() {
   const [statWindow, setStatWindow] = useState<AckWindow>("30");
   const [previews, setPreviews] = useState<Record<string, { date: string; member: string }[]>>({});
   const [copied, setCopied] = useState<string>("");
+  const [calendarView, setCalendarView] = useState<"strip" | "month">("strip");
+  const [monthOffset, setMonthOffset] = useState(0);
   const [form, setForm] = useState<typeof EMPTY_FORM>({ ...EMPTY_FORM });
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -60,12 +62,19 @@ export default function ScheduleSettings() {
     try {
       const data = await api.get("/schedules");
       setSchedules(data.schedules ?? []);
-      // 逐组拉取认领统计（近 30 天）
+      // 逐组拉取认领统计（7 天 + 30 天双窗口）
       for (const s of data.schedules ?? []) {
-        api
-          .get(`/acks/stats?schedule=${encodeURIComponent(s.name)}&days=30`)
-          .then((stats) => setAckStats((prev) => ({ ...prev, [s.name]: stats })))
-          .catch(() => {});
+        for (const days of ["7", "30"] as AckWindow[]) {
+          api
+            .get(`/acks/stats?schedule=${encodeURIComponent(s.name)}&days=${days}`)
+            .then((stats) =>
+              setAckStats((prev) => ({
+                ...prev,
+                [s.name]: { ...(prev[s.name] ?? {}), [days]: stats },
+              }))
+            )
+            .catch(() => {});
+        }
         api
           .get(`/schedules/${s.id}/preview?days=31`)
           .then((p) =>
@@ -80,6 +89,19 @@ export default function ScheduleSettings() {
       showErrorToast(e);
     }
   }, [api]);
+
+  // 全部组 30 天 MTTA 汇总
+  const summary = (() => {
+    const total = schedules.reduce((acc, s) => acc + (ackStats[s.name]?.["30"]?.total ?? 0), 0);
+    const claimed = schedules.reduce((acc, s) => acc + (ackStats[s.name]?.["30"]?.claimed ?? 0), 0);
+    const withMtta = schedules
+      .map((s) => ackStats[s.name]?.["30"]?.mtta_seconds)
+      .filter((v): v is number => v != null);
+    const avgMtta = withMtta.length
+      ? Math.round(withMtta.reduce((a, b) => a + b, 0) / withMtta.length / 60)
+      : null;
+    return { total, claimed, avgMtta };
+  })();
 
   useEffect(() => {
     if (api.isReady()) load();
@@ -147,6 +169,23 @@ export default function ScheduleSettings() {
       <div>
         <Title>{t("schedule.title")}</Title>
         <Subtitle>{t("schedule.subtitle")}</Subtitle>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="p-3">
+          <p className="text-xs text-gray-500">{t("schedule.statNotifications")}</p>
+          <p className="text-xl font-semibold">{summary.total}</p>
+        </Card>
+        <Card className="p-3">
+          <p className="text-xs text-gray-500">{t("schedule.statClaimed")}</p>
+          <p className="text-xl font-semibold">{summary.claimed}</p>
+        </Card>
+        <Card className="p-3">
+          <p className="text-xs text-gray-500">{t("schedule.statMtta")}</p>
+          <p className="text-xl font-semibold">
+            {summary.avgMtta != null ? `${summary.avgMtta} ${t("schedule.minutes")}` : "-"}
+          </p>
+        </Card>
       </div>
 
       <Card>
@@ -289,25 +328,42 @@ export default function ScheduleSettings() {
                 })()}
                 {previews[s.name] && previews[s.name]!.length > 0 && (
                   <div className="mt-2">
-                    <p className="text-xs text-gray-500 mb-1">{t("schedule.next7Days")}</p>
-                    <div className="flex gap-1 overflow-x-auto pb-1">
-                      {previews[s.name]!.slice(0, 14).map((p) => {
-                        const isToday = p.date === new Date().toISOString().slice(0, 10);
-                        return (
-                          <div
-                            key={p.date}
-                            className={`flex-shrink-0 rounded-md border px-2 py-1 text-center ${
-                              isToday ? "border-orange-400 bg-orange-50" : "border-gray-200"
-                            }`}
-                          >
-                            <p className={`text-xs font-medium ${isToday ? "text-orange-600" : "text-gray-700"}`}>
-                              {p.date.slice(5)}
-                            </p>
-                            <p className="text-xs text-gray-500">{p.member || "-"}</p>
-                          </div>
-                        );
-                      })}
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-xs text-gray-500">{t("schedule.next7Days")}</p>
+                      <div className="flex gap-1">
+                        <Button size="xs" variant={calendarView === "strip" ? "primary" : "secondary"}
+                          onClick={() => setCalendarView("strip")}>{t("schedule.viewStrip")}</Button>
+                        <Button size="xs" variant={calendarView === "month" ? "primary" : "secondary"}
+                          onClick={() => setCalendarView("month")}>{t("schedule.viewMonth")}</Button>
+                      </div>
                     </div>
+                    {calendarView === "strip" ? (
+                      <div className="flex gap-1 overflow-x-auto pb-1">
+                        {previews[s.name]!.slice(0, 14).map((p) => {
+                          const isToday = p.date === new Date().toISOString().slice(0, 10);
+                          return (
+                            <div
+                              key={p.date}
+                              className={`flex-shrink-0 rounded-md border px-2 py-1 text-center ${
+                                isToday ? "border-orange-400 bg-orange-50" : "border-gray-200"
+                              }`}
+                            >
+                              <p className={`text-xs font-medium ${isToday ? "text-orange-600" : "text-gray-700"}`}>
+                                {p.date.slice(5)}
+                              </p>
+                              <p className="text-xs text-gray-500">{p.member || "-"}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <MonthGrid
+                        preview={previews[s.name]!}
+                        monthOffset={monthOffset}
+                        onPrev={() => setMonthOffset((v) => v - 1)}
+                        onNext={() => setMonthOffset((v) => v + 1)}
+                      />
+                    )}
                   </div>
                 )}
               </div>
@@ -335,6 +391,71 @@ export default function ScheduleSettings() {
           ))}
         </div>
       </Card>
+    </div>
+  );
+}
+
+
+function MonthGrid({
+  preview,
+  monthOffset,
+  onPrev,
+  onNext,
+}: {
+  preview: { date: string; member: string }[];
+  monthOffset: number;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const byDate: Record<string, string> = {};
+  for (const p of preview) byDate[p.date] = p.member;
+
+  const base = new Date();
+  base.setDate(1);
+  base.setMonth(base.getMonth() + monthOffset);
+  const year = base.getFullYear();
+  const month = base.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDow = new Date(year, month, 1).getDay(); // 0=周日
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  const cells: ({ date: string; member: string; inMonth: boolean } | null)[] = [];
+  for (let i = 0; i < firstDow; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    cells.push({ date, member: byDate[date] ?? "", inMonth: true });
+  }
+
+  const monthLabel = `${year}-${String(month + 1).padStart(2, "0")}`;
+  const dows = ["日", "一", "二", "三", "四", "五", "六"];
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <Button size="xs" variant="secondary" onClick={onPrev}>‹</Button>
+        <p className="text-xs font-medium text-gray-700">{monthLabel}</p>
+        <Button size="xs" variant="secondary" onClick={onNext}>›</Button>
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {dows.map((d) => (
+          <p key={d} className="text-xs text-gray-400 text-center">{d}</p>
+        ))}
+        {cells.map((c, i) =>
+          c === null ? (
+            <div key={`e${i}`} />
+          ) : (
+            <div
+              key={c.date}
+              className={`rounded border px-1 py-1 text-center ${
+                c.date === todayStr ? "border-orange-400 bg-orange-50" : "border-gray-200"
+              }`}
+            >
+              <p className="text-xs text-gray-500">{c.date.slice(8)}</p>
+              <p className="text-xs truncate" title={c.member}>{c.member || "-"}</p>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 }

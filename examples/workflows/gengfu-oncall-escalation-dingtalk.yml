@@ -2,27 +2,28 @@ workflow:
   id: gengfu-oncall-escalation-dingtalk
   name: 更夫 · 值班升级钉钉通知
   description: >
-    值班升级检查（借鉴 FlashDuty 升级条件「未关闭且未认领」）：每 10 分钟检查一次，
-    最近 30 分钟内的值班通知若无人认领，则 @ 全组协助。需配合值班通知工作流使用
-    （通知消息里通过 keep.oncall_ack_link 附认领链接）。可按需调整 interval 与 within_minutes。
+    多级值班升级（借鉴 FlashDuty 升级条件「未关闭且未认领」）：每 10 分钟检查一次，
+    最近 30 分钟内的值班通知若无人认领，@ 对象随超时时间**逐级自动升级**
+    （首位值班人 → 第二顺位 → …循环）。需配合值班通知工作流使用。
   triggers:
     - type: interval
       interval: 10m
   actions:
-    - name: escalate-to-group
+    - name: escalate
       if: "not keep.oncall_claimed('支付值班', 30)"
       provider:
         type: dingtalk
         config: "{{ providers.dingtalk }}"
         with:
-          title: "⚠️ 值班升级：告警 30 分钟无人认领"
+          title: "⚠️ 值班升级：告警超时无人认领"
           message: |
             **值班升级提醒**
 
-            「支付值班」最近 30 分钟内的告警通知**无人认领**，请组内协助响应。
+            「支付值班」最近 30 分钟内的告警通知**无人认领**，请当前应答人响应。
 
             - 当前值班: {{ keep.oncall_current("支付值班") }}
+            - 升级应答: {{ keep.oncall_escalation_phone("支付值班", 30) }}
             - 检查时间: {{ now }}
 
             > 处理完成后请在原通知的认领链接点击认领。
-          at_mobiles: "{{ keep.oncall_phone(\"支付值班\") }}"
+          at_mobiles: "{{ keep.oncall_escalation_phone(\"支付值班\", 30) }}"
