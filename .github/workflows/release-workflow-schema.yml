@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -43,7 +43,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -55,7 +55,7 @@ jobs:
 
       - name: Cache dependencies
         id: cache-deps
-        uses: actions/cache@v4.2.0
+        uses: actions/cache@v6.1.0
         with:
           path: .venv
           key: pydeps-${{ hashFiles('**/poetry.lock') }}
@@ -68,7 +68,7 @@ jobs:
           PYTHONPATH="${{ github.workspace }}" poetry run python ./scripts/save_providers_list.py
 
       - name: Set up Node.js 20
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: "npm"
@@ -83,7 +83,7 @@ jobs:
         run: npm run build:workflow-yaml-json-schema
 
       - name: Upload schema artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: workflow-schema
           path: workflow-yaml-json-schema.json
@@ -106,7 +106,7 @@ jobs:
 #          name: workflow-schema
 #          path: .
 #      - name: Checkout schema repository
-#        uses: actions/checkout@v4
+#        uses: actions/checkout@v7
 #        with:
 #          repository: ${{ env.SCHEMA_REPO_NAME }}
 #          token: ${{ secrets.SCHEMA_REPO_PAT }}

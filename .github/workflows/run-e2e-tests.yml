@@ -36,18 +36,18 @@ jobs:
       FRONTEND_IMAGE: ${{ inputs.frontend-image-name }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Login to GitHub Container Registry
         if: ${{ inputs.is-fork != true }}
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python ${{ inputs.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python-version }}
 
@@ -59,7 +59,7 @@ jobs:
 
       - name: Restore dependencies cache
         id: cache-deps
-        uses: actions/cache@v4.2.0
+        uses: actions/cache@v6.1.0
         with:
           path: .venv
           key: pydeps-${{ hashFiles('**/poetry.lock') }}
@@ -77,7 +77,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v4.2.0
+        uses: actions/cache@v6.1.0
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ steps.playwright-version.outputs.version }}
@@ -91,11 +91,11 @@ jobs:
       - name: Set up Docker Buildx
         if: ${{ inputs.is-fork == true }}
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
 
       - name: Rebuild frontend image locally for fork PRs
         if: ${{ inputs.is-fork == true }}
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v7
         with:
           context: keep-ui
           file: ./docker/Dockerfile.ui
@@ -110,7 +110,7 @@ jobs:
 
       - name: Rebuild backend image locally for fork PRs
         if: ${{ inputs.is-fork == true }}
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ./docker/Dockerfile.api
@@ -290,7 +290,7 @@ jobs:
         run: poetry run coverage json --omit="keep/providers/*"
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v7
         with:
           fail_ci_if_error: false
           files: coverage.json
@@ -315,7 +315,7 @@ jobs:
       # Upload artifacts
       - name: Upload test artifacts on failure
         if: always()
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v7
         with:
           name: test-artifacts-db-${{ inputs.db-type }}-redis-${{ inputs.redis_enabled }}
           path: |
