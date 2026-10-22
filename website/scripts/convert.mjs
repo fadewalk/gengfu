@@ -213,6 +213,22 @@ function escapeVueMoustache(src) {
   return lines.join('\n')
 }
 
+// 上游衍生文档页顶部注入内核说明；更夫自有指南（docs/zh）与已重写的简介页不加
+const KERNEL_NOTE = `::: info 关于本页
+本页介绍更夫所基于的开源内核 [Keep](https://github.com/keephq/keep) 的通用能力。更夫在其上提供国内化增强：钉钉/企业微信/飞书通知、国产大模型接入、LDAP 认证与值班管理。部署与上手请看[快速上手](/quickstart)。
+:::
+`
+
+// 已重写为更夫叙事的页面不再注入
+const NO_KERNEL_NOTE = new Set(['overview/introduction.md'])
+
+function injectKernelNote(src, relOut) {
+  if (NO_KERNEL_NOTE.has(relOut.replaceAll('\\', '/'))) return src
+  const m = src.match(/^---\n[\s\S]*?\n---\n/)
+  if (!m) return `${KERNEL_NOTE}\n${src}`
+  return src.slice(0, m[0].length) + `\n${KERNEL_NOTE}\n` + src.slice(m[0].length)
+}
+
 function convertSource(src, outFilePath, importsMap = {}) {
   let out = src
   const { imports, stripped } = collectImports(out)
@@ -278,7 +294,9 @@ for (const dir of CONTENT_DIRS) {
     const rel = relative(docsZhDir, file).replace(/\.mdx$/, '.md')
     const outPath = join(websiteDir, rel)
     mkdirSync(dirname(outPath), { recursive: true })
-    writeFileSync(outPath, convertSource(readFileSync(file, 'utf8'), outPath))
+    let content = convertSource(readFileSync(file, 'utf8'), outPath)
+    content = injectKernelNote(content, rel)
+    writeFileSync(outPath, content)
     converted++
   }
 }

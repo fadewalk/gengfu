@@ -67,6 +67,6 @@ features:
 
 ## 与上游 Keep 的关系
 
-本仓库是 [keephq/keep](https://github.com/keephq/keep)（MIT License）的中文发行版，品牌独立、代码血缘透明：定期合并上游更新，有普适价值的改动也会回馈上游。MIT 许可证与版权声明完整保留。
+本仓库是 [keephq/keep](https://github.com/keephq/keep)（MIT License）的中文发行版。更夫独立演进、不向上游回馈 PR；每季度审阅上游变更，安全与核心修复按需 cherry-pick 吸收。MIT 许可证与版权声明完整保留。
 
 阅读左侧/顶部导航中的使用文档，了解更夫（Keep 内核）的完整能力：告警、事件、工作流、Providers、部署与 CLI。

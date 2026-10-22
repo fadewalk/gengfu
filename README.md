@@ -70,14 +70,14 @@
 
 **进行中 / 计划**
 
-- 定期合并上游更新（上游修复节奏约每季度近百个提交）
+- 每季度审阅上游安全与核心修复，按需 cherry-pick 吸收（不做全量合并；依赖更新由 dependabot 自动化）
 - 海外 SaaS 集成（PagerDuty、ServiceNow、Slack 等）转为默认关闭的可选项
 - 国产大模型兼容矩阵：验证工具已就绪（`scripts/verify_llm_compat.py`），待接入各家 API key 实测并产出矩阵
 - 企业微信/飞书 @ 指定值班人（需开放平台 user_id 映射）
 
 ## 与上游 Keep 的关系
 
-本仓库是 [keephq/keep](https://github.com/keephq/keep)（MIT License）的中文发行版，品牌独立、代码血缘透明：我们定期合并上游更新，有普适价值的改动也会回馈上游。MIT 许可证与版权声明完整保留，致谢见文末。
+本仓库是 [keephq/keep](https://github.com/keephq/keep)（MIT License）的中文发行版。更夫独立演进：按自己的路线图做国内化与二次开发，不向上游回馈 PR；每季度审阅一次上游变更，安全修复与核心 bug 修复按需 cherry-pick 吸收，其余不跟进。MIT 许可证与版权声明完整保留，致谢见文末。
 
 </br>
 
@@ -944,4 +944,4 @@ docker compose up -d
 
 ## 致谢
 
-本项目基于 [Keep](https://github.com/keephq/keep)（MIT License）二次开发，感谢 [KeepHQ](https://github.com/keephq) 团队与开源社区的贡献。上游的持续演进是本项目的地基，我们会定期同步上游更新，并把有普适价值的改动回馈上游。
+本项目基于 [Keep](https://github.com/keephq/keep)（MIT License）二次开发，感谢 [KeepHQ](https://github.com/keephq) 团队与开源社区的贡献。上游的持续演进是本项目的地基；更夫独立演进，并定期审阅上游的安全与核心修复，按需吸收。
