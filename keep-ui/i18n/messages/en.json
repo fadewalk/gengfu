@@ -2968,5 +2968,8 @@
   "schedule.last30Days": "Last 30 days",
   "schedule.statNotifications": "Notifications (30d)",
   "schedule.statClaimed": "Claimed (30d)",
-  "schedule.statMtta": "MTTA"
+  "schedule.statMtta": "MTTA",
+  "schedule.recentClaims": "Recent claims",
+  "schedule.acked": "Claimed",
+  "schedule.pending": "Pending"
 }

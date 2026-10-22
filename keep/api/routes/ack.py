@@ -206,3 +206,44 @@ def ack_stats(
         # MTTA：平均认领时长（秒）
         "mtta_seconds": round(sum(durations) / len(durations)) if durations else None,
     }
+
+
+@router.get("/recent", description="Recent claim records for a schedule")
+def ack_recent(
+    schedule: str,
+    days: int = 30,
+    limit: int = 10,
+    authenticated_entity: AuthenticatedEntity = Depends(
+        IdentityManagerFactory.get_auth_verifier(["read:settings"])
+    ),
+    session: Session = Depends(get_session),
+):
+    tenant_id = authenticated_entity.tenant_id
+    since = datetime.datetime.utcnow() - datetime.timedelta(days=days)
+    records = session.exec(
+        select(AckRecord)
+        .where(
+            AckRecord.tenant_id == tenant_id,
+            AckRecord.schedule_name == schedule,
+            AckRecord.created_at >= since,
+        )
+        .order_by(AckRecord.created_at.desc())
+    ).all()
+    result = []
+    for r in records[: max(1, min(limit, 100))]:
+        mtta = (
+            (r.acked_at - r.created_at).total_seconds()
+            if r.acked_at is not None
+            else None
+        )
+        result.append(
+            {
+                "alert_name": r.alert_name,
+                "member": r.notified_member_name,
+                "created_at": r.created_at.isoformat(),
+                "acked_at": r.acked_at.isoformat() if r.acked_at else None,
+                "acked": r.acked_at is not None,
+                "mtta_seconds": round(mtta) if mtta is not None else None,
+            }
+        )
+    return {"schedule": schedule, "records": result}

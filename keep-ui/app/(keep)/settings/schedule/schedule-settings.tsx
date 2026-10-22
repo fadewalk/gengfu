@@ -35,6 +35,15 @@ type AckStats = {
 
 type AckWindow = "7" | "30";
 
+type AckRecordItem = {
+  alert_name: string;
+  member: string;
+  created_at: string;
+  acked_at: string | null;
+  acked: boolean;
+  mtta_seconds: number | null;
+};
+
 const EMPTY_FORM = {
   id: 0,
   name: "",
@@ -51,6 +60,7 @@ export default function ScheduleSettings() {
   const [ackStats, setAckStats] = useState<Record<string, Record<AckWindow, AckStats | null>>>({});
   const [statWindow, setStatWindow] = useState<AckWindow>("30");
   const [previews, setPreviews] = useState<Record<string, { date: string; member: string }[]>>({});
+  const [recentAcks, setRecentAcks] = useState<Record<string, AckRecordItem[]>>({});
   const [copied, setCopied] = useState<string>("");
   const [calendarView, setCalendarView] = useState<"strip" | "month">("strip");
   const [monthOffset, setMonthOffset] = useState(0);
@@ -75,6 +85,10 @@ export default function ScheduleSettings() {
             )
             .catch(() => {});
         }
+        api
+          .get(`/acks/recent?schedule=${encodeURIComponent(s.name)}&days=30&limit=5`)
+          .then((d) => setRecentAcks((prev) => ({ ...prev, [s.name]: d.records ?? [] })))
+          .catch(() => {});
         api
           .get(`/schedules/${s.id}/preview?days=31`)
           .then((p) =>
@@ -326,6 +340,19 @@ export default function ScheduleSettings() {
                     </div>
                   );
                 })()}
+                {recentAcks[s.name] && recentAcks[s.name]!.length > 0 && (
+                  <div className="mt-2 border-t pt-2">
+                    <p className="text-xs text-gray-500 mb-1">{t("schedule.recentClaims")}</p>
+                    {recentAcks[s.name]!.slice(0, 5).map((r, i) => (
+                      <div key={i} className="flex items-center justify-between text-xs py-0.5">
+                        <span className="truncate text-gray-700">{r.alert_name || "-"}</span>
+                        <span className={r.acked ? "text-green-600" : "text-orange-500"}>
+                          {r.acked ? t("schedule.acked") : t("schedule.pending")}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {previews[s.name] && previews[s.name]!.length > 0 && (
                   <div className="mt-2">
                     <div className="flex items-center justify-between mb-1">

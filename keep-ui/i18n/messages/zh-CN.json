@@ -2968,5 +2968,8 @@
   "schedule.last30Days": "近 30 天",
   "schedule.statNotifications": "近 30 天通知",
   "schedule.statClaimed": "近 30 天已认领",
-  "schedule.statMtta": "平均认领时长 MTTA"
+  "schedule.statMtta": "平均认领时长 MTTA",
+  "schedule.recentClaims": "最近认领记录",
+  "schedule.acked": "已认领",
+  "schedule.pending": "待认领"
 }
