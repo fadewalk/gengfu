@@ -12,7 +12,7 @@ docker compose up -d
 ```
 
 等容器全部 healthy 后打开 `http://localhost:4000`。默认 NO_AUTH 免认证模式（内网试用），
-生产环境请参考 [docker-compose.yml](../../docker-compose.yml) 内的注释配置 LDAP 认证与 MySQL。
+生产环境请参考 [docker-compose.yml](https://github.com/fadewalk/gengfu/blob/main/docker-compose.yml) 内的注释配置 LDAP 认证与 MySQL。
 
 ## 第 2 步：接入监控源（3 分钟）
 
@@ -43,8 +43,8 @@ receivers:
 3. 更夫界面「Providers」→ 搜索 **DingTalk** → 填入 `access_token` 与 `secret` → 连接
    - 实例名建议就叫 `dingtalk`（与内置模板的引用名一致）
 
-企业微信 / 飞书的接入方法见 [providers 文档目录](../providers/documentation/)，
-其中飞书编程套餐订阅 key 的用法见[兼容性文档](../llm-compatibility-zh.md)。
+企业微信 / 飞书的接入方法见 [providers 文档目录](https://github.com/fadewalk/gengfu/tree/main/keep/providers)，
+其中飞书编程套餐订阅 key 的用法见[兼容性文档](https://github.com/fadewalk/gengfu/blob/main/docs/llm-compatibility-zh.md)。
 
 ## 第 4 步：启用内置工作流模板（1 分钟）
 
@@ -88,7 +88,7 @@ curl -X POST http://localhost:8080/alerts/event/prometheus \
 
 ## 进阶
 
-- **AI 事件报告**：告警聚合为事件后，事件页点「报告」可生成中文分析报告（Settings → AI Configuration 里配 DeepSeek / GLM 等，兼容性实测见 [llm-compatibility-zh.md](../llm-compatibility-zh.md)）
+- **AI 事件报告**：告警聚合为事件后，事件页点「报告」可生成中文分析报告（Settings → AI Configuration 里配 DeepSeek / GLM 等，兼容性实测见 [llm-compatibility-zh.md](https://github.com/fadewalk/gengfu/blob/main/docs/llm-compatibility-zh.md)）
 - **告警降噪**：多个同源告警会自动去重聚合；自定义去重规则见设置页
 - **海外集成**：默认隐藏了 54 个海外 SaaS，设置页「提供商可见性」可随时打开
 - **值班排班与更多工作流语法**：见上游文档（英文）

@@ -1,0 +1,14 @@
+{
+  "name": "gengfu-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "convert": "node scripts/convert.mjs",
+    "dev": "npm run convert && vitepress dev",
+    "build": "npm run convert && vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3"
+  }
+}

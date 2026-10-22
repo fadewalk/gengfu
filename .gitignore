@@ -257,3 +257,23 @@ llm-compat-glm.md
 # 视频代理插件本地产物
 .video_agent/
 .v2c/
+
+# website (VitePress) — 内容由 website/scripts/convert.mjs 从 docs-zh 与 docs/zh 生成
+website/node_modules/
+website/.vitepress/cache/
+website/.vitepress/dist/
+website/.vitepress/generated/
+website/overview/
+website/alerts/
+website/incidents/
+website/workflows/
+website/alertevaluation/
+website/providers/
+website/deployment/
+website/development/
+website/cli/
+website/images/
+website/logo/
+website/quickstart.md
+website/nightingale.md
+website/oncall-roadmap.md
