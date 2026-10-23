@@ -4,13 +4,20 @@ sidebarTitle: 支持
 ---
 
 ## 概述
-您可以使用以下方法获取与 Keep 相关的任何支持/帮助：
+
+更夫是社区驱动的开源项目，通过以下方式获取支持：
 
 <CardGroup cols={2}>
-  <Card title="Slack 社区" icon="square-1">
-    您可以使用 <u>[Keep Slack 社区](https://slack.keephq.dev)</u> 获取支持。
+  <Card title="GitHub Issues" icon="square-1">
+    在 <u>[fadewalk/gengfu](https://github.com/fadewalk/gengfu/issues)</u> 提交问题：部署故障、集成问题、功能建议均可。请附上部署方式与相关日志（注意脱敏）。
   </Card>
-  <Card title="电子邮件" icon="square-2">
-    您可以使用 <u>support@keephq.dev</u> 发送咨询。
+  <Card title="内核能力问题" icon="square-2">
+    涉及 Keep 内核（工作流引擎、Provider 机制等）的通用问题，也可查阅 <u>[上游文档](https://docs.keephq.dev)</u> 与上游仓库 Issues。
   </Card>
 </CardGroup>
+
+## 提问前建议
+
+- 先翻一遍[常见问题](/overview/faq)与[快速上手](/quickstart)，多数部署问题出在环境配置；
+- 提问时描述清楚：部署方式（docker compose / 源码）、认证方式（NO_AUTH / DB / LDAP）、监控源类型与版本；
+- 告警未收到时，附上更夫日志中 provider 与 workflow 相关的片段。

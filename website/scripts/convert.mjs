@@ -220,7 +220,12 @@ const KERNEL_NOTE = `::: info 关于本页
 `
 
 // 已重写为更夫叙事的页面不再注入
-const NO_KERNEL_NOTE = new Set(['overview/introduction.md'])
+const NO_KERNEL_NOTE = new Set([
+  'overview/introduction.md',
+  'overview/faq.md',
+  'overview/support.md',
+  'overview/playground.md',
+])
 
 function injectKernelNote(src, relOut) {
   if (NO_KERNEL_NOTE.has(relOut.replaceAll('\\', '/'))) return src
