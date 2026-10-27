@@ -12,6 +12,17 @@
 </br>
 </div>
 
+<div align="center">
+📖 <a href="https://fadewalk.github.io/gengfu/">在线文档</a>
+&nbsp;·&nbsp;
+🚀 <a href="https://fadewalk.github.io/gengfu/quickstart">十分钟快速上手</a>
+&nbsp;·&nbsp;
+🌙 <a href="https://fadewalk.github.io/gengfu/nightingale">接入夜莺</a>
+&nbsp;·&nbsp;
+🗓️ <a href="https://fadewalk.github.io/gengfu/oncall-roadmap">值班排班路线</a>
+</br>
+</div>
+
 <div style="width: 100%; max-width: 800px; margin: 0 auto;">
     <img
         src="/assets/sneaknew.png?raw=true"
@@ -923,9 +934,9 @@ docker compose up -d
 
 打开 `http://localhost:4000` 即可使用（API 在 `http://localhost:8080`）。
 
-> 📖 **[中文快速上手：10 分钟从安装到收到第一条钉钉告警](docs/zh/quickstart.md)**
-> 🌙 **[接入夜莺 Nightingale](docs/zh/nightingale.md)** —— 监控交给夜莺们，告警之后的事交给更夫
-> 🗓️ **[值班排班路线](docs/zh/oncall-roadmap.md)** —— 轻量排班 + 工作流动态解析（路线征集中）
+> 📖 **[中文快速上手：10 分钟从安装到收到第一条钉钉告警](https://fadewalk.github.io/gengfu/quickstart)**
+> 🌙 **[接入夜莺 Nightingale](https://fadewalk.github.io/gengfu/nightingale)** —— 监控交给夜莺们，告警之后的事交给更夫
+> 🗓️ **[值班排班路线](https://fadewalk.github.io/gengfu/oncall-roadmap)** —— 轻量排班 + 工作流动态解析（路线征集中）
 
 **生产环境建议**：
 
