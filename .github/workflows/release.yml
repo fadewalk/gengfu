@@ -13,7 +13,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -21,7 +21,7 @@ jobs:
 
       - name: Release Keep
         id: release-step
-        uses: python-semantic-release/python-semantic-release@v9.8.7
+        uses: python-semantic-release/python-semantic-release@v10.7.0
         with:
           git_committer_name: Keep Release Bot
           git_committer_email: no-reply@keephq.dev
@@ -32,7 +32,7 @@ jobs:
 
       - name: Open PR for release branch
         id: pr-step
-        uses: peter-evans/create-pull-request@v6.1.0
+        uses: peter-evans/create-pull-request@v8.1.1
         with:
           committer: Keep Release Bot <no-reply@keephq.dev>
           title: "Release - ${{ steps.release-step.outputs.version }}"

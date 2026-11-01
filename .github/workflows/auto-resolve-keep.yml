@@ -49,7 +49,7 @@ jobs:
         if: |
           (github.event_name == 'pull_request' && github.event.pull_request.merged == true && steps.set_ids.outputs.final_incident_id != '') ||
           (github.event_name == 'workflow_dispatch' && inputs.incident_id != '')
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@v2
         with:
           url: "https://api.keephq.dev/incidents/${{ steps.set_ids.outputs.final_incident_id }}/status"
           method: "POST"
@@ -60,7 +60,7 @@ jobs:
         if: |
           (github.event_name == 'pull_request' && github.event.pull_request.merged == true && steps.set_ids.outputs.final_incident_id != '') ||
           (github.event_name == 'workflow_dispatch' && inputs.incident_id != '')
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@v2
         with:
           url: "https://api.keephq.dev/incidents/${{ steps.set_ids.outputs.final_incident_id }}/enrich"
           method: "POST"
@@ -71,7 +71,7 @@ jobs:
         if: |
           (github.event_name == 'pull_request' && github.event.pull_request.merged == true && steps.set_ids.outputs.final_alert_fingerprint != '') ||
           (github.event_name == 'workflow_dispatch' && inputs.alert_fingerprint != '')
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@v2
         with:
           url: "https://api.keephq.dev/alerts/enrich?dispose_on_new_alert=true"
           method: "POST"
