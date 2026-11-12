@@ -131,9 +131,9 @@ export default function GroupsTab() {
           <Table className="h-full">
             <TableHead>
               <TableRow>
-                <TableHeaderCell className="w-3/24">Group Name</TableHeaderCell>
-                <TableHeaderCell className="w-5/12">Members</TableHeaderCell>
-                <TableHeaderCell className="w-5/12">Roles</TableHeaderCell>
+                <TableHeaderCell className="w-3/24">{t("settings.groups.groupName")}</TableHeaderCell>
+                <TableHeaderCell className="w-5/12">{t("settings.groups.members")}</TableHeaderCell>
+                <TableHeaderCell className="w-5/12">{t("settings.groups.roles")}</TableHeaderCell>
                 <TableHeaderCell className="w-1/24"></TableHeaderCell>
               </TableRow>
             </TableHead>
@@ -154,7 +154,7 @@ export default function GroupsTab() {
                       ))}
                       {group.members.length > 4 && (
                         <Badge color="orange" className="text-xs">
-                          +{group.members.length - 4} more
+                          +{group.members.length - 4} {t("misc.more")}
                         </Badge>
                       )}
                     </div>

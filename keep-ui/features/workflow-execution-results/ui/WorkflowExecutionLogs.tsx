@@ -16,6 +16,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { parseISO, differenceInSeconds, formatDistance } from "date-fns";
 import Skeleton from "react-loading-skeleton";
+import { useI18n } from "@/i18n/hooks/useI18n";
 import "react-loading-skeleton/dist/skeleton.css";
 import { JsonCard } from "@/shared/ui";
 
@@ -208,6 +209,7 @@ export function WorkflowExecutionLogs({
   selectedStep: string | null;
   showSkeleton: boolean;
 }) {
+  const { t } = useI18n();
   const groupedLogs = useMemo(() => {
     if (!logs) {
       return [];
@@ -314,13 +316,12 @@ export function WorkflowExecutionLogs({
             ))}
             {status === "in_progress" && (
               <p>
-                The workflow is in progress, will check again in one second
-                (times checked: {checks})
+                {t("workflows.executionLogs.inProgress", { checks })}
               </p>
             )}
-            {status === "failed" && <p>The workflow failed, loading logs...</p>}
+            {status === "failed" && <p>{t("workflows.executionLogs.failedLoading")}</p>}
             {status === "success" && (
-              <p>The workflow succeeded, loading logs...</p>
+              <p>{t("workflows.executionLogs.successLoading")}</p>
             )}
           </div>
         ) : (

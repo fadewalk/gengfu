@@ -145,9 +145,36 @@
       "deleteRole": "删除角色",
       "editRole": "编辑角色",
       "title": "角色管理",
-      "searchPlaceholder": "按角色名搜索"
+      "searchPlaceholder": "按角色名搜索",
+      "authModeNotAvailable": "此功能在当前认证模式下不可用。",
+      "createCustomRole": "创建自定义角色",
+      "roleName": "角色名称",
+      "description": "描述",
+      "scopes": "权限范围",
+      "predefined": "预定义",
+      "custom": "自定义"
     },
-    "general": "常规"
+    "general": "常规",
+    "changePassword": {
+      "title": "修改密码",
+      "currentPassword": "当前密码",
+      "currentPlaceholder": "请输入当前密码",
+      "newPassword": "新密码",
+      "newPlaceholder": "请输入新密码",
+      "confirmNewPassword": "确认新密码",
+      "confirmPlaceholder": "请再次输入新密码",
+      "saving": "保存中...",
+      "save": "修改密码",
+      "success": "密码修改成功",
+      "errors": {
+        "currentRequired": "请输入当前密码",
+        "newRequired": "请输入新密码",
+        "mismatch": "两次输入的新密码不一致",
+        "sameAsCurrent": "新密码不能与当前密码相同",
+        "failed": "修改密码失败",
+        "unexpected": "发生意外错误"
+      }
+    }
   },
   "webhook": {
     "title": "Webhook",
@@ -1822,6 +1849,13 @@
       "alertName": "告警名称",
       "saveChanges": "保存更改",
       "editIncident": "编辑事件"
+    },
+    "rowDensity": {
+      "title": "设置行密度",
+      "compact": "紧凑",
+      "compactDescription": "紧凑行距显示更多数据",
+      "relaxed": "宽松",
+      "relaxedDescription": "标准行高与舒适间距"
     }
   },
   "roleSidebar": {
@@ -2819,6 +2853,11 @@
       "hideAIAssistant": "隐藏 AI 助手",
       "loadingProviders": "加载集成中...",
       "failedToLoadProviders": "加载集成失败"
+    },
+    "executionLogs": {
+      "inProgress": "工作流执行中，1 秒后重新检查（已检查 {checks} 次）",
+      "failedLoading": "工作流执行失败，正在加载日志...",
+      "successLoading": "工作流执行成功，正在加载日志..."
     }
   },
   "notFound": {
@@ -2834,7 +2873,8 @@
     "executionDetails": "执行详情",
     "logs": "日志",
     "alertId": "告警 ID",
-    "enrichedFields": "丰富字段"
+    "enrichedFields": "丰富字段",
+    "ruleExecutionsTitle": "映射规则执行记录"
   },
   "notificationsHub": {
     "title": "通知中心",
@@ -2867,7 +2907,18 @@
     "searching": "搜索中...",
     "noColumnsFound": "未找到匹配\"{search}\"的列",
     "savingChanges": "保存中...",
-    "saveChanges": "保存更改"
+    "saveChanges": "保存更改",
+    "form": {
+      "updatePreset": "更新预设",
+      "enterName": "输入新预设名称",
+      "presetName": "预设名称",
+      "nameRequired": "预设名称为必填项",
+      "group": "分组",
+      "tags": "标签",
+      "tagsPlaceholder": "选择或创建标签",
+      "matchDescription": "以下是匹配您预设的告警",
+      "saveTooltip": "保存预设"
+    }
   },
   "extraction": {
     "fingerprint": "指纹",
@@ -2971,5 +3022,16 @@
   "schedule.statMtta": "平均认领时长 MTTA",
   "schedule.recentClaims": "最近认领记录",
   "schedule.acked": "已认领",
-  "schedule.pending": "待认领"
+  "schedule.pending": "待认领",
+  "misc": {
+    "more": "更多",
+    "presetControls": {
+      "private": "私密",
+      "privateTooltip": "私密预设仅您自己可见",
+      "noisy": "嘈杂",
+      "noisyTooltip": "嘈杂预设会对每个匹配事件触发提示音",
+      "counterMode": "仅触发告警计数",
+      "counterModeTooltip": "导航栏计数只统计触发中的告警还是全部匹配告警"
+    }
+  }
 }

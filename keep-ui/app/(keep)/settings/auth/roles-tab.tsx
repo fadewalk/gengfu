@@ -101,10 +101,10 @@ export default function RolesTab({ customRolesAllowed }: RolesTabProps) {
             tooltip={
               customRolesAllowed
                 ? undefined
-                : "This feature is not available in your authentication mode."
+                : t("settings.roles.authModeNotAvailable")
             }
           >
-            Create Custom Role
+            {t("settings.roles.createCustomRole")}
           </Button>
         </div>
       </div>
@@ -118,9 +118,9 @@ export default function RolesTab({ customRolesAllowed }: RolesTabProps) {
         <Table className="h-full">
           <TableHead>
             <TableRow className="border-b border-tremor-border dark:border-dark-tremor-border">
-              <TableHeaderCell className="w-4/24">Role Name</TableHeaderCell>
-              <TableHeaderCell className="w-4/24">Description</TableHeaderCell>
-              <TableHeaderCell className="w-15/24">Scopes</TableHeaderCell>
+              <TableHeaderCell className="w-4/24">{t("settings.roles.roleName")}</TableHeaderCell>
+              <TableHeaderCell className="w-4/24">{t("settings.roles.description")}</TableHeaderCell>
+              <TableHeaderCell className="w-15/24">{t("settings.roles.scopes")}</TableHeaderCell>
               <TableHeaderCell className="w-1/24"></TableHeaderCell>
             </TableRow>
           </TableHead>
@@ -144,14 +144,14 @@ export default function RolesTab({ customRolesAllowed }: RolesTabProps) {
                             color="orange"
                             className="ml-2 w-24 text-center"
                           >
-                            Predefined
+                            {t("settings.roles.predefined")}
                           </Badge>
                         ) : (
                           <Badge
                             color="orange"
                             className="ml-2 w-24 text-center"
                           >
-                            Custom
+                            {t("settings.roles.custom")}
                           </Badge>
                         )}
                       </div>

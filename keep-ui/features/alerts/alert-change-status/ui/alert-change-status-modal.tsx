@@ -82,7 +82,7 @@ export function AlertChangeStatusModal({
       return;
     }
     if (Array.isArray(alert)) {
-      showErrorToast(new Error("Batch status change should use batch handler."));
+      showErrorToast(new Error(t("alerts.changeStatus.batchHandlerError")));
       return;
     }
     setIsSubmitting(true);
@@ -157,13 +157,13 @@ export function AlertChangeStatusModal({
   if (!Array.isArray(alert)) {
     return (
       <Modal onClose={handleClose} isOpen={!!alert} className="!max-w-none !w-auto inline-block whitespace-nowrap overflow-visible">
-        <Title className="text-lg font-semibold">Change Alert Status</Title>
+        <Title className="text-lg font-semibold">{t("alerts.changeStatus.title")}</Title>
         <div className="border-t border-gray-200 my-4" />
         <div className="flex mt-2.5 inline-flex items-center">
           <Subtitle
             className="flex items-center bold"
           >
-            New status:
+            {t("alerts.changeStatus.newStatus")}
           </Subtitle>
           <Select
             options={statusOptions}
@@ -171,7 +171,7 @@ export function AlertChangeStatusModal({
               (option) => option.value === selectedStatus
             )}
             onChange={(option) => setSelectedStatus(option?.value || null)}
-            placeholder="Select new status"
+            placeholder={t("alerts.changeStatus.selectNewStatus")}
             className="ml-2"
             styles={{
               control: (base) => ({
@@ -186,19 +186,19 @@ export function AlertChangeStatusModal({
             className="ml-4"
             size="xs"
             onClick={() => setDisposeOnNewAlert(!disposeOnNewAlert)}
-            tooltip={disposeOnNewAlert ? "Dispose the status when a new alert comes in." : "Keep the status when a new alert comes in."}
+            tooltip={disposeOnNewAlert ? t("alerts.changeStatus.disposeTooltip") : t("alerts.changeStatus.keepTooltip")}
           >
-            {disposeOnNewAlert ? "Disposing on new alerts" : "Keeping on new alerts"}
+            {disposeOnNewAlert ? t("alerts.changeStatus.disposeOnNewAlerts") : t("alerts.changeStatus.keepOnNewAlerts")}
           </Button>
         </div>
         <div className="mt-4">
-          <Subtitle >Add Note</Subtitle>
+          <Subtitle >{t("alerts.actions.addNote")}</Subtitle>
           <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
             <ReactQuill
               value={noteContent}
               onChange={(value: string) => setNoteContent(value)}
               theme="snow"
-              placeholder="Add the reason for status change here..."
+              placeholder={t("alerts.changeStatus.addNotePlaceholder")}
             />
           </div>
         </div>
@@ -209,7 +209,7 @@ export function AlertChangeStatusModal({
             variant="secondary"
             disabled={isSubmitting}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleChangeStatus}
@@ -217,7 +217,7 @@ export function AlertChangeStatusModal({
             loading={isSubmitting}
             disabled={isSubmitting}
           >
-            Change Status
+            {t("alerts.actions.changeStatus")}
           </Button>
         </div>
       </Modal>
@@ -225,13 +225,13 @@ export function AlertChangeStatusModal({
   } else {
     return (
       <Modal onClose={handleClose} isOpen={!!alert} className="!max-w-none !w-auto inline-block whitespace-nowrap overflow-visible">
-        <Title className="text-lg font-semibold">Change Alerts Status - Alert(s) selected: {Array.isArray(alert) ? alert.length : 1}</Title>
+        <Title className="text-lg font-semibold">{t("alerts.changeStatus.batchTitle", { count: Array.isArray(alert) ? alert.length : 1 })}</Title>
         <div className="border-t border-gray-200 my-4" />
         <div className="flex mt-2.5 inline-flex items-center">
           <Subtitle
             className="flex items-center bold"
           >
-            New status:
+            {t("alerts.changeStatus.newStatus")}
           </Subtitle>
           <Select
             options={statusOptions}
@@ -239,7 +239,7 @@ export function AlertChangeStatusModal({
               (option) => option.value === selectedStatus
             )}
             onChange={(option) => setSelectedStatus(option?.value || null)}
-            placeholder="Select new status"
+            placeholder={t("alerts.changeStatus.selectNewStatus")}
             className="ml-2"
             styles={{
               control: (base) => ({
@@ -254,19 +254,19 @@ export function AlertChangeStatusModal({
             className="ml-4"
             size="xs"
             onClick={() => setDisposeOnNewAlert(!disposeOnNewAlert)}
-            tooltip={disposeOnNewAlert ? "Dispose the status when a new alert comes in." : "Keep the status when a new alert comes in."}
+            tooltip={disposeOnNewAlert ? t("alerts.changeStatus.disposeTooltip") : t("alerts.changeStatus.keepTooltip")}
           >
-            {disposeOnNewAlert ? "Disposing on new alerts" : "Keeping on new alerts"}
+            {disposeOnNewAlert ? t("alerts.changeStatus.disposeOnNewAlerts") : t("alerts.changeStatus.keepOnNewAlerts")}
           </Button>
         </div>
         <div className="mt-4">
-          <Subtitle >Add Note</Subtitle>
+          <Subtitle >{t("alerts.actions.addNote")}</Subtitle>
           <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
             <ReactQuill
               value={noteContent}
               onChange={(value: string) => setNoteContent(value)}
               theme="snow"
-              placeholder="Add the reason for status change here..."
+              placeholder={t("alerts.changeStatus.addNotePlaceholder")}
             />
           </div>
         </div>
@@ -277,7 +277,7 @@ export function AlertChangeStatusModal({
             variant="secondary"
             disabled={isSubmitting}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleChangeStatusBatch}
@@ -285,7 +285,7 @@ export function AlertChangeStatusModal({
             loading={isSubmitting}
             disabled={isSubmitting}
           >
-            Change Status
+            {t("alerts.actions.changeStatus")}
           </Button>
         </div>
       </Modal>

@@ -35,6 +35,7 @@ export default function MappingExecutionsPage(props: {
   params: Promise<{ rule_id: string }>;
 }) {
   const params = use(props.params);
+  const { t } = useI18n();
   const [pagination, setPagination] = useState<Pagination>({
     limit: 20,
     offset: 0,
@@ -57,12 +58,12 @@ export default function MappingExecutionsPage(props: {
     <div className="p-4 space-y-4">
       <div>
         <Subtitle className="text-sm">
-          <Link href="/mapping">All Rules</Link>{" "}
+          <Link href="/mapping">{t("mapping.allRules")}</Link>{" "}
           <Icon icon={ArrowRightIcon} color="gray" size="xs" />{" "}
-          {rule?.name || `Rule ${params.rule_id}`}
-          <Icon icon={ArrowRightIcon} color="gray" size="xs" /> Executions
+          {rule?.name || `${t("mapping.rule")} ${params.rule_id}`}
+          <Icon icon={ArrowRightIcon} color="gray" size="xs" />{t("mapping.executions")}
         </Subtitle>
-        <Title>Mapping Rule Executions</Title>
+        <Title>{t("mapping.ruleExecutionsTitle")}</Title>
       </div>
 
       <div className="space-y-4">

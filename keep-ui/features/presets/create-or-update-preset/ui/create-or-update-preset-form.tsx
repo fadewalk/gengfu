@@ -17,6 +17,7 @@ import { useTags } from "@/utils/hooks/useTags";
 import { Preset } from "@/entities/presets/model/types";
 import { usePresetActions } from "@/entities/presets/model/usePresetActions";
 import { GroupSelector } from "@/components/group/GroupSelector";
+import { useI18n } from "@/i18n/hooks/useI18n";
 
 interface TagOption {
   id?: string;
@@ -47,6 +48,7 @@ export function CreateOrUpdatePresetForm({
   onCreateOrUpdate,
   onCancel,
 }: CreateOrUpdatePresetFormProps) {
+  const { t } = useI18n();
   const [presetName, setPresetName] = useState(presetData.name ?? "");
   const [isPrivate, setIsPrivate] = useState(presetData.isPrivate ?? false);
   const [isNoisy, setIsNoisy] = useState(presetData.isNoisy ?? false);
@@ -166,18 +168,18 @@ export function CreateOrUpdatePresetForm({
       onSubmit={addOrUpdatePreset}
     >
       <div className="text-lg font-semibold">
-        <p>{presetName ? "Update preset" : "Enter new preset name"}</p>
+        <p>{presetName ? t("presets.form.updatePreset") : t("presets.form.enterName")}</p>
       </div>
 
       <div className="space-y-2">
-        <Subtitle>Preset Name</Subtitle>
+        <Subtitle>{t("presets.form.presetName")}</Subtitle>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <TextInput
               data-testid="preset-name-input"
               // TODO: don't show error until user tries to save
               error={!presetName}
-              errorMessage="Preset name is required"
+              errorMessage={t("presets.form.nameRequired")}
               placeholder={
                 presetName === "feed" || presetName === "deleted"
                   ? ""
@@ -230,11 +232,11 @@ export function CreateOrUpdatePresetForm({
 
       {/* Group selector for group-level data isolation */}
       <div className="flex flex-col gap-1">
-        <Subtitle>Group</Subtitle>
+        <Subtitle>{t("presets.form.group")}</Subtitle>
         <GroupSelector value={groupId} onChange={setGroupId} />
       </div>
 
-      <Subtitle>Tags</Subtitle>
+      <Subtitle>{t("presets.form.tags")}</Subtitle>
       <CreatableMultiSelect
         value={selectedTags.map((tag) => ({
           value: tag.name,
@@ -246,7 +248,7 @@ export function CreateOrUpdatePresetForm({
           value: tag.name,
           label: tag.name,
         }))}
-        placeholder="Select or create tags"
+        placeholder={t("presets.form.tagsPlaceholder")}
       />
 
       {/* Add alerts count card before the save buttons */}
@@ -255,7 +257,7 @@ export function CreateOrUpdatePresetForm({
           presetCEL={presetData.CEL}
           isDebouncing={false}
           vertical={true}
-          description="These are the alerts that would match your preset"
+          description={t("presets.form.matchDescription")}
         />
       )}
 
@@ -266,9 +268,9 @@ export function CreateOrUpdatePresetForm({
           variant="secondary"
           color="orange"
           onClick={handleCancel}
-          tooltip="Close"
+          tooltip={t("common.close")}
         >
-          Close
+          {t("common.close")}
         </Button>
         <Button
           data-testid="save-preset-button"
@@ -277,9 +279,9 @@ export function CreateOrUpdatePresetForm({
           size="lg"
           color="orange"
           variant="primary"
-          tooltip="Save Preset"
+          tooltip={t("presets.form.saveTooltip")}
         >
-          Save
+          {t("common.actions.save")}
         </Button>
       </div>
     </form>

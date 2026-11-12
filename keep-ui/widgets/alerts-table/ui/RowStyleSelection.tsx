@@ -4,11 +4,13 @@ import {
   RowStyle,
   useAlertRowStyle,
 } from "@/entities/alerts/model/useAlertRowStyle";
+import { useI18n } from "@/i18n/hooks/useI18n";
 interface RowStyleSelectionProps {
   onClose?: () => void;
 }
 
 export function RowStyleSelection({ onClose }: RowStyleSelectionProps) {
+  const { t } = useI18n();
   const [rowStyle, setRowStyle] = useAlertRowStyle();
 
   const handleStyleChange = (style: RowStyle) => {
@@ -19,7 +21,7 @@ export function RowStyleSelection({ onClose }: RowStyleSelectionProps) {
   return (
     <form className="flex flex-col h-full">
       <div className="flex-1 overflow-hidden flex flex-col">
-        <span className="text-gray-400 text-sm mb-2">Set row density</span>
+        <span className="text-gray-400 text-sm mb-2">{t("alerts.rowDensity.title")}</span>
         <div className="space-y-2">
           <button
             type="button"
@@ -30,9 +32,9 @@ export function RowStyleSelection({ onClose }: RowStyleSelectionProps) {
                 : "hover:bg-gray-100"
             }`}
           >
-            <Text>Compact</Text>
+            <Text>{t("alerts.rowDensity.compact")}</Text>
             <Text className="text-sm text-gray-500">
-              Compact rows to show more data
+              {t("alerts.rowDensity.compactDescription")}
             </Text>
           </button>
           <button
@@ -44,9 +46,9 @@ export function RowStyleSelection({ onClose }: RowStyleSelectionProps) {
                 : "hover:bg-gray-100"
             }`}
           >
-            <Text>Relaxed</Text>
+            <Text>{t("alerts.rowDensity.relaxed")}</Text>
             <Text className="text-sm text-gray-500">
-              Standard row height with comfortable spacing
+              {t("alerts.rowDensity.relaxedDescription")}
             </Text>
           </button>
         </div>
