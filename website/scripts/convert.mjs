@@ -314,7 +314,7 @@ for (const dir of ['images', 'logo']) {
 }
 
 // 更夫自有指南（docs/zh）拷贝为站点顶层页面
-for (const guide of ['quickstart.md', 'nightingale.md', 'oncall-roadmap.md']) {
+for (const guide of ['quickstart.md', 'nightingale.md', 'oncall-roadmap.md', 'nightingale-benchmark.md']) {
   const src = join(docsZhGuidesDir, guide)
   if (existsSync(src)) {
     const outPath = join(websiteDir, guide)

@@ -64,6 +64,7 @@ export default defineConfig({
       { text: '首页', link: '/' },
       { text: '快速上手', link: '/quickstart' },
       { text: '接入夜莺', link: '/nightingale' },
+      { text: '夜莺能力对标', link: '/nightingale-benchmark' },
       {
         text: '使用文档',
         items: [
